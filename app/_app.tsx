@@ -1,7 +1,6 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 
-import MainLayout from "../components/Layouts/main";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AnimatePresence } from "framer-motion";
 import theme from "../theme/styles";
@@ -36,16 +35,14 @@ export default function App({
   return (
     <ChakraProvider theme={theme}>
       <SpeedInsights />
-      <MainLayout>
-        <AnimatePresence initial={true}>
-          <div
-            className={`${comfortaa.variable} ${poppins.variable} ${lexend.variable} font-helvetica`}
-          >
-            <Component {...pageProps} />
-            <Analytics mode={"production"} />
-          </div>
-        </AnimatePresence>
-      </MainLayout>
+      <AnimatePresence initial={true}>
+        <div
+          className={`${comfortaa.variable} ${poppins.variable} ${lexend.variable} font-helvetica`}
+        >
+          <Component {...pageProps} />
+          <Analytics mode={"production"} />
+        </div>
+      </AnimatePresence>
     </ChakraProvider>
   );
 }

@@ -2,7 +2,6 @@
 import React, { useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import BasicLayout from "@/components/Layouts/BasicLayout";
 
 import Script from "next/script";
 import Footer from "@/components/Footer";
@@ -36,7 +35,7 @@ export default function Home() {
   py-5 px-8 shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover font-bold`;
 
   return (
-    <BasicLayout title="GitAuto" overrideTitle={true}>
+    <div className="min-h-screen">
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -79,7 +78,7 @@ export default function Home() {
         </div>
       </motion.div>
       <Footer />
-    </BasicLayout>
+    </div>
   );
 }
 

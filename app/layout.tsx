@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -8,12 +9,29 @@ export const metadata: Metadata = {
   title: { template: "%s | GitAuto", default: "GitAuto" },
   description: "Automatic PR's for Bugs",
   generator: "Next.js",
-  applicationName: "Next.js",
+  applicationName: "GitAuto",
   referrer: "origin-when-cross-origin",
-  keywords: ["Next.js", "React", "JavaScript"],
-  authors: [{ name: "Seb" }, { name: "Josh", url: "https://gitauto.ai" }],
-  creator: "Jiachi Liu",
-  publisher: "Sebastian Markbåge",
+  keywords: [
+    "AI",
+    "artificial intelligence",
+    "coding",
+    "pull requests",
+    "github",
+    "git",
+    "gitauto",
+    "git auto",
+    "git-auto",
+    "automatic pull requests",
+    "automatic prs",
+    "automatic pr",
+    "automatic pr for bugs",
+    "automatic pr for issues",
+    "automatic pr for issues",
+  ],
+  authors: [
+    { name: "Hiroshi Nishio" },
+    { name: "Nikita Malinovsky", url: "https://gitauto.ai" },
+  ],
   formatDetection: {
     email: false,
     address: false,
@@ -21,13 +39,13 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL("https://gitauto.ai"),
   openGraph: {
-    title: "Next.js",
-    description: "The React Framework for the Web",
+    title: "GitAuto",
+    description: "Automatic PR's for Bugs",
     url: "https://gitauto.ai",
-    siteName: "Next.js",
+    siteName: "GitAuto",
     images: [
       {
-        url: "https://gitauto.ai/favicon.png", // Must be an absolute URL
+        url: "https://gitauto.ai/favicon.svg", // Must be an absolute URL
         width: 800,
         height: 600,
       },
@@ -57,7 +75,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <Navbar />
+        {children}
+      </body>
     </html>
   );
 }
