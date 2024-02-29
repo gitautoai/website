@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import Script from "next/script";
 import Footer from "@/components/Footer";
+import Link from "next/link";
 
 const childVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -35,12 +36,9 @@ export default function Home() {
   py-5 px-8 shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover font-bold`;
 
   return (
-    <div className="min-h-screen">
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="flex flex-col justify-center items-center bg-white  py-5 gap-8 footerSM:gap-10 footerSM:py-8 md:gap-12 lg:gap-16
+    <div className="h-[calc(100vh-73px)] bg-darkBlue text-white">
+      <div
+        className="flex flex-col justify-center items-center bg-darkBlue  py-5 gap-8 footerSM:gap-10 footerSM:py-8 md:gap-12 lg:gap-16
          md:py-12 lg:py-16 mb-auto"
       >
         <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] ">
@@ -53,16 +51,20 @@ export default function Home() {
                 </span>
                 🪲
               </h1>
-              <motion.div
-                className="flex flex-col justify-center items-center z-10"
-                variants={childVariants}
+              <Link
+                href="https://github.com/apps/gitauto-ai"
+                passHref
+                target="_blank"
+                className={`${personTypeButtonStyles} mx-auto mt-2 flex items-center gap-2`}
               >
-                <button
-                  className={`${personTypeButtonStyles} mx-auto mt-2 flex items-center gap-1`}
-                >
-                  Get Started{" "}
-                </button>
-              </motion.div>
+                <Image
+                  src="/github.svg"
+                  width={30}
+                  height={30}
+                  alt="Github Logo"
+                />
+                Get Started
+              </Link>
             </div>
             <div className="flex p-1 pb-3 bg-gray rounded-lg outline-none shadow-lg">
               <div
@@ -76,7 +78,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
       <Footer />
     </div>
   );

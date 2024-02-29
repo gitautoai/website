@@ -1,19 +1,44 @@
 // import WebNav from "./webNav";
 // import MobileNav from "./mobileNav";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <div className="flex flex-col w-full justify-center font-helvetica font-normal items-center bg-white ">
+    <div className="flex flex-col w-full justify-center font-helvetica font-normal items-center bg-darkBlue text-white">
       <div className="flex flex-col w-[95vw] footerXM:w-[90vw] footerSM:w-[85vw] sm:w-[80vw] xxl:w-[1280px] ">
         <nav className="flex text-lg justify-center items-center my-4">
           <Link href="/" className="mr-auto ml-5">
-            <div className="flex flex-col items-start text-sm footerSM:text-xl text-black">
+            <div className="flex items-center gap-2 text-sm footerSM:text-xl text-black">
+              <Image
+                src="/favicon.svg"
+                width={40}
+                height={40}
+                alt="GitAuto Logo"
+              />
               <span className="font-bold font-lexend text-blue">GitAuto</span>
             </div>
           </Link>
-
-          <div>Pricing Documentation</div>
+          <ol className="flex gap-2">
+            <li>
+              <Link
+                href="/"
+                passHref
+                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+              >
+                Pricing
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/pricing"
+                passHref
+                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+              >
+                Documentation
+              </Link>
+            </li>
+          </ol>
           {/* <WebNav></WebNav> */}
 
           {/* <MobileNav session={session} status={status}></MobileNav> */}
