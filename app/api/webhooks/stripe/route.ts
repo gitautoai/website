@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
         break;
       case "customer.subscription.deleted":
         const customerSubscriptionDeleted = event.data.object;
+				// rewmove ter
         // Then define and call a function to handle the event customer.subscription.deleted
         break;
       case "customer.subscription.updated":
