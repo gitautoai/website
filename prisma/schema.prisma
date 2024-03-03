@@ -1,0 +1,58 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextIndex", "fullTextSearch"]
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model installation_history {
+  id                       Int      @id @default(autoincrement())
+  installation_target_type String
+  installation_target_id   BigInt
+  installation_target_name String
+  installation_id          BigInt
+  installation_status      String
+  created_at               DateTime @default(now()) @db.Timestamptz(6)
+  created_by_id            BigInt
+  created_by_name          String
+
+  @@unique([installation_target_id, installation_target_type, created_at])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model repo_info {
+  id              BigInt    @id @default(autoincrement())
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  installation_id BigInt    @unique
+  login           String    @unique
+  html_url        String?
+  deleted_at      DateTime? @db.Timestamptz(6)
+  repositories    String[]  @default([])
+  repository_ids  BigInt[]  @default([])
+  requests        BigInt    @default(0)
+  invoice_id      String?
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model issues {
+  id                      BigInt                             @id @default(autoincrement())
+  created_at              DateTime                           @default(now()) @db.Timestamptz(6)
+  run_id                  BigInt?
+  used_within_time_period BigInt?
+  installation_id         BigInt
+  repo_info               owner_installation_id_relationship @relation(fields: [installation_id], references: [installation_id], onDelete: Cascade, map: "public_issues_installation_id_fkey")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model owner_installation_id_relationship {
+  id              BigInt   @id @default(autoincrement())
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  owner           String   @unique
+  installation_id BigInt   @unique
+  issues          issues[]
+}

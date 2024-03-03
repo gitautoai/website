@@ -22,14 +22,14 @@ export default function Navbar() {
           <ol className="flex gap-2">
             <li>
               <Link
-                href="/"
+                href="/#pricing"
                 passHref
                 className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
               >
                 Pricing
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 href="/pricing"
                 passHref
@@ -37,7 +37,7 @@ export default function Navbar() {
               >
                 Documentation
               </Link>
-            </li>
+            </li> */}
           </ol>
           {/* <WebNav></WebNav> */}
 

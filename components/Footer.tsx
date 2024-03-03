@@ -8,14 +8,14 @@ export default function Footer() {
             <ol className="flex gap-2">
               <li>
                 <Link
-                  href="/"
+                  href="https://github.com/apps/gitauto-ai"
                   passHref
                   className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
                 >
                   Github
                 </Link>
               </li>
-              <li>
+              {/* <li>
                 <Link
                   href="/pricing"
                   passHref
@@ -23,10 +23,10 @@ export default function Footer() {
                 >
                   Discord
                 </Link>
-              </li>
+              </li> */}
               <li>
                 <Link
-                  href="/pricing"
+                  href="/#pricing"
                   passHref
                   className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
                 >
@@ -35,13 +35,22 @@ export default function Footer() {
               </li>
               <li>
                 <Link
+                  href="https://billing.stripe.com/p/login/eVacPB8qCbV64Ni144"
+                  passHref
+                  className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+                >
+                  Manage Payment
+                </Link>
+              </li>
+              {/* <li>
+                <Link
                   href="/docs"
                   passHref
                   className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
                 >
                   Docs
                 </Link>
-              </li>
+              </li> */}
             </ol>
           </div>
         </div>
