@@ -103,7 +103,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="bg-white text-black w-[100vw] flex flex-col">
+        <div className="bg-white text-black w-[100vw] flex flex-col h-[300px]">
           <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px]  ">
             <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
               Features Bug Fixes Automatic PRs AI
