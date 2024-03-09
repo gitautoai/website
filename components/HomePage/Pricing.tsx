@@ -2,7 +2,13 @@ import Link from "next/link";
 
 import Image from "next/image";
 
+// Analytics
+import { usePostHog } from "posthog-js/react";
+
 export default function Pricing() {
+  // Analytics
+  const posthog = usePostHog();
+
   const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
   text-md footerSM:text-lg xl:text-xl py-3 px-8 mx-auto shadow-lg hover:shadow-lg 
   cursor-pointer hover:bg-blueHover font-semibold text-center nav:w-auto`;
@@ -22,6 +28,12 @@ export default function Pricing() {
               href="https://github.com/apps/gitauto-ai"
               passHref
               target="_blank"
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "github_app_install",
+                  $current_url: window.location.href,
+                });
+              }}
               className={`${pricingButtonStyles} bg-blue text-white flex items-center gap-2`}
             >
               <Image
@@ -45,8 +57,12 @@ export default function Pricing() {
             <Link
               href="https://buy.stripe.com/4gw15W4HNaBccWkcMM"
               passHref
-              // onClick={onSubmit}
-
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "purchase",
+                  $current_url: window.location.href,
+                });
+              }}
               className={`${pricingButtonStyles} bg-darkBlue hover:bg-darkBlueHover text-white   flex items-center gap-2`}
             >
               Purchase
@@ -66,6 +82,12 @@ export default function Pricing() {
               href="mailto:info@gitauto.ai"
               passHref
               target="_blank"
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "contact_us",
+                  $current_url: window.location.href,
+                });
+              }}
               className={`${pricingButtonStyles} bg-blue text-white mx-auto  flex items-center gap-2`}
             >
               Contact Us
@@ -92,7 +114,12 @@ export default function Pricing() {
               href="https://buy.stripe.com/4gw15W4HNaBccWkcMM"
               passHref
               // onClick={onSubmit}
-
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "purchase",
+                  $current_url: window.location.href,
+                });
+              }}
               className={`${pricingButtonStyles} bg-darkBlue hover:bg-darkBlueHover text-white   flex items-center gap-2`}
             >
               Purchase
@@ -112,6 +139,12 @@ export default function Pricing() {
               href="https://github.com/apps/gitauto-ai"
               passHref
               target="_blank"
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "github_app_install",
+                  $current_url: window.location.href,
+                });
+              }}
               className={`${pricingButtonStyles} bg-blue text-white flex items-center gap-2`}
             >
               <Image
@@ -136,6 +169,12 @@ export default function Pricing() {
               href="mailto:info@gitauto.ai"
               passHref
               target="_blank"
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "contact_us",
+                  $current_url: window.location.href,
+                });
+              }}
               className={`${pricingButtonStyles} bg-blue text-white mx-auto  flex items-center gap-2`}
             >
               Contact Us

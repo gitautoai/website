@@ -1,5 +1,12 @@
 import Link from "next/link";
+
+// Analytics
+import { usePostHog } from "posthog-js/react";
+
 export default function Footer() {
+  // Analytics
+  const posthog = usePostHog();
+  
   return (
     <div className="flex flex-col w-full justify-center font-helvetica items-center bg-darkBlue shadow-lg pb-4">
       <div className="flex  w-[95vw] footerXM:w-[90vw] footerSM:w-[85vw]  sm:w-[80vw] xxl:w-[1280px] flex-col justify-center ">
@@ -10,6 +17,12 @@ export default function Footer() {
                 <Link
                   href="https://github.com/apps/gitauto-ai"
                   passHref
+                  onClick={() => {
+                    posthog.capture("$click", {
+                      $event_type: "github_app_install",
+                      $current_url: window.location.href,
+                    });
+                  }}
                   className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
                 >
                   Github
@@ -27,6 +40,12 @@ export default function Footer() {
               <li>
                 <a
                   href="#pricing"
+                  onClick={() => {
+                    posthog.capture("$click", {
+                      $event_type: "pricing",
+                      $current_url: window.location.href,
+                    });
+                  }}
                   className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
                 >
                   Pricing
@@ -36,6 +55,12 @@ export default function Footer() {
                 <Link
                   href="https://billing.stripe.com/p/login/eVacPB8qCbV64Ni144"
                   passHref
+                  onClick={() => {
+                    posthog.capture("$click", {
+                      $event_type: "manage_payment",
+                      $current_url: window.location.href,
+                    });
+                  }}
                   className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
                 >
                   Manage Payment

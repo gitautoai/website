@@ -1,14 +1,20 @@
 "use client";
-import { Elements } from "@stripe/react-stripe-js";
-import CheckoutForm from "@/components/CheckoutForm";
 import React, { useEffect } from "react";
-import { motion } from "framer-motion";
-import Image from "next/image";
 
-import Script from "next/script";
-import Footer from "@/components/Footer";
+// NextJs imports
+import Image from "next/image";
 import Link from "next/link";
+
+// Components
+import Footer from "@/components/Footer";
 import Pricing from "@/components/HomePage/Pricing";
+
+// Animation
+import { motion } from "framer-motion";
+
+// Analytics
+import { usePathname, useSearchParams } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
 
 const childVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -38,6 +44,23 @@ export default function Home() {
 
   const modalButtonStyles = `bg-blue text-white rounded-lg transition-colors duration-200 text-md footerSM:text-lg xl:text-xl
   py-5 px-8 shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover font-bold`;
+
+  // Analytics
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const posthog = usePostHog();
+
+  useEffect(() => {
+    if (pathname && posthog) {
+      let url = window.origin + pathname;
+      if (searchParams.toString()) {
+        url = url + `?${searchParams.toString()}`;
+      }
+      posthog.capture("$pageview", {
+        $current_url: url,
+      });
+    }
+  }, [pathname, searchParams, posthog]);
 
   // const stripe = useStripe();
   // const elements = useElements();
@@ -80,6 +103,12 @@ export default function Home() {
                 href="https://github.com/apps/gitauto-ai"
                 passHref
                 target="_blank"
+                onClick={() => {
+                  posthog.capture("$click", {
+                    $event_type: "github_app_install",
+                    $current_url: window.location.href,
+                  });
+                }}
                 className={`${personTypeButtonStyles} mx-auto mt-2 flex items-center gap-2`}
               >
                 <Image
