@@ -197,7 +197,9 @@ export default function Home() {
             </div>
           </div>
         </div>
+
         <Pricing />
+
         <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] ">
           <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
             Frequently Asked Questions Do we collect your data? We save your
@@ -206,6 +208,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+
       <Footer />
     </div>
   );
