@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://gitauto.ai/favicon.ico", // Must be an absolute URL
-        width: 800,
+        width: 600,
         height: 600,
       },
     ],

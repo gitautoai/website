@@ -94,7 +94,7 @@ export default function Home() {
             <div className="flex flex-col items-center gap-4 fourteenHundred:gap-6 text-center">
               <h1 className="text-center text-3xl footerSM:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold">
                 Automatic PR&apos;s<br></br>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue to-blueHover">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue to-[#FCA831]">
                   for Bugs
                 </span>
                 🪲
@@ -120,22 +120,26 @@ export default function Home() {
                 Get Started
               </Link>
             </div>
-            <div className="flex p-1 pb-3 bg-gray rounded-lg outline-none shadow-lg">
+            <div className="flex rounded-lg outline-none shadow-lg">
               <div
                 className="block w-[300px] h-[169px] footerXM:w-[350px] footerXM:h-[197px] lgMenu:w-[400px] lgMenu:h-[225px] md:w-[300px] md:h-[169px]
-             ml:w-[350px] ml:h-[197px] lg:w-[400px] lg:h-[225px] xl:w-[450px] xl:h-[253px] relative p-2  outline-none"
+             ml:w-[350px] ml:h-[197px] lg:w-[400px] lg:h-[225px] xl:w-[450px] xl:h-[253px] relative outline-none"
               >
                 <video autoPlay loop muted>
-                  <source src="/demo-1920x1080.mp4" />
+                  <source src="/demo-v1.mp4" />
                 </video>
               </div>
             </div>
           </div>
         </div>
         <div className="bg-white text-black w-[100vw] flex flex-col h-[300px]">
-          <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px]  ">
-            <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
-              Features Bug Fixes Automatic PRs AI
+          <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] flex flex-col items-center ">
+            <div className="flex flex-col ">
+              <h2 className="text-center mt-5 mb-2">
+                Reduce cost by 99% by never hiring an engineer
+              </h2>
+              <span>&bull; Feature Requests</span>
+              <span>&bull; Bug Fixes</span>
             </div>
           </div>
         </div>

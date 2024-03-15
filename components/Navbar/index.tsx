@@ -11,12 +11,12 @@ export default function Navbar() {
           <Link href="/" className="mr-auto ml-5">
             <div className="flex items-center gap-2 text-sm footerSM:text-xl text-black">
               <Image
-                src="/favicon.svg"
-                width={40}
-                height={40}
+                src="/transparent-not-centered.png"
+                width={30}
+                height={30}
                 alt="GitAuto Logo"
               />
-              <span className="font-bold font-lexend text-blue">GitAuto</span>
+              <span className="font-bold font-lexend text-black">GitAuto</span>
             </div>
           </Link>
           <ol className="flex gap-2">
