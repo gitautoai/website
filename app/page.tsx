@@ -16,6 +16,8 @@ import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 
+import YouTube from "react-youtube";
+
 const childVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -79,6 +81,46 @@ export default function Home() {
   //   }
   // };
 
+  const opts = {
+    height: "600",
+    width: "1068",
+    playerVars: {
+      autoplay: 1,
+      disablekb: 1,
+    },
+  };
+
+  const opts2 = {
+    height: "300",
+    width: "480",
+    playerVars: {
+      autoplay: 1,
+      disablekb: 1,
+    },
+  };
+
+  const opts3 = {
+    height: "214",
+    width: "381",
+    playerVars: {
+      autoplay: 1,
+      disablekb: 1,
+    },
+  };
+
+  const opts4 = {
+    height: "177",
+    width: "315",
+    playerVars: {
+      autoplay: 1,
+      disablekb: 1,
+    },
+  };
+
+  const onReady = (event: any) => {
+    event.target.mute();
+  };
+
   return (
     <div className="h-[calc(100vh-73px)] bg-darkBlue text-white">
       <div
@@ -116,17 +158,33 @@ export default function Home() {
                 Get Started
               </Link>
             </div>
-            <div className="flex rounded-lg outline-none shadow-lg">
-              <div
-                className="block w-[300px] h-[169px] footerXM:w-[350px] footerXM:h-[197px] lgMenu:w-[400px] lgMenu:h-[225px] md:w-[300px] md:h-[169px]
-             ml:w-[350px] ml:h-[197px] lg:w-[400px] lg:h-[225px] xl:w-[450px] xl:h-[253px] relative outline-none"
-              >
-                <video autoPlay loop muted>
-                  <source src="/demo-v1.mp4" />
-                </video>
-              </div>
-            </div>
           </div>
+        </div>
+        <div className="flexrounded-lg outline-none shadow-lg">
+          <YouTube
+            className="hidden tw:block"
+            videoId="VFBvO-ezMIs"
+            opts={opts}
+            onReady={onReady}
+          />
+          <YouTube
+            className="hidden five:block tw:hidden outline-none"
+            videoId="VFBvO-ezMIs"
+            opts={opts2}
+            onReady={onReady}
+          />
+          <YouTube
+            className="hidden fourteen:block five:hidden outline-none"
+            videoId="VFBvO-ezMIs"
+            opts={opts3}
+            onReady={onReady}
+          />
+          <YouTube
+            className="block fourteen:hidden outline-none"
+            videoId="VFBvO-ezMIs"
+            opts={opts4}
+            onReady={onReady}
+          />
         </div>
         <div className="bg-white text-black w-[100vw] flex flex-col h-[300px]">
           <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] flex flex-col items-center ">
