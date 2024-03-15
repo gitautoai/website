@@ -32,25 +32,25 @@ export async function POST(req: NextRequest) {
         break;
       case "checkout.session.completed":
         const checkoutSessionCompleted: any = event.data.object;
-        const githubUserName =
+        const githubUserName: string =
           checkoutSessionCompleted["custom_fields"][0]["text"]["value"];
-        await prisma.repo_info.upsert({
+        await prisma.owner_info.upsert({
           where: {
-            login: githubUserName,
+            owner_name: githubUserName,
           },
           update: {
             invoice_id: checkoutSessionCompleted["id"],
           },
           create: {
             installation_id: BigInt(Number(uuidv4().replace(/\D/g, ""))), // will remove this line after db change
-            login: githubUserName,
+            owner_name: githubUserName,
             invoice_id: checkoutSessionCompleted["id"],
           },
         });
         break;
       case "customer.subscription.deleted":
         const customerSubscriptionDeleted = event.data.object;
-				// rewmove ter
+        // rewmove ter
         // Then define and call a function to handle the event customer.subscription.deleted
         break;
       case "customer.subscription.updated":
