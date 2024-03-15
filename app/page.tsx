@@ -56,7 +56,7 @@ export default function Home() {
         $current_url: url,
       });
     }
-  }, [pathname, searchParams, posthog]);
+  }, [pathname, posthog]);
 
   // const stripe = useStripe();
   // const elements = useElements();
