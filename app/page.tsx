@@ -208,7 +208,8 @@ export default function Home() {
                 &bull; Create an issue such as a bug report or feature request.
               </span>
               <span>
-                &bull; Click the checkbox in GitAuto's comment to Generate a PR
+                &bull; Click the checkbox in GitAuto&apos;s comment to Generate
+                a PR
               </span>
               <span>
                 &bull; Viola, your PR will soon be created. The progress is
