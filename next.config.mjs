@@ -9,6 +9,7 @@ export default withSentryConfig(
     // https://github.com/getsentry/sentry-webpack-plugin#options
 
     // Suppresses source map uploading logs during build
+    automaticVercelMonitors: true,
     silent: true,
     org: "gitauto-w0",
     project: "website",
