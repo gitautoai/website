@@ -1,5 +1,5 @@
+// Next imports
 import Link from "next/link";
-
 import Image from "next/image";
 
 // Analytics
@@ -14,15 +14,15 @@ export default function Pricing() {
   cursor-pointer hover:bg-blueHover font-semibold text-center nav:w-auto`;
 
   return (
-    <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] my-10 ">
+    <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] py-16 ">
       {/* Web View */}
-      <div className="hidden lg:flex flex-col items-center justify-evenly gap-8 ">
-        <h2 className="text-5xl" id="pricing">
-          <a id="pricing">Pricing</a>
-        </h2>
+      <h2 className="text-center text-3xl" id="pricing">
+        <a id="pricing">Pricing</a>
+      </h2>
+      <div className="hidden lg:flex flex-col items-center justify-evenly gap-8 mt-10">
         <div className="flex">
           <div className="flex flex-col p-5 mb-10">
-            <h3 className="text-5xl">Free</h3>
+            <h3 className="text-3xl">Free</h3>
             <span className="mt-2 text-xl">Starter</span>
             <Link
               href="https://github.com/apps/gitauto-ai"
@@ -37,7 +37,7 @@ export default function Pricing() {
               className={`${pricingButtonStyles} bg-blue text-white flex items-center gap-2`}
             >
               <Image
-                src="/github.svg"
+                src="/icons/github.svg"
                 width={30}
                 height={30}
                 alt="Github Logo"
@@ -52,7 +52,7 @@ export default function Pricing() {
             </div>
           </div>
           <div className="flex flex-col rounded-xl bg-blue p-5 mb-5">
-            <h3 className="text-5xl">$19</h3>
+            <h3 className="text-3xl">$19</h3>
             <span className="mt-2 text-xl">Individual</span>
             <Link
               href="https://buy.stripe.com/4gw15W4HNaBccWkcMM"
@@ -76,7 +76,7 @@ export default function Pricing() {
             </div>
           </div>
           <div className="flex flex-col p-5 mb-10">
-            <h3 className="text-5xl">Custom</h3>
+            <h3 className="text-3xl">Custom</h3>
             <span className="mt-2 text-xl">Enterprise</span>
             <Link
               href="mailto:info@gitauto.ai"
@@ -148,7 +148,7 @@ export default function Pricing() {
               className={`${pricingButtonStyles} bg-blue text-white flex items-center gap-2`}
             >
               <Image
-                src="/github.svg"
+                src="/icons/github.svg"
                 width={30}
                 height={30}
                 alt="Github Logo"
@@ -156,7 +156,7 @@ export default function Pricing() {
               Install
             </Link>
             <div className="flex flex-col">
-              <span>&bull; 2 issues per month</span>
+              <span>&bull; 30 issues per month</span>
               <span>&bull; Solve bugs and implement features</span>
               <span>&bull; Chat with issue and PR to modify PR</span>
               <span>&bull; Support</span>
@@ -180,7 +180,6 @@ export default function Pricing() {
               Contact Us
             </Link>
             <div className="flex flex-col">
-              <span>&bull; 20+ issues/month per user</span>
               <span>&bull; Solve bugs and implement features</span>
               <span>&bull; Chat with issue and PR to modify PR</span>
               <span>&bull; Support</span>

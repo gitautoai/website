@@ -146,12 +146,12 @@ export default function Home() {
                 className={`${personTypeButtonStyles} mx-auto mt-2 flex items-center gap-2`}
               >
                 <Image
-                  src="/github.svg"
+                  src="/icons/github.svg"
                   width={30}
                   height={30}
                   alt="Github Logo"
                 />
-                Get Started
+                Get Started for Free
               </Link>
             </div>
           </div>
@@ -183,23 +183,54 @@ export default function Home() {
           />
         </div>
 
-        <div className="bg-white text-black w-[100vw] flex flex-col h-[300px]">
-          <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] flex flex-col items-center ">
-            <div className="flex flex-col ">
-              <h2 className="text-center mt-5 mb-2">
-                Reduce cost by 99% by never hiring an engineer
-              </h2>
-              <span>&bull; Feature Requests</span>
-              <span>&bull; Bug Fixes</span>
-              <span>&bull; Tech Debt</span>
+        <div className="bg-white text-black w-[100vw] flex flex-col py-16">
+          <div className="flex flex-col items-center">
+            <h2 className="text-center text-3xl">
+              Reduce cost by 99% by never hiring an engineer
+            </h2>
+            <div className="flex flex-col gap-5 mt-5">
+              <div className="flex flex-col">
+                <span>Feature Requests</span>
+                <span>Ask GitAuto to create a feature</span>
+              </div>
+              <Image
+                src="/homepage/error.png"
+                width={300}
+                height={300}
+                alt="Feature Request"
+              />
+            </div>
+            <div className="flex">
+              <div className="flex flex-col">
+                <span>Bug Fixes</span>
+                <span>Ask GitAuto to fix bugs</span>
+              </div>
+              <Image
+                src="/homepage/error.png"
+                width={300}
+                height={300}
+                alt="Feature Request"
+              />
+            </div>
+            <div className="flex">
+              <div className="flex flex-col">
+                <span>Code Debt</span>
+                <span>Ask GitAuto to refactor and fix code</span>
+              </div>
+              <Image
+                src="/homepage/error.png"
+                width={300}
+                height={300}
+                alt="Feature Request"
+              />
             </div>
           </div>
         </div>
 
-        <div className="bg-light text-black w-[100vw] flex flex-col h-[300px]">
-          <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] flex flex-col items-center ">
-            <div className="flex flex-col ">
-              <h2 className="text-center mt-5 mb-2">Installation</h2>
+        <div className="bg-light text-black w-[100vw] flex flex-col py-16">
+          <div className="flex flex-col items-center">
+            <h2 className="text-center text-3xl">Installation</h2>
+            <div className=" flex flex-col gap-5 mt-5">
               <span>&bull; Install our Github App</span>
               <span>
                 &bull; Select the repositories you would like to activate
@@ -221,11 +252,11 @@ export default function Home() {
 
         <Pricing />
 
-        <div className="bg-white text-black w-[100vw] flex flex-col items-center pb-5 ">
-          <h2 className="text-center mt-5 mb-2 text-2xl">
-            Frequently Asked Questions
+        <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 ">
+          <h2 className="text-center text-3xl">
+            <a id="faq"> Frequently Asked Questions</a>
           </h2>
-          <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] flex flex-col gap-5">
+          <div className=" flex flex-col gap-5 mt-5">
             <div className="flex flex-col ">
               <span className="font-bold text-lg">
                 Do we collect your data?
