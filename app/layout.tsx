@@ -8,6 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: { template: "%s | GitAuto", default: "GitAuto" },
+import GettingStarted from './getting-started';
   description: "Automatic PR's for Bugs",
   generator: "Next.js",
   applicationName: "GitAuto",
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
     "github",
     "git",
     "gitauto",
+          <GettingStarted />
     "git auto",
     "git-auto",
     "automatic pull requests",
