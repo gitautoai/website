@@ -14,7 +14,7 @@ export default function Pricing() {
   cursor-pointer hover:bg-blueHover font-semibold text-center nav:w-auto`;
 
   return (
-    <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] ">
+    <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] my-10 ">
       {/* Web View */}
       <div className="hidden lg:flex flex-col items-center justify-evenly gap-8 ">
         <h2 className="text-5xl" id="pricing">
@@ -63,7 +63,7 @@ export default function Pricing() {
                   $current_url: window.location.href,
                 });
               }}
-              className={`${pricingButtonStyles} bg-darkBlue hover:bg-darkBlueHover text-white   flex items-center gap-2`}
+              className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black   flex items-center gap-2`}
             >
               Purchase
             </Link>

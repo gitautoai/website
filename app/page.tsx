@@ -122,20 +122,16 @@ export default function Home() {
   };
 
   return (
-    <div className="h-[calc(100vh-73px)] bg-darkBlue text-white">
-      <div
-        className="flex flex-col justify-center items-center bg-darkBlue  py-5 gap-8 footerSM:gap-10 footerSM:py-8 md:gap-12 lg:gap-16
-         md:py-12 lg:py-16 mb-auto"
-      >
+    <div className="h-[calc(100vh-73px)] bg-darkBlue text-white ">
+      <div className="flex flex-col justify-center items-center bg-darkBlue">
         <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] ">
           <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
             <div className="flex flex-col items-center gap-4 fourteenHundred:gap-6 text-center">
-              <h1 className="text-center text-3xl footerSM:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold">
-                Automatic PR&apos;s<br></br>
+              <h1 className="text-center text-3xl footerSM:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-10">
+                Create Code <br></br>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue to-[#FCA831]">
-                  for Bugs
+                  100x cheaper
                 </span>
-                🪲
               </h1>
               <Link
                 href="https://github.com/apps/gitauto-ai"
@@ -160,7 +156,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="flexrounded-lg outline-none shadow-lg">
+        <div className="flexrounded-lg outline-none shadow-lg mt-10 mb-16">
           <YouTube
             className="hidden tw:block"
             videoId="VFBvO-ezMIs"
@@ -186,6 +182,7 @@ export default function Home() {
             onReady={onReady}
           />
         </div>
+
         <div className="bg-white text-black w-[100vw] flex flex-col h-[300px]">
           <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] flex flex-col items-center ">
             <div className="flex flex-col ">
@@ -194,17 +191,66 @@ export default function Home() {
               </h2>
               <span>&bull; Feature Requests</span>
               <span>&bull; Bug Fixes</span>
+              <span>&bull; Tech Debt</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-light text-black w-[100vw] flex flex-col h-[300px]">
+          <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] flex flex-col items-center ">
+            <div className="flex flex-col ">
+              <h2 className="text-center mt-5 mb-2">Installation</h2>
+              <span>&bull; Install our Github App</span>
+              <span>
+                &bull; Select the repositories you would like to activate
+              </span>
+              <span>
+                &bull; Create an issue such as a bug report or feature request.
+              </span>
+              <span>
+                &bull; Click the checkbox in GitAuto's comment to Generate a PR
+              </span>
+              <span>
+                &bull; Viola, your PR will soon be created. The progress is
+                reflected in the comment
+              </span>
             </div>
           </div>
         </div>
 
         <Pricing />
 
-        <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] ">
-          <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
-            Frequently Asked Questions Do we collect your data? We save your
-            chat history with an issue until that issue is closed out. No other
-            data is collected or saved.
+        <div className="bg-white text-black w-[100vw] flex flex-col items-center pb-5 ">
+          <h2 className="text-center mt-5 mb-2 text-2xl">
+            Frequently Asked Questions
+          </h2>
+          <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] flex flex-col gap-5">
+            <div className="flex flex-col ">
+              <span className="font-bold text-lg">
+                Do we collect your data?
+              </span>
+              <span className="text-md">
+                We save your chat history with an issue until that issue is
+                closed out. No other data is collected or saved.
+              </span>
+            </div>
+            <div className="flex flex-col ">
+              <span className="font-bold text-lg">
+                What languages do we support?
+              </span>
+              <span className="text-md">
+                GitAuto supports virtually all languages.
+              </span>
+            </div>
+            <div className="flex flex-col ">
+              <span className="font-bold text-lg">
+                Is there a repository limit?
+              </span>
+              <span className="text-md">
+                There is not. However user and organization repositories can not
+                be used under the same account.
+              </span>
+            </div>
           </div>
         </div>
       </div>
