@@ -7,11 +7,11 @@ module.exports = {
   ],
   theme: {
     colors: {
-      blue: "#5aa7b6",
+      lightBlue: "#B3E5FC",
       //blue: '#1fb6ff',
-      blueHover: "#448B99",
-      darkBlue: "#012e41",
-      darkBlueHover: "#025273",
+      lightBlueHover: "#81D4FA",
+      softBlue: "#4FC3F7",
+      softBlueHover: "#29B6F6",
       green: "#4cb93f",
       greenHover: "#6DC962",
       gray: "#8492a6",
