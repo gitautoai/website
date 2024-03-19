@@ -14,7 +14,7 @@ export default function Footer() {
   return (
     <div className="flex flex-col w-full justify-center font-helvetica items-center bg-light shadow-lg pb-4">
       <div className="flex  w-[95vw]  sm:w-[80vw] 2xl:w-[1280px] flex-col justify-center ">
-        <div className="flex flex-col gap-10 sm:gap-0 sm:flex-row items-center py-10 mt-auto w-full text-white text-lg font-helvetica justify-center ">
+        <div className="flex flex-col gap-10 sm:gap-0 sm:flex-row items-center py-10 mt-auto w-full text-black text-lg font-helvetica justify-center ">
           <div className="flex flex-wrap  gap-16 xl:gap-32 mx-auto w-auto ">
             <ol className="flex gap-2">
               <li>
@@ -83,7 +83,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mx-auto flex items-center gap-5">
-          <span className=" text-white">
+          <span className="text-black">
             &copy; 2024 GitAuto. All Rights Reserved
           </span>
           <Link

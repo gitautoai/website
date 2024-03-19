@@ -66,10 +66,7 @@ export default function Pricing() {
 
             <div className="flex flex-col">
               <span>&bull; 30 issues per month</span>
-              <span>&bull; Solve bugs and implement features</span>
-              <span>&bull; Chat with issue and PR to modify PR</span>
-              <span>&bull; Support</span>
-            </div>
+i            </div>
           </div>
           <div className="flex flex-col p-5 mb-10">
             <h3 className="text-3xl">Custom</h3>

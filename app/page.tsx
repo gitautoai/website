@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
+import Features from "@/components/HomePage/Features";
 
 const childVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -120,50 +121,7 @@ export default function Home() {
             src="https://www.youtube.com/embed/VFBvO-ezMIs"
           ></iframe>
         </div>
-
-        <div className="bg-white text-black w-[100vw] flex flex-col py-16">
-          <div className="flex flex-col items-center">
-            <h2 className="text-center text-3xl">
-              Reduce cost by 99% by never hiring an engineer
-            </h2>
-            <div className="flex flex-col gap-5 mt-5">
-              <div className="flex flex-col">
-                <span>Feature Requests</span>
-                <span>Ask GitAuto to create a feature</span>
-              </div>
-              <Image
-                src="/homepage/error.png"
-                width={300}
-                height={300}
-                alt="Feature Request"
-              />
-            </div>
-            <div className="flex">
-              <div className="flex flex-col">
-                <span>Bug Fixes</span>
-                <span>Ask GitAuto to fix bugs</span>
-              </div>
-              <Image
-                src="/homepage/error.png"
-                width={300}
-                height={300}
-                alt="Feature Request"
-              />
-            </div>
-            <div className="flex">
-              <div className="flex flex-col">
-                <span>Code Debt</span>
-                <span>Ask GitAuto to refactor and fix code</span>
-              </div>
-              <Image
-                src="/homepage/error.png"
-                width={300}
-                height={300}
-                alt="Feature Request"
-              />
-            </div>
-          </div>
-        </div>
+        <Features />
 
         <div className="bg-light text-black w-[100vw] flex flex-col py-16">
           <div className="flex flex-col items-center">
