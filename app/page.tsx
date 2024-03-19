@@ -190,18 +190,16 @@ export default function Home() {
 
         <Pricing />
 
-        <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 ">
+        <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 px-3">
           <h2 className="text-center text-3xl">
-            <a id="faq"> Frequently Asked Questions</a>
+            <a id="faq"> FAQ</a>
           </h2>
           <div className=" flex flex-col gap-5 mt-5">
             <div className="flex flex-col ">
-              <span className="font-bold text-lg">
-                Do we collect your data?
-              </span>
+              <span className="font-bold text-lg">Do we retain your data?</span>
               <span className="text-md">
-                We save your chat history with an issue until that issue is
-                closed out. No other data is collected or saved.
+                No, we don&apos;t retain your data. We read but we don&apos;t
+                clone your repo or save your data.
               </span>
             </div>
             <div className="flex flex-col ">
@@ -216,10 +214,7 @@ export default function Home() {
               <span className="font-bold text-lg">
                 Is there a repository limit?
               </span>
-              <span className="text-md">
-                There is not. However user and organization repositories can not
-                be used under the same account.
-              </span>
+              <span className="text-md">There is not.</span>
             </div>
           </div>
         </div>
