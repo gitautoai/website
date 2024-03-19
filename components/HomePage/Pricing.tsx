@@ -10,8 +10,8 @@ export default function Pricing() {
   const posthog = usePostHog();
 
   const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
-  text-md sm:text-lg xl:text-xl py-3 px-8 mx-auto shadow-lg hover:shadow-lg 
-  cursor-pointer hover:bg-pinkHover font-semibold text-center md:w-auto`;
+  text-md sm:text-lg xl:text-xl py-3 w-[210px] shadow-lg hover:shadow-lg 
+  cursor-pointer font-semibold text-center mx-auto `;
 
   return (
     <div className="w-[100vw] bg-white flex justify-center">
@@ -33,7 +33,7 @@ export default function Pricing() {
                   $current_url: window.location.href,
                 });
               }}
-              className={`${pricingButtonStyles} bg-pink text-white flex items-center gap-2`}
+              className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover text-white flex items-center justify-center gap-2`}
             >
               <Image
                 src="/icons/github.svg"
@@ -59,7 +59,7 @@ export default function Pricing() {
                   $current_url: window.location.href,
                 });
               }}
-              className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black   flex items-center gap-2`}
+              className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black`}
             >
               Purchase
             </Link>
@@ -81,13 +81,13 @@ export default function Pricing() {
                   $current_url: window.location.href,
                 });
               }}
-              className={`${pricingButtonStyles} bg-pink text-white mx-auto  flex items-center gap-2`}
+              className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover text-white`}
             >
               Contact Us
             </Link>
             <div className="flex flex-col">
-              <span>&bull; 20+ issues -&gt; unlimited</span>
-              <span>&bull; Self API key</span>
+              <span>&bull; Unlimited Issues</span>
+              <span>&bull; Self OpenAI API key</span>
               <span>&bull; Self hosting</span>
               <span>&bull; Fine tuning</span>
             </div>
