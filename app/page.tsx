@@ -85,11 +85,13 @@ export default function Home() {
         <div className="w-[98vw] md:w-[95vw] lg:w-[90vw] xl:w-[80vw] 2xl:w-[1280px] ">
           <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
             <div className="flex flex-col items-center gap-4 fourteenHundred:gap-6 text-center">
-              <h1 className="text-center text-3xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-10">
-                Create Code <br></br>
+              <h1 className="text-center text-3xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-16">
+                GitAuto - AI engineer that
+                <br></br>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue to-[#FCA831]">
-                  100x cheaper
+                  automatically generates
                 </span>
+                &nbsp;a PR from an issue
               </h1>
               <Link
                 href="https://github.com/apps/gitauto-ai"
@@ -101,7 +103,7 @@ export default function Home() {
                     $current_url: window.location.href,
                   });
                 }}
-                className={`${personTypeButtonStyles} mx-auto mt-2 flex items-center gap-2`}
+                className={`${personTypeButtonStyles} mx-auto mt-8 flex items-center gap-2`}
               >
                 <Image
                   src="/icons/github.svg"
@@ -114,7 +116,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="mt-10 mb-16">
+        <div className="mt-14 mb-16">
           <iframe
             className="lg:h-[540px] lg:w-[960px] md:h-[396px] md:w-[704px] sm:h-[333px] sm:w-[592px] h-[177px] w-[315px]"
             src={`https://www.youtube.com/embed/gulhHrKCPxQ?autoplay=1&mute=1&loop=1&playlist=gulhHrKCPxQ&rel=0`}
