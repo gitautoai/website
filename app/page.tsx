@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
+import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
 
 const childVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -86,7 +87,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
             <div className="flex flex-col items-center gap-4 fourteenHundred:gap-6 text-center">
               <h1 className="text-center text-3xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-16">
-                GitAuto - AI engineer that
+                AI engineer that
                 <br></br>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue to-[#FCA831]">
                   automatically generates
@@ -168,28 +169,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="bg-light text-black w-[100vw] flex flex-col py-16">
-          <div className="flex flex-col items-center">
-            <h2 className="text-center text-3xl">Installation</h2>
-            <div className=" flex flex-col gap-5 mt-5">
-              <span>&bull; Install our Github App</span>
-              <span>
-                &bull; Select the repositories you would like to activate
-              </span>
-              <span>
-                &bull; Create an issue such as a bug report or feature request.
-              </span>
-              <span>
-                &bull; Click the checkbox in GitAuto&apos;s comment to Generate
-                a PR
-              </span>
-              <span>
-                &bull; Viola, your PR will soon be created. The progress is
-                reflected in the comment
-              </span>
-            </div>
-          </div>
-        </div>
+        <HowToGetStarted />
 
         <Pricing />
 

@@ -2,14 +2,22 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import { FaYoutube } from "react-icons/fa";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faGithub,
+  faXTwitter,
+  faLinkedin,
+  faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
 // Analytics
 import { usePostHog } from "posthog-js/react";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
 
 export default function Footer() {
   // Analytics
   const posthog = usePostHog();
+
+  const iconSize = "2x";
 
   return (
     <div className="flex flex-col w-full justify-center font-helvetica items-center bg-darkBlue shadow-lg pb-4">
@@ -97,12 +105,7 @@ export default function Footer() {
               });
             }}
           >
-            <Image
-              src="/icons/github.svg"
-              width={30}
-              height={30}
-              alt="Github Logo"
-            />
+            <FontAwesomeIcon icon={faGithub} size={iconSize} />
           </Link>
           <Link
             href="https://twitter.com/git-auto"
@@ -115,7 +118,7 @@ export default function Footer() {
               });
             }}
           >
-            <Image src="/icons/x.svg" width={30} height={30} alt="X Logo" />
+            <FontAwesomeIcon icon={faXTwitter} size={iconSize} />
           </Link>
           <Link
             href="https://www.youtube.com/@gitauto"
@@ -128,12 +131,7 @@ export default function Footer() {
               });
             }}
           >
-            <Image
-              src="/icons/youtube.svg"
-              width={30}
-              height={30}
-              alt="Youtube Logo"
-            />
+            <FontAwesomeIcon icon={faYoutube} size={iconSize} />
           </Link>
           <Link
             href="https://www.linkedin.com/company/gitauto"
@@ -146,12 +144,7 @@ export default function Footer() {
               });
             }}
           >
-            <Image
-              src="/icons/linkedin.svg"
-              width={30}
-              height={30}
-              alt="LinkedIn Logo"
-            />
+            <FontAwesomeIcon icon={faLinkedin} size={iconSize} />
           </Link>
         </div>
       </div>
