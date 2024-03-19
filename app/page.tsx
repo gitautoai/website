@@ -114,10 +114,11 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="flexrounded-lg outline-none shadow-lg mt-10 mb-16">
+        <div className="mt-10 mb-16">
           <iframe
             className="lg:h-[540px] lg:w-[960px] md:h-[396px] md:w-[704px] sm:h-[333px] sm:w-[592px] h-[177px] w-[315px]"
-            src="https://www.youtube.com/embed/VFBvO-ezMIs"
+            src={`https://www.youtube.com/embed/gulhHrKCPxQ?autoplay=1&mute=1&loop=1&playlist=gulhHrKCPxQ&rel=0`}
+            allow="accelerometer; autoplay; encrypted-media; fullscreen; gyroscope; picture-in-picture"
           ></iframe>
         </div>
 
