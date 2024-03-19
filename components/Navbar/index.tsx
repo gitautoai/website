@@ -10,8 +10,8 @@ import { usePostHog } from "posthog-js/react";
 
 export default function Navbar() {
   const personTypeButtonStyles = `bg-blue text-white rounded-lg transition-colors 
-  duration-200 footerSM:text-md xl:text-lg py-2 px-3 shadow-lg hover:shadow-lg 
-  cursor-pointer hover:bg-blueHover font-semibold text-center nav:w-auto`;
+  duration-200 sm:text-md xl:text-lg py-2 px-3 shadow-lg hover:shadow-lg 
+  cursor-pointer hover:bg-blueHover font-semibold text-center md:w-auto`;
   // Analytics
   const pathname = usePathname();
   const posthog = usePostHog();
@@ -27,10 +27,10 @@ export default function Navbar() {
 
   return (
     <div className="flex flex-col w-full justify-center font-helvetica font-normal items-center bg-white text-black">
-      <div className="flex flex-col w-[95vw] footerXM:w-[90vw] footerSM:w-[85vw] sm:w-[80vw] xxl:w-[1280px] ">
+      <div className="flex flex-col w-[95vw]  sm:w-[80vw] 2xl:w-[1280px] ">
         <nav className="flex text-lg justify-center items-center my-4">
           <Link href="/" className="mr-auto ml-5">
-            <div className="flex items-center gap-2 text-sm footerSM:text-xl text-black">
+            <div className="flex items-center gap-2 text-sm sm:text-xl text-black">
               <Image
                 src="/transparent-not-centered.png"
                 width={30}

@@ -10,11 +10,11 @@ export default function Pricing() {
   const posthog = usePostHog();
 
   const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
-  text-md footerSM:text-lg xl:text-xl py-3 px-8 mx-auto shadow-lg hover:shadow-lg 
-  cursor-pointer hover:bg-blueHover font-semibold text-center nav:w-auto`;
+  text-md sm:text-lg xl:text-xl py-3 px-8 mx-auto shadow-lg hover:shadow-lg 
+  cursor-pointer hover:bg-blueHover font-semibold text-center md:w-auto`;
 
   return (
-    <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] py-16 ">
+    <div className="w-[98vw] md:w-[95vw] lg:w-[90vw] xl:w-[80vw] 2xl:w-[1280px] py-16 ">
       {/* Web View */}
       <h2 className="text-center text-3xl" id="pricing">
         <a id="pricing">Pricing</a>

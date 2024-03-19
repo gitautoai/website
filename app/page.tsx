@@ -16,8 +16,6 @@ import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 
-import YouTube from "react-youtube";
-
 const childVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
@@ -41,10 +39,10 @@ const containerVariants = {
 
 export default function Home() {
   const personTypeButtonStyles = `bg-blue text-white rounded-lg transition-colors 
-  duration-200 text-md footerSM:text-lg xl:text-xl py-5 px-8 shadow-lg hover:shadow-lg 
-  cursor-pointer hover:bg-blueHover font-semibold text-center nav:w-auto`;
+  duration-200 text-md sm:text-lg xl:text-xl py-5 px-8 shadow-lg hover:shadow-lg 
+  cursor-pointer hover:bg-blueHover font-semibold text-center md:w-auto`;
 
-  const modalButtonStyles = `bg-blue text-white rounded-lg transition-colors duration-200 text-md footerSM:text-lg xl:text-xl
+  const modalButtonStyles = `bg-blue text-white rounded-lg transition-colors duration-200 text-md sm:text-lg xl:text-xl
   py-5 px-8 shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover font-bold`;
 
   // Analytics
@@ -81,53 +79,13 @@ export default function Home() {
   //   }
   // };
 
-  const opts = {
-    height: "600",
-    width: "1068",
-    playerVars: {
-      autoplay: 1,
-      disablekb: 1,
-    },
-  };
-
-  const opts2 = {
-    height: "300",
-    width: "480",
-    playerVars: {
-      autoplay: 1,
-      disablekb: 1,
-    },
-  };
-
-  const opts3 = {
-    height: "214",
-    width: "381",
-    playerVars: {
-      autoplay: 1,
-      disablekb: 1,
-    },
-  };
-
-  const opts4 = {
-    height: "177",
-    width: "315",
-    playerVars: {
-      autoplay: 1,
-      disablekb: 1,
-    },
-  };
-
-  const onReady = (event: any) => {
-    event.target.mute();
-  };
-
   return (
     <div className="h-[calc(100vh-73px)] bg-darkBlue text-white ">
       <div className="flex flex-col justify-center items-center bg-darkBlue">
-        <div className="w-[98vw] ml:w-[95vw] lg:w-[90vw] xl:w-[80vw] xxl:w-[1280px] ">
+        <div className="w-[98vw] md:w-[95vw] lg:w-[90vw] xl:w-[80vw] 2xl:w-[1280px] ">
           <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
             <div className="flex flex-col items-center gap-4 fourteenHundred:gap-6 text-center">
-              <h1 className="text-center text-3xl footerSM:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-10">
+              <h1 className="text-center text-3xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-10">
                 Create Code <br></br>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue to-[#FCA831]">
                   100x cheaper
@@ -157,30 +115,10 @@ export default function Home() {
           </div>
         </div>
         <div className="flexrounded-lg outline-none shadow-lg mt-10 mb-16">
-          <YouTube
-            className="hidden tw:block"
-            videoId="VFBvO-ezMIs"
-            opts={opts}
-            onReady={onReady}
-          />
-          <YouTube
-            className="hidden five:block tw:hidden outline-none"
-            videoId="VFBvO-ezMIs"
-            opts={opts2}
-            onReady={onReady}
-          />
-          <YouTube
-            className="hidden fourteen:block five:hidden outline-none"
-            videoId="VFBvO-ezMIs"
-            opts={opts3}
-            onReady={onReady}
-          />
-          <YouTube
-            className="block fourteen:hidden outline-none"
-            videoId="VFBvO-ezMIs"
-            opts={opts4}
-            onReady={onReady}
-          />
+          <iframe
+            className="lg:h-[540px] lg:w-[960px] md:h-[396px] md:w-[704px] sm:h-[333px] sm:w-[592px] h-[177px] w-[315px]"
+            src="https://www.youtube.com/embed/VFBvO-ezMIs"
+          ></iframe>
         </div>
 
         <div className="bg-white text-black w-[100vw] flex flex-col py-16">
