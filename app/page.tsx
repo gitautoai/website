@@ -191,8 +191,8 @@ export default function Home() {
         <Pricing />
 
         <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 px-3">
-          <h2 className="text-center text-3xl">
-            <a id="faq"> FAQ</a>
+          <h2 className="text-center text-3xl" id="faq">
+            FAQ
           </h2>
           <div className=" flex flex-col gap-5 mt-5">
             <div className="flex flex-col ">
