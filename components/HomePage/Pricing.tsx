@@ -19,7 +19,7 @@ export default function Pricing() {
         <h2 className="text-center text-3xl" id="pricing">
           <a id="pricing">Pricing</a>
         </h2>
-        <div className="flex flex-col lg:flex-row items-center mt-10 bg-light rounded-xl">
+        <div className="flex flex-col lg:flex-row  gap-10 px-8 pt-10 mt-10 bg-light rounded-xl">
           <div className="flex flex-col p-5 mb-10">
             <h3 className="text-3xl">$0</h3>
             <span className="mt-2 text-xl">Free</span>
@@ -66,7 +66,7 @@ export default function Pricing() {
 
             <div className="flex flex-col">
               <span>&bull; 30 issues per month</span>
-i            </div>
+            </div>
           </div>
           <div className="flex flex-col p-5 mb-10">
             <h3 className="text-3xl">Custom</h3>

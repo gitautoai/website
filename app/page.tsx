@@ -187,11 +187,3 @@ export default function Home() {
     </div>
   );
 }
-
-{
-  /* <nav>Create Nav Bar</nav>
-<h1>Fix Bugs Automatically</h1>
-<h1>Fix Bugs Using AI</h1>
-<h1>Automatic PRs for old bugs</h1>
-<div>Create Footer</div> */
-}
