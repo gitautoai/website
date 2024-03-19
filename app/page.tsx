@@ -38,12 +38,12 @@ const containerVariants = {
 };
 
 export default function Home() {
-  const personTypeButtonStyles = `bg-blue text-white rounded-lg transition-colors 
+  const personTypeButtonStyles = `bg-pink text-white rounded-lg transition-colors 
   duration-200 text-md sm:text-lg xl:text-xl py-5 px-8 shadow-lg hover:shadow-lg 
-  cursor-pointer hover:bg-blueHover font-semibold text-center md:w-auto`;
+  cursor-pointer hover:bg-pinkHover font-semibold text-center md:w-auto`;
 
-  const modalButtonStyles = `bg-blue text-white rounded-lg transition-colors duration-200 text-md sm:text-lg xl:text-xl
-  py-5 px-8 shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover font-bold`;
+  const modalButtonStyles = `bg-pink text-white rounded-lg transition-colors duration-200 text-md sm:text-lg xl:text-xl
+  py-5 px-8 shadow-md hover:shadow-lg cursor-pointer hover:bg-pinkHover font-bold`;
 
   // Analytics
   const pathname = usePathname();
@@ -80,14 +80,14 @@ export default function Home() {
   // };
 
   return (
-    <div className="h-[calc(100vh-73px)] bg-darkBlue text-white ">
-      <div className="flex flex-col justify-center items-center bg-darkBlue">
+    <div className="h-[calc(100vh-73px)] bg-light text-white ">
+      <div className="flex flex-col justify-center items-center bg-light">
         <div className="w-[98vw] md:w-[95vw] lg:w-[90vw] xl:w-[80vw] 2xl:w-[1280px] ">
           <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
             <div className="flex flex-col items-center gap-4 fourteenHundred:gap-6 text-center">
               <h1 className="text-center text-3xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-10">
                 Create Code <br></br>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue to-[#FCA831]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink to-[#FCA831]">
                   100x cheaper
                 </span>
               </h1>

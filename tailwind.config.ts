@@ -7,22 +7,16 @@ module.exports = {
   ],
   theme: {
     colors: {
-      blue: "#f23b87",
-      //old -> blue: '#1fb6ff',
-      blueHover: "#EA106A",
+      pink: "#f23b87",
+      pinkHover: "#EA106A",
       darkBlue: "#669BBC",
       darkBlueHover: "#4982A6",
-      green: "#4cb93f",
-      greenHover: "#6DC962",
       gray: "#8492a6",
       white: "#ffffff",
       black: "#000000",
-      red: "#E1341E",
-      redHover: "#E75D4B",
       transparent: "transparent",
-      light: "#f9f9f9 ", //grey
+      light: "#eaebe5 ", //grey
       lightHover: "#E0E0E0",
-      analogueBlue: "#0900FF",
     },
     fontFamily: {
       sans: ["sans-serif", "sans-serif"],

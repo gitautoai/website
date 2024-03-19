@@ -9,9 +9,9 @@ import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 
 export default function Navbar() {
-  const personTypeButtonStyles = `bg-blue text-white rounded-lg transition-colors 
+  const personTypeButtonStyles = `bg-pink text-white rounded-lg transition-colors 
   duration-200 sm:text-md xl:text-lg py-2 px-3 shadow-lg hover:shadow-lg 
-  cursor-pointer hover:bg-blueHover font-semibold text-center md:w-auto`;
+  cursor-pointer hover:bg-pinkHover font-semibold text-center md:w-auto `;
   // Analytics
   const pathname = usePathname();
   const posthog = usePostHog();
