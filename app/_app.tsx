@@ -1,18 +1,20 @@
 "use client";
-import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 
+// Local Styles - Tailwind + Chakra
+import "@/styles/globals.css";
+import theme from "../theme/styles";
+
+// 3rd Party Styles
 import { ChakraProvider } from "@chakra-ui/react";
 import { AnimatePresence } from "framer-motion";
-import theme from "../theme/styles";
 import { Comfortaa, Poppins, Lexend } from "next/font/google";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
+// Analytics
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 
-import Script from "next/script";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Suspense } from "react";
 
 const comfortaa = Comfortaa({
   subsets: ["latin"],
@@ -37,12 +39,14 @@ export default function App({
     <ChakraProvider theme={theme}>
       <SpeedInsights />
       <AnimatePresence initial={true}>
-        <div
-          className={`${comfortaa.variable} ${poppins.variable} ${lexend.variable} font-helvetica`}
-        >
-          <Component {...pageProps} />
-          <Analytics mode={"production"} />
-        </div>
+        <Suspense fallback={<div>Loading...</div>}>
+          <div
+            className={`${comfortaa.variable} ${poppins.variable} ${lexend.variable} font-helvetica`}
+          >
+            <Component {...pageProps} />
+            <Analytics mode={"production"} />
+          </div>
+        </Suspense>
       </AnimatePresence>
     </ChakraProvider>
   );

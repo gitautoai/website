@@ -25,34 +25,35 @@ model installation_history {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model repo_info {
-  id              BigInt    @id @default(autoincrement())
-  created_at      DateTime  @default(now()) @db.Timestamptz(6)
-  installation_id BigInt    @unique
-  login           String    @unique
-  html_url        String?
-  deleted_at      DateTime? @db.Timestamptz(6)
-  repositories    String[]  @default([])
-  repository_ids  BigInt[]  @default([])
-  requests        BigInt    @default(0)
-  invoice_id      String?
-}
-
-/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model issues {
-  id                      BigInt                             @id @default(autoincrement())
-  created_at              DateTime                           @default(now()) @db.Timestamptz(6)
+  id                      BigInt     @id @default(autoincrement())
+  created_at              DateTime   @default(now()) @db.Timestamptz(6)
   run_id                  BigInt?
   used_within_time_period BigInt?
   installation_id         BigInt
-  repo_info               owner_installation_id_relationship @relation(fields: [installation_id], references: [installation_id], onDelete: Cascade, map: "public_issues_installation_id_fkey")
+  progress                Int        @default(0) @db.SmallInt
+  unique_id               String     @unique(map: "issues_issue_key")
+  merged                  Boolean    @default(false)
+  owner_info              owner_info @relation(fields: [installation_id], references: [installation_id], onDelete: NoAction, onUpdate: NoAction, map: "public_issues_installation_id_fkey")
+}
+
+model owner_info {
+  id                      BigInt    @id @default(autoincrement())
+  created_at              DateTime  @default(now()) @db.Timestamptz(6)
+  installation_id         BigInt    @unique
+  owner_name              String    @unique
+  deleted_at              DateTime? @db.Timestamptz(6)
+  request_count           BigInt    @default(0)
+  invoice_id              String?
+  completed_request_count BigInt?   @default(0)
+  owner_type              String    @default("")
+  issues                  issues[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model owner_installation_id_relationship {
-  id              BigInt   @id @default(autoincrement())
-  created_at      DateTime @default(now()) @db.Timestamptz(6)
-  owner           String   @unique
-  installation_id BigInt   @unique
-  issues          issues[]
+model users {
+  id         BigInt    @id @default(autoincrement())
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  deleted_at DateTime? @db.Timestamptz(6)
+  name       String?
 }
