@@ -23,16 +23,18 @@ export default function MobileDrawer({
       size="full"
       onClose={() => setIsNavOpen(!isNavOpen)}
     >
-      <DrawerContent className="text-3xl bg-white">
+      <DrawerContent
+        className="text-3xl bg-white"
+        onClick={() => {
+          setIsNavOpen(false);
+        }}
+      >
         <DrawerBody p={0}>
           <ol className="flex flex-col items-center justify-center gap-20 mt-36">
             <li>
               <Link
                 href="/#features"
                 passHref
-                onClick={() => {
-                  setIsNavOpen(false);
-                }}
                 className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link outline-none"
               >
                 Features
@@ -42,9 +44,6 @@ export default function MobileDrawer({
               <Link
                 href="/#pricing"
                 passHref
-                onClick={() => {
-                  setIsNavOpen(false);
-                }}
                 className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
               >
                 Pricing
@@ -54,9 +53,6 @@ export default function MobileDrawer({
               <Link
                 href="/#faq"
                 passHref
-                onClick={() => {
-                  setIsNavOpen(false);
-                }}
                 className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
               >
                 FAQ
@@ -71,7 +67,6 @@ export default function MobileDrawer({
                   posthog.capture("$click", {
                     $event_type: "github_app_install_nav",
                   });
-                  setIsNavOpen(false);
                 }}
                 className={`${buttonStyles}`}
               >

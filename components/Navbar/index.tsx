@@ -35,7 +35,7 @@ export default function Navbar() {
       <div className="flex flex-col w-[95vw] sm:w-[80vw] 2xl:w-[1280px]">
         <nav className="flex text-lg justify-center items-center my-4">
           <Link href="/" className="mr-auto ml-5">
-            <div className="flex items-center gap-2 text-sm sm:text-xl text-black">
+            <div className="flex items-center gap-2 text-black">
               <Image
                 src="/transparent-not-centered.png"
                 width={30}
