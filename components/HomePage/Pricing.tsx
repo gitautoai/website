@@ -16,7 +16,10 @@ export default function Pricing() {
   return (
     <div className="w-[100vw] bg-white flex justify-center">
       <div className=" py-16 text-black">
-        <h2 className="text-center text-3xl" id="pricing">
+        <h2
+          className="text-center text-3xl font-helvetica font-medium"
+          id="pricing"
+        >
           <a id="pricing">Pricing</a>
         </h2>
         <div className="flex flex-col lg:flex-row  gap-10 px-8 pt-10 mt-10 bg-light rounded-xl">
@@ -48,7 +51,7 @@ export default function Pricing() {
             </div>
           </div>
           <div className="flex flex-col rounded-xl  p-5 mb-5">
-            <h3 className="text-3xl">$19 / user / month</h3>
+            <h3 className="text-3xl">$19/user/mo</h3>
             <span className="mt-2 text-xl">Standard</span>
             <Link
               href="https://buy.stripe.com/4gw15W4HNaBccWkcMM"

@@ -87,7 +87,7 @@ export default function Home() {
         <div className="w-[98vw] md:w-[95vw] lg:w-[90vw] xl:w-[80vw] 2xl:w-[1280px] ">
           <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
             <div className="flex flex-col items-center gap-4 fourteenHundred:gap-6 text-center">
-              <h1 className="text-center text-3xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-16">
+              <h1 className="text-center text-4xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-16">
                 AI engineer that
                 <br></br>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink to-[#FCA831]">
@@ -132,7 +132,10 @@ export default function Home() {
         <Pricing />
 
         <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 px-3">
-          <h2 className="text-center text-3xl" id="faq">
+          <h2
+            className="text-center text-3xl font-helvetica font-medium"
+            id="faq"
+          >
             FAQ
           </h2>
           <div className=" flex flex-col gap-5 mt-5">
