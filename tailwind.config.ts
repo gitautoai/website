@@ -28,6 +28,9 @@ module.exports = {
       arial: ["Arial", "sans-serif"],
       helvetica: ["Helvetica", "sans-serif"],
     },
+    screens: {
+      nav: "480px",
+    },
   },
   plugins: [],
 };
