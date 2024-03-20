@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
+import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
 import Features from "@/components/HomePage/Features";
 
 const childVariants = {
@@ -81,16 +82,18 @@ export default function Home() {
   // };
 
   return (
-    <div className="h-[calc(100vh-73px)] bg-light text-white ">
+    <div className="h-[calc(100vh-73px)] bg-light text-black ">
       <div className="flex flex-col justify-center items-center bg-light">
         <div className="w-[98vw] md:w-[95vw] lg:w-[90vw] xl:w-[80vw] 2xl:w-[1280px] ">
           <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
             <div className="flex flex-col items-center gap-4 fourteenHundred:gap-6 text-center">
-              <h1 className="text-center text-3xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-10">
-                Create Code <br></br>
+              <h1 className="text-center text-3xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-16">
+                AI engineer that
+                <br></br>
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink to-[#FCA831]">
-                  100x cheaper
+                  automatically generates
                 </span>
+                &nbsp;a PR from an issue
               </h1>
               <Link
                 href="https://github.com/apps/gitauto-ai"
@@ -102,7 +105,7 @@ export default function Home() {
                     $current_url: window.location.href,
                   });
                 }}
-                className={`${personTypeButtonStyles} mx-auto mt-2 flex items-center gap-2`}
+                className={`${personTypeButtonStyles} mx-auto mt-8 flex items-center gap-2`}
               >
                 <Image
                   src="/icons/github.svg"
@@ -115,51 +118,29 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="flexrounded-lg outline-none shadow-lg mt-10 mb-16">
+        <div className="mt-14 mb-16">
           <iframe
             className="lg:h-[540px] lg:w-[960px] md:h-[396px] md:w-[704px] sm:h-[333px] sm:w-[592px] h-[177px] w-[315px]"
-            src="https://www.youtube.com/embed/VFBvO-ezMIs"
+            src={`https://www.youtube.com/embed/gulhHrKCPxQ?autoplay=1&mute=1&loop=1&playlist=gulhHrKCPxQ&rel=0`}
+            allow="accelerometer; autoplay; encrypted-media; fullscreen; gyroscope; picture-in-picture"
           ></iframe>
         </div>
-        <Features />
 
-        <div className="bg-light text-black w-[100vw] flex flex-col py-16">
-          <div className="flex flex-col items-center">
-            <h2 className="text-center text-3xl">Installation</h2>
-            <div className=" flex flex-col gap-5 mt-5">
-              <span>&bull; Install our Github App</span>
-              <span>
-                &bull; Select the repositories you would like to activate
-              </span>
-              <span>
-                &bull; Create an issue such as a bug report or feature request.
-              </span>
-              <span>
-                &bull; Click the checkbox in GitAuto&apos;s comment to Generate
-                a PR
-              </span>
-              <span>
-                &bull; Viola, your PR will soon be created. The progress is
-                reflected in the comment
-              </span>
-            </div>
-          </div>
-        </div>
+        <Features />
+        <HowToGetStarted />
 
         <Pricing />
 
-        <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 ">
-          <h2 className="text-center text-3xl">
-            <a id="faq"> Frequently Asked Questions</a>
+        <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 px-3">
+          <h2 className="text-center text-3xl" id="faq">
+            FAQ
           </h2>
           <div className=" flex flex-col gap-5 mt-5">
             <div className="flex flex-col ">
-              <span className="font-bold text-lg">
-                Do we collect your data?
-              </span>
+              <span className="font-bold text-lg">Do we retain your data?</span>
               <span className="text-md">
-                We save your chat history with an issue until that issue is
-                closed out. No other data is collected or saved.
+                No, we don&apos;t retain your data. We read but we don&apos;t
+                clone your repo or save your data.
               </span>
             </div>
             <div className="flex flex-col ">
@@ -174,10 +155,7 @@ export default function Home() {
               <span className="font-bold text-lg">
                 Is there a repository limit?
               </span>
-              <span className="text-md">
-                There is not. However user and organization repositories can not
-                be used under the same account.
-              </span>
+              <span className="text-md">There is not.</span>
             </div>
           </div>
         </div>

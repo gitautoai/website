@@ -2,14 +2,22 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import { FaYoutube } from "react-icons/fa";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faGithub,
+  faXTwitter,
+  faLinkedin,
+  faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
 // Analytics
 import { usePostHog } from "posthog-js/react";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
 
 export default function Footer() {
   // Analytics
   const posthog = usePostHog();
+
+  const iconSize = "2x";
 
   return (
     <div className="flex flex-col w-full justify-center font-helvetica items-center bg-light shadow-lg pb-4">
@@ -82,77 +90,64 @@ export default function Footer() {
             </ol>
           </div>
         </div>
-        <div className="mx-auto flex items-center gap-5">
-          <span className="text-black">
+        <div className="mx-auto flex flex-col-reverse  sm:flex-row items-center gap-5">
+          <span className=" text-black">
             &copy; 2024 GitAuto. All Rights Reserved
           </span>
-          <Link
-            href="https://github.com/apps/gitauto-ai"
-            passHref
-            target="_blank"
-            onClick={() => {
-              posthog.capture("$click", {
-                $event_type: "github_app_install_footer",
-                $current_url: window.location.href,
-              });
-            }}
-          >
-            <Image
-              src="/icons/github.svg"
-              width={30}
-              height={30}
-              alt="Github Logo"
-            />
-          </Link>
-          <Link
-            href="https://twitter.com/git-auto"
-            passHref
-            target="_blank"
-            onClick={() => {
-              posthog.capture("$click", {
-                $event_type: "x_footer",
-                $current_url: window.location.href,
-              });
-            }}
-          >
-            <Image src="/icons/x.svg" width={30} height={30} alt="X Logo" />
-          </Link>
-          <Link
-            href="https://www.youtube.com/@gitauto"
-            passHref
-            target="_blank"
-            onClick={() => {
-              posthog.capture("$click", {
-                $event_type: "youtube_footer",
-                $current_url: window.location.href,
-              });
-            }}
-          >
-            <Image
-              src="/icons/youtube.svg"
-              width={30}
-              height={30}
-              alt="Youtube Logo"
-            />
-          </Link>
-          <Link
-            href="https://www.linkedin.com/company/gitauto"
-            passHref
-            target="_blank"
-            onClick={() => {
-              posthog.capture("$click", {
-                $event_type: "linked_in_footer",
-                $current_url: window.location.href,
-              });
-            }}
-          >
-            <Image
-              src="/icons/linkedin.svg"
-              width={30}
-              height={30}
-              alt="LinkedIn Logo"
-            />
-          </Link>
+          <div className="flex items-center gap-5">
+            <Link
+              href="https://github.com/apps/gitauto-ai"
+              passHref
+              target="_blank"
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "github_app_install_footer",
+                  $current_url: window.location.href,
+                });
+              }}
+            >
+              <FontAwesomeIcon icon={faGithub} size={iconSize} />
+            </Link>
+            <Link
+              href="https://twitter.com/git-auto"
+              passHref
+              target="_blank"
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "x_footer",
+                  $current_url: window.location.href,
+                });
+              }}
+            >
+              <FontAwesomeIcon icon={faXTwitter} size={iconSize} />
+            </Link>
+            <Link
+              href="https://www.youtube.com/@gitauto"
+              passHref
+              target="_blank"
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "youtube_footer",
+                  $current_url: window.location.href,
+                });
+              }}
+            >
+              <FontAwesomeIcon icon={faYoutube} size={iconSize} />
+            </Link>
+            <Link
+              href="https://www.linkedin.com/company/gitauto"
+              passHref
+              target="_blank"
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "linked_in_footer",
+                  $current_url: window.location.href,
+                });
+              }}
+            >
+              <FontAwesomeIcon icon={faLinkedin} size={iconSize} />
+            </Link>
+          </div>
         </div>
       </div>
     </div>

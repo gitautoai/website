@@ -3,32 +3,30 @@ export default function Features() {
   return (
     <div className="bg-white text-black w-[100vw] flex flex-col py-16">
       <div className="flex flex-col items-center">
-        <h2 className="text-center text-3xl">
-          Reduce cost by 99% by never hiring an engineer
-        </h2>
-        <div className=" w-[95vw]  sm:w-[80vw] 2xl:w-[800px] mt-16">
-          <div className="flex flex-col gap-5 lg:gap-0 lg:flex-row justify-between items-center  ">
-            <div className="flex flex-col">
-              <span className="text-xl">Feature Requests</span>
-              <span className="text-lg">Ask GitAuto to create a feature</span>
+        <h2 className="text-center text-3xl">Let AI do the work for you</h2>
+        <div className=" w-[95vw] sm:w-[80vw] xl:w-[1000px] 2xl:w-[1250px] mt-16">
+          <div className="flex flex-col gap-10 lg:flex-row justify-between items-center">
+            <div className="flex flex-col gap-2 min-w-[200px] lg:max-w-[200px] xxl:max-w-auto">
+              <span className="text-3xl">Feature Requests</span>
+              <span className="text-xl">Ask GitAuto to create a feature</span>
             </div>
             <Image
               src="/homepage/feature.png"
-              width={500}
-              height={500}
+              width={907}
+              height={252}
               alt="Feature Request"
               className="p-5 bg-light rounded-lg"
             />
           </div>
-          <div className="flex flex-col gap-5 lg:gap-0 lg:flex-row justify-between items-center mt-10">
-            <div className="flex flex-col ">
-              <span className="text-xl">Bug Fixes</span>
-              <span className="text-lg">Ask GitAuto to fix bugs</span>
+          <div className="flex flex-col gap-10 lg:flex-row justify-between items-center mt-10">
+            <div className="flex flex-col gap-2 min-w-[200px] lg:max-w-[200px] xxl:max-w-auto">
+              <span className="text-3xl">Bug Fixes</span>
+              <span className="text-xl">Ask GitAuto to fix bugs</span>
             </div>
             <Image
               src="/homepage/bugfix.png"
-              width={300}
-              height={300}
+              width={907}
+              height={252}
               alt="Feature Request"
               className="p-5 bg-light rounded-lg"
             />
