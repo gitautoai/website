@@ -1,4 +1,6 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import GitAutoProvider from "next-auth/providers/gitauto";
+  auth: { providers: [GitAutoProvider({ clientId: "<GITAUTO_CLIENT_ID>", clientSecret: "<GITAUTO_CLIENT_SECRET>" })] },
 /** @type {import('next').NextConfig} */
 const nextConfig = {};
 
