@@ -31,8 +31,8 @@ export default function Navbar() {
   }, [pathname, posthog]);
 
   return (
-    <div className="flex flex-col w-full justify-center font-helvetica font-normal items-center bg-white text-black">
-      <div className="flex flex-col w-[95vw] sm:w-[80vw] 2xl:w-[1280px] ">
+    <div className="flex flex-col w-full justify-center items-center font-helvetica font-normal  bg-white text-black">
+      <div className="flex flex-col w-[95vw] sm:w-[80vw] 2xl:w-[1280px]">
         <nav className="flex text-lg justify-center items-center my-4">
           <Link href="/" className="mr-auto ml-5">
             <div className="flex items-center gap-2 text-sm sm:text-xl text-black">
@@ -105,8 +105,6 @@ export default function Navbar() {
             isNavOpen={isNavOpen}
             posthog={posthog}
           />
-
-          {/* <MobileNav session={session} status={status}></MobileNav> */}
         </nav>
       </div>
       <hr className="h-[1px] opacity-50 bg-[#C2C2C2] w-full border-0 rounded"></hr>

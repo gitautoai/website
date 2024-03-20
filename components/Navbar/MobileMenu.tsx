@@ -25,7 +25,7 @@ export default function MobileDrawer({
     >
       <DrawerContent className="text-3xl bg-white">
         <DrawerBody p={0}>
-          <ol className="flex flex-col items-center justify-center gap-20 mt-32">
+          <ol className="flex flex-col items-center justify-center gap-20 mt-36">
             <li>
               <Link
                 href="/#features"
