@@ -9,6 +9,7 @@ import theme from "../theme/styles";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AnimatePresence } from "framer-motion";
 import { Comfortaa, Poppins, Lexend } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
 
 // Analytics
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -36,18 +37,20 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   return (
-    <ChakraProvider theme={theme}>
-      <SpeedInsights />
-      <AnimatePresence initial={true}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <div
-            className={`${comfortaa.variable} ${poppins.variable} ${lexend.variable} font-helvetica`}
-          >
-            <Component {...pageProps} />
-            <Analytics mode={"production"} />
-          </div>
-        </Suspense>
-      </AnimatePresence>
-    </ChakraProvider>
+    <SessionProvider session={session}>
+      <ChakraProvider theme={theme}>
+        <SpeedInsights />
+        <AnimatePresence initial={true}>
+          <Suspense fallback={<div>Loading...</div>}>
+            <div
+              className={`${comfortaa.variable} ${poppins.variable} ${lexend.variable} font-helvetica`}
+            >
+              <Component {...pageProps} />
+              <Analytics mode={"production"} />
+            </div>
+          </Suspense>
+        </AnimatePresence>
+      </ChakraProvider>{" "}
+    </SessionProvider>
   );
 }
