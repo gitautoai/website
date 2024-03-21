@@ -45,7 +45,7 @@ export default function Navbar() {
               <span className="font-bold font-lexend text-black">GitAuto</span>
             </div>
           </Link>
-          <ol className="hidden nav:flex items-center justify-center gap-4">
+          <ol className="hidden sm:flex items-center justify-center gap-4">
             <li>
               <Link
                 href="/#use-cases"
