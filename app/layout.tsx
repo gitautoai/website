@@ -42,14 +42,14 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://gitauto.ai"),
   openGraph: {
     title: "GitAuto",
-    description: "Automatic PR's for Bugs",
+    description: "AI engineer that generates GitHub PRs from issues",
     url: "https://gitauto.ai",
     siteName: "GitAuto",
     images: [
       {
-        url: "https://gitauto.ai/favicon.ico", // Must be an absolute URL
-        width: 600,
-        height: 600,
+        url: "https://gitauto.ai/og-logo.png", // Must be an absolute URL
+        width: 1200,
+        height: 630,
       },
     ],
     locale: "en_US",
