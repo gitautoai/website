@@ -48,11 +48,11 @@ export default function Navbar() {
           <ol className="hidden nav:flex items-center justify-center gap-4">
             <li>
               <Link
-                href="/#features"
+                href="/#use-cases"
                 passHref
                 className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
               >
-                Features
+                Use Cases
               </Link>
             </li>
             <li>

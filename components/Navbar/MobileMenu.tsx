@@ -33,11 +33,11 @@ export default function MobileDrawer({
           <ol className="flex flex-col items-center justify-center gap-20 mt-36">
             <li>
               <Link
-                href="/#features"
+                href="/#use-cases"
                 passHref
                 className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link outline-none"
               >
-                Features
+                UseCases
               </Link>
             </li>
             <li>

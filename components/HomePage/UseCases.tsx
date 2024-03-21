@@ -1,10 +1,13 @@
 import Image from "next/image";
-export default function Features() {
+export default function UseCases() {
   return (
     <div className="bg-white text-black w-[100vw] flex flex-col py-16">
       <div className="flex flex-col items-center">
-        <h2 id="features" className="text-center text-3xl font-helvetica font-medium">
-          Features
+        <h2
+          id="use-cases"
+          className="text-center text-3xl font-helvetica font-medium"
+        >
+          Use Cases
         </h2>
         <div className=" w-[95vw] sm:w-[80vw] lg:w-[1000px] 2xl:w-[1250px] mt-10 lg:mt-16 ">
           <div className="flex flex-col gap-5 lg:gap-10 lg:flex-row justify-between items-center">

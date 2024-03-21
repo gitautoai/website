@@ -16,7 +16,7 @@ import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
-import Features from "@/components/HomePage/Features";
+import UseCases from "@/components/HomePage/UseCases";
 
 const childVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -126,7 +126,7 @@ export default function Home() {
           ></iframe>
         </div>
 
-        <Features />
+        <UseCases />
         <HowToGetStarted />
 
         <Pricing />

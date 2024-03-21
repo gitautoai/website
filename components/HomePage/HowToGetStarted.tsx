@@ -7,7 +7,7 @@ export default function HowToGetStarted() {
         </h2>
         <div className=" flex flex-col gap-5 mt-5">
           <span>&bull; Install our Github App</span>
-          <span>&bull; Select the repositories you would like to activate</span>
+          <span>&bull; Select the repositories you would like to use</span>
           <span>
             &bull; Create an issue such as a bug report or feature request.
           </span>
