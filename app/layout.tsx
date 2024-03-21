@@ -47,8 +47,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://gitauto.ai/og-logo.png", // Must be an absolute URL
-        width: 600,
-        height: 600,
+        width: 1200,
+        height: 630,
       },
     ],
     locale: "en_US",
