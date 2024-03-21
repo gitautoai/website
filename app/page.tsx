@@ -16,7 +16,7 @@ import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
-import Features from "@/components/HomePage/Features";
+import UseCases from "@/components/HomePage/UseCases";
 
 const childVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -120,18 +120,18 @@ export default function Home() {
         </div>
         <div className="mt-14 mb-16">
           <iframe
-            className="lg:h-[540px] lg:w-[960px] md:h-[396px] md:w-[704px] sm:h-[333px] sm:w-[592px] h-[177px] w-[315px]"
+            className="lg:h-[540px] lg:w-[960px] md:h-[396px] md:w-[704px] sm:h-[333px] sm:w-[592px] w-[90vw] aspect-video"
             src={`https://www.youtube.com/embed/gulhHrKCPxQ?autoplay=1&mute=1&loop=1&playlist=gulhHrKCPxQ&rel=0`}
             allow="accelerometer; autoplay; encrypted-media; fullscreen; gyroscope; picture-in-picture"
           ></iframe>
         </div>
 
-        <Features />
+        <UseCases />
         <HowToGetStarted />
 
         <Pricing />
 
-        <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 px-3">
+        <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 px-5">
           <h2
             className="text-center text-3xl font-helvetica font-medium"
             id="faq"
