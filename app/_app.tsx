@@ -9,7 +9,6 @@ import theme from "../theme/styles";
 import { ChakraProvider } from "@chakra-ui/react";
 import { AnimatePresence } from "framer-motion";
 import { Comfortaa, Poppins, Lexend } from "next/font/google";
-import { SessionProvider } from "next-auth/react";
 
 // Analytics
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -37,7 +36,7 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   return (
-    <SessionProvider session={session}>
+
       <ChakraProvider theme={theme}>
         <SpeedInsights />
         <AnimatePresence initial={true}>
@@ -50,7 +49,7 @@ export default function App({
             </div>
           </Suspense>
         </AnimatePresence>
-      </ChakraProvider>{" "}
-    </SessionProvider>
+      </ChakraProvider>
+
   );
 }

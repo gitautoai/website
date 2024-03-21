@@ -10,17 +10,20 @@ export default function Pricing() {
   const posthog = usePostHog();
 
   const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
-  text-md sm:text-lg xl:text-xl py-3 w-[210px] shadow-lg hover:shadow-lg 
+  text-md sm:text-lg xl:text-xl py-3 w-[250px] sm:w-[315px] lg:w-[210px] shadow-lg hover:shadow-lg 
   cursor-pointer font-semibold text-center mx-auto `;
 
   return (
     <div className="w-[100vw] bg-white flex justify-center">
-      <div className=" py-16 text-black">
-        <h2 className="text-center text-3xl" id="pricing">
+      <div className="mx-10 pt-16 text-black">
+        <h2
+          className="text-center text-3xl font-helvetica font-medium"
+          id="pricing"
+        >
           <a id="pricing">Pricing</a>
         </h2>
-        <div className="flex flex-col lg:flex-row  gap-10 px-8 pt-10 mt-10 bg-light rounded-xl">
-          <div className="flex flex-col p-5 mb-10">
+        <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 pt-10 mt-10 bg-light rounded-xl">
+          <div className="flex flex-col p-4 sm:p-5 mb-10">
             <h3 className="text-3xl">$0</h3>
             <span className="mt-2 text-xl">Free</span>
             <Link
@@ -47,8 +50,8 @@ export default function Pricing() {
               <span>&bull; 5 issues per month</span>
             </div>
           </div>
-          <div className="flex flex-col rounded-xl  p-5 mb-5">
-            <h3 className="text-3xl">$19 / user / month</h3>
+          <div className="flex flex-col rounded-xl p-4 sm:p-5 mb-5">
+            <h3 className="text-3xl">$19/user/mo</h3>
             <span className="mt-2 text-xl">Standard</span>
             <Link
               href="https://buy.stripe.com/4gw15W4HNaBccWkcMM"
@@ -68,7 +71,7 @@ export default function Pricing() {
               <span>&bull; 30 issues per month</span>
             </div>
           </div>
-          <div className="flex flex-col p-5 mb-10">
+          <div className="flex flex-col p-4 sm:p-5 mb-10">
             <h3 className="text-3xl">Custom</h3>
             <span className="mt-2 text-xl">Enterprise</span>
             <Link

@@ -9,21 +9,6 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
-/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
-model installation_history {
-  id                       Int      @id @default(autoincrement())
-  installation_target_type String
-  installation_target_id   BigInt
-  installation_target_name String
-  installation_id          BigInt
-  installation_status      String
-  created_at               DateTime @default(now()) @db.Timestamptz(6)
-  created_by_id            BigInt
-  created_by_name          String
-
-  @@unique([installation_target_id, installation_target_type, created_at])
-}
-
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model issues {
   id                      BigInt     @id @default(autoincrement())
@@ -38,22 +23,26 @@ model issues {
 }
 
 model owner_info {
-  id                      BigInt    @id @default(autoincrement())
-  created_at              DateTime  @default(now()) @db.Timestamptz(6)
-  installation_id         BigInt    @unique
-  owner_name              String    @unique
-  deleted_at              DateTime? @db.Timestamptz(6)
-  request_count           BigInt    @default(0)
-  invoice_id              String?
-  completed_request_count BigInt?   @default(0)
-  owner_type              String    @default("")
-  issues                  issues[]
+  id                        BigInt    @id @default(autoincrement())
+  created_at                DateTime  @default(now()) @db.Timestamptz(6)
+  installation_id           BigInt    @unique
+  owner_name                String    @unique
+  uninstalled_at            DateTime? @db.Timestamptz(6)
+  invoice_id                String?
+  owner_type                String    @default("")
+  requests_allowed_per_user BigInt    @default(5)
+  issues                    issues[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model users {
-  id         BigInt    @id @default(autoincrement())
-  created_at DateTime  @default(now()) @db.Timestamptz(6)
-  deleted_at DateTime? @db.Timestamptz(6)
-  name       String?
+  id                      BigInt    @id @default(autoincrement())
+  created_at              DateTime  @default(now()) @db.Timestamptz(6)
+  deleted_at              DateTime? @db.Timestamptz(6)
+  login                   String?
+  completed_request_count BigInt    @default(0)
+  request_count           BigInt    @default(0)
+  user_id                 BigInt    @unique
+  installation_id         String?
+  requests_allowed        BigInt    @default(5)
 }

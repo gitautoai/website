@@ -1,22 +1,23 @@
 "use client";
-import React, { useEffect } from "react";
-
 // NextJs imports
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 // Components
 import Footer from "@/components/Footer";
 import Pricing from "@/components/HomePage/Pricing";
+import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
+import UseCases from "@/components/HomePage/UseCases";
 
-// Animation
+// Third Party
+import useSWR from "swr";
 import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
-import UseCases from "@/components/HomePage/UseCases";
 
 const childVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -51,6 +52,33 @@ export default function Home() {
   const pathname = usePathname();
   const posthog = usePostHog();
 
+  const { data: session, status } = useSession();
+  const [userId, setUserId] = useState<string | null>(null);
+  const [jwt, setJwt] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      if (session && session.user) {
+        setUserId(session.user.userId);
+        setJwt(session.jwt);
+      }
+    };
+    fetchSession();
+  }, [session]);
+
+  let getUserInfoUrl = "";
+  if (userId) {
+    getUserInfoUrl = `api/users/get-user-info?userId=${userId}&jwt=${jwt}`;
+  }
+
+  const { data: userInfo, isLoading: userInfoLoading } = useSWR(
+    getUserInfoUrl,
+    async () => {
+      const res = await fetch(getUserInfoUrl);
+      return res.json();
+    }
+  );
+
   useEffect(() => {
     if (pathname && posthog) {
       let url = window.origin + pathname;
@@ -59,27 +87,6 @@ export default function Home() {
       });
     }
   }, [pathname, posthog]);
-
-  // const stripe = useStripe();
-  // const elements = useElements();
-  // const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   const cardElement = elements?.getElement("card");
-
-  //   try {
-  //     if (!stripe || !cardElement) return null;
-  //     const { data } = await axios.post("/api/create-payment-intent", {
-  //       data: { amount: 89 },
-  //     });
-  //     const clientSecret = data;
-
-  //     await stripe?.confirmCardPayment(clientSecret, {
-  //       payment_method: { card: cardElement },
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   return (
     <div className="h-[calc(100vh-73px)] bg-light text-black ">
