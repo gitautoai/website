@@ -1,12 +1,16 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-
 import { useEffect } from "react";
 
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
+
+// Styling
+import { motion } from "framer-motion";
+
+import { signIn } from "next-auth/react";
 
 export default function Navbar() {
   const personTypeButtonStyles = `bg-pink text-white rounded-lg transition-colors 
@@ -74,6 +78,25 @@ export default function Navbar() {
               >
                 Get Started
               </Link>
+            </li>
+            <li>
+              <motion.button
+                whileHover={{
+                  scale: 1.04,
+                  transition: { duration: 0.1 },
+                }}
+                whileTap={{
+                  scale: 0.98,
+                  transition: { duration: 0.1 },
+                }}
+                onClick={() => {
+                  signIn("github");
+                }}
+                className="bg-white border border-pink text-black rounded-lg transition-colors duration-200 text-xl
+         py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover mr-5"
+              >
+                Sign In
+              </motion.button>
             </li>
             {/* <li>
               <Link

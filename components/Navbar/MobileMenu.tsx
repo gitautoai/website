@@ -1,6 +1,10 @@
-import { Drawer, DrawerContent, DrawerBody, Text } from "@chakra-ui/react";
-
 import Link from "next/link";
+
+// Styling
+import { Drawer, DrawerContent, DrawerBody, Text } from "@chakra-ui/react";
+import { motion } from "framer-motion";
+
+import { signIn } from "next-auth/react";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -28,14 +32,14 @@ export default function MobileDrawer({
           <ol className="flex flex-col items-center justify-center gap-20 mt-36">
             <li>
               <Link
-                href="/#features"
+                href="/#use-cases"
                 passHref
                 onClick={() => {
                   setIsNavOpen(false);
                 }}
                 className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link outline-none"
               >
-                Features
+                Use Cases
               </Link>
             </li>
             <li>
@@ -77,7 +81,31 @@ export default function MobileDrawer({
               >
                 Get Started
               </Link>
+              <motion.button
+                whileHover={{
+                  scale: 1.04,
+                  transition: { duration: 0.1 },
+                }}
+                whileTap={{
+                  scale: 0.98,
+                  transition: { duration: 0.1 },
+                }}
+                onClick={() => {
+                  signIn(
+                    "auth0",
+                    { callbackUrl: "/admin" },
+                    {
+                      prompt: "login",
+                    }
+                  );
+                }}
+                className="bg-pink text-white rounded-lg transition-colors duration-200 text-xl
+         py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover mr-5"
+              >
+                Sign In
+              </motion.button>
             </li>
+            <li></li>
           </ol>
         </DrawerBody>
       </DrawerContent>

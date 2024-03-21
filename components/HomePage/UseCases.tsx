@@ -1,5 +1,5 @@
 import Image from "next/image";
-export default function Features() {
+export default function UseCases() {
   return (
     <div className="bg-white text-black w-[100vw] flex flex-col py-16">
       <div className="flex flex-col items-center">
