@@ -12,7 +12,8 @@ const schema = z.object({
 });
 export async function GET(req: NextRequest) {
   try {
-    const params = req.nextUrl.searchParams;
+    const url = new URL(req.url);
+    const params = new URLSearchParams(url.searchParams);
     const { userId, jwtToken } = schema.parse({
       userId: params.get("userId"),
       jwtToken: params.get("jwtToken"),
