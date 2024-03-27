@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function LoadingSpinner() {
   return (
-    <div className="flex justify-center items-center h-[calc(100vh-232px)] ">
+    <div className="flex justify-center items-center h-[calc(100vh-232px)] bg-light">
       <div className="relative flex items-center">
         <Spinner
           thickness="4px"
