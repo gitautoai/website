@@ -13,8 +13,6 @@ import LoadingSpinner from "@/components/Auth/LoadingSpinner";
 
 // Third Party
 import { useSession } from "next-auth/react";
-import { signOut } from "next-auth/react";
-import jwt, { JwtPayload } from "jsonwebtoken";
 import { usePostHog } from "posthog-js/react";
 
 export default function Home() {
@@ -22,7 +20,7 @@ export default function Home() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { account, accountType, userInfos, selectedIndex, userId, jwtToken } =
+  const { accountType, userInfos, selectedIndex, userId, jwtToken } =
     useAccountContext();
 
   // Analytics
@@ -145,3 +143,4 @@ export default function Home() {
     </div>
   );
 }
+export const dynamic = "force-static";

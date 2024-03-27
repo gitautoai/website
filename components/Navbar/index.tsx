@@ -56,35 +56,35 @@ export default function Navbar() {
             </div>
           </Link>
           <ol className="hidden sm:flex items-center justify-center gap-4">
-            {status === "loading" || status === "unauthenticated" ? (
+            <li>
+              <Link
+                href="/#use-cases"
+                passHref
+                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+              >
+                Use Cases
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/#pricing"
+                passHref
+                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+              >
+                Pricing
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/#faq"
+                passHref
+                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+              >
+                FAQ
+              </Link>
+            </li>
+            {status === "unauthenticated" && (
               <>
-                <li>
-                  <Link
-                    href="/#use-cases"
-                    passHref
-                    className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
-                  >
-                    Use Cases
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/#pricing"
-                    passHref
-                    className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
-                  >
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/#faq"
-                    passHref
-                    className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
-                  >
-                    FAQ
-                  </Link>
-                </li>
                 <li>
                   <Link
                     href="https://github.com/apps/gitauto-ai"
@@ -123,7 +123,8 @@ export default function Navbar() {
                   </motion.button>
                 </li>
               </>
-            ) : (
+            )}
+            {status === "authenticated" && (
               <>
                 {pathname === "/" ? (
                   <motion.a
