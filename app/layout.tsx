@@ -69,9 +69,8 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    site: "https://gitauto.ai",
-    siteId: "@gitauto_ai",
-    creator: "Hiroshi Nishio, Nikita Malinovsky",
+    site: "@gitauto-ai",
+    creator: "@hnishio0105",
     description: "AI engineer that generates GitHub PRs from issues",
     title: "GitAuto",
     images: {
