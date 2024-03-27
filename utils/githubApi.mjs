@@ -25,13 +25,12 @@ fetch("https://api.github.com/users/nikitamalinov/orgs", {
 })
   .then((response) => {
     if (!response.ok) {
-      console.log(response);
+      console.error(response);
       throw new Error("Network response was not ok");
     }
     return response.json();
   })
   .then((data) => {
-    console.log(data);
     // Use the data as needed
   })
   .catch((error) => {

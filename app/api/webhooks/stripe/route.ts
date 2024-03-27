@@ -10,7 +10,6 @@ const { v4: uuidv4 } = require("uuid");
 
 export async function POST(req: NextRequest) {
   try {
-    console.log("Hello from the stripe webhook");
     const body = await req.text();
     let event: Stripe.Event;
     const sig = req.headers.get("stripe-signature");
@@ -21,7 +20,6 @@ export async function POST(req: NextRequest) {
         endpointSecret
       );
     } catch (err: any) {
-      console.log("ERR: ", err);
       return new NextResponse(`Webhook Error: ${err.message}`, { status: 200 });
     }
 
@@ -34,19 +32,19 @@ export async function POST(req: NextRequest) {
         const checkoutSessionCompleted: any = event.data.object;
         const githubUserName: string =
           checkoutSessionCompleted["custom_fields"][0]["text"]["value"];
-        await prisma.owner_info.upsert({
-          where: {
-            owner_name: githubUserName,
-          },
-          update: {
-            invoice_id: checkoutSessionCompleted["id"],
-          },
-          create: {
-            installation_id: BigInt(Number(uuidv4().replace(/\D/g, ""))), // will remove this line after db change
-            owner_name: githubUserName,
-            invoice_id: checkoutSessionCompleted["id"],
-          },
-        });
+        // await prisma.owners.upsert({
+        //   where: {
+        //     owner_name: githubUserName,
+        //   },
+        //   update: {
+        //     stripe_customer_id: checkoutSessionCompleted["id"],
+        //   },
+        //   create: {
+        //     stripe_customer_id: BigInt(Number(uuidv4().replace(/\D/g, ""))), // will remove this line after db change
+        //     owner_name: githubUserName,
+        //     invoice_id: checkoutSessionCompleted["id"],
+        //   },
+        // });
         break;
       case "customer.subscription.deleted":
         const customerSubscriptionDeleted = event.data.object;
@@ -59,7 +57,7 @@ export async function POST(req: NextRequest) {
         break;
       // ... handle other event types
       default:
-        console.log(`Unhandled event type ${event.type}`);
+        console.error(`Unhandled event type ${event.type}`);
     }
 
     return new NextResponse("Nothing", { status: 200 });

@@ -16,6 +16,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 
 import { motion } from "framer-motion";
+import ProfileIcon from "./ProfileIcon";
 
 const buttonStyles = `bg-pink text-white rounded-lg transition-colors 
 duration-200 sm:text-md xl:text-lg py-2 px-3 shadow-lg hover:shadow-lg 
@@ -55,97 +56,95 @@ export default function Navbar() {
             </div>
           </Link>
           <ol className="hidden sm:flex items-center justify-center gap-4">
-            <li>
-              <Link
-                href="/#use-cases"
-                passHref
-                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
-              >
-                Use Cases
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/#pricing"
-                passHref
-                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
-              >
-                Pricing
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/#faq"
-                passHref
-                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
-              >
-                FAQ
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="https://github.com/apps/gitauto-ai"
-                passHref
-                target="_blank"
-                onClick={() => {
-                  posthog.capture("$click", {
-                    $event_type: "github_app_install_nav",
-                    $current_url: window.location.href,
-                  });
-                }}
-                className={`${buttonStyles}`}
-              >
-                Get Started
-              </Link>
-            </li>
-            <li>
-              {status === "loading" || status === "unauthenticated" ? (
-                <motion.button
-                  whileHover={{
-                    scale: 1.04,
-                    transition: { duration: 0.1 },
-                  }}
-                  whileTap={{
-                    scale: 0.98,
-                    transition: { duration: 0.1 },
-                  }}
-                  onClick={() => {
-                    signIn("github", {
-                      callbackUrl: `/dashboard`,
-                    });
-                  }}
-                  className="bg-white border border-pink text-black rounded-lg transition-colors duration-200 text-xl
+            {status === "loading" || status === "unauthenticated" ? (
+              <>
+                <li>
+                  <Link
+                    href="/#use-cases"
+                    passHref
+                    className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+                  >
+                    Use Cases
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/#pricing"
+                    passHref
+                    className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+                  >
+                    Pricing
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/#faq"
+                    passHref
+                    className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+                  >
+                    FAQ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="https://github.com/apps/gitauto-ai"
+                    passHref
+                    target="_blank"
+                    onClick={() => {
+                      posthog.capture("$click", {
+                        $event_type: "github_app_install_nav",
+                        $current_url: window.location.href,
+                      });
+                    }}
+                    className={`${buttonStyles}`}
+                  >
+                    Get Started
+                  </Link>
+                </li>
+                <li>
+                  <motion.button
+                    whileHover={{
+                      scale: 1.04,
+                      transition: { duration: 0.1 },
+                    }}
+                    whileTap={{
+                      scale: 0.98,
+                      transition: { duration: 0.1 },
+                    }}
+                    onClick={() => {
+                      signIn("github", {
+                        callbackUrl: `/dashboard`,
+                      });
+                    }}
+                    className="bg-white border border-pink text-black rounded-lg transition-colors duration-200 text-xl
          py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover mr-5"
-                >
-                  Sign In
-                </motion.button>
-              ) : (
-                <motion.button
-                  whileHover={{
-                    scale: 1.04,
-                    transition: { duration: 0.1 },
-                  }}
-                  whileTap={{
-                    scale: 0.98,
-                    transition: { duration: 0.1 },
-                  }}
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="bg-white border border-pink text-black rounded-lg transition-colors duration-200 text-xl
-     py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover mr-5"
-                >
-                  Sign Out
-                </motion.button>
-              )}
-            </li>
-            {/* <li>
-              <Link
-                href="/pricing"
-                passHref
-                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
-              >
-                Documentation
-              </Link>
-            </li> */}
+                  >
+                    Sign In
+                  </motion.button>
+                </li>
+              </>
+            ) : (
+              <>
+                {pathname === "/" ? (
+                  <motion.a
+                    whileHover={{
+                      scale: 1.04,
+                      transition: { duration: 0.1 },
+                    }}
+                    whileTap={{
+                      scale: 0.98,
+                      transition: { duration: 0.1 },
+                    }}
+                    href="/dashboard"
+                    className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+                  >
+                    Dashboard
+                  </motion.a>
+                ) : (
+                  <ProfileIcon session={session} />
+                )}
+              </>
+            )}
           </ol>
           <HamburgerMenu setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />
           <MobileDrawer

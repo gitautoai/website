@@ -23,11 +23,16 @@ const theme = extendTheme({
     mono: "Menlo, monospace",
   },
   breakpoints: {
+    footerXM: "402px",
+    footerSM: "620px",
     sm: "640px",
     md: "768px",
+    nav: "850px",
+    ml: "896px",
     lg: "1024px",
     xl: "1280px",
-    "2xl": "1600px",
+    mycommunity: "1375px",
+    xxl: "1600px",
   },
 
   Popover: {

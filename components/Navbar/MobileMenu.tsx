@@ -91,13 +91,9 @@ export default function MobileDrawer({
                   transition: { duration: 0.1 },
                 }}
                 onClick={() => {
-                  signIn(
-                    "auth0",
-                    { callbackUrl: "/admin" },
-                    {
-                      prompt: "login",
-                    }
-                  );
+                  signIn("github", {
+                    callbackUrl: `/dashboard`,
+                  });
                 }}
                 className="bg-pink text-white rounded-lg transition-colors duration-200 text-xl
          py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover mr-5"

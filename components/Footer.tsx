@@ -109,7 +109,7 @@ export default function Footer() {
               <FontAwesomeIcon icon={faGithub} size={iconSize} />
             </Link>
             <Link
-              href="https://twitter.com/git-auto"
+              href="https://twitter.com/gitautoai"
               passHref
               target="_blank"
               onClick={() => {

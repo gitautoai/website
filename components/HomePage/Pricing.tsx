@@ -1,9 +1,16 @@
 // Next imports
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 // Analytics
 import { usePostHog } from "posthog-js/react";
+
+// Components
+import { useAccountContext } from "@/components/Context/Account";
+
+// Third Party
+import { signIn } from "next-auth/react";
 
 export default function Pricing() {
   // Analytics
@@ -12,6 +19,40 @@ export default function Pricing() {
   const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
   text-md sm:text-lg xl:text-xl py-3 w-[250px] sm:w-[315px] lg:w-[210px] shadow-lg hover:shadow-lg 
   cursor-pointer font-semibold text-center mx-auto `;
+
+  const { userId, jwtToken, selectedIndex, userInfos } = useAccountContext();
+
+  const router = useRouter();
+
+  // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
+  async function handleSubscribe() {
+    posthog.capture("$click", {
+      $event_type: "subscribe",
+      $current_url: window.location.href,
+    });
+    if (userId && jwtToken) {
+      if (selectedIndex) {
+        const response = await fetch("api/stripe/create-portal-url", {
+          method: "POST",
+          body: JSON.stringify({
+            userId: userId,
+            jwtToken: jwtToken,
+            customerId:
+              userInfos[selectedIndex].installations.owners.stripe_customer_id,
+          }),
+        });
+
+        const res = await response.json();
+        router.push(res);
+      } else {
+        router.push("/dashboard?subscribe");
+      }
+    } else {
+      signIn("github", {
+        callbackUrl: `/dashboard?subscribe`,
+      });
+    }
+  }
 
   return (
     <div className="w-[100vw] bg-white flex justify-center">
@@ -53,19 +94,14 @@ export default function Pricing() {
           <div className="flex flex-col rounded-xl p-4 sm:p-5 mb-5">
             <h3 className="text-3xl">$19/user/mo</h3>
             <span className="mt-2 text-xl">Standard</span>
-            <Link
-              href="https://buy.stripe.com/4gw15W4HNaBccWkcMM"
-              passHref
+            <button
               onClick={() => {
-                posthog.capture("$click", {
-                  $event_type: "purchase",
-                  $current_url: window.location.href,
-                });
+                handleSubscribe();
               }}
               className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black`}
             >
-              Purchase
-            </Link>
+              Subscribe
+            </button>
 
             <div className="flex flex-col">
               <span>&bull; 30 issues per month</span>
@@ -78,7 +114,7 @@ export default function Pricing() {
               href="mailto:info@gitauto.ai"
               passHref
               target="_blank"
-              onClick={() => {
+              onClick={(event) => {
                 posthog.capture("$click", {
                   $event_type: "contact_us",
                   $current_url: window.location.href,

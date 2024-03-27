@@ -1,84 +1,33 @@
 "use client";
 // NextJs imports
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 // Components
 import Footer from "@/components/Footer";
-import Pricing from "@/components/HomePage/Pricing";
-import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
-import UseCases from "@/components/HomePage/UseCases";
+import SwitchAccount from "@/components/Dashboard/SwitchAccount";
+import { useAccountContext } from "@/components/Context/Account";
+import LoadingSpinner from "@/components/Auth/LoadingSpinner";
 
 // Third Party
-import useSWR from "swr";
-import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
-
-// Analytics
-import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { usePostHog } from "posthog-js/react";
 
-const childVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-    },
-  },
-};
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
 export default function Home() {
-  const personTypeButtonStyles = `bg-pink text-white rounded-lg transition-colors 
-  duration-200 text-md sm:text-lg xl:text-xl py-5 px-8 shadow-lg hover:shadow-lg 
-  cursor-pointer hover:bg-pinkHover font-semibold text-center md:w-auto`;
-
-  const modalButtonStyles = `bg-pink text-white rounded-lg transition-colors duration-200 text-md sm:text-lg xl:text-xl
-  py-5 px-8 shadow-md hover:shadow-lg cursor-pointer hover:bg-pinkHover font-bold`;
+  // Hooks
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { account, accountType, userInfos, selectedIndex, userId, jwtToken } =
+    useAccountContext();
 
   // Analytics
   const pathname = usePathname();
   const posthog = usePostHog();
-
-  const { data: session, status } = useSession();
-  const [userId, setUserId] = useState<string | null>(null);
-  const [jwt, setJwt] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchSession = async () => {
-      if (session && session.user) {
-        setUserId(session.user.userId);
-        setJwt(session.jwt);
-      }
-    };
-    fetchSession();
-  }, [session]);
-
-  let getUserInfoUrl = "";
-  if (userId) {
-    getUserInfoUrl = `api/users/get-user-info?userId=${userId}&jwt=${jwt}`;
-  }
-
-  const { data: userInfo, isLoading: userInfoLoading } = useSWR(
-    getUserInfoUrl,
-    async () => {
-      const res = await fetch(getUserInfoUrl);
-      return res.json();
-    }
-  );
-
   useEffect(() => {
     if (pathname && posthog) {
       let url = window.origin + pathname;
@@ -88,89 +37,110 @@ export default function Home() {
     }
   }, [pathname, posthog]);
 
+  // TODO
+  // If "subscribe" in query parameter from "Subscribe" button on homepage, create checkout session or portal
+  useEffect(() => {
+    async function createCheckoutSession() {
+      let customerId = "";
+      if (selectedIndex) {
+        customerId =
+          userInfos[selectedIndex].installations.owners.stripe_customer_id;
+      } else {
+        customerId = userInfos[0].installations.owners.stripe_customer_id;
+      }
+      const response = await fetch("api/stripe/create-portal-url", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: userId,
+          jwtToken: jwtToken,
+          customerId: customerId,
+        }),
+      });
+
+      const res = await response.json();
+      router.push(res);
+      return await res;
+    }
+
+    if (searchParams.has("subscribe")) {
+      createCheckoutSession();
+    }
+  }, [searchParams, userInfos, selectedIndex, userId, jwtToken, router]);
+
+  async function pushToStripePortal() {
+    if (selectedIndex) {
+      const response = await fetch("api/stripe/create-portal-url", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: userId,
+          jwtToken: jwtToken,
+          customerId:
+            userInfos[selectedIndex].installations.owners.stripe_customer_id,
+        }),
+      });
+
+      const res = await response.json();
+      router.push(res);
+      return await res;
+    }
+  }
+
+  if (status === "loading" || searchParams.has("subscribe") || !userInfos) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <div className="h-[calc(100vh-73px)] bg-light text-black ">
-      <div className="flex flex-col justify-center items-center bg-light">
-        <div className="w-[98vw] md:w-[95vw] lg:w-[90vw] xl:w-[80vw] 2xl:w-[1280px] ">
-          <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
-            <div className="flex flex-col items-center gap-4 fourteenHundred:gap-6 text-center">
-              <h1 className="text-center text-4xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-16">
-                AI engineer that
-                <br></br>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink to-[#FCA831]">
-                  automatically generates
-                </span>
-                &nbsp;a PR from an issue
-              </h1>
-              <Link
-                href="https://github.com/apps/gitauto-ai"
-                passHref
-                target="_blank"
-                onClick={() => {
-                  posthog.capture("$click", {
-                    $event_type: "github_app_install",
-                    $current_url: window.location.href,
-                  });
-                }}
-                className={`${personTypeButtonStyles} mx-auto mt-8 flex items-center gap-2`}
-              >
-                <Image
-                  src="/icons/github.svg"
-                  width={30}
-                  height={30}
-                  alt="Github Logo"
-                />
-                Get Started for Free
-              </Link>
-            </div>
-          </div>
-        </div>
-        <div className="mt-14 mb-16">
-          <iframe
-            className="lg:h-[540px] lg:w-[960px] md:h-[396px] md:w-[704px] sm:h-[333px] sm:w-[592px] w-[90vw] aspect-video"
-            src={`https://www.youtube.com/embed/gulhHrKCPxQ?autoplay=1&mute=1&loop=1&playlist=gulhHrKCPxQ&rel=0`}
-            allow="accelerometer; autoplay; encrypted-media; fullscreen; gyroscope; picture-in-picture"
-          ></iframe>
-        </div>
-
-        <UseCases />
-        <HowToGetStarted />
-
-        <Pricing />
-
-        <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 px-5">
-          <h2
-            className="text-center text-3xl font-helvetica font-medium"
-            id="faq"
-          >
-            FAQ
-          </h2>
-          <div className=" flex flex-col gap-5 mt-5">
-            <div className="flex flex-col ">
-              <span className="font-bold text-lg">Do we retain your data?</span>
-              <span className="text-md">
-                No, we don&apos;t retain your data. We read but we don&apos;t
-                clone your repo or save your data.
-              </span>
-            </div>
-            <div className="flex flex-col ">
-              <span className="font-bold text-lg">
-                What languages do we support?
-              </span>
-              <span className="text-md">
-                GitAuto supports virtually all languages.
-              </span>
-            </div>
-            <div className="flex flex-col ">
-              <span className="font-bold text-lg">
-                Is there a repository limit?
-              </span>
-              <span className="text-md">There is not.</span>
-            </div>
+    <div className=" bg-light text-black ">
+      <div className="min-h-[calc(100vh-232px)]">
+        <h2 className="text-center pt-16 text-4xl">Dashboard</h2>
+        <div className="flex flex-col items-center bg-light h-full mt-10">
+          <div className="w-[98vw] md:w-[95vw] lg:w-[90vw] xl:w-[80vw] 2xl:w-[1280px] ">
+            {!selectedIndex ? (
+              <SwitchAccount isOpen={true} onClose={() => {}} />
+            ) : (
+              <>
+                <div>
+                  {accountType === "U" && (
+                    <div>
+                      User account <b>{userInfos[selectedIndex].user_name}</b>{" "}
+                      selected. Want to purchase individual plan?&nbsp;
+                      <a
+                        href="https://stripe.com"
+                        target="_blank"
+                        className="text-pink underline"
+                      >
+                        Click Here
+                      </a>
+                    </div>
+                  )}
+                  {accountType === "O" && (
+                    <div className="flex flex-col items-center">
+                      <div className="flex flex-col gap-5">
+                        <span>
+                          Organization account{" "}
+                          <b>
+                            {userInfos[selectedIndex].installations.owner_name}
+                          </b>{" "}
+                          selected.
+                        </span>{" "}
+                        <span> Want to purchase a plan?</span>
+                        <button
+                          onClick={() => {
+                            pushToStripePortal();
+                          }}
+                          className="underline"
+                        >
+                          Manage Payments
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
-
       <Footer />
     </div>
   );

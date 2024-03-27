@@ -1,26 +1,21 @@
+import prisma from "@/lib/client";
+
 // Third party
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
-
-import prisma from "@/lib/client";
-import axios from "axios";
 import { sign } from "jsonwebtoken";
 
-const { GITHUB_ID = "", GITHUB_SECRET = "" } = process.env;
 const handler = NextAuth({
   providers: [
     GithubProvider({
-      // clientId: GITHUB_ID as string,
-      // clientSecret: GITHUB_SECRET as string,
-      clientId: "cbba3e5ff46520474dc2",
-      clientSecret: "058876e0b27e7a03e46385a572f6c608ef777a0e",
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     }),
   ],
   callbacks: {
     async signIn({ user, profile }) {
       try {
-        console.log("signIn", user, profile);
-        const isAlreadyUser = await prisma.users.findUnique({
+        const isAlreadyUser = await prisma.user.findMany({
           where: {
             user_id: Number(user.id),
           },
@@ -37,7 +32,7 @@ const handler = NextAuth({
     async session({ session, token }) {
       try {
         session.user.userId = Number(token.user_id);
-        session.jwt = token.jwt as string;
+        session.jwtToken = token.jwtToken as string;
       } catch (err) {
         console.error(err);
       }
@@ -45,7 +40,8 @@ const handler = NextAuth({
     },
     async jwt({ token, account, user }) {
       if (user) {
-        token.jwt = sign(user, process.env.JWT_SECRET as string, {
+        token.jwtToken = sign(user, process.env.JWT_SECRET as string, {
+          algorithm: "HS256",
           expiresIn: "1h",
         });
       }

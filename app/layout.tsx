@@ -4,6 +4,14 @@ import "@/styles/globals.css";
 import Navbar from "@/components/Navbar";
 import { PHProvider } from "@/components/PostHog";
 import SessionProvider from "@/components/SessionProvider";
+import { AccountContextWrapper } from "@/components/Context/Account";
+
+// 3rd Party Styles
+import { Providers } from "./providers";
+
+// Analytics
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -55,6 +63,18 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
+  twitter: {
+    site: "https://gitauto.ai",
+    siteId: "@gitauto_ai",
+    creator: "Hiroshi Nishio, Nikita Malinovsky",
+    description: "AI engineer that generates GitHub PRs from issues",
+    title: "GitAuto",
+    images: {
+      url: "https://gitauto.ai/og-logo.png", // Must be an absolute URL
+      width: 1200,
+      height: 630,
+    },
+  },
   robots: {
     index: false,
     follow: true,
@@ -78,10 +98,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <PHProvider>
-        <body className={inter.className}>
+        <body className={`${inter.className} min-h-full`}>
           <SessionProvider>
-            <Navbar />
-            {children}
+            <AccountContextWrapper>
+              <Providers>
+                <Navbar />
+                {children}
+                <SpeedInsights />
+                <Analytics mode={"production"} />
+              </Providers>
+            </AccountContextWrapper>
           </SessionProvider>
         </body>
       </PHProvider>
