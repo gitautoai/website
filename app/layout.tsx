@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+
+// Styles
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
+
+// Components
 import Navbar from "@/components/Navbar";
 import { PHProvider } from "@/components/PostHog";
 import SessionProvider from "@/components/SessionProvider";
@@ -99,16 +104,18 @@ export default function RootLayout({
     <html lang="en">
       <PHProvider>
         <body className={`${inter.className} min-h-full`}>
-          <SessionProvider>
-            <AccountContextWrapper>
-              <Providers>
-                <Navbar />
-                {children}
-                <SpeedInsights />
-                <Analytics mode={"production"} />
-              </Providers>
-            </AccountContextWrapper>
-          </SessionProvider>
+          <Suspense fallback={<div>Loading...</div>}>
+            <SessionProvider>
+              <AccountContextWrapper>
+                <Providers>
+                  <Navbar />
+                  {children}
+                  <SpeedInsights />
+                  <Analytics mode={"production"} />
+                </Providers>
+              </AccountContextWrapper>
+            </SessionProvider>
+          </Suspense>
         </body>
       </PHProvider>
     </html>

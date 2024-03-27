@@ -5,8 +5,6 @@ import "@/styles/globals.css";
 
 import { Comfortaa, Poppins, Lexend } from "next/font/google";
 
-import { Suspense } from "react";
-
 const comfortaa = Comfortaa({
   subsets: ["latin"],
   variable: "--font-comfortaa",
@@ -27,12 +25,10 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div
-        className={`${comfortaa.variable} ${poppins.variable} ${lexend.variable} font-helvetica`}
-      >
-        <Component {...pageProps} />
-      </div>
-    </Suspense>
+    <div
+      className={`${comfortaa.variable} ${poppins.variable} ${lexend.variable} font-helvetica`}
+    >
+      <Component {...pageProps} />
+    </div>
   );
 }
