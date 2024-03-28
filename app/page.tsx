@@ -64,6 +64,7 @@ export default function Home() {
                   width={30}
                   height={30}
                   alt="Github Logo"
+                  className="invert"
                 />
                 Get Started for Free
               </Link>

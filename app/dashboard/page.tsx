@@ -14,6 +14,11 @@ import LoadingSpinner from "@/components/Auth/LoadingSpinner";
 // Third Party
 import { useSession } from "next-auth/react";
 import { usePostHog } from "posthog-js/react";
+import { Spinner } from "@chakra-ui/react";
+
+const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
+text-md sm:text-lg xl:text-xl py-3 w-[250px] sm:w-[315px] lg:w-[210px] shadow-lg hover:shadow-lg 
+cursor-pointer font-semibold text-center mx-auto `;
 
 export default function Home() {
   // Hooks
@@ -22,6 +27,8 @@ export default function Home() {
   const searchParams = useSearchParams();
   const { accountType, userInfos, selectedIndex, userId, jwtToken } =
     useAccountContext();
+
+  const [isPaymentLoading, setIsPaymentLoading] = useState(false);
 
   // Analytics
   const pathname = usePathname();
@@ -57,7 +64,6 @@ export default function Home() {
 
       const res = await response.json();
       router.push(res);
-      return await res;
     }
 
     if (searchParams.has("subscribe")) {
@@ -66,6 +72,7 @@ export default function Home() {
   }, [searchParams, userInfos, selectedIndex, userId, jwtToken, router]);
 
   async function pushToStripePortal() {
+    setIsPaymentLoading(true);
     if (selectedIndex) {
       const response = await fetch("api/stripe/create-portal-url", {
         method: "POST",
@@ -79,12 +86,18 @@ export default function Home() {
 
       const res = await response.json();
       router.push(res);
-      return await res;
+    } else {
+      setIsPaymentLoading(false);
     }
   }
 
   if (status === "loading" || searchParams.has("subscribe") || !userInfos) {
-    return <LoadingSpinner />;
+    return (
+      <>
+        <LoadingSpinner />
+        <Footer />
+      </>
+    );
   }
 
   return (
@@ -122,14 +135,24 @@ export default function Home() {
                           selected.
                         </span>{" "}
                         <span> Want to purchase a plan?</span>
-                        <button
-                          onClick={() => {
-                            pushToStripePortal();
-                          }}
-                          className="underline"
-                        >
-                          Manage Payments
-                        </button>
+                        <div className="relative items-center">
+                          <button
+                            onClick={() => {
+                              pushToStripePortal();
+                            }}
+                            className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black  ${
+                              isPaymentLoading &&
+                              "opacity-0 pointer-events-none"
+                            }`}
+                          >
+                            Subscribe
+                          </button>
+                          {isPaymentLoading && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-white opacity-50 rounded-lg my-8 py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed ">
+                              <Spinner size="md" color="pink" />
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}

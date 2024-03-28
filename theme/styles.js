@@ -3,6 +3,7 @@ import { extendTheme } from "@chakra-ui/react";
 // example theme
 const theme = extendTheme({
   colors: {
+    pink: "#f23b87",
     blue: "#0076ff",
     //blue: '#1fb6ff',
     blueHover: "#3391FF",

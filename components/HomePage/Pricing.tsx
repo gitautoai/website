@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import { useState } from "react";
 // Analytics
 import { usePostHog } from "posthog-js/react";
 
@@ -12,20 +12,25 @@ import { useAccountContext } from "@/components/Context/Account";
 // Third Party
 import { signIn } from "next-auth/react";
 
+import { Spinner } from "@chakra-ui/react";
+
+const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
+text-md sm:text-lg xl:text-xl py-3 w-[250px] sm:w-[315px] lg:w-[210px] shadow-lg hover:shadow-lg 
+cursor-pointer font-semibold text-center mx-auto `;
+
 export default function Pricing() {
   // Analytics
   const posthog = usePostHog();
-
-  const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
-  text-md sm:text-lg xl:text-xl py-3 w-[250px] sm:w-[315px] lg:w-[210px] shadow-lg hover:shadow-lg 
-  cursor-pointer font-semibold text-center mx-auto `;
 
   const { userId, jwtToken, selectedIndex, userInfos } = useAccountContext();
 
   const router = useRouter();
 
+  const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
+
   // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
   async function handleSubscribe() {
+    setIsSubscribeLoading(true);
     posthog.capture("$click", {
       $event_type: "subscribe",
       $current_url: window.location.href,
@@ -48,7 +53,7 @@ export default function Pricing() {
         router.push("/dashboard?subscribe");
       }
     } else {
-      signIn("github", {
+      await signIn("github", {
         callbackUrl: `/dashboard?subscribe`,
       });
     }
@@ -94,15 +99,23 @@ export default function Pricing() {
           <div className="flex flex-col rounded-xl p-4 sm:p-5 mb-5">
             <h3 className="text-3xl">$19/user/mo</h3>
             <span className="mt-2 text-xl">Standard</span>
-            <button
-              onClick={() => {
-                handleSubscribe();
-              }}
-              className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black`}
-            >
-              Subscribe
-            </button>
-
+            <div className="relative items-center">
+              <button
+                onClick={() => {
+                  handleSubscribe();
+                }}
+                className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black  ${
+                  isSubscribeLoading && "opacity-0 pointer-events-none"
+                }`}
+              >
+                Subscribe
+              </button>
+              {isSubscribeLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white opacity-50 rounded-lg my-8 py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed ">
+                  <Spinner size="md" color="pink" />
+                </div>
+              )}
+            </div>
             <div className="flex flex-col">
               <span>&bull; 30 issues per month</span>
             </div>
