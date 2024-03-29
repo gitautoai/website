@@ -42,6 +42,9 @@ export function AccountContextWrapper({
   const [accountType, setAccountType] = useState<string | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
+  const [userInfoSubscribed, setUserInfoSubscribed] = useState<
+    boolean[] | null
+  >(null);
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -80,6 +83,8 @@ export function AccountContextWrapper({
       selectedIndex = null;
     }
   }
+
+  console.log(userInfos);
 
   return (
     <AccountContext.Provider

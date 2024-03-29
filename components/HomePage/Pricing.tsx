@@ -36,6 +36,7 @@ export default function Pricing() {
       $current_url: window.location.href,
     });
     if (userId && jwtToken) {
+      // Signed in and last time account
       if (selectedIndex) {
         const response = await fetch("api/stripe/create-portal-url", {
           method: "POST",
@@ -50,9 +51,11 @@ export default function Pricing() {
         const res = await response.json();
         router.push(res);
       } else {
+        // Signed in but no selected account
         router.push("/dashboard?subscribe");
       }
     } else {
+      // Not signed in, prompt sign in
       await signIn("github", {
         callbackUrl: `/dashboard?subscribe`,
       });
@@ -88,6 +91,7 @@ export default function Pricing() {
                 src="/icons/github.svg"
                 width={30}
                 height={30}
+                className="invert"
                 alt="Github Logo"
               />
               Install

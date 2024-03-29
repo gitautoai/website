@@ -15,12 +15,12 @@ const handler = NextAuth({
   callbacks: {
     async signIn({ user, profile }) {
       try {
-        const isAlreadyUser = await prisma.user.findMany({
+        const isAlreadyUser: any[] = await prisma.user.findMany({
           where: {
             user_id: Number(user.id),
           },
         });
-        if (isAlreadyUser == undefined) {
+        if (isAlreadyUser.length === 0) {
           return "/get-started";
         }
         return true;
@@ -42,7 +42,7 @@ const handler = NextAuth({
       if (user) {
         token.jwtToken = sign(user, process.env.JWT_SECRET as string, {
           algorithm: "HS256",
-          expiresIn: "1h",
+          expiresIn: "100d",
         });
       }
       if (account) {

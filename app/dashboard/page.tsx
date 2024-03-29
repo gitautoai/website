@@ -42,23 +42,24 @@ export default function Home() {
     }
   }, [pathname, posthog]);
 
-  // TODO
   // If "subscribe" in query parameter from "Subscribe" button on homepage, create checkout session or portal
   useEffect(() => {
-    async function createCheckoutSession() {
-      let customerId = "";
+    async function createPortalURL() {
+      let currentIndex = 0;
       if (selectedIndex) {
-        customerId =
-          userInfos[selectedIndex].installations.owners.stripe_customer_id;
-      } else {
-        customerId = userInfos[0].installations.owners.stripe_customer_id;
+        currentIndex = selectedIndex;
       }
-      const response = await fetch("api/stripe/create-portal-url", {
+      const response = await fetch("api/stripe/create-portal-or-checkout-url", {
         method: "POST",
         body: JSON.stringify({
           userId: userId,
           jwtToken: jwtToken,
-          customerId: customerId,
+          customerId:
+            userInfos[currentIndex].installations.owners.stripe_customer_id,
+          ownerType: userInfos[currentIndex].installations.owner_type,
+          ownerId: userInfos[currentIndex].installations.owner_id,
+          ownerName: userInfos[currentIndex].installations.owner_name,
+          userName: userInfos[currentIndex].user_name,
         }),
       });
 
@@ -67,7 +68,7 @@ export default function Home() {
     }
 
     if (searchParams.has("subscribe")) {
-      createCheckoutSession();
+      createPortalURL();
     }
   }, [searchParams, userInfos, selectedIndex, userId, jwtToken, router]);
 

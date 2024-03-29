@@ -80,22 +80,18 @@ export default function SwitchAccount({
                   <>
                     {userInfos.length === 0 && (
                       <div>
-                        No User or Organizations found. Please install GitAuto.
-                      </div>
-                    )}
-                    {userInfos.length === 1 && (
-                      <div>
-                        Only your GitHub user account was found. To manage your
-                        organization, please install our{" "}
+                        No User or Organizations found. Please install{" "}
                         <a
                           href="https://github.com/apps/gitauto-ai"
                           target="_blank"
                           className="text-pink underline"
                         >
-                          marketplace app
+                          GitAuto
                         </a>
+                        .
                       </div>
                     )}
+
                     {userInfos.length > 1 && (
                       <div>
                         <div className="mt-8 mb-8 text-2xl">

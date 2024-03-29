@@ -1,10 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
 
-import { prisma } from "@/lib/prisma";
 import { z, ZodError } from "zod";
 import { isValidToken } from "@/utils/auth";
 
-const stripe = require("stripe")(process.env.STRIPE_API_KEY);
+import stripe from "@/lib/stripe";
 
 const schema = z.object({
   userId: z.number(),

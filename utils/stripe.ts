@@ -1,17 +1,16 @@
-const stripe = require("stripe")(process.env.STRIPE_API_KEY);
-
+import stripe from "@/lib/stripe";
 /**
  * Create a Stripe checkout session.
  * @see https://stripe.com/docs/api/checkout/sessions/create
  */
 export const createCheckoutSession = async ({
   customerId,
-  origin,
   priceId,
+  metadata,
 }: {
   customerId: string;
-  origin: string; // such as "https://gitauto.ai"
   priceId: string;
+  metadata: any;
 }) => {
   try {
     const line_items = [
@@ -29,11 +28,12 @@ export const createCheckoutSession = async ({
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items,
       mode: "subscription", // "subscription" or "payment" or "setup"
-      success_url: `${origin}?success=true`,
-      cancel_url: `${origin}?canceled=true`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}}?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}?canceled=true`,
       client_reference_id: customerId,
       currency: "usd",
       customer: customerId,
+      metadata: metadata,
 
       // More parameters are available here:
       after_expiration: {
@@ -56,6 +56,7 @@ export const createCheckoutSession = async ({
       payment_method_collection: "always", // "always" or "if_required"
       subscription_data: {
         description: "This subscription was created from Checkout Session",
+        metadata: metadata,
       },
 
       // We don't offer a trial period when an admin registers his/her payment method.
@@ -70,11 +71,3 @@ export const createCheckoutSession = async ({
     throw error;
   }
 };
-
-export function createStripeSubscription(customerId: string) {
-  const session = stripe.billing_portal.Session.create(
-    (customerId = customerId)
-    // return_url = "https://gitauto.ai/dashboard"
-  );
-  return session.url;
-}

@@ -1,7 +1,10 @@
 // Next imports
 import Link from "next/link";
-import Image from "next/image";
 
+// Components
+import { useAccountContext } from "@/components/Context/Account";
+
+import { usePostHog } from "posthog-js/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faGithub,
@@ -9,9 +12,6 @@ import {
   faLinkedin,
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
-// Analytics
-import { usePostHog } from "posthog-js/react";
-import { faLink } from "@fortawesome/free-solid-svg-icons";
 
 export default function Footer() {
   // Analytics
@@ -37,7 +37,7 @@ export default function Footer() {
                   }}
                   className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
                 >
-                  Github
+                  GitHub
                 </Link>
               </li>
               {/* <li>

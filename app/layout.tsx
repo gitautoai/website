@@ -55,7 +55,8 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://gitauto.ai"),
   openGraph: {
     title: "GitAuto",
-    description: "AI engineer that generates GitHub PRs from issues",
+    description:
+      "GitAuto is an AI engineer that generates GitHub PRs from issues.",
     url: "https://gitauto.ai",
     siteName: "GitAuto",
     images: [
@@ -69,9 +70,10 @@ export const metadata: Metadata = {
     type: "website",
   },
   twitter: {
-    site: "@gitauto-ai",
+    site: "@gitautoai",
     creator: "@hnishio0105",
-    description: "AI engineer that generates GitHub PRs from issues",
+    description:
+      "GitAuto is an AI engineer that generates GitHub PRs from issues.",
     title: "GitAuto",
     images: {
       url: "https://gitauto.ai/og-logo.png", // Must be an absolute URL
