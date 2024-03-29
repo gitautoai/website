@@ -1,6 +1,10 @@
-import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+// components
+import SwitchAccount from "@/components/HomePage/SwitchAccount";
+import { useAccountContext } from "@/components/Context/Account";
 
+// Third Party
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
 import { motion } from "framer-motion";
@@ -11,7 +15,6 @@ import {
   MenuItem,
   useDisclosure,
 } from "@chakra-ui/react";
-import SwitchAccount from "@/components/Dashboard/SwitchAccount";
 
 const MotionMenuList = motion(MenuList);
 
@@ -37,6 +40,9 @@ const variants = {
 
 const ProfileIcon = ({ session }: ProfileIconProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { selectedIndex, userInfosSubscribed } = useAccountContext();
+  const router = useRouter();
   return (
     <>
       <Menu isLazy>
@@ -56,6 +62,37 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
           animate="open"
           exit="closed"
         >
+          {selectedIndex && userInfosSubscribed && (
+            <>
+              {userInfosSubscribed[selectedIndex] === true ? (
+                <MenuItem
+                  _hover={{
+                    bg: "none",
+                  }}
+                  _focus={{ bg: "none" }}
+                  _active={{ bg: "none" }}
+                >
+                  <span className={`link `}>Manage Payment</span>
+                </MenuItem>
+              ) : (
+                <MenuItem
+                  _hover={{
+                    bg: "none",
+                  }}
+                  _focus={{ bg: "none" }}
+                  _active={{ bg: "none" }}
+                >
+                  <span
+                    className={`link `}
+                    onClick={() => router.push("/?subscribe")}
+                  >
+                    Subscribe
+                  </span>
+                </MenuItem>
+              )}
+            </>
+          )}
+
           <MenuItem
             _hover={{
               bg: "none",
@@ -80,11 +117,7 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
           </MenuItem>
         </MotionMenuList>
       </Menu>
-      <SwitchAccount
-        isOpen={isOpen}
-        onClose={onClose}
-        isFromProfileMenu={true}
-      />
+      <SwitchAccount isOpen={isOpen} onClose={onClose} />
     </>
   );
 };

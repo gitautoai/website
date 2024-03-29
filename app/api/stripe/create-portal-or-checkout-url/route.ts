@@ -4,7 +4,7 @@ import { z, ZodError } from "zod";
 import { isValidToken } from "@/utils/auth";
 
 import stripe from "@/lib/stripe";
-import { createCheckoutSession } from "@/utils/stripe";
+import { createCheckoutSession, hasActiveSubscription } from "@/utils/stripe";
 // import { NEXT_PUBLIC_SITE_URL } from "@/lib/constants";
 
 const schema = z.object({
@@ -34,16 +34,10 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const subscription = stripe.subscriptions.list({ customer: customerId });
     let session = null;
-    // If the customer has an active subscription, redirect to the customer portal
+    // If the customer has an active non-free subscription, redirect to the customer portal
     // Otherwise, create a new checkout session
-    if (
-      subscription &&
-      "data" in subscription &&
-      Array.isArray(subscription["data"]) &&
-      subscription["data"].length > 0
-    ) {
+    if (await hasActiveSubscription(customerId)) {
       session = await stripe.billingPortal.sessions.create({
         customer: customerId,
         return_url: process.env.NEXT_PUBLIC_SITE_URL,
@@ -54,7 +48,7 @@ export async function POST(req: NextRequest) {
       if (ownerType === "U") {
         priceId = process.env.STRIPE_USER_PRICE_ID as string;
       }
-      if (ownerType === "C") {
+      if (ownerType === "O") {
         priceId = process.env.STRIPE_ORGANIZATION_PRICE_ID as string;
       }
       session = await createCheckoutSession({

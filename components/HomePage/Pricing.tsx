@@ -1,8 +1,8 @@
 // Next imports
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useCallback, useEffect } from "react";
 // Analytics
 import { usePostHog } from "posthog-js/react";
 
@@ -27,6 +27,38 @@ export default function Pricing() {
   const router = useRouter();
 
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
+  const searchParams = useSearchParams();
+
+  const createPortalOrCheckoutURL = useCallback(async () => {
+    let currentIndex = 0;
+    if (selectedIndex) {
+      currentIndex = selectedIndex;
+    }
+    // If user has an installation, create portal or checkout session
+    if (userInfos && userInfos.length > 0) {
+      const response = await fetch("api/stripe/create-portal-or-checkout-url", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: userId,
+          jwtToken: jwtToken,
+          customerId:
+            userInfos[currentIndex].installations.owners.stripe_customer_id,
+          ownerType: userInfos[currentIndex].installations.owner_type,
+          ownerId: Number(
+            userInfos[currentIndex].installations.owner_id.replace("n", "")
+          ),
+          ownerName: userInfos[currentIndex].installations.owner_name,
+          userName: userInfos[currentIndex].user_name,
+        }),
+      });
+
+      const res = await response.json();
+      router.push(res);
+    } else {
+      // If not, redirect to installation page
+      router.push("/redirect-to-install");
+    }
+  }, [jwtToken, router, selectedIndex, userId, userInfos]);
 
   // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
   async function handleSubscribe() {
@@ -36,31 +68,35 @@ export default function Pricing() {
       $current_url: window.location.href,
     });
     if (userId && jwtToken) {
-      // Signed in and last time account
-      if (selectedIndex) {
-        const response = await fetch("api/stripe/create-portal-url", {
-          method: "POST",
-          body: JSON.stringify({
-            userId: userId,
-            jwtToken: jwtToken,
-            customerId:
-              userInfos[selectedIndex].installations.owners.stripe_customer_id,
-          }),
-        });
-
-        const res = await response.json();
-        router.push(res);
+      // Has at least one installation
+      if (userInfos && userInfos.length > 0) {
+        createPortalOrCheckoutURL();
       } else {
-        // Signed in but no selected account
-        router.push("/dashboard?subscribe");
+        // Signed in but no intallation
+        router.push("/redirect-to-install");
       }
     } else {
       // Not signed in, prompt sign in
       await signIn("github", {
-        callbackUrl: `/dashboard?subscribe`,
+        callbackUrl: `/?subscribe`,
       });
     }
   }
+
+  // If "subscribe" in query parameter create checkout session or portal
+  useEffect(() => {
+    if (searchParams.has("subscribe") && userInfos) {
+      createPortalOrCheckoutURL();
+    }
+  }, [
+    searchParams,
+    userInfos,
+    selectedIndex,
+    userId,
+    jwtToken,
+    router,
+    createPortalOrCheckoutURL,
+  ]);
 
   return (
     <div className="w-[100vw] bg-white flex justify-center">

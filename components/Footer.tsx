@@ -16,6 +16,7 @@ import {
 export default function Footer() {
   // Analytics
   const posthog = usePostHog();
+  const { userInfosSubscribed } = useAccountContext();
 
   const iconSize = "2x";
 
@@ -63,21 +64,27 @@ export default function Footer() {
                   Pricing
                 </a>
               </li>
-              <li>
-                <Link
-                  href="https://billing.stripe.com/p/login/eVacPB8qCbV64Ni144"
-                  passHref
-                  onClick={() => {
-                    posthog.capture("$click", {
-                      $event_type: "manage_payment",
-                      $current_url: window.location.href,
-                    });
-                  }}
-                  className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
-                >
-                  Manage Payment
-                </Link>
-              </li>
+              {/* If there is an active subscription, show "Manage Payment" */}
+              {userInfosSubscribed &&
+                userInfosSubscribed.some(
+                  (is_subscribed) => is_subscribed === true
+                ) && (
+                  <li>
+                    <Link
+                      href="/?subscribe"
+                      passHref
+                      onClick={() => {
+                        posthog.capture("$click", {
+                          $event_type: "manage_payment",
+                          $current_url: window.location.href,
+                        });
+                      }}
+                      className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+                    >
+                      Manage Payment
+                    </Link>
+                  </li>
+                )}
               {/* <li>
                 <Link
                   href="/docs"

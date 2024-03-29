@@ -92,7 +92,7 @@ export default function MobileDrawer({
                 }}
                 onClick={() => {
                   signIn("github", {
-                    callbackUrl: `/dashboard`,
+                    callbackUrl: `/`,
                   });
                 }}
                 className="bg-pink text-white rounded-lg transition-colors duration-200 text-xl

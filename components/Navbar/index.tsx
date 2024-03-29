@@ -120,7 +120,7 @@ export default function Navbar() {
                     }}
                     onClick={() => {
                       signIn("github", {
-                        callbackUrl: `/dashboard`,
+                        callbackUrl: `/`,
                       });
                     }}
                     className="bg-white border border-pink text-black rounded-lg transition-colors duration-200
@@ -131,28 +131,7 @@ export default function Navbar() {
                 </li>
               </>
             )}
-            {status === "authenticated" && (
-              <>
-                {pathname === "/" ? (
-                  <motion.a
-                    whileHover={{
-                      scale: 1.04,
-                      transition: { duration: 0.1 },
-                    }}
-                    whileTap={{
-                      scale: 0.98,
-                      transition: { duration: 0.1 },
-                    }}
-                    href="/dashboard"
-                    className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
-                  >
-                    Dashboard
-                  </motion.a>
-                ) : (
-                  <ProfileIcon session={session} />
-                )}
-              </>
-            )}
+            {status === "authenticated" && <ProfileIcon session={session} />}
           </ol>
           <HamburgerMenu setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />
           <MobileDrawer

@@ -8,12 +8,12 @@ import Link from "next/link";
 // Components
 import Footer from "@/components/Footer";
 import Pricing from "@/components/HomePage/Pricing";
+import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
+import UseCases from "@/components/HomePage/UseCases";
 
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
-import UseCases from "@/components/HomePage/UseCases";
 
 export default function Home() {
   const buttonStyles = `bg-pink text-white rounded-lg transition-colors 

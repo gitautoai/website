@@ -20,7 +20,6 @@ export const createCheckoutSession = async ({
         adjustable_quantity: { enabled: true, maximum: 999 },
       },
     ];
-
     /**
      * Create a Stripe Checkout Session.
      * @see https://stripe.com/docs/api/checkout/sessions/create
@@ -28,7 +27,7 @@ export const createCheckoutSession = async ({
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items,
       mode: "subscription", // "subscription" or "payment" or "setup"
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}}?success=true`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}?success=true`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}?canceled=true`,
       client_reference_id: customerId,
       currency: "usd",
@@ -70,4 +69,29 @@ export const createCheckoutSession = async ({
   } catch (error: any) {
     throw error;
   }
+};
+
+export const hasActiveSubscription = async (customerId: string) => {
+  const subscription = await stripe.subscriptions.list({
+    customer: customerId,
+  });
+
+  if (
+    subscription &&
+    "data" in subscription &&
+    Array.isArray(subscription["data"]) &&
+    subscription["data"].length > 0
+  ) {
+    for (const sub of subscription["data"]) {
+      if (
+        sub.status === "active" &&
+        sub["items"]["data"][0].price.id !=
+          process.env.STRIPE_FREE_TIER_PRICE_ID
+      ) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 };
