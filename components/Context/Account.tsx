@@ -9,10 +9,6 @@ import { signOut, useSession } from "next-auth/react";
 import useSWR from "swr";
 
 const AccountContext = createContext<{
-  account: string | null; // Currently selected account
-  setAccount: React.Dispatch<React.SetStateAction<string | null>>;
-  accountType: string | null; // Currently selected account type
-  setAccountType: React.Dispatch<React.SetStateAction<string | null>>;
   userInfos: any; // All users, installations, owners associated with this github account
   mutateUserInfos: () => void;
   userInfosSubscribed: boolean[] | null; // whether a given userInfo has a live subscription or not
@@ -21,14 +17,6 @@ const AccountContext = createContext<{
   userId: number | null;
   jwtToken: string | null;
 }>({
-  account: null,
-  setAccount: () => {
-    ("");
-  },
-  accountType: null,
-  setAccountType: () => {
-    ("");
-  },
   userInfos: null,
   mutateUserInfos: () => {
     ("");
@@ -48,8 +36,6 @@ export function AccountContextWrapper({
   children: React.ReactNode;
 }) {
   const { data: session } = useSession();
-  const [account, setAccount] = useState<string | null>(null);
-  const [accountType, setAccountType] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
@@ -93,7 +79,6 @@ export function AccountContextWrapper({
     const customerIds = userInfos.map(
       (user: any) => user.installations.owners.stripe_customer_id
     );
-    console.log("IDS: ", customerIds);
     const empty: string[] = [];
     getUserInfosSubscribed = `api/stripe/get-userinfo-subscriptions?userId=${userId}&jwtToken=${jwtToken}&customerIds=${customerIds}`;
   }
@@ -107,33 +92,35 @@ export function AccountContextWrapper({
   );
 
   useEffect(() => {
+    async function setInstallationFallback() {
+      await fetch("api/users/set-installation-fallback", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: userId,
+          jwtToken: jwtToken,
+        }),
+      });
+    }
+
     // Set Selected Index if there is a selected user account
     if (userInfos) {
       const newIndex = userInfos.findIndex((user: any) => user.is_selected);
 
+      // Should always have an account selected, this is a fallback
       if (newIndex == -1) {
         console.error("No selected index found");
-        // TODO call api to ensure is_selected is true
+        setInstallationFallback();
+
         // await mutateUserInfos();
       } else {
-        setAccount(userInfos[newIndex].installations.owner_id);
-        setAccountType(userInfos[newIndex].installations.owner_type);
         setSelectedIndex(newIndex);
       }
     }
-  }, [userInfos, selectedIndex]);
-
-  console.log("sel: ", selectedIndex);
-  console.log("userInfos: ", userInfos);
-  console.log("userInfosSubscribed: ", userInfosSubscribed);
+  }, [userInfos, selectedIndex, userId, jwtToken]);
 
   return (
     <AccountContext.Provider
       value={{
-        account,
-        setAccount,
-        accountType,
-        setAccountType,
         userInfos,
         mutateUserInfos,
         userInfosSubscribed,

@@ -1,47 +1,35 @@
-"use server";
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z, ZodError } from "zod";
 
 // Utils
 import { isValidToken } from "@/utils/auth";
-import { stringify } from "@/utils/transform";
 
 const schema = z.object({
-  userId: z.string(),
+  userId: z.number(),
   jwtToken: z.string(),
 });
-export async function GET(req: NextRequest) {
-  try {
-    const url = new URL(req.url);
-    const params = new URLSearchParams(url.searchParams);
-    const { userId, jwtToken } = schema.parse({
-      userId: params.get("userId"),
-      jwtToken: params.get("jwtToken"),
-    });
 
-    if (!isValidToken(userId, jwtToken)) {
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { userId, jwtToken } = schema.parse(body);
+
+    if (!isValidToken(userId.toString(), jwtToken)) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const user = await prisma.user.findMany({
+    const users = await prisma.user.findMany({
       where: {
         user_id: Number(userId),
-        installations: {
-          uninstalled_at: null,
-        },
       },
       include: {
-        installations: {
-          include: {
-            owners: true,
-          },
-        },
+        installations: true,
       },
     });
 
-    // owner_type == "U" comes first in the list of users
-    user.sort((a: any, b: any) => {
+    // owner_type == "U" comes first in the list of users, then sort by created at
+    users.sort((a: any, b: any) => {
       if (
         a.installations.owner_type === "U" &&
         b.installations.owner_type !== "U"
@@ -57,7 +45,16 @@ export async function GET(req: NextRequest) {
       }
     });
 
-    return new NextResponse(stringify(user), { status: 200 });
+    await prisma.user.update({
+      where: {
+        id: users[0].id,
+      },
+      data: {
+        is_selected: true,
+      },
+    });
+
+    return NextResponse.json({ messsage: "Success" }, { status: 200 });
   } catch (err: any) {
     console.error(err);
     if (err instanceof ZodError) {

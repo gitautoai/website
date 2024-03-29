@@ -62,7 +62,7 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
           animate="open"
           exit="closed"
         >
-          {selectedIndex && userInfosSubscribed && (
+          {selectedIndex != null && userInfosSubscribed && (
             <>
               {userInfosSubscribed[selectedIndex] === true ? (
                 <MenuItem

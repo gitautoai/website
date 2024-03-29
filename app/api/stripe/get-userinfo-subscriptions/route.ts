@@ -16,7 +16,6 @@ export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const params = new URLSearchParams(url.searchParams);
-    console.log(params);
     const { userId, jwtToken, customerIds } = schema.parse({
       userId: Number(params.get("userId")),
       jwtToken: params.get("jwtToken"),
@@ -39,7 +38,6 @@ export async function GET(req: NextRequest) {
 
     for (const customerId of customerIdsSplit) {
       const myBool = await hasActiveSubscription(customerId);
-      console.log("MY: ", myBool);
       booleanMapping.push(myBool);
     }
 
