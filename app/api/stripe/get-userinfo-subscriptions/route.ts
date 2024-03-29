@@ -1,3 +1,4 @@
+"use server";
 import { NextResponse, NextRequest } from "next/server";
 
 import { z, ZodError } from "zod";
@@ -57,4 +58,3 @@ export async function GET(req: NextRequest) {
     }
   }
 }
-export const dynamic = "force-dynamic";

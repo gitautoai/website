@@ -25,9 +25,10 @@ export default function Home() {
       });
     }
   }, [pathname, posthog]);
-
-  router.push("https://github.com/apps/gitauto-ai");
-
+	
+  useEffect(() => {
+    router.push("https://github.com/apps/gitauto-ai");
+  });
   return (
     <>
       <LoadingSpinner />
