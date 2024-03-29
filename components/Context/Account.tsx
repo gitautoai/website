@@ -14,6 +14,7 @@ const AccountContext = createContext<{
   accountType: string | null; // Currently selected account type
   setAccountType: React.Dispatch<React.SetStateAction<string | null>>;
   userInfos: any; // All users, installations, owners associated with this github account
+  mutateUserInfos: () => void;
   userInfosSubscribed: boolean[] | null; // whether a given userInfo has a live subscription or not
   selectedIndex: number | null; // Index of selected account
   setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
@@ -29,6 +30,9 @@ const AccountContext = createContext<{
     ("");
   },
   userInfos: null,
+  mutateUserInfos: () => {
+    ("");
+  },
   userInfosSubscribed: null,
   selectedIndex: null,
   setSelectedIndex: () => {
@@ -76,10 +80,13 @@ export function AccountContextWrapper({
     getUserInfoUrl = `api/users/get-user-info?userId=${userId}&jwtToken=${jwtToken}`;
   }
 
-  const { data: userInfos } = useSWR(getUserInfoUrl, async () => {
-    const res = await fetch(getUserInfoUrl);
-    return res.json();
-  });
+  const { data: userInfos, mutate: mutateUserInfos } = useSWR(
+    getUserInfoUrl,
+    async () => {
+      const res = await fetch(getUserInfoUrl);
+      return res.json();
+    }
+  );
 
   // Get userinfos that have a live subscription
   if (userInfos) {
@@ -101,31 +108,24 @@ export function AccountContextWrapper({
 
   useEffect(() => {
     // Set Selected Index if there is a selected user account
-    if (userInfos && !selectedIndex) {
-      setSelectedIndex(userInfos.findIndex((user: any) => user.is_selected));
+    if (userInfos) {
+      const newIndex = userInfos.findIndex((user: any) => user.is_selected);
 
-      if (selectedIndex == -1) {
+      if (newIndex == -1) {
         console.error("No selected index found");
         // TODO call api to ensure is_selected is true
-        // mutate userInfos
+        // await mutateUserInfos();
+      } else {
+        setAccount(userInfos[newIndex].installations.owner_id);
+        setAccountType(userInfos[newIndex].installations.owner_type);
+        setSelectedIndex(newIndex);
       }
     }
   }, [userInfos, selectedIndex]);
 
-  // Set selected account if there is only 1 account
-  useEffect(() => {
-    if (
-      userInfos &&
-      userInfos.length === 1 &&
-      !account &&
-      !accountType &&
-      !selectedIndex
-    ) {
-      setAccount(userInfos[0].installations.owner_id);
-      setAccountType(userInfos[0].installations.owner_type);
-      setSelectedIndex(0);
-    }
-  }, [account, accountType, selectedIndex, userInfos]);
+  console.log("sel: ", selectedIndex);
+  console.log("userInfos: ", userInfos);
+  console.log("userInfosSubscribed: ", userInfosSubscribed);
 
   return (
     <AccountContext.Provider
@@ -135,6 +135,7 @@ export function AccountContextWrapper({
         accountType,
         setAccountType,
         userInfos,
+        mutateUserInfos,
         userInfosSubscribed,
         selectedIndex,
         setSelectedIndex,

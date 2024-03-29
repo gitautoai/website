@@ -41,11 +41,21 @@ export async function GET(req: NextRequest) {
     });
 
     // owner_type == "U" comes first in the list of users
-    user.sort((a: any, b) => {
-      if (a.installations.owner_type === "U") {
-        return -1;
+    user.sort((a: any, b: any) => {
+      if (
+        a.installations.owner_type === "U" &&
+        b.installations.owner_type !== "U"
+      ) {
+        return -1; // a should come before b
+      } else if (
+        a.installations.owner_type !== "U" &&
+        b.installations.owner_type === "U"
+      ) {
+        return 1; // b should come before a
+      } else {
+        // If both have owner_type !== "U", or both have owner_type === "U", compare by created_at
+        return a.installations.created_at - b.installations.created_at;
       }
-      return 0;
     });
 
     return new NextResponse(stringify(user), { status: 200 });

@@ -1,23 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
 
 // Local
 import { useAccountContext } from "../Context/Account";
-import { useSession } from "next-auth/react";
+
 import {
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalOverlay,
-  useDisclosure,
 } from "@chakra-ui/react";
-import { set } from "zod";
-
-import { Session } from "next-auth";
-interface ProfileIconProps {
-  session: Session | null;
-}
 
 export default function SwitchAccount({
   isOpen,
@@ -26,16 +18,8 @@ export default function SwitchAccount({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const {
-    account,
-    setAccount,
-    accountType,
-    setAccountType,
-    userInfos,
-    selectedIndex,
-    userId,
-    jwtToken,
-  } = useAccountContext();
+  const { userInfos, mutateUserInfos, selectedIndex, userId, jwtToken } =
+    useAccountContext();
 
   async function setInstalllationToSelected(newUserPrimaryId: string) {
     const response = await fetch("api/users/set-installation-to-selected", {
@@ -46,11 +30,11 @@ export default function SwitchAccount({
         newUserPrimaryId: Number(newUserPrimaryId.replace("n", "")),
       }),
     });
-
-    const res = await response.json();
-    await res;
-    // TODO create loading button
-    onClose();
+    if (response.ok) {
+      await response.json();
+      await mutateUserInfos();
+      onClose();
+    }
     return;
   }
 
@@ -63,21 +47,7 @@ export default function SwitchAccount({
           <div className="text-xl my-16">
             {userInfos ? (
               <>
-                {userInfos.length === 0 && (
-                  <div>
-                    No User or Organizations found. Please install{" "}
-                    <a
-                      href="https://github.com/apps/gitauto-ai"
-                      target="_blank"
-                      className="text-pink underline"
-                    >
-                      GitAuto
-                    </a>
-                    .
-                  </div>
-                )}
-
-                {userInfos.length > 1 && (
+                {userInfos.length > 0 && (
                   <div>
                     <div className="mt-8 mb-8 text-2xl">
                       Please select an account:
@@ -89,10 +59,12 @@ export default function SwitchAccount({
                             {item.installations.owner_type === "U" && (
                               <button
                                 onClick={() => {
-                                  setAccount(item.installations.owner_id);
-                                  setAccountType("U");
                                   setInstalllationToSelected(item.id);
                                 }}
+                                className={`${
+                                  selectedIndex == index &&
+                                  "border-l-2 p-1 border-pink"
+                                }`}
                               >
                                 {item.installations.owner_name}
                                 <span className="text-lg">
@@ -103,13 +75,15 @@ export default function SwitchAccount({
                             {item.installations.owner_type === "O" && (
                               <button
                                 onClick={() => {
-                                  setAccount(item.installations.owner_id);
-                                  setAccountType("O");
                                   setInstalllationToSelected(item.id);
                                 }}
+                                className={`${
+                                  selectedIndex == index &&
+                                  "border-l-2 p-1 border-pink"
+                                }`}
                               >
                                 {item.installations.owner_name}{" "}
-                                <span className="text-lg">- organization</span>
+                                <span className="text-lg">- organization</span>{" "}
                               </button>
                             )}
                           </div>
