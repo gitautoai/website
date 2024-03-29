@@ -1,3 +1,4 @@
+"use client";
 // Next imports
 import Link from "next/link";
 import Image from "next/image";

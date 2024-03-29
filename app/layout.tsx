@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 
 // Styles
 import { Inter } from "next/font/google";
@@ -105,18 +104,16 @@ export default function RootLayout({
     <html lang="en">
       <PHProvider>
         <body className={`${inter.className} min-h-full`}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <SessionProvider>
-              <AccountContextWrapper>
-                <Providers>
-                  <Navbar />
-                  {children}
-                  <SpeedInsights />
-                  <Analytics mode={"production"} />
-                </Providers>
-              </AccountContextWrapper>
-            </SessionProvider>
-          </Suspense>
+          <SessionProvider>
+            <AccountContextWrapper>
+              <Providers>
+                <Navbar />
+                {children}
+                <SpeedInsights />
+                <Analytics mode={"production"} />
+              </Providers>
+            </AccountContextWrapper>
+          </SessionProvider>
         </body>
       </PHProvider>
     </html>
