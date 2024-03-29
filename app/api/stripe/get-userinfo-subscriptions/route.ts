@@ -38,7 +38,9 @@ export async function GET(req: NextRequest) {
     const customerIdsSplit = customerIds[0].split(",");
 
     for (const customerId of customerIdsSplit) {
-      booleanMapping.push(await hasActiveSubscription(customerId));
+      const myBool = await hasActiveSubscription(customerId);
+      console.log("MY: ", myBool);
+      booleanMapping.push(myBool);
     }
 
     return NextResponse.json(booleanMapping, { status: 200 });

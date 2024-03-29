@@ -83,12 +83,16 @@ export const hasActiveSubscription = async (customerId: string) => {
     subscription["data"].length > 0
   ) {
     for (const sub of subscription["data"]) {
-      if (
-        sub.status === "active" &&
-        sub["items"]["data"][0].price.id !=
-          process.env.STRIPE_FREE_TIER_PRICE_ID
-      ) {
-        return true;
+      if (sub.status === "active") {
+        for (const item of sub.items.data) {
+          console.log(item);
+          if (
+            item.price.active === true &&
+            item.price.id !== process.env.STRIPE_FREE_TIER_PRICE_ID
+          ) {
+            return true;
+          }
+        }
       }
     }
   }
