@@ -72,7 +72,12 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
                   _focus={{ bg: "none" }}
                   _active={{ bg: "none" }}
                 >
-                  <span className={`link `}>Manage Payment</span>
+                  <span
+                    className={`link `}
+                    onClick={() => router.push("/?subscribe")}
+                  >
+                    Manage Payment
+                  </span>
                 </MenuItem>
               ) : (
                 <MenuItem
