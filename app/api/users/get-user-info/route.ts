@@ -1,3 +1,4 @@
+"use server";
 import { NextResponse, NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z, ZodError } from "zod";
