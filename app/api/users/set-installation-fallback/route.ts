@@ -22,6 +22,9 @@ export async function POST(req: NextRequest) {
     const users = await prisma.user.findMany({
       where: {
         user_id: Number(userId),
+        installations: {
+          uninstalled_at: null,
+        },
       },
       include: {
         installations: true,

@@ -54,6 +54,7 @@ export default function Pricing() {
       });
 
       const res = await response.json();
+      createPortalOrCheckoutURL();
       router.push(res);
     } else {
       // If not, redirect to installation page

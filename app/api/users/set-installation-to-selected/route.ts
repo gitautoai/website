@@ -23,6 +23,9 @@ export async function POST(req: NextRequest) {
     await prisma.user.updateMany({
       where: {
         user_id: Number(userId),
+        installations: {
+          uninstalled_at: null,
+        },
       },
       data: {
         is_selected: false,

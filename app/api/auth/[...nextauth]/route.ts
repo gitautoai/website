@@ -13,6 +13,22 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user, profile }) {
+      try {
+        const isAlreadyUser: any[] = await prisma.user.findMany({
+          where: {
+            user_id: Number(user.id),
+          },
+        });
+        if (isAlreadyUser.length === 0) {
+          return "/redirect-to-install";
+        }
+        return true;
+      } catch (err) {
+        console.error(err);
+      }
+      return false;
+    },
     async session({ session, token }) {
       try {
         session.user.userId = Number(token.user_id);

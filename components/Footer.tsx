@@ -17,7 +17,7 @@ import {
 export default function Footer() {
   // Analytics
   const posthog = usePostHog();
-  const { userInfosSubscribed } = useAccountContext();
+  const { userInfosSubscribed, selectedIndex, userInfos } = useAccountContext();
 
   const iconSize = "2x";
 
@@ -66,10 +66,9 @@ export default function Footer() {
                 </a>
               </li>
               {/* If there is an active subscription, show "Manage Payment" */}
-              {userInfosSubscribed &&
-                userInfosSubscribed.some(
-                  (is_subscribed) => is_subscribed === true
-                ) && (
+              {selectedIndex != null &&
+                userInfosSubscribed &&
+                userInfosSubscribed[selectedIndex] === true && (
                   <li>
                     <Link
                       href="/?subscribe"

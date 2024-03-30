@@ -7,6 +7,7 @@ import { isTokenExpired } from "@/utils/auth";
 // Third Party
 import { signOut, useSession } from "next-auth/react";
 import useSWR from "swr";
+import { useRouter } from "next/navigation";
 
 const AccountContext = createContext<{
   userInfos: any; // All users, installations, owners associated with this github account
@@ -39,6 +40,7 @@ export function AccountContextWrapper({
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
+  const router = useRouter();
 
   // Get userId and jwtToken from session object
   useEffect(() => {
@@ -116,7 +118,7 @@ export function AccountContextWrapper({
         setSelectedIndex(newIndex);
       }
     }
-  }, [userInfos, selectedIndex, userId, jwtToken]);
+  }, [userInfos, selectedIndex, userId, jwtToken, router]);
 
   return (
     <AccountContext.Provider

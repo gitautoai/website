@@ -39,10 +39,37 @@ const variants = {
   },
 };
 
+const createPortalOrCheckoutURL = async (
+  userId: number | null,
+  jwtToken: string | null,
+  userInfos: any,
+  currentIndex: number
+) => {
+  const response = await fetch("api/stripe/create-portal-or-checkout-url", {
+    method: "POST",
+    body: JSON.stringify({
+      userId: userId,
+      jwtToken: jwtToken,
+      customerId:
+        userInfos[currentIndex].installations.owners.stripe_customer_id,
+      ownerType: userInfos[currentIndex].installations.owner_type,
+      ownerId: Number(
+        userInfos[currentIndex].installations.owner_id.replace("n", "")
+      ),
+      ownerName: userInfos[currentIndex].installations.owner_name,
+      userName: userInfos[currentIndex].user_name,
+    }),
+  });
+
+  const res = await response.json();
+  return await res.url;
+};
+
 const ProfileIcon = ({ session }: ProfileIconProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { selectedIndex, userInfosSubscribed } = useAccountContext();
+  const { userId, jwtToken, userInfos, selectedIndex, userInfosSubscribed } =
+    useAccountContext();
   const router = useRouter();
   return (
     <>
@@ -63,41 +90,31 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
           animate="open"
           exit="closed"
         >
-          {selectedIndex != null && userInfosSubscribed && (
-            <>
-              {userInfosSubscribed[selectedIndex] === true ? (
-                <MenuItem
-                  _hover={{
-                    bg: "none",
-                  }}
-                  _focus={{ bg: "none" }}
-                  _active={{ bg: "none" }}
+          {selectedIndex != null &&
+            userInfosSubscribed &&
+            userInfosSubscribed[selectedIndex] === true && (
+              <MenuItem
+                _hover={{
+                  bg: "none",
+                }}
+                _focus={{ bg: "none" }}
+                _active={{ bg: "none" }}
+              >
+                <span
+                  className={`link `}
+                  onClick={() =>
+                    createPortalOrCheckoutURL(
+                      userId,
+                      jwtToken,
+                      userInfos,
+                      selectedIndex
+                    )
+                  }
                 >
-                  <span
-                    className={`link `}
-                    onClick={() => router.push("/?subscribe")}
-                  >
-                    Manage Payment
-                  </span>
-                </MenuItem>
-              ) : (
-                <MenuItem
-                  _hover={{
-                    bg: "none",
-                  }}
-                  _focus={{ bg: "none" }}
-                  _active={{ bg: "none" }}
-                >
-                  <span
-                    className={`link `}
-                    onClick={() => router.push("/?subscribe")}
-                  >
-                    Subscribe
-                  </span>
-                </MenuItem>
-              )}
-            </>
-          )}
+                  Manage Payment
+                </span>
+              </MenuItem>
+            )}
 
           <MenuItem
             _hover={{
