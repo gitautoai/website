@@ -2,6 +2,7 @@
 import type { AppProps } from "next/app";
 
 import "@/styles/globals.css";
+import { Suspense } from "react";
 
 import { Comfortaa, Poppins, Lexend } from "next/font/google";
 
@@ -28,7 +29,9 @@ export default function App({
     <div
       className={`${comfortaa.variable} ${poppins.variable} ${lexend.variable} font-helvetica`}
     >
-      <Component {...pageProps} />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Component {...pageProps} />
+      </Suspense>
     </div>
   );
 }
