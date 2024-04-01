@@ -14,7 +14,6 @@ import UseCases from "@/components/HomePage/UseCases";
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-
 export default function Home() {
   const buttonStyles = `bg-pink text-white rounded-lg transition-colors 
   duration-200 text-md sm:text-lg xl:text-xl py-5 px-8 shadow-lg hover:shadow-lg 
@@ -47,9 +46,8 @@ export default function Home() {
                 </span>
                 &nbsp;a PR from an issue
               </h1>
-              <Link
-                href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
-                passHref
+              <a
+                href={process.env.NEXT_PUBLIC_GITHUB_APP_URL}
                 target="_blank"
                 onClick={() => {
                   posthog.capture("$click", {
@@ -67,7 +65,7 @@ export default function Home() {
                   className="invert"
                 />
                 Get Started for Free
-              </Link>
+              </a>
             </div>
           </div>
         </div>
