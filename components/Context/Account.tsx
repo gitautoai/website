@@ -65,7 +65,7 @@ export function AccountContextWrapper({
   let getUserInfoUrl = "";
   let getUserInfosSubscribed = "";
   if (userId && jwtToken) {
-    getUserInfoUrl = `api/users/get-user-info?userId=${userId}&jwtToken=${jwtToken}`;
+    getUserInfoUrl = `/api/users/get-user-info?userId=${userId}&jwtToken=${jwtToken}`;
   }
 
   const { data: userInfos, mutate: mutateUserInfos } = useSWR(
@@ -81,8 +81,8 @@ export function AccountContextWrapper({
     const customerIds = userInfos.map(
       (user: any) => user.installations.owners.stripe_customer_id
     );
-    const empty: string[] = [];
-    getUserInfosSubscribed = `api/stripe/get-userinfo-subscriptions?userId=${userId}&jwtToken=${jwtToken}&customerIds=${customerIds}`;
+
+    getUserInfosSubscribed = `/api/stripe/get-userinfo-subscriptions?userId=${userId}&jwtToken=${jwtToken}&customerIds=${customerIds}`;
   }
 
   const { data: userInfosSubscribed } = useSWR(
@@ -95,7 +95,7 @@ export function AccountContextWrapper({
 
   useEffect(() => {
     async function setInstallationFallback() {
-      await fetch("api/users/set-installation-fallback", {
+      await fetch("/api/users/set-installation-fallback", {
         method: "POST",
         body: JSON.stringify({
           userId: userId,

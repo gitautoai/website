@@ -17,7 +17,7 @@ export const createCheckoutSession = async ({
       {
         price: priceId,
         quantity: 1,
-        adjustable_quantity: { enabled: true, maximum: 999 },
+        adjustable_quantity: { enabled: true, maximum: 9999 },
       },
     ];
     /**

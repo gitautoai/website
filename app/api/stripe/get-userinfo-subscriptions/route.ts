@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const params = new URLSearchParams(url.searchParams);
+
     const { userId, jwtToken, customerIds } = schema.parse({
       userId: Number(params.get("userId")),
       jwtToken: params.get("jwtToken"),
@@ -27,7 +28,7 @@ export async function GET(req: NextRequest) {
     }
 
     // If no customerIds are passed, return an empty array
-    if (customerIds[0].length === 1) {
+    if (customerIds.length === 1 && customerIds[0].length === 0) {
       return NextResponse.json([], { status: 200 });
     }
 

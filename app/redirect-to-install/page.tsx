@@ -33,7 +33,7 @@ export default function Home() {
     }, 1000);
 
     const timeout = setTimeout(() => {
-      router.push("https://github.com/apps/gitauto-ai");
+      router.push(process.env.NEXT_PUBLIC_GITHUB_APP_URL as string);
     }, 4000);
 
     return () => {

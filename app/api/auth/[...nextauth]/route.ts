@@ -5,6 +5,8 @@ import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
 
+import { REDIRECT_GITHUB_APP_URL } from "@/lib/constants";
+
 const handler = NextAuth({
   providers: [
     GithubProvider({
@@ -21,7 +23,7 @@ const handler = NextAuth({
           },
         });
         if (isAlreadyUser.length === 0) {
-          return "/redirect-to-install";
+          return REDIRECT_GITHUB_APP_URL;
         }
         return true;
       } catch (err) {

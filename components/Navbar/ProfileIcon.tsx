@@ -45,7 +45,7 @@ const createPortalOrCheckoutURL = async (
   userInfos: any,
   currentIndex: number
 ) => {
-  const response = await fetch("api/stripe/create-portal-or-checkout-url", {
+  const response = await fetch("/api/stripe/create-portal-or-checkout-url", {
     method: "POST",
     body: JSON.stringify({
       userId: userId,

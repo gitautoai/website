@@ -41,3 +41,5 @@
 // export const NEXT_PUBLIC_POSTHOG_HOST =
 //   process.env.NEXT_PUBLIC_POSTHOG_HOST || "";
 // checkVar(NEXT_PUBLIC_POSTHOG_HOST, "NEXT_PUBLIC_POSTHOG_HOST");
+
+export const REDIRECT_GITHUB_APP_URL = "/redirect-to-install";

@@ -25,9 +25,9 @@ export default function Home() {
       });
     }
   }, [pathname, posthog]);
-	
+
   useEffect(() => {
-    router.push("https://github.com/apps/gitauto-ai");
+    router.push(process.env.NEXT_PUBLIC_GITHUB_APP_URL as string);
   });
   return (
     <>

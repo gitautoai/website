@@ -48,7 +48,7 @@ export default function Home() {
                 &nbsp;a PR from an issue
               </h1>
               <Link
-                href="https://github.com/apps/gitauto-ai"
+                href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
                 passHref
                 target="_blank"
                 onClick={() => {

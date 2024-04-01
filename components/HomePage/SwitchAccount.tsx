@@ -22,7 +22,7 @@ export default function SwitchAccount({
     useAccountContext();
 
   async function setInstalllationToSelected(newUserPrimaryId: string) {
-    const response = await fetch("api/users/set-installation-to-selected", {
+    const response = await fetch("/api/users/set-installation-to-selected", {
       method: "POST",
       body: JSON.stringify({
         userId: userId,

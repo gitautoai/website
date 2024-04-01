@@ -29,7 +29,7 @@ export default function Footer() {
             <ol className="flex gap-2">
               <li>
                 <Link
-                  href="https://github.com/apps/gitauto-ai"
+                  href="process.env.NEXT_PUBLIC_GITHUB_APP_URL as string
                   passHref
                   onClick={() => {
                     posthog.capture("$click", {
@@ -103,7 +103,7 @@ export default function Footer() {
           </span>
           <div className="flex items-center gap-5">
             <Link
-              href="https://github.com/apps/gitauto-ai"
+        href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
               passHref
               target="_blank"
               onClick={() => {
