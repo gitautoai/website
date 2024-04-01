@@ -25,7 +25,7 @@ export default function Footer() {
     <div className="flex flex-col w-full justify-center font-helvetica items-center bg-light shadow-lg pb-4">
       <div className="flex  w-[95vw]  sm:w-[80vw] 2xl:w-[1280px] flex-col justify-center ">
         <div className="flex flex-col gap-10 sm:gap-0 sm:flex-row items-center py-10 mt-auto w-full text-black text-lg font-helvetica justify-center ">
-          <div className="flex flex-wrap  gap-16 xl:gap-32 mx-auto w-auto ">
+          <div className="flex flex-wrap  gap-20 xl:gap-36 mx-auto w-auto ">
             <ol className="flex gap-2">
               <li>
                 <Link

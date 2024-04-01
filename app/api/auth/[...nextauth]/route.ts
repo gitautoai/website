@@ -5,8 +5,6 @@ import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
 
-import { REDIRECT_GITHUB_APP_URL } from "@/lib/constants";
-
 const handler = NextAuth({
   providers: [
     GithubProvider({
@@ -15,22 +13,6 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({ user, profile }) {
-      try {
-        const isAlreadyUser: any[] = await prisma.user.findMany({
-          where: {
-            user_id: Number(user.id),
-          },
-        });
-        if (isAlreadyUser.length === 0) {
-          return REDIRECT_GITHUB_APP_URL;
-        }
-        return true;
-      } catch (err) {
-        console.error(err);
-      }
-      return false;
-    },
     async session({ session, token }) {
       try {
         session.user.userId = Number(token.user_id);

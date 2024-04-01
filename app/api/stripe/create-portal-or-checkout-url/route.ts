@@ -11,6 +11,7 @@ const schema = z.object({
   userId: z.number(),
   jwtToken: z.string(),
   customerId: z.string(),
+  email: z.string().email(),
   ownerType: z.string(),
   ownerId: z.number(),
   ownerName: z.string(),
@@ -24,6 +25,7 @@ export async function POST(req: NextRequest) {
       userId,
       jwtToken,
       customerId,
+      email,
       ownerType,
       ownerId,
       ownerName,
@@ -53,6 +55,7 @@ export async function POST(req: NextRequest) {
       }
       session = await createCheckoutSession({
         customerId,
+        email: email,
         priceId: priceId,
         metadata: {
           userId: userId,

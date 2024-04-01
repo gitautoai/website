@@ -5,10 +5,12 @@ import stripe from "@/lib/stripe";
  */
 export const createCheckoutSession = async ({
   customerId,
+  email,
   priceId,
   metadata,
 }: {
   customerId: string;
+  email: string;
   priceId: string;
   metadata: any;
 }) => {
@@ -27,13 +29,11 @@ export const createCheckoutSession = async ({
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items,
       mode: "subscription", // "subscription" or "payment" or "setup"
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}?canceled=true`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout-success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout-failure`,
       client_reference_id: customerId,
       currency: "usd",
-      customer: customerId,
       metadata: metadata,
-
       // More parameters are available here:
       after_expiration: {
         recovery: {
@@ -46,12 +46,7 @@ export const createCheckoutSession = async ({
       consent_collection: {
         terms_of_service: "none", // "none" or "required". We set "none" because Google Pay and Apple Pay are not supported in case of "required"
       },
-      customer_update: customerId
-        ? {
-            address: "auto", // "never" or "auto"
-            name: "auto", // "never" or "auto"
-          }
-        : undefined,
+      customer_email: email,
       payment_method_collection: "always", // "always" or "if_required"
       subscription_data: {
         description: "This subscription was created from Checkout Session",

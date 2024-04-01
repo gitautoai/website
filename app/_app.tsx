@@ -1,8 +1,6 @@
 "use client";
 import type { AppProps } from "next/app";
 
-import "@/styles/globals.css";
-
 import { Comfortaa, Poppins, Lexend } from "next/font/google";
 
 const comfortaa = Comfortaa({

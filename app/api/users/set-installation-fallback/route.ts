@@ -32,6 +32,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    // If no users found, return success
+    if (users.length === 0) {
+      return NextResponse.json({ messsage: "Success" }, { status: 200 });
+    }
+
     // owner_type == "U" comes first in the list of users, then sort by created at
     users.sort((a: any, b: any) => {
       if (

@@ -8,6 +8,7 @@ import { isTokenExpired } from "@/utils/auth";
 import { signOut, useSession } from "next-auth/react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
+import { REDIRECT_GITHUB_APP_URL } from "@/lib/constants";
 
 const AccountContext = createContext<{
   userInfos: any; // All users, installations, owners associated with this github account
@@ -16,6 +17,7 @@ const AccountContext = createContext<{
   selectedIndex: number | null; // Index of selected account
   setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
   userId: number | null;
+  email: string | null;
   jwtToken: string | null;
 }>({
   userInfos: null,
@@ -28,6 +30,7 @@ const AccountContext = createContext<{
     ("");
   },
   userId: null,
+  email: null,
   jwtToken: null,
 });
 
@@ -39,6 +42,7 @@ export function AccountContextWrapper({
   const { data: session } = useSession();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
+  const [email, setEmail] = useState<string | null>("");
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const router = useRouter();
 
@@ -50,9 +54,11 @@ export function AccountContextWrapper({
         session.user &&
         session.jwtToken &&
         session.user.name &&
-        session.user.image
+        session.user.image &&
+        session.user.email
       ) {
         setUserId(session.user.userId);
+        setEmail(session.user.email);
         if (isTokenExpired(session.jwtToken)) {
           signOut({ callbackUrl: "/" });
         }
@@ -120,6 +126,13 @@ export function AccountContextWrapper({
     }
   }, [userInfos, selectedIndex, userId, jwtToken, router]);
 
+  // If user has no accounts, redirect to github app
+  useEffect(() => {
+    if (userInfos && userInfos.length === 0) {
+      router.push(REDIRECT_GITHUB_APP_URL);
+    }
+  }, [userInfos, router]);
+
   return (
     <AccountContext.Provider
       value={{
@@ -129,6 +142,7 @@ export function AccountContextWrapper({
         selectedIndex,
         setSelectedIndex,
         userId: userId as number | null,
+        email,
         jwtToken,
       }}
     >

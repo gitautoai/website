@@ -33,8 +33,8 @@ export default function Home() {
     }, 1000);
 
     const timeout = setTimeout(() => {
-      router.push(process.env.NEXT_PUBLIC_GITHUB_APP_URL as string);
-    }, 5000);
+      router.push("/");
+    }, 4000);
 
     return () => {
       clearInterval(intervalId);
@@ -46,12 +46,8 @@ export default function Home() {
     <div className="bg-light text-black ">
       <div className="min-h-[calc(100vh-232px)]">
         <div className="flex flex-col justify-center items-center  text-2xl gap-10">
-          <span className="mt-16">
-            You have not installed our GitHub Marketplace App.
-          </span>
-          <span>
-            Please wait while we redirect you to the installation page...
-          </span>
+          <span className="mt-16">You have successfully subscribed!</span>
+          <span>Please wait while we redirect you to the home page...</span>
           <span>You will be redirecting in {timeLeft} seconds</span>
         </div>
       </div>

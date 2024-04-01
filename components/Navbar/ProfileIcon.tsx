@@ -17,60 +17,51 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-const MotionMenuList = motion(MenuList);
-
 interface ProfileIconProps {
   session: Session | null;
 }
-const variants = {
-  open: {
-    opacity: 1,
-    y: 0,
-    display: "block",
-    transition: { duration: 1 },
-  },
-  closed: {
-    opacity: 0,
-    y: -20,
-    transitionEnd: {
-      display: "none",
-    },
-    transition: { duration: 1 },
-  },
-};
-
-const createPortalOrCheckoutURL = async (
-  userId: number | null,
-  jwtToken: string | null,
-  userInfos: any,
-  currentIndex: number
-) => {
-  const response = await fetch("/api/stripe/create-portal-or-checkout-url", {
-    method: "POST",
-    body: JSON.stringify({
-      userId: userId,
-      jwtToken: jwtToken,
-      customerId:
-        userInfos[currentIndex].installations.owners.stripe_customer_id,
-      ownerType: userInfos[currentIndex].installations.owner_type,
-      ownerId: Number(
-        userInfos[currentIndex].installations.owner_id.replace("n", "")
-      ),
-      ownerName: userInfos[currentIndex].installations.owner_name,
-      userName: userInfos[currentIndex].user_name,
-    }),
-  });
-
-  const res = await response.json();
-  return await res.url;
-};
 
 const ProfileIcon = ({ session }: ProfileIconProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { userId, jwtToken, userInfos, selectedIndex, userInfosSubscribed } =
-    useAccountContext();
+  const {
+    userId,
+    jwtToken,
+    email,
+    userInfos,
+    selectedIndex,
+    userInfosSubscribed,
+  } = useAccountContext();
+
   const router = useRouter();
+
+  const createPortalOrCheckoutURL = async (
+    userId: number | null,
+    jwtToken: string | null,
+    userInfos: any,
+    currentIndex: number
+  ) => {
+    const response = await fetch("/api/stripe/create-portal-or-checkout-url", {
+      method: "POST",
+      body: JSON.stringify({
+        userId: userId,
+        jwtToken: jwtToken,
+        customerId:
+          userInfos[currentIndex].installations.owners.stripe_customer_id,
+        email: email,
+        ownerType: userInfos[currentIndex].installations.owner_type,
+        ownerId: Number(
+          userInfos[currentIndex].installations.owner_id.replace("n", "")
+        ),
+        ownerName: userInfos[currentIndex].installations.owner_name,
+        userName: userInfos[currentIndex].user_name,
+      }),
+    });
+
+    const res = await response.json();
+    router.push(res);
+  };
+
   return (
     <>
       <Menu isLazy>
@@ -84,12 +75,7 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
             src={session?.user?.image || ""}
           />
         </MenuButton>
-        <MotionMenuList
-          variants={variants}
-          initial="closed"
-          animate="open"
-          exit="closed"
-        >
+        <MenuList>
           {selectedIndex != null &&
             userInfosSubscribed &&
             userInfosSubscribed[selectedIndex] === true && (
@@ -122,10 +108,9 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
             }}
             _focus={{ bg: "none" }}
             _active={{ bg: "none" }}
+            onClick={onOpen}
           >
-            <span className={`link `} onClick={onOpen}>
-              Switch Account
-            </span>
+            <span className={`link`}>Switch Account</span>
           </MenuItem>
 
           <MenuItem
@@ -134,11 +119,12 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
             }}
             _focus={{ bg: "none" }}
             _active={{ bg: "none" }}
+            className="link"
             onClick={() => signOut({ callbackUrl: "/" })}
           >
-            <span className="link">Sign Out</span>
+            Sign Out
           </MenuItem>
-        </MotionMenuList>
+        </MenuList>
       </Menu>
       <SwitchAccount isOpen={isOpen} onClose={onClose} />
     </>

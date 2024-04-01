@@ -24,7 +24,14 @@ export default function Pricing() {
   // Analytics
   const posthog = usePostHog();
 
-  const { userId, jwtToken, selectedIndex, userInfos } = useAccountContext();
+  const {
+    userId,
+    jwtToken,
+    email,
+    selectedIndex,
+    userInfos,
+    userInfosSubscribed,
+  } = useAccountContext();
 
   const router = useRouter();
 
@@ -38,21 +45,25 @@ export default function Pricing() {
     }
     // If user has an installation, create portal or checkout session
     if (userInfos && userInfos.length > 0) {
-      const response = await fetch("/api/stripe/create-portal-or-checkout-url", {
-        method: "POST",
-        body: JSON.stringify({
-          userId: userId,
-          jwtToken: jwtToken,
-          customerId:
-            userInfos[currentIndex].installations.owners.stripe_customer_id,
-          ownerType: userInfos[currentIndex].installations.owner_type,
-          ownerId: Number(
-            userInfos[currentIndex].installations.owner_id.replace("n", "")
-          ),
-          ownerName: userInfos[currentIndex].installations.owner_name,
-          userName: userInfos[currentIndex].user_name,
-        }),
-      });
+      const response = await fetch(
+        "/api/stripe/create-portal-or-checkout-url",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            userId: userId,
+            jwtToken: jwtToken,
+            customerId:
+              userInfos[currentIndex].installations.owners.stripe_customer_id,
+            email: email,
+            ownerType: userInfos[currentIndex].installations.owner_type,
+            ownerId: Number(
+              userInfos[currentIndex].installations.owner_id.replace("n", "")
+            ),
+            ownerName: userInfos[currentIndex].installations.owner_name,
+            userName: userInfos[currentIndex].user_name,
+          }),
+        }
+      );
 
       const res = await response.json();
       createPortalOrCheckoutURL();
@@ -151,7 +162,11 @@ export default function Pricing() {
                   isSubscribeLoading && "opacity-0 pointer-events-none"
                 }`}
               >
-                Subscribe
+                {selectedIndex != null &&
+                userInfosSubscribed &&
+                userInfosSubscribed[selectedIndex] === true
+                  ? "Manage Plan"
+                  : "Subscribe"}
               </button>
               {isSubscribeLoading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-white opacity-50 rounded-lg my-8 py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed ">
