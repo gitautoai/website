@@ -46,17 +46,10 @@ export async function POST(req: NextRequest) {
       });
       if (!session.url) throw new Error("No billing portal URL found");
     } else {
-      let priceId = "";
-      if (ownerType === "U") {
-        priceId = process.env.STRIPE_USER_PRICE_ID as string;
-      }
-      if (ownerType === "O") {
-        priceId = process.env.STRIPE_ORGANIZATION_PRICE_ID as string;
-      }
       session = await createCheckoutSession({
         customerId,
         email: email,
-        priceId: priceId,
+        priceId: process.env.STRIPE_STANDARD_PLAN_PRICE_ID || "",
         metadata: {
           userId: userId,
           userName: userName,

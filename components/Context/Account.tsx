@@ -42,7 +42,7 @@ export function AccountContextWrapper({
   const { data: session } = useSession();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
-  const [email, setEmail] = useState<string | null>("");
+  const [email, setEmail] = useState<string | null>();
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const router = useRouter();
 

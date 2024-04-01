@@ -19,7 +19,7 @@ export const createCheckoutSession = async ({
       {
         price: priceId,
         quantity: 1,
-        adjustable_quantity: { enabled: true, maximum: 9999 },
+        adjustable_quantity: { enabled: true, maximum: 999999 },
       },
     ];
     /**
@@ -29,11 +29,12 @@ export const createCheckoutSession = async ({
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items,
       mode: "subscription", // "subscription" or "payment" or "setup"
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout-success`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/checkout-failure`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success=false`,
       client_reference_id: customerId,
       currency: "usd",
       metadata: metadata,
+      customer: customerId,
       // More parameters are available here:
       after_expiration: {
         recovery: {
@@ -46,7 +47,7 @@ export const createCheckoutSession = async ({
       consent_collection: {
         terms_of_service: "none", // "none" or "required". We set "none" because Google Pay and Apple Pay are not supported in case of "required"
       },
-      customer_email: email,
+      // customer_email: email, // TODO To Implement and test in KAN-146
       payment_method_collection: "always", // "always" or "if_required"
       subscription_data: {
         description: "This subscription was created from Checkout Session",
