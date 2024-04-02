@@ -48,6 +48,12 @@ export const createCheckoutSession = async ({
         terms_of_service: "none", // "none" or "required". We set "none" because Google Pay and Apple Pay are not supported in case of "required"
       },
       // customer_email: email, // TODO To Implement and test in KAN-146
+      customer_update: customerId
+        ? {
+            address: "auto", // "never" or "auto"
+            name: "auto", // "never" or "auto"
+          }
+        : undefined,
       payment_method_collection: "always", // "always" or "if_required"
       subscription_data: {
         description: "This subscription was created from Checkout Session",
