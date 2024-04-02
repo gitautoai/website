@@ -29,8 +29,8 @@ export const createCheckoutSession = async ({
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items,
       mode: "subscription", // "subscription" or "payment" or "setup"
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/success=false`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}?success=false`,
       client_reference_id: customerId,
       currency: "usd",
       metadata: metadata,
