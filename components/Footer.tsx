@@ -31,6 +31,7 @@ export default function Footer() {
                 <Link
                   href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
                   passHref
+                  target="_blank"
                   onClick={() => {
                     posthog.capture("$click", {
                       $event_type: "github_app_install",
