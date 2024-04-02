@@ -119,10 +119,9 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
             }}
             _focus={{ bg: "none" }}
             _active={{ bg: "none" }}
-      
             onClick={() => signOut({ callbackUrl: "/" })}
           >
-            <span className="link">Sign Out
+            <span className="link">Sign Out</span>
           </MenuItem>
         </MenuList>
       </Menu>
