@@ -141,7 +141,7 @@ export function AccountContextWrapper({
         userInfosSubscribed,
         selectedIndex,
         setSelectedIndex,
-        userId: userId as number | null,
+        userId,
         email,
         jwtToken,
       }}
