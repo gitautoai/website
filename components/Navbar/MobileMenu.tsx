@@ -151,7 +151,7 @@ export default function MobileDrawer({
                       });
                     }}
                     className="bg-white border border-pink text-black rounded-lg transition-colors duration-200
-                py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover mr-5"
+                py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover"
                   >
                     Sign In
                   </motion.button>
