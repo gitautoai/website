@@ -4,6 +4,7 @@ import { Suspense } from "react";
 // Styles
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
+import "@/styles/styles.css";
 
 // Components
 import Navbar from "@/components/Navbar";

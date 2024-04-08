@@ -12,7 +12,7 @@ import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 
 // Third Party
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
 
 import { motion } from "framer-motion";
@@ -133,7 +133,12 @@ export default function Navbar() {
             )}
             {status === "authenticated" && <ProfileIcon session={session} />}
           </ol>
-          <HamburgerMenu setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />
+          <HamburgerMenu
+            setIsNavOpen={setIsNavOpen}
+            isNavOpen={isNavOpen}
+            session={session}
+            status={status}
+          />
           <MobileDrawer
             setIsNavOpen={setIsNavOpen}
             isNavOpen={isNavOpen}

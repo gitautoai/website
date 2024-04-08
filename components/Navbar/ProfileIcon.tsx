@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+
 // components
 import SwitchAccount from "@/components/HomePage/SwitchAccount";
 import { useAccountContext } from "@/components/Context/Account";
@@ -8,7 +9,7 @@ import { useAccountContext } from "@/components/Context/Account";
 // Third Party
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
-import { motion } from "framer-motion";
+
 import {
   Menu,
   MenuButton,
@@ -102,16 +103,18 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
               </MenuItem>
             )}
 
-          <MenuItem
-            _hover={{
-              bg: "none",
-            }}
-            _focus={{ bg: "none" }}
-            _active={{ bg: "none" }}
-            onClick={onOpen}
-          >
-            <span className={`link`}>Switch Account</span>
-          </MenuItem>
+          {userInfos && userInfos.length > 0 && (
+            <MenuItem
+              _hover={{
+                bg: "none",
+              }}
+              _focus={{ bg: "none" }}
+              _active={{ bg: "none" }}
+              onClick={onOpen}
+            >
+              <span className={`link`}>Switch Account</span>
+            </MenuItem>
+          )}
 
           <MenuItem
             _hover={{
