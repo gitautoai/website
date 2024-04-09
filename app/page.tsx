@@ -8,44 +8,16 @@ import Link from "next/link";
 // Components
 import Footer from "@/components/Footer";
 import Pricing from "@/components/HomePage/Pricing";
-
-// Animation
-import { motion } from "framer-motion";
+import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
+import UseCases from "@/components/HomePage/UseCases";
 
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
-import UseCases from "@/components/HomePage/UseCases";
-
-const childVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-    },
-  },
-};
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
 export default function Home() {
-  const personTypeButtonStyles = `bg-pink text-white rounded-lg transition-colors 
+  const buttonStyles = `bg-pink text-white rounded-lg transition-colors 
   duration-200 text-md sm:text-lg xl:text-xl py-5 px-8 shadow-lg hover:shadow-lg 
   cursor-pointer hover:bg-pinkHover font-semibold text-center md:w-auto`;
-
-  const modalButtonStyles = `bg-pink text-white rounded-lg transition-colors duration-200 text-md sm:text-lg xl:text-xl
-  py-5 px-8 shadow-md hover:shadow-lg cursor-pointer hover:bg-pinkHover font-bold`;
 
   // Analytics
   const pathname = usePathname();
@@ -59,27 +31,6 @@ export default function Home() {
       });
     }
   }, [pathname, posthog]);
-
-  // const stripe = useStripe();
-  // const elements = useElements();
-  // const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-  //   const cardElement = elements?.getElement("card");
-
-  //   try {
-  //     if (!stripe || !cardElement) return null;
-  //     const { data } = await axios.post("/api/create-payment-intent", {
-  //       data: { amount: 89 },
-  //     });
-  //     const clientSecret = data;
-
-  //     await stripe?.confirmCardPayment(clientSecret, {
-  //       payment_method: { card: cardElement },
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   return (
     <div className="h-[calc(100vh-73px)] bg-light text-black ">
@@ -95,9 +46,8 @@ export default function Home() {
                 </span>
                 &nbsp;a PR from an issue
               </h1>
-              <Link
-                href="https://github.com/apps/gitauto-ai"
-                passHref
+              <a
+                href={process.env.NEXT_PUBLIC_GITHUB_APP_URL}
                 target="_blank"
                 onClick={() => {
                   posthog.capture("$click", {
@@ -105,16 +55,17 @@ export default function Home() {
                     $current_url: window.location.href,
                   });
                 }}
-                className={`${personTypeButtonStyles} mx-auto mt-8 flex items-center gap-2`}
+                className={`${buttonStyles} mx-auto mt-8 flex items-center gap-2`}
               >
                 <Image
                   src="/icons/github.svg"
                   width={30}
                   height={30}
                   alt="Github Logo"
+                  className="invert"
                 />
                 Get Started for Free
-              </Link>
+              </a>
             </div>
           </div>
         </div>
@@ -127,6 +78,7 @@ export default function Home() {
         </div>
 
         <UseCases />
+
         <HowToGetStarted />
 
         <Pricing />
@@ -163,7 +115,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       <Footer />
     </div>
   );

@@ -1,8 +1,23 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+
+// Styles
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
+import "@/styles/styles.css";
+
+// Components
 import Navbar from "@/components/Navbar";
 import { PHProvider } from "@/components/PostHog";
+import SessionProvider from "@/components/SessionProvider";
+import { AccountContextWrapper } from "@/components/Context/Account";
+
+// 3rd Party Styles
+import { Providers } from "./providers";
+
+// Analytics
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -41,7 +56,8 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://gitauto.ai"),
   openGraph: {
     title: "GitAuto",
-    description: "AI engineer that generates GitHub PRs from issues",
+    description:
+      "GitAuto is an AI engineer that generates GitHub PRs from issues.",
     url: "https://gitauto.ai",
     siteName: "GitAuto",
     images: [
@@ -53,6 +69,18 @@ export const metadata: Metadata = {
     ],
     locale: "en_US",
     type: "website",
+  },
+  twitter: {
+    site: "@gitautoai",
+    creator: "@hnishio0105",
+    description:
+      "GitAuto is an AI engineer that generates GitHub PRs from issues.",
+    title: "GitAuto",
+    images: {
+      url: "https://gitauto.ai/og-logo.png", // Must be an absolute URL
+      width: 1200,
+      height: 630,
+    },
   },
   robots: {
     index: false,
@@ -77,9 +105,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <PHProvider>
-        <body className={inter.className}>
-          <Navbar />
-          {children}
+        <body className={`${inter.className} min-h-full`}>
+          <Suspense>
+            <SessionProvider>
+              <AccountContextWrapper>
+                <Providers>
+                  <Navbar />
+                  {children}
+                  <SpeedInsights />
+                  <Analytics mode={"production"} />
+                </Providers>
+              </AccountContextWrapper>
+            </SessionProvider>
+          </Suspense>
         </body>
       </PHProvider>
     </html>

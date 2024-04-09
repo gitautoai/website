@@ -1,17 +1,116 @@
+"use client";
 // Next imports
 import Link from "next/link";
 import Image from "next/image";
-
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useCallback, useEffect } from "react";
 // Analytics
 import { usePostHog } from "posthog-js/react";
+
+// Components
+import { useAccountContext } from "@/components/Context/Account";
+
+// Third Party
+import { signIn } from "next-auth/react";
+
+import { Spinner } from "@chakra-ui/react";
+import { REDIRECT_GITHUB_APP_URL } from "@/lib/constants";
+
+const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
+text-md sm:text-lg xl:text-xl py-3 w-[250px] sm:w-[315px] lg:w-[210px] shadow-lg hover:shadow-lg 
+cursor-pointer font-semibold text-center mx-auto `;
 
 export default function Pricing() {
   // Analytics
   const posthog = usePostHog();
 
-  const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
-  text-md sm:text-lg xl:text-xl py-3 w-[250px] sm:w-[315px] lg:w-[210px] shadow-lg hover:shadow-lg 
-  cursor-pointer font-semibold text-center mx-auto `;
+  const {
+    userId,
+    jwtToken,
+    email,
+    selectedIndex,
+    userInfos,
+    userInfosSubscribed,
+  } = useAccountContext();
+
+  const router = useRouter();
+
+  const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
+  const searchParams = useSearchParams();
+
+  const createPortalOrCheckoutURL = useCallback(async () => {
+    let currentIndex = 0;
+    if (selectedIndex) {
+      currentIndex = selectedIndex;
+    }
+    // If user has an installation, create portal or checkout session
+    if (userInfos && userInfos.length > 0) {
+      const response = await fetch(
+        "/api/stripe/create-portal-or-checkout-url",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            userId: userId,
+            jwtToken: jwtToken,
+            customerId:
+              userInfos[currentIndex].installations.owners.stripe_customer_id,
+            email: email,
+            ownerType: userInfos[currentIndex].installations.owner_type,
+            ownerId: Number(
+              userInfos[currentIndex].installations.owner_id.replace("n", "")
+            ),
+            ownerName: userInfos[currentIndex].installations.owner_name,
+            userName: userInfos[currentIndex].user_name,
+          }),
+        }
+      );
+
+      const res = await response.json();
+      createPortalOrCheckoutURL();
+      router.push(res);
+    } else {
+      // If not, redirect to installation page
+      router.push(REDIRECT_GITHUB_APP_URL);
+    }
+  }, [jwtToken, router, selectedIndex, userId, userInfos]);
+
+  // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
+  async function handleSubscribe() {
+    setIsSubscribeLoading(true);
+    posthog.capture("$click", {
+      $event_type: "subscribe",
+      $current_url: window.location.href,
+    });
+    if (userId && jwtToken) {
+      // Has at least one installation
+      if (userInfos && userInfos.length > 0) {
+        createPortalOrCheckoutURL();
+      } else {
+        // Signed in but no intallation
+        router.push(REDIRECT_GITHUB_APP_URL);
+      }
+    } else {
+      // Not signed in, prompt sign in
+      await signIn("github", {
+        callbackUrl: `/?subscribe`,
+      });
+    }
+  }
+
+  // If "subscribe" in query parameter create checkout session or portal
+  useEffect(() => {
+    if (searchParams.has("subscribe") && userInfos) {
+      createPortalOrCheckoutURL();
+    }
+  }, [
+    searchParams,
+    userInfos,
+    selectedIndex,
+    userId,
+    jwtToken,
+    router,
+    createPortalOrCheckoutURL,
+  ]);
 
   return (
     <div className="w-[100vw] bg-white flex justify-center">
@@ -27,7 +126,7 @@ export default function Pricing() {
             <h3 className="text-3xl">$0</h3>
             <span className="mt-2 text-xl">Free</span>
             <Link
-              href="https://github.com/apps/gitauto-ai"
+              href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
               passHref
               target="_blank"
               onClick={() => {
@@ -42,6 +141,7 @@ export default function Pricing() {
                 src="/icons/github.svg"
                 width={30}
                 height={30}
+                className="invert"
                 alt="Github Logo"
               />
               Install
@@ -53,20 +153,27 @@ export default function Pricing() {
           <div className="flex flex-col rounded-xl p-4 sm:p-5 mb-5">
             <h3 className="text-3xl">$19/user/mo</h3>
             <span className="mt-2 text-xl">Standard</span>
-            <Link
-              href="https://buy.stripe.com/4gw15W4HNaBccWkcMM"
-              passHref
-              onClick={() => {
-                posthog.capture("$click", {
-                  $event_type: "purchase",
-                  $current_url: window.location.href,
-                });
-              }}
-              className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black`}
-            >
-              Purchase
-            </Link>
-
+            <div className="relative items-center">
+              <button
+                onClick={() => {
+                  handleSubscribe();
+                }}
+                className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black  ${
+                  isSubscribeLoading && "opacity-0 pointer-events-none"
+                }`}
+              >
+                {selectedIndex != null &&
+                userInfosSubscribed &&
+                userInfosSubscribed[selectedIndex] === true
+                  ? "Manage Plan"
+                  : "Subscribe"}
+              </button>
+              {isSubscribeLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white opacity-50 rounded-lg my-8 py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed ">
+                  <Spinner size="md" color="pink" />
+                </div>
+              )}
+            </div>
             <div className="flex flex-col">
               <span>&bull; 30 issues per month</span>
             </div>
@@ -78,7 +185,7 @@ export default function Pricing() {
               href="mailto:info@gitauto.ai"
               passHref
               target="_blank"
-              onClick={() => {
+              onClick={(event) => {
                 posthog.capture("$click", {
                   $event_type: "contact_us",
                   $current_url: window.location.href,

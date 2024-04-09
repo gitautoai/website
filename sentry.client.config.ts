@@ -4,6 +4,8 @@
 
 import * as Sentry from "@sentry/nextjs";
 
+// import { NODE_ENV } from "@/lib/constants";
+
 Sentry.init({
   dsn: "https://edc3c897ec77dbdf06de9dd08f70513b@o4506827828101120.ingest.us.sentry.io/4506827829346304",
 
