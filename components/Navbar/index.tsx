@@ -2,13 +2,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 // Components
 import HamburgerMenu from "./hamburgerMenu";
 import MobileDrawer from "./MobileMenu";
 
 // Analytics
-import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 
 // Third Party
@@ -39,6 +39,8 @@ export default function Navbar() {
       });
     }
   }, [pathname, posthog]);
+
+  if (pathname === "/privacy-policy") return null;
 
   return (
     <div className="flex flex-col w-full justify-center items-center font-helvetica font-normal  bg-white text-black sm:text-md xl:text-lg">

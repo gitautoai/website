@@ -21,14 +21,6 @@
 // checkVar(NEXTAUTH_SECRET, "NEXTAUTH_SECRET");
 
 // // Stripe
-// export const NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY =
-//   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "";
-// checkVar(
-//   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-//   "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
-// );
-// export const STRIPE_API_VERSION = process.env.STRIPE_API_VERSION || "";
-// checkVar(STRIPE_API_VERSION, "STRIPE_API_VERSION");
 // export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
 // checkVar(STRIPE_SECRET_KEY, "STRIPE_SECRET_KEY");
 // export const NEXT_PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";

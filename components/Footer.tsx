@@ -66,6 +66,20 @@ export default function Footer() {
                   Pricing
                 </a>
               </li>
+              <li>
+                <Link
+                  href="/privacy-policy"
+                  onClick={() => {
+                    posthog.capture("$click", {
+                      $event_type: "privacy_policy",
+                      $current_url: window.location.href,
+                    });
+                  }}
+                  className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
               {/* If there is an active subscription, show "Manage Payment" */}
               {selectedIndex != null &&
                 userInfosSubscribed &&
