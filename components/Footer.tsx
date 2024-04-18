@@ -70,6 +70,7 @@ export default function Footer() {
               <li>
                 <Link
                   href={config.PRIVACY_POLICY_URL}
+                  target="_blank"
                   onClick={() => {
                     posthog.capture("$click", {
                       $event_type: "privacy_policy",
