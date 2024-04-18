@@ -25,6 +25,16 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </h3>
     ),
+    a: ({ href, children }) => (
+      <a
+        href={href}
+        target="_blank"
+        rel="noreferer noopener"
+        className="cursor-pointer"
+      >
+        <u>{children}</u>
+      </a>
+    ),
     ol: ({ children }) => (
       <ol type="1" style={{ fontSize: "16px", listStyleType: "decimal" }}>
         {children}
@@ -47,17 +57,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       >
         {children}
       </li>
-    ),
-    table: ({ children }) => (
-      <table className="table-auto border-x border-b">{children}</table>
-    ),
-    th: ({ children }) => (
-      <th className="font-bold p-2 border-b border-l border-indigo-700 text-left bg-indigo-700 text-white">
-        {children}
-      </th>
-    ),
-    td: ({ children }) => (
-      <td className="p-2 border-b border-l text-left">{children}</td>
     ),
 
     ...components,
