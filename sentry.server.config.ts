@@ -3,6 +3,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
+import config from "./config";
 // import { NODE_ENV } from "@/lib/constants";
 
 Sentry.init({
@@ -10,7 +11,7 @@ Sentry.init({
 
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1,
-  enabled: process.env.NODE_ENV === "production",
+  enabled: config.NODE_ENV === "production",
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   debug: false,

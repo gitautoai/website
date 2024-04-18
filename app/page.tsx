@@ -14,6 +14,7 @@ import UseCases from "@/components/HomePage/UseCases";
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
+import config from "@/config";
 export default function Home() {
   const buttonStyles = `bg-pink text-white rounded-lg transition-colors 
   duration-200 text-md sm:text-lg xl:text-xl py-5 px-8 shadow-lg hover:shadow-lg 
@@ -47,7 +48,7 @@ export default function Home() {
                 &nbsp;a PR from an issue
               </h1>
               <a
-                href={process.env.NEXT_PUBLIC_GITHUB_APP_URL}
+                href={config.NEXT_PUBLIC_GITHUB_APP_URL}
                 target="_blank"
                 onClick={() => {
                   posthog.capture("$click", {

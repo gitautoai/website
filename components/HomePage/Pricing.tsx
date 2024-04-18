@@ -14,7 +14,7 @@ import { useAccountContext } from "@/components/Context/Account";
 import { signIn } from "next-auth/react";
 
 import { Spinner } from "@chakra-ui/react";
-import { REDIRECT_GITHUB_APP_URL } from "@/lib/constants";
+import config from "@/config";
 
 const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
 text-md sm:text-lg xl:text-xl py-3 w-[250px] sm:w-[315px] lg:w-[210px] shadow-lg hover:shadow-lg 
@@ -70,7 +70,7 @@ export default function Pricing() {
       router.push(res);
     } else {
       // If not, redirect to installation page
-      router.push(REDIRECT_GITHUB_APP_URL);
+      router.push(config.REDIRECT_GITHUB_APP_URL);
     }
   }, [jwtToken, router, selectedIndex, userId, userInfos]);
 
@@ -87,7 +87,7 @@ export default function Pricing() {
         createPortalOrCheckoutURL();
       } else {
         // Signed in but no intallation
-        router.push(REDIRECT_GITHUB_APP_URL);
+        router.push(config.REDIRECT_GITHUB_APP_URL);
       }
     } else {
       // Not signed in, prompt sign in
@@ -126,7 +126,7 @@ export default function Pricing() {
             <h3 className="text-3xl">$0</h3>
             <span className="mt-2 text-xl">Free</span>
             <Link
-              href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
+              href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
               passHref
               target="_blank"
               onClick={() => {

@@ -4,12 +4,13 @@ import prisma from "@/lib/client";
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
+import config from "@/config";
 
 const handler = NextAuth({
   providers: [
     GithubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+      clientId: config.GITHUB_CLIENT_ID as string,
+      clientSecret: config.GITHUB_CLIENT_SECRET as string,
     }),
   ],
   callbacks: {
@@ -24,7 +25,7 @@ const handler = NextAuth({
     },
     async jwt({ token, account, user }) {
       if (user) {
-        token.jwtToken = sign(user, process.env.JWT_SECRET as string, {
+        token.jwtToken = sign(user, config.JWT_SECRET as string, {
           algorithm: "HS256",
           expiresIn: "100d",
         });
@@ -36,7 +37,7 @@ const handler = NextAuth({
     },
   },
   debug: true,
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: config.NEXTAUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };

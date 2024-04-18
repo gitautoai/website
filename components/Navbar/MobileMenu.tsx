@@ -13,6 +13,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useDisclosure } from "@chakra-ui/react";
 import SwitchAccount from "../HomePage/SwitchAccount";
+import config from "@/config";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -121,7 +122,7 @@ export default function MobileDrawer({
               <>
                 <li>
                   <Link
-                    href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
+                    href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
                     passHref
                     target="_blank"
                     onClick={() => {

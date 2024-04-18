@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
+import config from "@/config";
 
 export default function Home() {
   const router = useRouter();
@@ -33,7 +34,7 @@ export default function Home() {
     }, 1000);
 
     const timeout = setTimeout(() => {
-      router.push(process.env.NEXT_PUBLIC_GITHUB_APP_URL as string);
+      router.push(config.NEXT_PUBLIC_GITHUB_APP_URL as string);
     }, 5000);
 
     return () => {

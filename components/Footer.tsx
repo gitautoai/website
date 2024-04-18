@@ -13,7 +13,7 @@ import {
   faLinkedin,
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
-import { PRIVACY_POLICY_URL } from "@/lib/constants";
+import config from "@/config";
 
 export default function Footer() {
   // Analytics
@@ -30,7 +30,7 @@ export default function Footer() {
             <ol className="flex gap-5">
               <li>
                 <Link
-                  href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
+                  href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
                   passHref
                   target="_blank"
                   onClick={() => {
@@ -69,7 +69,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href={PRIVACY_POLICY_URL}
+                  href={config.PRIVACY_POLICY_URL}
                   onClick={() => {
                     posthog.capture("$click", {
                       $event_type: "privacy_policy",
@@ -119,7 +119,7 @@ export default function Footer() {
           </span>
           <div className="flex items-center gap-5">
             <Link
-              href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
+              href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
               passHref
               target="_blank"
               onClick={() => {
