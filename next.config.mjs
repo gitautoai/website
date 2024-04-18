@@ -1,4 +1,6 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import createMDX from "@next/mdx";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -8,10 +10,22 @@ const nextConfig = {
       },
     ],
   },
+  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  experimental: {
+    mdxRs: true,
+  },
 };
 
+const withMDX = createMDX({
+  extention: /\mdx?$/,
+  options: {
+    remarkPlugins: [],
+    rehypePlugins: [],
+  },
+});
+
 export default withSentryConfig(
-  nextConfig,
+  withMDX(nextConfig),
   {
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options
