@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 
 import { motion } from "framer-motion";
 import ProfileIcon from "./ProfileIcon";
+import { PRIVACY_POLICY_URL } from "@/lib/constants";
 
 const buttonStyles = `bg-pink text-white rounded-lg transition-colors 
 duration-200 py-2 px-3 shadow-lg hover:shadow-lg 
@@ -40,7 +41,7 @@ export default function Navbar() {
     }
   }, [pathname, posthog]);
 
-  if (pathname === "/privacy-policy") return null;
+  if (pathname === PRIVACY_POLICY_URL) return null;
 
   return (
     <div className="flex flex-col w-full justify-center items-center font-helvetica font-normal  bg-white text-black sm:text-md xl:text-lg">

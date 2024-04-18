@@ -35,3 +35,4 @@
 // checkVar(NEXT_PUBLIC_POSTHOG_HOST, "NEXT_PUBLIC_POSTHOG_HOST");
 
 export const REDIRECT_GITHUB_APP_URL = "/redirect-to-install";
+export const PRIVACY_POLICY_URL = "/privacy-policy";

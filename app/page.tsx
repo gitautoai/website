@@ -69,7 +69,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-
         <div className="mt-14 mb-16">
           <iframe
             className="lg:h-[540px] lg:w-[960px] md:h-[396px] md:w-[704px] sm:h-[333px] sm:w-[592px] w-[90vw] aspect-video"

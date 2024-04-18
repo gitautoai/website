@@ -13,6 +13,7 @@ import {
   faLinkedin,
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
+import { PRIVACY_POLICY_URL } from "@/lib/constants";
 
 export default function Footer() {
   // Analytics
@@ -26,7 +27,7 @@ export default function Footer() {
       <div className="flex  w-[95vw]  sm:w-[80vw] 2xl:w-[1280px] flex-col justify-center ">
         <div className="flex flex-col gap-10 sm:gap-0 sm:flex-row items-center py-10 mt-auto w-full text-black text-lg font-helvetica justify-center ">
           <div className="flex flex-wrap  gap-20 xl:gap-36 mx-auto w-auto ">
-            <ol className="flex gap-2">
+            <ol className="flex gap-5">
               <li>
                 <Link
                   href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
@@ -68,7 +69,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/privacy-policy"
+                  href={PRIVACY_POLICY_URL}
                   onClick={() => {
                     posthog.capture("$click", {
                       $event_type: "privacy_policy",
