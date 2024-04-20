@@ -8,7 +8,7 @@ import { isTokenExpired } from "@/utils/auth";
 import { signOut, useSession } from "next-auth/react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { REDIRECT_GITHUB_APP_URL } from "@/lib/constants";
+import config from "@/config";
 
 const AccountContext = createContext<{
   userInfos: any; // All users, installations, owners associated with this github account
@@ -129,7 +129,7 @@ export function AccountContextWrapper({
   // If user has no accounts, redirect to github app
   useEffect(() => {
     if (userInfos && userInfos.length === 0) {
-      router.push(REDIRECT_GITHUB_APP_URL);
+      router.push(config.REDIRECT_GITHUB_APP_URL);
     }
   }, [userInfos, router]);
 

@@ -4,6 +4,7 @@ import { z, ZodError } from "zod";
 import { isValidToken } from "@/utils/auth";
 
 import stripe from "@/lib/stripe";
+import config from "@/config";
 
 const schema = z.object({
   userId: z.number(),
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     const session = await stripe.billingPortal.sessions.create({
       customer: customerId,
-      return_url: process.env.NEXT_PUBLIC_SITE_URL as string,
+      return_url: config.NEXT_PUBLIC_SITE_URL as string,
     });
 
     if (!session.url) throw new Error("No checkout session URL found");

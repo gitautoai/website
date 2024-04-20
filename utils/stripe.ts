@@ -1,3 +1,4 @@
+import config from "@/config";
 import stripe from "@/lib/stripe";
 /**
  * Create a Stripe checkout session.
@@ -29,8 +30,8 @@ export const createCheckoutSession = async ({
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items,
       mode: "subscription", // "subscription" or "payment" or "setup"
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}?success=true`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}?success=false`,
+      success_url: `${config.NEXT_PUBLIC_SITE_URL}?success=true`,
+      cancel_url: `${config.NEXT_PUBLIC_SITE_URL}?success=false`,
       client_reference_id: customerId,
       currency: "usd",
       metadata: metadata,
@@ -62,7 +63,7 @@ export const createCheckoutSession = async ({
 
       // We don't offer a trial period when an admin registers his/her payment method.
       // subscription_data: {
-      //   trial_period_days: process.env.NEXT_PUBLIC_STRIPE_TRIAL_PERIOD_DAYS, // Has to be at least 1
+      //   trial_period_days: config.NEXT_PUBLIC_STRIPE_TRIAL_PERIOD_DAYS, // Has to be at least 1
       // },
       tax_id_collection: { enabled: true },
     });
@@ -89,7 +90,7 @@ export const hasActiveSubscription = async (customerId: string) => {
         for (const item of sub.items.data) {
           if (
             item.price.active === true &&
-            item.price.id !== process.env.STRIPE_FREE_TIER_PRICE_ID
+            item.price.id !== config.STRIPE_FREE_TIER_PRICE_ID
           ) {
             return true;
           }

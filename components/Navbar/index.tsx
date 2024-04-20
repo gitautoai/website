@@ -2,13 +2,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 // Components
 import HamburgerMenu from "./hamburgerMenu";
 import MobileDrawer from "./MobileMenu";
 
 // Analytics
-import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 
 // Third Party
@@ -17,6 +17,7 @@ import { useSession } from "next-auth/react";
 
 import { motion } from "framer-motion";
 import ProfileIcon from "./ProfileIcon";
+import config from "@/config";
 
 const buttonStyles = `bg-pink text-white rounded-lg transition-colors 
 duration-200 py-2 px-3 shadow-lg hover:shadow-lg 
@@ -39,6 +40,8 @@ export default function Navbar() {
       });
     }
   }, [pathname, posthog]);
+
+  if (pathname === config.PRIVACY_POLICY_URL) return null;
 
   return (
     <div className="flex flex-col w-full justify-center items-center font-helvetica font-normal  bg-white text-black sm:text-md xl:text-lg">
@@ -94,7 +97,7 @@ export default function Navbar() {
               <>
                 <li>
                   <Link
-                    href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
+                    href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
                     passHref
                     target="_blank"
                     onClick={() => {

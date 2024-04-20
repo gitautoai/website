@@ -5,6 +5,7 @@ import { isValidToken } from "@/utils/auth";
 
 import stripe from "@/lib/stripe";
 import { createCheckoutSession, hasActiveSubscription } from "@/utils/stripe";
+import config from "@/config";
 // import { NEXT_PUBLIC_SITE_URL } from "@/lib/constants";
 
 const schema = z.object({
@@ -42,14 +43,14 @@ export async function POST(req: NextRequest) {
     if (await hasActiveSubscription(customerId)) {
       session = await stripe.billingPortal.sessions.create({
         customer: customerId,
-        return_url: process.env.NEXT_PUBLIC_SITE_URL,
+        return_url: config.NEXT_PUBLIC_SITE_URL,
       });
       if (!session.url) throw new Error("No billing portal URL found");
     } else {
       session = await createCheckoutSession({
         customerId,
         email: email,
-        priceId: process.env.STRIPE_STANDARD_PLAN_PRICE_ID || "",
+        priceId: config.STRIPE_STANDARD_PLAN_PRICE_ID || "",
         metadata: {
           userId: userId,
           userName: userName,

@@ -13,6 +13,7 @@ import {
   faLinkedin,
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
+import config from "@/config";
 
 export default function Footer() {
   // Analytics
@@ -26,10 +27,10 @@ export default function Footer() {
       <div className="flex  w-[95vw]  sm:w-[80vw] 2xl:w-[1280px] flex-col justify-center ">
         <div className="flex flex-col gap-10 sm:gap-0 sm:flex-row items-center py-10 mt-auto w-full text-black text-lg font-helvetica justify-center ">
           <div className="flex flex-wrap  gap-20 xl:gap-36 mx-auto w-auto ">
-            <ol className="flex gap-2">
+            <ol className="flex gap-5">
               <li>
                 <Link
-                  href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
+                  href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
                   passHref
                   target="_blank"
                   onClick={() => {
@@ -65,6 +66,21 @@ export default function Footer() {
                 >
                   Pricing
                 </a>
+              </li>
+              <li>
+                <Link
+                  href={config.PRIVACY_POLICY_URL}
+                  target="_blank"
+                  onClick={() => {
+                    posthog.capture("$click", {
+                      $event_type: "privacy_policy",
+                      $current_url: window.location.href,
+                    });
+                  }}
+                  className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+                >
+                  Privacy Policy
+                </Link>
               </li>
               {/* If there is an active subscription, show "Manage Payment" */}
               {selectedIndex != null &&
@@ -104,7 +120,7 @@ export default function Footer() {
           </span>
           <div className="flex items-center gap-5">
             <Link
-              href={process.env.NEXT_PUBLIC_GITHUB_APP_URL as string}
+              href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
               passHref
               target="_blank"
               onClick={() => {
