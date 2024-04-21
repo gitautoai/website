@@ -15,6 +15,7 @@ const config = {
   // Contants
   REDIRECT_GITHUB_APP_URL: "/redirect-to-install",
   PRIVACY_POLICY_URL: "/privacy-policy",
+  TERMS_OF_SERVICE_URL: "/terms-of-service",
 
   // Authentication
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || "",
