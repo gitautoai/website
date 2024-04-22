@@ -41,8 +41,6 @@ export default function Navbar() {
     }
   }, [pathname, posthog]);
 
-  if (pathname === config.PRIVACY_POLICY_URL) return null;
-
   return (
     <div className="flex flex-col w-full justify-center items-center font-helvetica font-normal  bg-white text-black sm:text-md xl:text-lg">
       <div className="flex flex-col w-[95vw] sm:w-[80vw] 2xl:w-[1280px]">
