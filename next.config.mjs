@@ -14,6 +14,13 @@ const nextConfig = {
   experimental: {
     mdxRs: true,
   },
+  // See https://github.com/vercel/next.js/blob/canary/examples/with-sitemap/next.config.js
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      require("./scripts/generate-sitemap");
+    }
+    return config;
+  },
 };
 
 const withMDX = createMDX({

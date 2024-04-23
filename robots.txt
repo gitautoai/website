@@ -1,0 +1,2 @@
+User-agent: *
+Sitemap: https://gitauto.ai/sitemap.xml
