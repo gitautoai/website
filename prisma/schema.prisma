@@ -13,9 +13,9 @@ model Installation {
   created_at      DateTime  @default(now()) @db.Timestamptz(6)
   installation_id BigInt    @id @unique(map: "owners_installation_id_key")
   owner_name      String
+  uninstalled_at  DateTime? @db.Timestamptz(6)
   owner_type      String    @default("")
   owner_id        BigInt    @default(1)
-  uninstalled_at  DateTime? @db.Timestamptz(6)
   created_by      String?
   uninstalled_by  String?
   owners          Owner     @relation(fields: [owner_id], references: [owner_id], onDelete: NoAction, onUpdate: NoAction, map: "public_owners_owner_id_fkey")
@@ -45,8 +45,8 @@ model Usage {
   id              BigInt   @id @default(autoincrement())
   created_at      DateTime @default(now()) @db.Timestamptz(6)
   is_completed    Boolean  @default(false)
-  tokens_input    BigInt?
-  tokens_output   BigInt?
+  token_input     BigInt?
+  token_output    BigInt?
   unique_issue_id String
   user_id         BigInt
   installation_id BigInt
@@ -60,14 +60,14 @@ model User {
   id               BigInt        @id @default(autoincrement())
   created_at       DateTime      @default(now()) @db.Timestamptz(6)
   deleted_at       DateTime?     @db.Timestamptz(6)
-  first_issue      Boolean       @default(true)
-  installation_id  BigInt?
-  is_user_assigned Boolean       @default(false)
   user_name        String?
   user_id          BigInt
+  installation_id  BigInt?
+  is_user_assigned Boolean       @default(false)
+  first_issue      Boolean       @default(true)
+  is_selected      Boolean       @default(false)
   created_by       String?
   deleted_by       String?
-  is_selected      Boolean       @default(false)
   installations    Installation? @relation(fields: [installation_id], references: [installation_id], onDelete: Cascade, map: "public_users_installation_id_fkey")
 
   @@unique([user_id, installation_id])
@@ -78,7 +78,7 @@ model User {
 model Owner {
   created_at         DateTime       @default(now()) @db.Timestamptz(6)
   owner_id           BigInt         @id(map: "owners_table_pkey") @unique(map: "owners_table_owner_id_key")
-  stripe_customer_id String?
+  stripe_customer_id String         @unique
   created_by         String?
   installations      Installation[]
 

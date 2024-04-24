@@ -3,10 +3,6 @@
 import fs from "fs";
 import globby from "globby";
 
-// Supported locales
-// Must match locales in lib\locales.ts (file note yet implemented)
-const localeKeys = ["de", "en", "es", "fr", "it", "ja", "ko", "pt", "ru", "zh"];
-
 // Get the lastmod value for a specific page by running git log against the file
 const getLastmod = (page) => {
   try {
@@ -21,10 +17,6 @@ const getLastmod = (page) => {
 /** Add hreflang links to the sitemap */
 const addHrefLangLinks = (route, siteUrl) => {
   let links = "";
-  localeKeys.forEach((key) => {
-    const siteLocaleUrl = key === "en" ? siteUrl : `${siteUrl}/${key}`;
-    links += `<xhtml:link rel="alternate" href="${siteLocaleUrl}${route}" hreflang="${key}" />\n  `;
-  });
   // Add x-default link
   links += `<xhtml:link rel="alternate" href="${siteUrl}${route}" hreflang="x-default" />`;
 
@@ -84,11 +76,6 @@ const generateSitemap = async () => {
 
   // Generate the sitemap entries for each page for each locale
   let sitemap = "";
-  for (const [pageIndex, page] of pages.entries()) {
-    for (const localeKey of localeKeys) {
-      sitemap += addPage(page, pageIndex, localeKey);
-    }
-  }
 
   // Create the final sitemap XML
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
