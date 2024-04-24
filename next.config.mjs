@@ -1,4 +1,4 @@
-import { withSentryConfig } from "@sentry/nextjs";
+import { withSitemap } from 'next-sitemap/config';
 import createMDX from "@next/mdx";
 
 /** @type {import('next').NextConfig} */
@@ -24,7 +24,7 @@ const withMDX = createMDX({
   },
 });
 
-export default withSentryConfig(
+module.exports = withSitemap(
   withMDX(nextConfig),
   {
     // For all available options, see:
