@@ -45,13 +45,12 @@ model Usage {
   id              BigInt   @id @default(autoincrement())
   created_at      DateTime @default(now()) @db.Timestamptz(6)
   is_completed    Boolean  @default(false)
+  tokens_input    BigInt?
+  tokens_output   BigInt?
   unique_issue_id String
   user_id         BigInt
   installation_id BigInt
   created_by      String?
-  token_input     BigInt?
-  token_output    BigInt?
-  total_seconds   BigInt?
   issues          Issue    @relation(fields: [unique_issue_id], references: [unique_id], onDelete: NoAction, onUpdate: NoAction, map: "public_usage_unique_issue_id_fkey")
 
   @@map("usage")
@@ -79,7 +78,7 @@ model User {
 model Owner {
   created_at         DateTime       @default(now()) @db.Timestamptz(6)
   owner_id           BigInt         @id(map: "owners_table_pkey") @unique(map: "owners_table_owner_id_key")
-  stripe_customer_id String         @unique
+  stripe_customer_id String?
   created_by         String?
   installations      Installation[]
 
