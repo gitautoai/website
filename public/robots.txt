@@ -1,9 +1,7 @@
-# *
+# Block all crawlers for /redirect-to-install
+User-agent: *
+Disallow: /redirect-to-install
+
+# Allow all crawlers
 User-agent: *
 Allow: /
-
-# Host
-Host: https://gitauto.ai
-
-# Sitemaps
-Sitemap: https://gitauto.ai/sitemap.xml

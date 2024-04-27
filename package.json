@@ -5,9 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "sitemap": "next-sitemap"
+    "start": "next start"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",
