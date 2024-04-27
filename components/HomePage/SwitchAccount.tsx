@@ -56,7 +56,7 @@ export default function SwitchAccount({
                       {userInfos.map((item: any, index: number) => {
                         return (
                           <div key={index}>
-                            {item.installations.owner_type === "U" && (
+                            {item.installations.owner_type === "User" && (
                               <button
                                 onClick={() => {
                                   setInstalllationToSelected(item.id);
@@ -72,7 +72,8 @@ export default function SwitchAccount({
                                 </span>
                               </button>
                             )}
-                            {item.installations.owner_type === "O" && (
+                            {item.installations.owner_type ===
+                              "Organization" && (
                               <button
                                 onClick={() => {
                                   setInstalllationToSelected(item.id);
