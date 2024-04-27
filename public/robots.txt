@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://gitauto.ai
+
+# Sitemaps
+Sitemap: https://gitauto.ai/sitemap.xml
