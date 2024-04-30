@@ -121,8 +121,8 @@ export default function Pricing() {
         >
           <a id="pricing">Pricing</a>
         </h2>
-        <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 pt-10 mt-10 bg-light rounded-xl">
-          <div className="flex flex-col p-4 sm:p-5 mb-10">
+        <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 pt-10 mt-10 ">
+          <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
             <h3 className="text-3xl">$0</h3>
             <span className="mt-2 text-xl">Free</span>
             <Link
@@ -150,7 +150,7 @@ export default function Pricing() {
               <span>&bull; 5 issues per month</span>
             </div>
           </div>
-          <div className="flex flex-col rounded-xl p-4 sm:p-5 mb-5">
+          <div className="flex flex-col p-4 sm:p-6 mb-10 bg-lightHover rounded-xl">
             <h3 className="text-3xl">$19/user/mo</h3>
             <span className="mt-2 text-xl">Standard</span>
             <div className="relative items-center">
@@ -178,7 +178,7 @@ export default function Pricing() {
               <span>&bull; 30 issues per month</span>
             </div>
           </div>
-          <div className="flex flex-col p-4 sm:p-5 mb-10">
+          <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
             <h3 className="text-3xl">Custom</h3>
             <span className="mt-2 text-xl">Enterprise</span>
             <Link
