@@ -114,14 +114,14 @@ export default function Pricing() {
 
   return (
     <div className="w-[100vw] bg-white flex justify-center">
-      <div className="mx-10 pt-16 text-black">
+      <div className="mx-10 mt-10 sm:pt-16 text-black">
         <h2
           className="text-center text-3xl font-helvetica font-medium"
           id="pricing"
         >
           <a id="pricing">Pricing</a>
         </h2>
-        <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 pt-10 mt-10 ">
+        <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 mt-10 sm:mt-16 ">
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
             <h3 className="text-3xl">$0</h3>
             <span className="mt-2 text-xl">Free</span>
