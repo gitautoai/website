@@ -44,23 +44,15 @@ export default function Navbar() {
   return (
     <div className="flex flex-col w-full justify-center items-center font-helvetica font-normal  bg-white text-black sm:text-md xl:text-lg">
       <div className="flex flex-col w-[95vw] sm:w-[80vw] 2xl:w-[1280px]">
-        <nav className="flex text-lg justify-center items-center my-4">
+        <nav className="flex text-lg justify-center items-center">
           <Link href="/" className="mr-auto ml-5">
             <div className="flex items-center gap-2 text-black">
               <Image
-                src="/transparent-not-centered.png"
-                width={30}
-                height={30}
-                alt="GitAuto Logo"
-              />
-              {/* <Image
                 src="/og-logo.png"
-                width={120}
-                height={63}
+                width={150}
+                height={78}
                 alt="GitAuto Logo"
               />
-  */}
-              <span className="font-bold font-lexend text-black">GitAuto</span>
             </div>
           </Link>
           <ol className="hidden sm:flex items-center justify-center gap-4">
