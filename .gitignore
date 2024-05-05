@@ -42,3 +42,5 @@ next-env.d.ts
 prisma/.env
 
 /utils/nikita*
+# Sentry Config File
+.sentryclirc
