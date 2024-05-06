@@ -1,4 +1,29 @@
 "use client";
+import { useState } from "react";
+import { ToggleButton } from "../Utility/ToggleButton"; // Assuming a ToggleButton component exists
+
+export default function Pricing() {
+  const [billingCycle, setBillingCycle] = useState("monthly");
+
+  return (
+    <div>
+      <ToggleButton
+        options={[{ label: "Monthly", value: "monthly" }, { label: "Yearly", value: "yearly" }]}
+        value={billingCycle}
+        onChange={(value) => setBillingCycle(value)}
+      />
+      <div>
+        {billingCycle === "monthly" ? (
+          <div>Display Monthly Pricing Here</div>
+        ) : (
+          <div>Display Yearly Pricing Here</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Note: Add CSS and additional logic as per requirements.
 // Next imports
 import Link from "next/link";
 import Image from "next/image";
