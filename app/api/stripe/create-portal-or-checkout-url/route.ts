@@ -4,6 +4,14 @@ import { z, ZodError } from "zod";
 import { isValidToken } from "@/utils/auth";
 
 import stripe from "@/lib/stripe";
+const billingCycle = request.query.billingCycle || 'monthly'; // Assuming the request query includes billingCycle
+
+// Further down in your logic where you create portal or checkout session
+if (billingCycle === 'yearly') {
+  // Logic for yearly billing
+} else {
+  // Existing logic for monthly billing
+}
 import { createCheckoutSession, hasActiveSubscription } from "@/utils/stripe";
 import config from "@/config";
 // import { NEXT_PUBLIC_SITE_URL } from "@/lib/constants";
