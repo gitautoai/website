@@ -35,6 +35,7 @@ export default function Pricing() {
 
   const router = useRouter();
 
+  const [billingPeriod, setBillingPeriod] = useState("Monthly");
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
   const searchParams = useSearchParams();
 
@@ -61,6 +62,7 @@ export default function Pricing() {
             ),
             ownerName: userInfos[currentIndex].installations.owner_name,
             userName: userInfos[currentIndex].user_name,
+            billingPeriod: billingPeriod,
           }),
         }
       );
@@ -121,7 +123,21 @@ export default function Pricing() {
         >
           <a id="pricing">Pricing</a>
         </h2>
-        <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 mt-10 sm:mt-16 ">
+        <div className="flex mt-4 mb-6 lg:mt-0 justify-center lg:justify-end">
+          <div className="flex flex-col text-lg">
+            Billing Period
+            <select
+              className="border border-pink focus:border-pinkHover rounded-lg outline-none"
+              onChange={(e) => {
+                setBillingPeriod(e.target.value);
+              }}
+            >
+              <option>Monthly</option>
+              <option>Yearly</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 mt-5 sm:mt-8">
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
             <h3 className="text-3xl">$0</h3>
             <span className="mt-2 text-xl">Free</span>

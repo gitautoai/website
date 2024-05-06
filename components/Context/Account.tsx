@@ -132,7 +132,7 @@ export function AccountContextWrapper({
       router.push(config.REDIRECT_GITHUB_APP_URL);
     }
   }, [userInfos, router]);
-
+  console.log(userInfosSubscribed);
   return (
     <AccountContext.Provider
       value={{

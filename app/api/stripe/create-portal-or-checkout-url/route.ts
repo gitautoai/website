@@ -17,6 +17,7 @@ const schema = z.object({
   ownerId: z.number(),
   ownerName: z.string(),
   userName: z.string(),
+  billingPeriod: z.string(),
 });
 
 export async function POST(req: NextRequest) {
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
       ownerId,
       ownerName,
       userName,
+      billingPeriod,
     } = schema.parse(body);
 
     if (!isValidToken(userId.toString(), jwtToken)) {
@@ -47,6 +49,10 @@ export async function POST(req: NextRequest) {
       });
       if (!session.url) throw new Error("No billing portal URL found");
     } else {
+      let priceId = config.STRIPE_STANDARD_PLAN_PRICE_ID || "";
+      if (billingPeriod === "Yearly") {
+        priceId = config.STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID || "";
+      }
       session = await createCheckoutSession({
         customerId,
         email: email,
