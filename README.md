@@ -5,6 +5,14 @@ This is a Nextjs website for GitAuto. It uses Vercel for deployment.
 1. Clone this repository
 2. Run `npm install` to install all the dependencies. Make sure you have Node.js installed.
 3. Run `npm run dev` to start the development server.
+## How to Get Started
+
+1. First, create an issue, such as a bug report or feature request. Label it as gitauto.
+2. Then, you just need to wait for the PR to be created.
+3. GitAuto updates you on progress in the issue comments.
+
+This guide aims to help new users understand the workflow of the platform and encourage engagement by submitting their first issue or feature request.
+
 
 ## How to run Prisma Migrations
 
