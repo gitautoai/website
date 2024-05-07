@@ -23,6 +23,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: { template: "%s | GitAuto", default: "GitAuto" },
+            <HowToGetStarted />
   description: "Automatic PR's for Bugs",
   generator: "Next.js",
   applicationName: "GitAuto",
