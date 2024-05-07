@@ -31,3 +31,4 @@ module.exports = {
   },
   plugins: [],
 };
+  '.howToGetStarted': { backgroundColor: '#f0f0f0', padding: '20px', borderRadius: '5px' },
