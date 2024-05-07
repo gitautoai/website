@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import Pricing from "@/components/HomePage/Pricing";
 import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
 import UseCases from "@/components/HomePage/UseCases";
+import HowToGetStarted from '../components/HomePage/HowToGetStarted';
 
 // Analytics
 import { usePathname } from "next/navigation";
@@ -25,6 +26,7 @@ export default function Home() {
   const posthog = usePostHog();
 
   useEffect(() => {
+      <HowToGetStarted />
     if (pathname && posthog) {
       let url = window.origin + pathname;
       posthog.capture("$pageview", {
