@@ -5,6 +5,7 @@ import { isValidToken } from "@/utils/auth";
 
 import stripe from "@/lib/stripe";
 import config from "@/config";
+import { createCustomerPortalSession } from "@/utils/stripe";
 
 const schema = z.object({
   userId: z.number(),
@@ -21,9 +22,8 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const session = await stripe.billingPortal.sessions.create({
-      customer: customerId,
-      return_url: config.NEXT_PUBLIC_SITE_URL as string,
+    const session = await createCustomerPortalSession({
+      stripe_customer_id: customerId,
     });
 
     if (!session.url) throw new Error("No checkout session URL found");
