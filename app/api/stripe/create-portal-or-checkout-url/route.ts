@@ -6,7 +6,7 @@ import { isValidToken } from "@/utils/auth";
 import stripe from "@/lib/stripe";
 import { createCheckoutSession, hasActiveSubscription } from "@/utils/stripe";
 import config from "@/config";
-// import { NEXT_PUBLIC_SITE_URL } from "@/lib/constants";
+import { createCustomerPortalSession } from "@/utils/stripe";
 
 const schema = z.object({
   userId: z.number(),
@@ -17,7 +17,7 @@ const schema = z.object({
   ownerId: z.number(),
   ownerName: z.string(),
   userName: z.string(),
-  billingPeriod: z.string(),
+  billingPeriod: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       billingPeriod,
     } = schema.parse(body);
 
+    console.log(body);
     if (!isValidToken(userId.toString(), jwtToken)) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -43,20 +44,20 @@ export async function POST(req: NextRequest) {
     // If the customer has an active non-free subscription, redirect to the customer portal
     // Otherwise, create a new checkout session
     if (await hasActiveSubscription(customerId)) {
-      session = await stripe.billingPortal.sessions.create({
-        customer: customerId,
-        return_url: config.NEXT_PUBLIC_SITE_URL,
+      session = await createCustomerPortalSession({
+        stripe_customer_id: customerId,
       });
       if (!session.url) throw new Error("No billing portal URL found");
     } else {
       let priceId = config.STRIPE_STANDARD_PLAN_PRICE_ID || "";
+      console.log("bill: ", billingPeriod);
       if (billingPeriod === "Yearly") {
         priceId = config.STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID || "";
       }
       session = await createCheckoutSession({
         customerId,
         email: email,
-        priceId: config.STRIPE_STANDARD_PLAN_PRICE_ID || "",
+        priceId: priceId,
         metadata: {
           userId: userId,
           userName: userName,

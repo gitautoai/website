@@ -19,6 +19,8 @@ const AccountContext = createContext<{
   userId: number | null;
   email: string | null;
   jwtToken: string | null;
+  billingPeriod: string;
+  setBillingPeriod: React.Dispatch<React.SetStateAction<string>>;
 }>({
   userInfos: null,
   mutateUserInfos: () => {
@@ -32,6 +34,10 @@ const AccountContext = createContext<{
   userId: null,
   email: null,
   jwtToken: null,
+  billingPeriod: "Monthly",
+  setBillingPeriod: () => {
+    ("");
+  },
 });
 
 export function AccountContextWrapper({
@@ -45,6 +51,7 @@ export function AccountContextWrapper({
   const [email, setEmail] = useState<string | null>(null);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const router = useRouter();
+  const [billingPeriod, setBillingPeriod] = useState<string>("Monthly");
 
   // Get userId and jwtToken from session object
   useEffect(() => {
@@ -144,6 +151,8 @@ export function AccountContextWrapper({
         userId,
         email,
         jwtToken,
+        billingPeriod,
+        setBillingPeriod,
       }}
     >
       {children}

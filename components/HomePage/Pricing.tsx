@@ -31,11 +31,12 @@ export default function Pricing() {
     selectedIndex,
     userInfos,
     userInfosSubscribed,
+    billingPeriod,
+    setBillingPeriod,
   } = useAccountContext();
 
   const router = useRouter();
 
-  const [billingPeriod, setBillingPeriod] = useState("Monthly");
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
   const searchParams = useSearchParams();
 
@@ -113,7 +114,7 @@ export default function Pricing() {
     router,
     createPortalOrCheckoutURL,
   ]);
-
+  console.log(billingPeriod);
   return (
     <div className="w-[100vw] bg-white flex justify-center">
       <div className="mx-10 mt-10 sm:pt-16 text-black">
@@ -167,7 +168,9 @@ export default function Pricing() {
             </div>
           </div>
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-lightHover rounded-xl">
-            <h3 className="text-3xl">$19/user/mo</h3>
+            <h3 className="text-3xl">
+              {billingPeriod === "Monthly" ? "$19/user/mo" : "$190/user/yr"}
+            </h3>
             <span className="mt-2 text-xl">Standard</span>
             <div className="relative items-center">
               <button

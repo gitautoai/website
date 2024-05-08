@@ -109,7 +109,7 @@ const createCustomerPortalConfiguration = async () => {
   const configuration = await stripe.billingPortal.configurations.create({
     business_profile: {
       privacy_policy_url: `${process.env.NEXT_PUBLIC_SITE_URL}${config.PRIVACY_POLICY_URL}`,
-      // terms_of_service_url: `${process.env.NEXT_PUBLIC_SITE_URL}${PAGES.TERMS_OF_SERVICE}`,
+      terms_of_service_url: `${process.env.NEXT_PUBLIC_SITE_URL}${config.TERMS_OF_SERVICE}`,
     },
     features: {
       customer_update: {
@@ -135,7 +135,6 @@ const createCustomerPortalConfiguration = async () => {
         },
         mode: "at_period_end",
       },
-      subscription_pause: { enabled: true },
       subscription_update: {
         enabled: true,
         default_allowed_updates: ["price", "quantity"], // "price" enables users to change the plan.
