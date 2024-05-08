@@ -40,16 +40,16 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // owner_type == "U" comes first in the list of users
+    // owner_type == "User" comes first in the list of users
     user.sort((a: any, b: any) => {
       if (
-        a.installations.owner_type === "U" &&
-        b.installations.owner_type !== "U"
+        a.installations.owner_type === "User" &&
+        b.installations.owner_type !== "User"
       ) {
         return -1;
       } else if (
-        a.installations.owner_type !== "U" &&
-        b.installations.owner_type === "U"
+        a.installations.owner_type !== "User" &&
+        b.installations.owner_type === "User"
       ) {
         return 1;
       } else {
