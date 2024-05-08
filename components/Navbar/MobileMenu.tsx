@@ -40,7 +40,6 @@ export default function MobileDrawer({
     userInfos,
     selectedIndex,
     userInfosSubscribed,
-    billingPeriod,
   } = useAccountContext();
 
   const router = useRouter();
@@ -65,7 +64,6 @@ export default function MobileDrawer({
         ),
         ownerName: userInfos[currentIndex].installations.owner_name,
         userName: userInfos[currentIndex].user_name,
-        billingPeriod: billingPeriod,
       }),
     });
 

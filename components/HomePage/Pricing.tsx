@@ -31,14 +31,13 @@ export default function Pricing() {
     selectedIndex,
     userInfos,
     userInfosSubscribed,
-    billingPeriod,
-    setBillingPeriod,
   } = useAccountContext();
 
   const router = useRouter();
 
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
   const searchParams = useSearchParams();
+  const [billingPeriod, setBillingPeriod] = useState<string>("Monthly");
 
   const createPortalOrCheckoutURL = useCallback(async () => {
     let currentIndex = 0;
