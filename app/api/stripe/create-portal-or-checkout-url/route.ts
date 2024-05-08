@@ -35,7 +35,6 @@ export async function POST(req: NextRequest) {
       billingPeriod,
     } = schema.parse(body);
 
-    console.log(body);
     if (!isValidToken(userId.toString(), jwtToken)) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -50,7 +49,6 @@ export async function POST(req: NextRequest) {
       if (!session.url) throw new Error("No billing portal URL found");
     } else {
       let priceId = config.STRIPE_STANDARD_PLAN_PRICE_ID || "";
-      console.log("bill: ", billingPeriod);
       if (billingPeriod === "Yearly") {
         priceId = config.STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID || "";
       }

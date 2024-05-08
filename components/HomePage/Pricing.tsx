@@ -75,7 +75,15 @@ export default function Pricing() {
       // If not, redirect to installation page
       router.push(config.REDIRECT_GITHUB_APP_URL);
     }
-  }, [jwtToken, router, selectedIndex, userId, userInfos]);
+  }, [
+    email,
+    jwtToken,
+    router,
+    selectedIndex,
+    userId,
+    userInfos,
+    billingPeriod,
+  ]);
 
   // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
   async function handleSubscribe() {
@@ -114,7 +122,7 @@ export default function Pricing() {
     router,
     createPortalOrCheckoutURL,
   ]);
-  console.log(billingPeriod);
+
   return (
     <div className="w-[100vw] bg-white flex justify-center">
       <div className="mx-10 mt-10 sm:pt-16 text-black">
