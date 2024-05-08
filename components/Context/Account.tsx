@@ -51,7 +51,7 @@ export function AccountContextWrapper({
   const [email, setEmail] = useState<string | null>(null);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const router = useRouter();
-  const [billingPeriod, setBillingPeriod] = useState<string>("Monthly2");
+  const [billingPeriod, setBillingPeriod] = useState<string>("Monthly");
 
   // Get userId and jwtToken from session object
   useEffect(() => {
