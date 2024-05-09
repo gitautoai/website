@@ -139,6 +139,7 @@ export default function Pricing() {
               onChange={(e) => {
                 setBillingPeriod(e.target.value);
               }}
+              value={billingPeriod}
             >
               <option>Monthly</option>
               <option>Yearly</option>
