@@ -37,7 +37,7 @@ export default function Pricing() {
 
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
   const searchParams = useSearchParams();
-  const [billingPeriod, setBillingPeriod] = useState<string>("Monthly");
+  const [billingPeriod, setBillingPeriod] = useState<string>("Yearly");
 
   const createPortalOrCheckoutURL = useCallback(async () => {
     let currentIndex = 0;
@@ -147,8 +147,8 @@ export default function Pricing() {
         </div>
         <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 mt-5 sm:mt-8">
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
-            <h3 className="text-3xl">$0</h3>
-            <span className="mt-2 text-xl">Free</span>
+            <h3 className="text-3xl mx-auto">$0</h3>
+            <span className="mt-2 text-xl mx-auto">Free</span>
             <Link
               href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
               passHref
@@ -175,10 +175,13 @@ export default function Pricing() {
             </div>
           </div>
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-lightHover rounded-xl">
-            <h3 className="text-3xl">
+            <h3 className="text-3xl mx-auto">
               {billingPeriod === "Monthly" ? "$19/user/mo" : "$190/user/yr"}
             </h3>
-            <span className="mt-2 text-xl">Standard</span>
+            {billingPeriod === "Yearly" && (
+              <span className="mx-auto mt-2">Save $38 /user/year</span>
+            )}
+            <span className="mt-2 text-xl mx-auto">Standard</span>
             <div className="relative items-center">
               <button
                 onClick={() => {
@@ -205,8 +208,8 @@ export default function Pricing() {
             </div>
           </div>
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
-            <h3 className="text-3xl">Custom</h3>
-            <span className="mt-2 text-xl">Enterprise</span>
+            <h3 className="text-3xl mx-auto">Custom</h3>
+            <span className="mt-2 text-xl mx-auto">Enterprise</span>
             <Link
               href="mailto:info@gitauto.ai"
               passHref

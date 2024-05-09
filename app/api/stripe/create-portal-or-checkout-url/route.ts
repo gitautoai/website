@@ -48,14 +48,13 @@ export async function POST(req: NextRequest) {
       });
       if (!session.url) throw new Error("No billing portal URL found");
     } else {
-      let priceId = config.STRIPE_STANDARD_PLAN_PRICE_ID || "";
-      if (billingPeriod === "Yearly") {
-        priceId = config.STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID || "";
-      }
       session = await createCheckoutSession({
         customerId,
         email: email,
-        priceId: priceId,
+        priceId:
+          billingPeriod === "Monthly"
+            ? config.STRIPE_STANDARD_PLAN_MONTHLY_PRICE_ID
+            : config.STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID,
         metadata: {
           userId: userId,
           userName: userName,

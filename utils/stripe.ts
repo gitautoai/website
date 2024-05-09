@@ -104,7 +104,6 @@ export const hasActiveSubscription = async (customerId: string) => {
 
 // Create a configuration for a customer portal.
 // @see https://stripe.com/docs/api/customer_portal/configurations/create
-
 const createCustomerPortalConfiguration = async () => {
   const configuration = await stripe.billingPortal.configurations.create({
     business_profile: {
@@ -143,7 +142,7 @@ const createCustomerPortalConfiguration = async () => {
           {
             product: config.STRIPE_STANDARD_PLAN_PRODUCT_ID,
             prices: [
-              config.STRIPE_STANDARD_PLAN_PRICE_ID,
+              config.STRIPE_STANDARD_PLAN_MONTHLY_PRICE_ID,
               config.STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID,
             ],
           },
@@ -159,7 +158,6 @@ const createCustomerPortalConfiguration = async () => {
 
 // Create a Stripe customer portal session.
 // https://stripe.com/docs/api/customer_portal/sessions/create
-
 export const createCustomerPortalSession = async ({
   stripe_customer_id,
 }: {
