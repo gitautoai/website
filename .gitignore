@@ -35,12 +35,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Sentry Config File
-.sentryclirc
 
 .env*.local
 prisma/.env
 
 /utils/nikita*
-# Sentry Config File
-.sentryclirc
