@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const users = await prisma.user.findMany({
+    const users = await prisma.userInstallation.findMany({
       where: {
         user_id: Number(userId),
         installations: {
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       }
     });
 
-    await prisma.user.update({
+    await prisma.user_installations.update({
       where: {
         id: users[0].id,
       },

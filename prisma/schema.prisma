@@ -10,17 +10,17 @@ datasource db {
 }
 
 model Installation {
-  created_at      DateTime  @default(now()) @db.Timestamptz(6)
-  installation_id BigInt    @id @unique(map: "owners_installation_id_key")
-  owner_name      String
-  uninstalled_at  DateTime? @db.Timestamptz(6)
-  owner_type      String    @default("")
-  owner_id        BigInt    @default(1)
-  created_by      String?
-  uninstalled_by  String?
-  owners          Owner     @relation(fields: [owner_id], references: [owner_id], onDelete: NoAction, onUpdate: NoAction, map: "public_owners_owner_id_fkey")
-  issues          Issue[]
-  users           User[]
+  created_at         DateTime           @default(now()) @db.Timestamptz(6)
+  installation_id    BigInt             @id @unique(map: "owners_installation_id_key")
+  owner_name         String
+  uninstalled_at     DateTime?          @db.Timestamptz(6)
+  owner_type         String             @default("")
+  owner_id           BigInt             @default(1)
+  created_by         String?
+  uninstalled_by     String?
+  owners             Owner              @relation(fields: [owner_id], references: [owner_id], onDelete: NoAction, onUpdate: NoAction, map: "public_owners_owner_id_fkey")
+  issues             Issue[]
+  user_installations UserInstallation[]
 
   @@map("installations")
 }
@@ -57,20 +57,13 @@ model Usage {
 }
 
 model User {
-  id               BigInt        @id @default(autoincrement())
-  created_at       DateTime      @default(now()) @db.Timestamptz(6)
-  deleted_at       DateTime?     @db.Timestamptz(6)
-  user_name        String?
-  user_id          BigInt
-  installation_id  BigInt?
-  is_user_assigned Boolean       @default(false)
-  first_issue      Boolean       @default(true)
-  is_selected      Boolean       @default(false)
-  created_by       String?
-  deleted_by       String?
-  installations    Installation? @relation(fields: [installation_id], references: [installation_id], onDelete: Cascade, map: "public_users_installation_id_fkey")
+  id                 BigInt             @id(map: "users_pkey1") @default(autoincrement())
+  user_name          String?            @unique
+  user_id            BigInt?            @unique
+  email              String?
+  created_at         DateTime           @default(now()) @db.Timestamptz(6)
+  user_installations UserInstallation[]
 
-  @@unique([user_id, installation_id])
   @@map("users")
 }
 
@@ -83,4 +76,23 @@ model Owner {
   installations      Installation[]
 
   @@map("owners")
+}
+
+model UserInstallation {
+  id               BigInt        @id(map: "users_pkey") @default(autoincrement())
+  created_at       DateTime      @default(now()) @db.Timestamptz(6)
+  deleted_at       DateTime?     @db.Timestamptz(6)
+  user_name        String?
+  user_id          BigInt
+  installation_id  BigInt?
+  is_user_assigned Boolean       @default(false)
+  first_issue      Boolean       @default(true)
+  is_selected      Boolean       @default(false)
+  created_by       String?
+  deleted_by       String?
+  installations    Installation? @relation(fields: [installation_id], references: [installation_id], onDelete: Cascade, map: "public_users_installation_id_fkey")
+  users            User          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@unique([user_id, installation_id], map: "users_user_id_installation_id_key")
+  @@map("user_installations")
 }
