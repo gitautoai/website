@@ -135,7 +135,7 @@ export default function Pricing() {
           <div className="flex flex-col text-lg">
             Billing Period
             <select
-              className="border border-pink focus:border-pinkHover rounded-lg outline-none"
+              className="border  rounded-lg outline-none"
               onChange={(e) => {
                 setBillingPeriod(e.target.value);
               }}
@@ -148,8 +148,9 @@ export default function Pricing() {
         </div>
         <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 mt-5 sm:mt-8">
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
-            <h3 className="text-3xl mx-auto">$0</h3>
-            <span className="mt-2 text-xl mx-auto">Free</span>
+            <h3 className=" text-3xl mx-auto">Free</h3>
+            <span className="mt-2 text-2xl mx-auto">$0</span>
+
             <Link
               href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
               passHref
@@ -176,21 +177,25 @@ export default function Pricing() {
             </div>
           </div>
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-lightHover rounded-xl">
-            <h3 className="text-3xl mx-auto">
+            <h3 className="text-3xl mx-auto">Standard</h3>
+            <span className="mt-2 text-2xl mx-auto">
               {billingPeriod === "Monthly" ? "$19/user/mo" : "$190/user/yr"}
-            </h3>
+            </span>
+
             {billingPeriod === "Yearly" && (
-              <span className="mx-auto mt-2">Save $38 /user/year</span>
+              <span className="mx-auto">Save $38/user/yr</span>
             )}
-            <span className="mt-2 text-xl mx-auto">Standard</span>
+
             <div className="relative items-center">
               <button
                 onClick={() => {
                   handleSubscribe();
                 }}
-                className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black  ${
+                className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover  text-white  ${
                   isSubscribeLoading && "opacity-0 pointer-events-none"
-                }`}
+                }
+                ${billingPeriod === "Monthly" ? "my-8" : "mt-2 mb-8"} 
+                `}
               >
                 {selectedIndex != null &&
                 userInfosSubscribed &&
@@ -199,7 +204,11 @@ export default function Pricing() {
                   : "Subscribe"}
               </button>
               {isSubscribeLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white opacity-50 rounded-lg my-8 py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed ">
+                <div
+                  className={`absolute inset-0 flex items-center justify-center bg-pink hover:bg-pinkHover opacity-50 rounded-lg ${
+                    billingPeriod === "Monthly" ? "my-8" : "my-4"
+                  } py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed `}
+                >
                   <Spinner size="md" color="pink" />
                 </div>
               )}
