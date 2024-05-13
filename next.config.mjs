@@ -32,7 +32,7 @@ export default withSentryConfig(
 
     // Suppresses source map uploading logs during build
     silent: true,
-    org: "gitauto-w0",
+    org: "gitauto-ai",
     project: "website",
   },
   {
