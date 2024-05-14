@@ -9,7 +9,7 @@ const config: Config = {
   coverageProvider: "v8",
   preset: "ts-jest",
   testEnvironment: "node",
-  collectCoverage: true,
+  // collectCoverage: true,
   collectCoverageFrom: ["**/*.{js,ts}", "!**/*.d.ts", "!**/node_modules/**"],
   // Add more setup options before each test is run
   // setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],

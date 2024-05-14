@@ -41,12 +41,12 @@ const config = {
 
   // Testing Variables
   OWNER_ID: -100,
-  USER_ID: -100,
   INSTALLATION_ID: -100,
   OWNER_NAME: "web-ownername-test",
   OWNER_TYPE: "Organization",
+  USER_ID: -100,
   USER_NAME: "web-username-test",
-  UNIQUE_ISSUE_ID: "O/web-gitautoai/test#100",
+  UNIQUE_ISSUE_ID: "Organization/web-ownername-test/test#100",
 };
 
 export default config;
