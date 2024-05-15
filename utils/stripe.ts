@@ -101,3 +101,74 @@ export const hasActiveSubscription = async (customerId: string) => {
 
   return false;
 };
+
+// Create a configuration for a customer portal.
+// @see https://stripe.com/docs/api/customer_portal/configurations/create
+const createCustomerPortalConfiguration = async () => {
+  const configuration = await stripe.billingPortal.configurations.create({
+    business_profile: {
+      privacy_policy_url: `${process.env.NEXT_PUBLIC_SITE_URL}${config.PRIVACY_POLICY_URL}`,
+      terms_of_service_url: `${process.env.NEXT_PUBLIC_SITE_URL}${config.TERMS_OF_SERVICE}`,
+    },
+    features: {
+      customer_update: {
+        enabled: true,
+        allowed_updates: ["address", "email", "name", "phone", "tax_id"],
+      },
+      invoice_history: { enabled: true },
+      payment_method_update: { enabled: true },
+      subscription_cancel: {
+        enabled: true,
+        cancellation_reason: {
+          enabled: true,
+          options: [
+            "too_expensive",
+            "missing_features",
+            "switched_service",
+            "unused",
+            "customer_service",
+            "too_complex",
+            "low_quality",
+            "other",
+          ],
+        },
+        mode: "at_period_end",
+      },
+      subscription_update: {
+        enabled: true,
+        default_allowed_updates: ["price", "quantity"], // "price" enables users to change the plan.
+        products: [
+          // Only seat-based products are allowed.
+          {
+            product: config.STRIPE_STANDARD_PLAN_PRODUCT_ID,
+            prices: [
+              config.STRIPE_STANDARD_PLAN_MONTHLY_PRICE_ID,
+              config.STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID,
+            ],
+          },
+        ],
+        proration_behavior: "create_prorations",
+      },
+    },
+    login_page: { enabled: true },
+  });
+
+  return configuration;
+};
+
+// Create a Stripe customer portal session.
+// https://stripe.com/docs/api/customer_portal/sessions/create
+export const createCustomerPortalSession = async ({
+  stripe_customer_id,
+}: {
+  stripe_customer_id: string;
+}) => {
+  const { id: configurationId } = await createCustomerPortalConfiguration();
+  const session = await stripe.billingPortal.sessions.create({
+    customer: stripe_customer_id,
+    configuration: configurationId,
+    locale: "auto", // or "en", "ja", etc.
+    return_url: `${process.env.NEXT_PUBLIC_SITE_URL}`,
+  });
+  return session;
+};

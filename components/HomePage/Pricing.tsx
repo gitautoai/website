@@ -37,6 +37,7 @@ export default function Pricing() {
 
   const [isSubscribeLoading, setIsSubscribeLoading] = useState(false);
   const searchParams = useSearchParams();
+  const [billingPeriod, setBillingPeriod] = useState<string>("Yearly");
 
   const createPortalOrCheckoutURL = useCallback(async () => {
     let currentIndex = 0;
@@ -61,6 +62,7 @@ export default function Pricing() {
             ),
             ownerName: userInfos[currentIndex].installations.owner_name,
             userName: userInfos[currentIndex].user_name,
+            billingPeriod: billingPeriod,
           }),
         }
       );
@@ -72,7 +74,15 @@ export default function Pricing() {
       // If not, redirect to installation page
       router.push(config.REDIRECT_GITHUB_APP_URL);
     }
-  }, [jwtToken, router, selectedIndex, userId, userInfos]);
+  }, [
+    email,
+    jwtToken,
+    router,
+    selectedIndex,
+    userId,
+    userInfos,
+    billingPeriod,
+  ]);
 
   // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
   async function handleSubscribe() {
@@ -121,10 +131,26 @@ export default function Pricing() {
         >
           <a id="pricing">Pricing</a>
         </h2>
-        <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 mt-10 sm:mt-16 ">
+
+        <div className="flex mt-4 mb-6 lg:mt-0 justify-center lg:justify-end lg:pr-8 ">
+          <div className="flex flex-col text-lg ">
+            Billing Period
+            <select
+              className="border  rounded-lg outline-none"
+              onChange={(e) => {
+                setBillingPeriod(e.target.value);
+              }}
+              value={billingPeriod}
+            >
+              <option>Monthly</option>
+              <option>Yearly</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex flex-col lg:flex-row lg:gap-10 px-4 sm:px-8 mt-5 sm:mt-8">
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
-            <h3 className="text-3xl">$0</h3>
-            <span className="mt-2 text-xl">Free</span>
+            <h3 className=" text-3xl mx-auto">Free</h3>
+            <span className="mt-2 text-2xl mx-auto">$0</span>
             <Link
               href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
               passHref
@@ -135,7 +161,7 @@ export default function Pricing() {
                   $current_url: window.location.href,
                 });
               }}
-              className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover text-white flex items-center justify-center gap-2`}
+              className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover text-white flex items-center justify-center gap-2 mt-14`}
             >
               <Image
                 src="/icons/github.svg"
@@ -150,17 +176,26 @@ export default function Pricing() {
               <span>&bull; 5 issues per month</span>
             </div>
           </div>
-          <div className="flex flex-col p-4 sm:p-6 mb-10 bg-lightHover rounded-xl">
-            <h3 className="text-3xl">$19/user/mo</h3>
-            <span className="mt-2 text-xl">Standard</span>
+          <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
+            <h3 className="text-3xl mx-auto">Standard</h3>
+            <span className="mt-2 text-2xl mx-auto">
+              {billingPeriod === "Monthly" ? "$19/user/mo" : "$190/user/yr"}
+            </span>
+
+            {billingPeriod === "Yearly" && (
+              <span className="mx-auto">Save $38/user/yr</span>
+            )}
+
             <div className="relative items-center">
               <button
                 onClick={() => {
                   handleSubscribe();
                 }}
-                className={`${pricingButtonStyles} bg-white hover:bg-[#E6E6E6] text-black  ${
+                className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover  text-white  ${
                   isSubscribeLoading && "opacity-0 pointer-events-none"
-                }`}
+                }
+                ${billingPeriod === "Monthly" ? "mt-14" : "mt-[34px]"} 
+                `}
               >
                 {selectedIndex != null &&
                 userInfosSubscribed &&
@@ -169,7 +204,11 @@ export default function Pricing() {
                   : "Subscribe"}
               </button>
               {isSubscribeLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-white opacity-50 rounded-lg my-8 py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed ">
+                <div
+                  className={`absolute inset-0 flex items-center justify-center bg-pink hover:bg-pinkHover opacity-50 rounded-lg ${
+                    billingPeriod === "Monthly" ? "mt-14 mb-8" : "my-8"
+                  } py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed `}
+                >
                   <Spinner size="md" color="pink" />
                 </div>
               )}
@@ -179,8 +218,8 @@ export default function Pricing() {
             </div>
           </div>
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
-            <h3 className="text-3xl">Custom</h3>
-            <span className="mt-2 text-xl">Enterprise</span>
+            <h3 className="text-3xl mx-auto">Custom</h3>
+            <span className="mt-2 text-xl mx-auto">Enterprise</span>
             <Link
               href="mailto:info@gitauto.ai"
               passHref
@@ -191,7 +230,7 @@ export default function Pricing() {
                   $current_url: window.location.href,
                 });
               }}
-              className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover text-white`}
+              className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover text-white mt-[62px]`}
             >
               Contact Us
             </Link>
