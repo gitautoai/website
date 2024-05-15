@@ -150,7 +150,6 @@ export default function Pricing() {
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
             <h3 className=" text-3xl mx-auto">Free</h3>
             <span className="mt-2 text-2xl mx-auto">$0</span>
-
             <Link
               href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
               passHref
@@ -161,7 +160,7 @@ export default function Pricing() {
                   $current_url: window.location.href,
                 });
               }}
-              className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover text-white flex items-center justify-center gap-2`}
+              className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover text-white flex items-center justify-center gap-2 mt-14`}
             >
               <Image
                 src="/icons/github.svg"
@@ -176,7 +175,7 @@ export default function Pricing() {
               <span>&bull; 5 issues per month</span>
             </div>
           </div>
-          <div className="flex flex-col p-4 sm:p-6 mb-10 bg-lightHover rounded-xl">
+          <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
             <h3 className="text-3xl mx-auto">Standard</h3>
             <span className="mt-2 text-2xl mx-auto">
               {billingPeriod === "Monthly" ? "$19/user/mo" : "$190/user/yr"}
@@ -194,7 +193,7 @@ export default function Pricing() {
                 className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover  text-white  ${
                   isSubscribeLoading && "opacity-0 pointer-events-none"
                 }
-                ${billingPeriod === "Monthly" ? "my-8" : "mt-2 mb-8"} 
+                ${billingPeriod === "Monthly" ? "mt-14" : "mt-[34px]"} 
                 `}
               >
                 {selectedIndex != null &&
@@ -206,7 +205,7 @@ export default function Pricing() {
               {isSubscribeLoading && (
                 <div
                   className={`absolute inset-0 flex items-center justify-center bg-pink hover:bg-pinkHover opacity-50 rounded-lg ${
-                    billingPeriod === "Monthly" ? "my-8" : "my-4"
+                    billingPeriod === "Monthly" ? "mt-14 mb-8" : "my-8"
                   } py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed `}
                 >
                   <Spinner size="md" color="pink" />
@@ -230,7 +229,7 @@ export default function Pricing() {
                   $current_url: window.location.href,
                 });
               }}
-              className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover text-white`}
+              className={`${pricingButtonStyles} bg-pink hover:bg-pinkHover text-white mt-[62px]`}
             >
               Contact Us
             </Link>
