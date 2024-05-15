@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const user = await prisma.user.findMany({
+    const user = await prisma.userInstallation.findMany({
       where: {
         user_id: Number(userId),
         installations: {
