@@ -131,8 +131,9 @@ export default function Pricing() {
         >
           <a id="pricing">Pricing</a>
         </h2>
-        <div className="flex mt-4 mb-6 lg:mt-0 justify-center lg:justify-end">
-          <div className="flex flex-col text-lg">
+
+        <div className="flex mt-4 mb-6 lg:mt-0 justify-center lg:justify-end lg:pr-8 ">
+          <div className="flex flex-col text-lg ">
             Billing Period
             <select
               className="border  rounded-lg outline-none"
