@@ -37,6 +37,11 @@ export async function GET(req: NextRequest) {
             owners: true,
           },
         },
+        users: {
+          select: {
+            user_name: true,
+          },
+        },
       },
     });
 

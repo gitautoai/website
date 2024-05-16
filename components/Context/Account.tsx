@@ -90,7 +90,7 @@ export function AccountContextWrapper({
 
     getUserInfosSubscribed = `/api/stripe/get-userinfo-subscriptions?userId=${userId}&jwtToken=${jwtToken}&customerIds=${customerIds}`;
   }
-
+  console.log(userInfos);
   const { data: userInfosSubscribed } = useSWR(
     getUserInfosSubscribed,
     async () => {
