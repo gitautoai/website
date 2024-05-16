@@ -58,8 +58,8 @@ model Usage {
 
 model User {
   id                 BigInt               @id(map: "users_pkey1") @default(autoincrement())
-  user_name          String?              @unique
-  user_id            BigInt?              @unique
+  user_name          String              @unique
+  user_id            BigInt              @unique
   email              String?
   created_at         DateTime             @default(now()) @db.Timestamptz(6)
   user_installations UserInstallation []
@@ -82,9 +82,8 @@ model UserInstallation  {
   id               BigInt        @id(map: "users_pkey") @default(autoincrement())
   created_at       DateTime      @default(now()) @db.Timestamptz(6)
   deleted_at       DateTime?     @db.Timestamptz(6)
-  user_name        String?
   user_id          BigInt
-  installation_id  BigInt?
+  installation_id  BigInt
   is_user_assigned Boolean       @default(false)
   first_issue      Boolean       @default(true)
   is_selected      Boolean       @default(false)
