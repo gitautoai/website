@@ -62,6 +62,7 @@ model User {
   user_id            BigInt              @unique
   email              String?
   created_at         DateTime             @default(now()) @db.Timestamptz(6)
+  created_by         String?
   user_installations UserInstallation []
 
   @@map("users")
