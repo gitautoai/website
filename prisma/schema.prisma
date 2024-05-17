@@ -95,4 +95,5 @@ model UserInstallation {
   users            User         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([user_id, installation_id], map: "users_user_id_installation_id_key")
+  @@map("user_installations")
 }
