@@ -20,7 +20,7 @@ model Installation {
   uninstalled_by     String?
   owners             Owner                @relation(fields: [owner_id], references: [owner_id], onDelete: NoAction, onUpdate: NoAction, map: "public_owners_owner_id_fkey")
   issues             Issue[]
-  user_installations UserInstallation []
+  user_installations user_installations[]
 
   @@map("installations")
 }
@@ -58,12 +58,12 @@ model Usage {
 
 model User {
   id                 BigInt               @id(map: "users_pkey1") @default(autoincrement())
-  user_name          String              @unique
-  user_id            BigInt              @unique
+  user_name          String               @unique
+  user_id            BigInt               @unique
   email              String?
   created_at         DateTime             @default(now()) @db.Timestamptz(6)
   created_by         String?
-  user_installations UserInstallation []
+  user_installations user_installations[]
 
   @@map("users")
 }
@@ -79,20 +79,20 @@ model Owner {
   @@map("owners")
 }
 
-model UserInstallation  {
-  id               BigInt        @id(map: "users_pkey") @default(autoincrement())
-  created_at       DateTime      @default(now()) @db.Timestamptz(6)
-  deleted_at       DateTime?     @db.Timestamptz(6)
+model user_installations {
+  id               BigInt       @id(map: "users_pkey") @default(autoincrement())
+  created_at       DateTime     @default(now()) @db.Timestamptz(6)
+  deleted_at       DateTime?    @db.Timestamptz(6)
   user_id          BigInt
   installation_id  BigInt
-  is_user_assigned Boolean       @default(false)
-  first_issue      Boolean       @default(true)
-  is_selected      Boolean       @default(false)
+  is_user_assigned Boolean      @default(false)
+  first_issue      Boolean      @default(true)
+  is_selected      Boolean      @default(false)
   created_by       String?
   deleted_by       String?
-  installations    Installation? @relation(fields: [installation_id], references: [installation_id], onDelete: Cascade, map: "public_users_installation_id_fkey")
-  users            User          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  is_active        Boolean      @default(true)
+  installations    Installation @relation(fields: [installation_id], references: [installation_id], onDelete: Cascade, map: "public_users_installation_id_fkey")
+  users            User         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
 
   @@unique([user_id, installation_id], map: "users_user_id_installation_id_key")
-  @@map("user_installations")
 }
