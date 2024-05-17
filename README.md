@@ -14,6 +14,12 @@ This is a Nextjs website for GitAuto. It uses Vercel for deployment.
 4. Set DATABASE_URL to your chosen db to you want to update
 5. Run `npx prisma db push` to push the changes to the database.
 
+## If you find permission denied when using Agent repo(service role key) run the following commands
+
+1. GRANT USAGE ON SCHEMA public TO service_role;
+2. GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES ON ALL TABLES IN SCHEMA public TO service_role;
+3. GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role; 
+
 ## Migrations (Not using anymore)
 
 ### How to run Prisma Migrations

@@ -20,7 +20,7 @@ model Installation {
   uninstalled_by     String?
   owners             Owner                @relation(fields: [owner_id], references: [owner_id], onDelete: NoAction, onUpdate: NoAction, map: "public_owners_owner_id_fkey")
   issues             Issue[]
-  user_installations user_installations[]
+  user_installations UserInstallation[]
 
   @@map("installations")
 }
@@ -63,7 +63,7 @@ model User {
   email              String?
   created_at         DateTime             @default(now()) @db.Timestamptz(6)
   created_by         String?
-  user_installations user_installations[]
+  user_installations UserInstallation[]
 
   @@map("users")
 }
@@ -79,7 +79,7 @@ model Owner {
   @@map("owners")
 }
 
-model user_installations {
+model UserInstallation {
   id               BigInt       @id(map: "users_pkey") @default(autoincrement())
   created_at       DateTime     @default(now()) @db.Timestamptz(6)
   deleted_at       DateTime?    @db.Timestamptz(6)
