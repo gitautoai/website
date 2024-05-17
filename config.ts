@@ -15,6 +15,7 @@ const config = {
   // Contants
   REDIRECT_GITHUB_APP_URL: "/redirect-to-install",
   PRIVACY_POLICY_URL: "/privacy-policy",
+  TERMS_OF_SERVICE_URL: "/terms-of-service",
 
   // Authentication
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || "",
@@ -26,8 +27,12 @@ const config = {
 
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
   STRIPE_FREE_TIER_PRICE_ID: process.env.STRIPE_FREE_TIER_PRICE_ID || "",
-  STRIPE_STANDARD_PLAN_PRICE_ID:
-    process.env.STRIPE_STANDARD_PLAN_PRICE_ID || "",
+  STRIPE_STANDARD_PLAN_PRODUCT_ID:
+    process.env.STRIPE_STANDARD_PLAN_PRODUCT_ID || "",
+  STRIPE_STANDARD_PLAN_MONTHLY_PRICE_ID:
+    process.env.STRIPE_STANDARD_PLAN_MONTHLY_PRICE_ID || "",
+  STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID:
+    process.env.STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID || "",
 
   // PostHog
   NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY || "",

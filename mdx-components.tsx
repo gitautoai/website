@@ -16,12 +16,26 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 style={{ fontSize: "28px", marginTop: "15px", marginBottom: "15px" }}>
+      <h2
+        style={{
+          fontSize: "28px",
+          marginTop: "15px",
+          marginBottom: "15px",
+          fontWeight: "bolder",
+        }}
+      >
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 style={{ fontSize: "20px", marginTop: "10px", marginBottom: "10px" }}>
+      <h3
+        style={{
+          fontSize: "20px",
+          marginTop: "10px",
+          marginBottom: "10px",
+          fontWeight: "bolder",
+        }}
+      >
         {children}
       </h3>
     ),
