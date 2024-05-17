@@ -61,7 +61,7 @@ export default function Pricing() {
               userInfos[currentIndex].installations.owner_id.replace("n", "")
             ),
             ownerName: userInfos[currentIndex].installations.owner_name,
-            userName: userInfos[currentIndex].user_name,
+            userName: userInfos[currentIndex].users.user_name,
             billingPeriod: billingPeriod,
           }),
         }
