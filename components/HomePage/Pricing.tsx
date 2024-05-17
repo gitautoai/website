@@ -209,7 +209,7 @@ export default function Pricing() {
                     billingPeriod === "Monthly" ? "mt-14 mb-8" : "my-8"
                   } py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed `}
                 >
-                  <Spinner size="md" color="pink" />
+                  <Spinner size="md" color="white" />
                 </div>
               )}
             </div>
