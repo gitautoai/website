@@ -7,13 +7,8 @@ import { useAccountContext } from "@/components/Context/Account";
 
 import { usePostHog } from "posthog-js/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faGithub,
-  faXTwitter,
-  faLinkedin,
-  faYoutube,
-} from "@fortawesome/free-brands-svg-icons";
-import config from "@/config";
+import { faGithub, faXTwitter, faLinkedin, faYoutube } from "@fortawesome/free-brands-svg-icons";
+import { config } from "@/config";
 
 export default function Footer() {
   // Analytics
@@ -121,9 +116,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mx-auto flex flex-col-reverse sm:flex-row items-center gap-5">
-          <span className=" text-black">
-            &copy; 2024 GitAuto. All Rights Reserved
-          </span>
+          <span className=" text-black">&copy; 2024 GitAuto. All Rights Reserved</span>
           <div className="flex items-center gap-5">
             <Link
               href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}

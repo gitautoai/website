@@ -4,7 +4,7 @@ import prisma from "@/lib/client";
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
-import config from "@/config";
+import { config } from "@/config";
 
 const handler = NextAuth({
   providers: [

@@ -11,7 +11,13 @@ function checkVar(variable: string) {
   return thisVariable;
 }
 
-const config = {
+export const FREE_TIER_REQUEST_LIMIT = 10;
+export const OPENAI_MAX_FILES = 90;
+export const OPENAI_MAX_LINES = "18K";
+export const OPENAI_MAX_TOKENS = "128K";
+export const OPENAI_MODEL_NAME = "GPT-4o";
+
+export const config = {
   // Contants
   REDIRECT_GITHUB_APP_URL: "/redirect-to-install",
   PRIVACY_POLICY_URL: "/privacy-policy",
@@ -24,7 +30,6 @@ const config = {
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "",
 
   // Stripe
-
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
   STRIPE_FREE_TIER_PRICE_ID: process.env.STRIPE_FREE_TIER_PRICE_ID || "",
   STRIPE_STANDARD_PLAN_PRODUCT_ID:
@@ -43,5 +48,3 @@ const config = {
   NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "",
   NEXT_PUBLIC_GITHUB_APP_URL: process.env.NEXT_PUBLIC_GITHUB_APP_URL || "",
 };
-
-export default config;

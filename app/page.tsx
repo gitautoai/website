@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 
 // NextJs imports
 import Image from "next/image";
-import Link from "next/link";
 
 // Components
 import Footer from "@/components/Footer";
@@ -14,7 +13,7 @@ import UseCases from "@/components/HomePage/UseCases";
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import config from "@/config";
+import { config } from "@/config";
 export default function Home() {
   const buttonStyles = `bg-pink text-white rounded-lg transition-colors 
   duration-200 text-md sm:text-lg xl:text-xl py-5 px-8 shadow-lg hover:shadow-lg 
@@ -85,32 +84,23 @@ export default function Home() {
         <Pricing />
 
         <div className="bg-white text-black w-[100vw] flex flex-col items-center py-16 px-5">
-          <h2
-            className="text-center text-3xl font-helvetica font-medium"
-            id="faq"
-          >
+          <h2 className="text-center text-3xl font-helvetica font-medium" id="faq">
             FAQ
           </h2>
           <div className=" flex flex-col gap-5 mt-5">
             <div className="flex flex-col ">
               <span className="font-bold text-lg">Do we retain your data?</span>
               <span className="text-md">
-                No, we don&apos;t retain your data. We read but we don&apos;t
-                clone your repo or save your data.
+                No, we don&apos;t retain your data. We read but we don&apos;t clone your repo or
+                save your data.
               </span>
             </div>
             <div className="flex flex-col ">
-              <span className="font-bold text-lg">
-                What languages do we support?
-              </span>
-              <span className="text-md">
-                GitAuto supports virtually all languages.
-              </span>
+              <span className="font-bold text-lg">What languages do we support?</span>
+              <span className="text-md">GitAuto supports virtually all languages.</span>
             </div>
             <div className="flex flex-col ">
-              <span className="font-bold text-lg">
-                Is there a repository limit?
-              </span>
+              <span className="font-bold text-lg">Is there a repository limit?</span>
               <span className="text-md">There is not.</span>
             </div>
           </div>

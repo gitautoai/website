@@ -3,8 +3,6 @@ import { NextResponse, NextRequest } from "next/server";
 import { z, ZodError } from "zod";
 import { isValidToken } from "@/utils/auth";
 
-import stripe from "@/lib/stripe";
-import config from "@/config";
 import { createCustomerPortalSession } from "@/utils/stripe";
 
 const schema = z.object({
