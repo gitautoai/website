@@ -3,7 +3,7 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from "@sentry/nextjs";
-import config from "./config";
+import { config } from "./config";
 // import { NODE_ENV } from "@/lib/constants";
 
 Sentry.init({
