@@ -1,4 +1,4 @@
-import config from "@/config";
+import { config } from "@/config";
 import stripe from "@/lib/stripe";
 /**
  * Create a Stripe checkout session.
@@ -88,10 +88,7 @@ export const hasActiveSubscription = async (customerId: string) => {
     for (const sub of subscription["data"]) {
       if (sub.status === "active") {
         for (const item of sub.items.data) {
-          if (
-            item.price.active === true &&
-            item.price.id !== config.STRIPE_FREE_TIER_PRICE_ID
-          ) {
+          if (item.price.active === true && item.price.id !== config.STRIPE_FREE_TIER_PRICE_ID) {
             return true;
           }
         }

@@ -1,4 +1,4 @@
-import config from "@/config";
+import { config } from "@/config";
 import jwt from "jsonwebtoken";
 
 export function isValidToken(userId: string, jwtToken: string) {

@@ -13,7 +13,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useDisclosure } from "@chakra-ui/react";
 import SwitchAccount from "../HomePage/SwitchAccount";
-import config from "@/config";
+import { config } from "@/config";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -25,22 +25,12 @@ const buttonStyles = `bg-pink text-white rounded-lg transition-colors
 duration-200 sm:text-md xl:text-lg py-2 px-3 shadow-lg hover:shadow-lg 
 cursor-pointer hover:bg-pinkHover font-semibold text-center md:w-auto `;
 
-export default function MobileDrawer({
-  setIsNavOpen,
-  isNavOpen,
-  posthog,
-}: MobileDrawerProps) {
+export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: MobileDrawerProps) {
   const { status } = useSession();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const {
-    userId,
-    jwtToken,
-    email,
-    userInfos,
-    selectedIndex,
-    userInfosSubscribed,
-  } = useAccountContext();
+  const { userId, jwtToken, email, userInfos, selectedIndex, userInfosSubscribed } =
+    useAccountContext();
 
   const router = useRouter();
 
@@ -55,13 +45,10 @@ export default function MobileDrawer({
       body: JSON.stringify({
         userId: userId,
         jwtToken: jwtToken,
-        customerId:
-          userInfos[currentIndex].installations.owners.stripe_customer_id,
+        customerId: userInfos[currentIndex].installations.owners.stripe_customer_id,
         email: email,
         ownerType: userInfos[currentIndex].installations.owner_type,
-        ownerId: Number(
-          userInfos[currentIndex].installations.owner_id.replace("n", "")
-        ),
+        ownerId: Number(userInfos[currentIndex].installations.owner_id.replace("n", "")),
         ownerName: userInfos[currentIndex].installations.owner_name,
         userName: userInfos[currentIndex].users.user_name,
       }),
@@ -72,16 +59,10 @@ export default function MobileDrawer({
   };
 
   return (
-    <Drawer
-      isOpen={isNavOpen}
-      size="full"
-      onClose={() => setIsNavOpen(!isNavOpen)}
-    >
+    <Drawer isOpen={isNavOpen} size="full" onClose={() => setIsNavOpen(!isNavOpen)}>
       <DrawerContent className="text-3xl bg-white">
         <DrawerBody p={0}>
-          <ol
-            className={`flex flex-col items-center justify-center gap-16 mt-24`}
-          >
+          <ol className={`flex flex-col items-center justify-center gap-16 mt-24`}>
             <li>
               <Link
                 href="/#use-cases"
@@ -168,12 +149,7 @@ export default function MobileDrawer({
                       <span
                         className={`link `}
                         onClick={() =>
-                          createPortalOrCheckoutURL(
-                            userId,
-                            jwtToken,
-                            userInfos,
-                            selectedIndex
-                          )
+                          createPortalOrCheckoutURL(userId, jwtToken, userInfos, selectedIndex)
                         }
                       >
                         Manage Payment
