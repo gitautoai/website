@@ -8,7 +8,7 @@ import { isTokenExpired } from "@/utils/auth";
 import { signOut, useSession } from "next-auth/react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import config from "@/config";
+import { config } from "@/config";
 
 const AccountContext = createContext<{
   userInfos: any; // All users, installations, owners associated with this github account
@@ -34,11 +34,7 @@ const AccountContext = createContext<{
   jwtToken: null,
 });
 
-export function AccountContextWrapper({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function AccountContextWrapper({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
@@ -74,30 +70,22 @@ export function AccountContextWrapper({
     getUserInfoUrl = `/api/users/get-user-info?userId=${userId}&jwtToken=${jwtToken}`;
   }
 
-  const { data: userInfos, mutate: mutateUserInfos } = useSWR(
-    getUserInfoUrl,
-    async () => {
-      const res = await fetch(getUserInfoUrl);
-      return res.json();
-    }
-  );
+  const { data: userInfos, mutate: mutateUserInfos } = useSWR(getUserInfoUrl, async () => {
+    const res = await fetch(getUserInfoUrl);
+    return res.json();
+  });
 
   // Get userinfos that have a live subscription
   if (userInfos) {
-    const customerIds = userInfos.map(
-      (user: any) => user.installations.owners.stripe_customer_id
-    );
+    const customerIds = userInfos.map((user: any) => user.installations.owners.stripe_customer_id);
 
     getUserInfosSubscribed = `/api/stripe/get-userinfo-subscriptions?userId=${userId}&jwtToken=${jwtToken}&customerIds=${customerIds}`;
   }
 
-  const { data: userInfosSubscribed } = useSWR(
-    getUserInfosSubscribed,
-    async () => {
-      const res = await fetch(getUserInfosSubscribed);
-      return res.json();
-    }
-  );
+  const { data: userInfosSubscribed } = useSWR(getUserInfosSubscribed, async () => {
+    const res = await fetch(getUserInfosSubscribed);
+    return res.json();
+  });
 
   useEffect(() => {
     async function setInstallationFallback() {

@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 // Get Stripe Secret Key from environment variables
-import config from "@/config";
+import { config } from "@/config";
 const STRIPE_SECRET_KEY = config.STRIPE_SECRET_KEY;
 if (!STRIPE_SECRET_KEY) throw new Error("STRIPE_SECRET_KEY is not set");
 

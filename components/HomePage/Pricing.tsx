@@ -14,7 +14,14 @@ import { useAccountContext } from "@/components/Context/Account";
 import { signIn } from "next-auth/react";
 
 import { Spinner } from "@chakra-ui/react";
-import config from "@/config";
+import {
+  FREE_TIER_REQUEST_LIMIT,
+  OPENAI_MAX_FILES,
+  OPENAI_MAX_LINES,
+  OPENAI_MAX_TOKENS,
+  OPENAI_MODEL_NAME,
+  config,
+} from "@/config";
 
 const pricingButtonStyles = `my-8 rounded-lg transition-colors  duration-200 
 text-md sm:text-lg xl:text-xl py-3 w-[250px] sm:w-[315px] lg:w-[210px] shadow-lg hover:shadow-lg 
@@ -24,14 +31,8 @@ export default function Pricing() {
   // Analytics
   const posthog = usePostHog();
 
-  const {
-    userId,
-    jwtToken,
-    email,
-    selectedIndex,
-    userInfos,
-    userInfosSubscribed,
-  } = useAccountContext();
+  const { userId, jwtToken, email, selectedIndex, userInfos, userInfosSubscribed } =
+    useAccountContext();
 
   const router = useRouter();
 
@@ -46,26 +47,20 @@ export default function Pricing() {
     }
     // If user has an installation, create portal or checkout session
     if (userInfos && userInfos.length > 0) {
-      const response = await fetch(
-        "/api/stripe/create-portal-or-checkout-url",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            userId: userId,
-            jwtToken: jwtToken,
-            customerId:
-              userInfos[currentIndex].installations.owners.stripe_customer_id,
-            email: email,
-            ownerType: userInfos[currentIndex].installations.owner_type,
-            ownerId: Number(
-              userInfos[currentIndex].installations.owner_id.replace("n", "")
-            ),
-            ownerName: userInfos[currentIndex].installations.owner_name,
-            userName: userInfos[currentIndex].users.user_name,
-            billingPeriod: billingPeriod,
-          }),
-        }
-      );
+      const response = await fetch("/api/stripe/create-portal-or-checkout-url", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: userId,
+          jwtToken: jwtToken,
+          customerId: userInfos[currentIndex].installations.owners.stripe_customer_id,
+          email: email,
+          ownerType: userInfos[currentIndex].installations.owner_type,
+          ownerId: Number(userInfos[currentIndex].installations.owner_id.replace("n", "")),
+          ownerName: userInfos[currentIndex].installations.owner_name,
+          userName: userInfos[currentIndex].users.user_name,
+          billingPeriod: billingPeriod,
+        }),
+      });
 
       const res = await response.json();
       createPortalOrCheckoutURL();
@@ -74,15 +69,7 @@ export default function Pricing() {
       // If not, redirect to installation page
       router.push(config.REDIRECT_GITHUB_APP_URL);
     }
-  }, [
-    email,
-    jwtToken,
-    router,
-    selectedIndex,
-    userId,
-    userInfos,
-    billingPeriod,
-  ]);
+  }, [email, jwtToken, router, selectedIndex, userId, userInfos, billingPeriod]);
 
   // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
   async function handleSubscribe() {
@@ -112,23 +99,12 @@ export default function Pricing() {
     if (searchParams.has("subscribe") && userInfos) {
       createPortalOrCheckoutURL();
     }
-  }, [
-    searchParams,
-    userInfos,
-    selectedIndex,
-    userId,
-    jwtToken,
-    router,
-    createPortalOrCheckoutURL,
-  ]);
+  }, [searchParams, userInfos, selectedIndex, userId, jwtToken, router, createPortalOrCheckoutURL]);
 
   return (
     <div className="w-[100vw] bg-white flex justify-center">
       <div className="mx-10 mt-10 sm:pt-16 text-black">
-        <h2
-          className="text-center text-3xl font-helvetica font-medium"
-          id="pricing"
-        >
+        <h2 className="text-center text-3xl font-helvetica font-medium" id="pricing">
           <a id="pricing">Pricing</a>
         </h2>
 
@@ -173,7 +149,11 @@ export default function Pricing() {
               Install
             </Link>
             <div className="flex flex-col">
-              <span>&bull; 5 issues per month</span>
+              <span>&bull; {OPENAI_MODEL_NAME}</span>
+              <span>&bull; Up to {OPENAI_MAX_TOKENS} tokens</span>
+              <span className="ml-3.5"> Up to ~{OPENAI_MAX_LINES} lines of code</span>
+              <span className="ml-3.5"> Up to ~{OPENAI_MAX_FILES} files</span>
+              <span>&bull; {FREE_TIER_REQUEST_LIMIT} issues per month</span>
             </div>
           </div>
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
@@ -182,9 +162,7 @@ export default function Pricing() {
               {billingPeriod === "Monthly" ? "$19/user/mo" : "$190/user/yr"}
             </span>
 
-            {billingPeriod === "Yearly" && (
-              <span className="mx-auto">Save $38/user/yr</span>
-            )}
+            {billingPeriod === "Yearly" && <span className="mx-auto">Save $38/user/yr</span>}
 
             <div className="relative items-center">
               <button
@@ -214,6 +192,10 @@ export default function Pricing() {
               )}
             </div>
             <div className="flex flex-col">
+              <span>&bull; {OPENAI_MODEL_NAME}</span>
+              <span>&bull; Up to {OPENAI_MAX_TOKENS} tokens</span>
+              <span className="ml-3.5"> Up to ~{OPENAI_MAX_LINES} lines of code</span>
+              <span className="ml-3.5"> Up to ~{OPENAI_MAX_FILES} files</span>
               <span>&bull; 30 issues per month</span>
             </div>
           </div>
@@ -235,6 +217,10 @@ export default function Pricing() {
               Contact Us
             </Link>
             <div className="flex flex-col">
+              <span>&bull; {OPENAI_MODEL_NAME}</span>
+              <span>&bull; Up to {OPENAI_MAX_TOKENS} tokens</span>
+              <span className="ml-3.5"> Up to ~{OPENAI_MAX_LINES} lines of code</span>
+              <span className="ml-3.5"> Up to ~{OPENAI_MAX_FILES} files</span>
               <span>&bull; Unlimited Issues</span>
               <span>&bull; Self OpenAI API key</span>
               <span>&bull; Self hosting</span>

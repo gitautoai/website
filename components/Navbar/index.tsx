@@ -17,7 +17,7 @@ import { useSession } from "next-auth/react";
 
 import { motion } from "framer-motion";
 import ProfileIcon from "./ProfileIcon";
-import config from "@/config";
+import { config } from "@/config";
 
 const buttonStyles = `bg-pink text-white rounded-lg transition-colors 
 duration-200 py-2 px-3 shadow-lg hover:shadow-lg 
@@ -47,12 +47,7 @@ export default function Navbar() {
         <nav className="flex text-lg justify-center items-center">
           <Link href="/" className="mr-auto ml-5">
             <div className="flex items-center gap-2 text-black">
-              <Image
-                src="/og-logo.png"
-                width={150}
-                height={78}
-                alt="GitAuto Logo"
-              />
+              <Image src="/og-logo.png" width={150} height={78} alt="GitAuto Logo" />
             </div>
           </Link>
           <ol className="hidden sm:flex items-center justify-center gap-4">
@@ -132,11 +127,7 @@ export default function Navbar() {
             session={session}
             status={status}
           />
-          <MobileDrawer
-            setIsNavOpen={setIsNavOpen}
-            isNavOpen={isNavOpen}
-            posthog={posthog}
-          />
+          <MobileDrawer setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} posthog={posthog} />
         </nav>
       </div>
       <hr className="h-[1px] opacity-50 bg-[#C2C2C2] w-full border-0 rounded"></hr>

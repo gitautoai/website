@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import config from "@/config";
+import { config } from "@/config";
 
 export default function Home() {
   const router = useRouter();
@@ -47,12 +47,8 @@ export default function Home() {
     <div className="bg-light text-black ">
       <div className="min-h-[calc(100vh-239px)] mx-5 text-center">
         <div className="flex flex-col justify-center items-center text-xl sm:text-2xl gap-10 ">
-          <span className="mt-16">
-            You have not installed our GitHub Marketplace App.
-          </span>
-          <span>
-            Please wait while we redirect you to the installation page...
-          </span>
+          <span className="mt-16">You have not installed our GitHub Marketplace App.</span>
+          <span>Please wait while we redirect you to the installation page...</span>
           <span>You will be redirected in {timeLeft} seconds</span>
         </div>
       </div>

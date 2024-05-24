@@ -1,5 +1,5 @@
 "use client";
-import config from "@/config";
+import { config } from "@/config";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 
