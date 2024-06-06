@@ -200,8 +200,8 @@ export default function Pricing() {
             </div>
           </div>
           <div className="flex flex-col p-4 sm:p-6 mb-10 bg-light rounded-xl">
-            <h3 className="text-3xl mx-auto">Custom</h3>
-            <span className="mt-2 text-xl mx-auto">Enterprise</span>
+            <h3 className="text-3xl mx-auto">Enterprise</h3>
+            <span className="mt-2 text-xl mx-auto">Custom</span>
             <Link
               href="mailto:info@gitauto.ai"
               passHref
