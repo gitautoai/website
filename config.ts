@@ -11,10 +11,13 @@ function checkVar(variable: string) {
   return thisVariable;
 }
 
-export const FREE_TIER_REQUEST_LIMIT = 10;
-export const OPENAI_MAX_FILES = 90;
-export const OPENAI_MAX_LINES = "18K";
+export const FREE_TIER_REQUEST_LIMIT = 5;
+export const OPENAI_FREE_TOKENS = "13K";
+export const OPENAI_FREE_LINES = "2K";
+export const OPENAI_FREE_FILES = 9;
 export const OPENAI_MAX_TOKENS = "128K";
+export const OPENAI_MAX_LINES = "18K";
+export const OPENAI_MAX_FILES = 90;
 export const OPENAI_MODEL_NAME = "GPT-4o";
 
 export const config = {
