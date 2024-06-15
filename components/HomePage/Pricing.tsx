@@ -16,6 +16,9 @@ import { signIn } from "next-auth/react";
 import { Spinner } from "@chakra-ui/react";
 import {
   FREE_TIER_REQUEST_LIMIT,
+  OPENAI_FREE_FILES,
+  OPENAI_FREE_LINES,
+  OPENAI_FREE_TOKENS,
   OPENAI_MAX_FILES,
   OPENAI_MAX_LINES,
   OPENAI_MAX_TOKENS,
@@ -150,9 +153,9 @@ export default function Pricing() {
             </Link>
             <div className="flex flex-col">
               <span>&bull; {OPENAI_MODEL_NAME}</span>
-              <span>&bull; Up to {OPENAI_MAX_TOKENS} tokens</span>
-              <span className="ml-3.5"> Up to ~{OPENAI_MAX_LINES} lines of code</span>
-              <span className="ml-3.5"> Up to ~{OPENAI_MAX_FILES} files</span>
+              <span>&bull; Up to {OPENAI_FREE_TOKENS} tokens</span>
+              <span className="ml-3.5"> Up to ~{OPENAI_FREE_LINES} lines of code</span>
+              <span className="ml-3.5"> Up to ~{OPENAI_FREE_FILES} files</span>
               <span>&bull; {FREE_TIER_REQUEST_LIMIT} issues per month</span>
             </div>
           </div>
