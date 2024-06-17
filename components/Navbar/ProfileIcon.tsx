@@ -47,6 +47,7 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
       body: JSON.stringify({
         userId: userId,
         jwtToken: jwtToken,
+            id="profile-icon-image"
         customerId:
           userInfos[currentIndex].installations.owners.stripe_customer_id,
         email: email,
