@@ -32,6 +32,7 @@ export default function SwitchAccount({
     });
     if (response.ok) {
       await response.json();
+              id="account-selection"
       await mutateUserInfos();
       onClose();
     }
