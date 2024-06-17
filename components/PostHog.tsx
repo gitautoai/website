@@ -17,4 +17,5 @@ if (typeof window !== "undefined") {
 
 export function PHProvider({ children }: any) {
   return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
+      name="posthog-analytics"
 }
