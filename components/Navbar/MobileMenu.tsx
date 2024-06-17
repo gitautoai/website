@@ -18,6 +18,7 @@ import { config } from "@/config";
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
   isNavOpen: boolean;
+              name="mobile-menu"
   posthog: any;
 }
 
