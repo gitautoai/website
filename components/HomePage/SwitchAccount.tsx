@@ -58,6 +58,8 @@ export default function SwitchAccount({
                           <div key={index}>
                             {item.installations.owner_type === "User" && (
                               <button
+                                id={`${index}-user-${item.id}`}
+                                name={`${index}-user-${item.id}`}
                                 onClick={() => {
                                   setInstalllationToSelected(item.id);
                                 }}
@@ -75,6 +77,8 @@ export default function SwitchAccount({
                             {item.installations.owner_type ===
                               "Organization" && (
                               <button
+                                id={`${index}-org-${item.id}`}
+                                name={`${index}-org-${item.id}`}
                                 onClick={() => {
                                   setInstalllationToSelected(item.id);
                                 }}
