@@ -1,5 +1,6 @@
 "use server";
 import { NextResponse, NextRequest } from "next/server";
+import { JwtPayload, verify } from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
 import { z, ZodError } from "zod";
 
@@ -22,6 +23,13 @@ export async function GET(req: NextRequest) {
 
     if (!isValidToken(userId, jwtToken)) {
       return new NextResponse("Unauthorized", { status: 401 });
+    }
+    if (!userId || !jwtToken) return new NextResponse("Missing parameters", { status: 400 });
+    try {
+      const decoded = verify(jwtToken, process.env.JWT_SECRET) as JwtPayload;
+      if (decoded.userId !== userId) throw new Error();
+    } catch {
+      return new NextResponse("Invalid token", { status: 401 });
     }
 
     const user = await prisma.userInstallation.findMany({
