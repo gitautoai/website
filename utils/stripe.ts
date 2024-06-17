@@ -46,6 +46,7 @@ export const createCheckoutSession = async ({
       automatic_tax: { enabled: true },
       billing_address_collection: "auto", // "required" or "auto"
       consent_collection: {
+      id="stripe-checkout"
         terms_of_service: "none", // "none" or "required". We set "none" because Google Pay and Apple Pay are not supported in case of "required"
       },
       // customer_email: email, // TODO To Implement and test in KAN-146
