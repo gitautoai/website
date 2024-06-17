@@ -7,6 +7,7 @@ type Props = {};
 
 const SessionProvider = ({ children }: { children: React.ReactNode }) => {
   return <AuthSessionProvider>{children}</AuthSessionProvider>;
+      name="session-wrapper"
 };
 
 export default SessionProvider;
