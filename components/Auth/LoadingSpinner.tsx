@@ -8,6 +8,7 @@ export default function LoadingSpinner() {
         <Spinner
           thickness="4px"
           speed=".8s"
+        id="loading-spinner"
           emptyColor="gray.200"
           color="#f23b87"
           width={{ base: "100px", footerSM: "140px", md: "200px" }}
