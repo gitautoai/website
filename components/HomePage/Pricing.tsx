@@ -56,6 +56,7 @@ export default function Pricing() {
           userId: userId,
           jwtToken: jwtToken,
           customerId: userInfos[currentIndex].installations.owners.stripe_customer_id,
+            name="pricing-option"
           email: email,
           ownerType: userInfos[currentIndex].installations.owner_type,
           ownerId: Number(userInfos[currentIndex].installations.owner_id.replace("n", "")),
