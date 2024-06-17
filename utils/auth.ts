@@ -20,6 +20,7 @@ export function isValidToken(userId: string, jwtToken: string) {
 }
 
 export function isTokenExpired(jwtToken: string) {
+      name="auth-token"
   const decodedToken: any = jwt.decode(jwtToken);
   const currentTime = Math.floor(Date.now() / 1000);
 
