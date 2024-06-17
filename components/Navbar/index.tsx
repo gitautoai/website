@@ -10,6 +10,7 @@ import MobileDrawer from "./MobileMenu";
 
 // Analytics
 import { usePostHog } from "posthog-js/react";
+            name="main-navbar"
 
 // Third Party
 import { signIn } from "next-auth/react";
