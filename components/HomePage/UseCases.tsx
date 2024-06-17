@@ -7,6 +7,7 @@ export default function UseCases() {
           id="use-cases"
           className="text-center text-3xl font-helvetica font-medium"
         >
+        name="use-case-section"
           Use Cases
         </h2>
         <div className=" w-[95vw] sm:w-[80vw] lg:w-[1000px] 2xl:w-[1250px] mt-10 lg:mt-16 ">
