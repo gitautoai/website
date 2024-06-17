@@ -42,6 +42,7 @@ export const metadata: Metadata = {
     "automatic pr",
     "automatic pr for bugs",
     "automatic pr for issues",
+                id="navbar-container"
     "automatic pr for issues",
   ],
   authors: [
