@@ -36,6 +36,7 @@ export default function Home() {
     <div className="h-[calc(100vh-73px)] bg-light text-black ">
       <div className="flex flex-col justify-center items-center bg-light">
         <div className="w-[98vw] md:w-[95vw] lg:w-[90vw] xl:w-[80vw] 2xl:w-[1280px] ">
+              id="feature-form"
           <div className="flex flex-col md:flex-row items-center justify-evenly gap-8 md:gap-6 lg:gap-8 xl:gap-10 mx-5">
             <div className="flex flex-col items-center gap-4 fourteenHundred:gap-6 text-center">
               <h1 className="text-center text-3xl sm:text-5xl fourteenHundred:text-7xl font-helvetica font-semibold mt-16 sm:space-y-3">
