@@ -47,15 +47,9 @@ export async function GET(req: NextRequest) {
 
     // owner_type == "User" comes first in the list of users
     user.sort((a: any, b: any) => {
-      if (
-        a.installations.owner_type === "User" &&
-        b.installations.owner_type !== "User"
-      ) {
+      if (a.installations.owner_type === "User" && b.installations.owner_type !== "User") {
         return -1;
-      } else if (
-        a.installations.owner_type !== "User" &&
-        b.installations.owner_type === "User"
-      ) {
+      } else if (a.installations.owner_type !== "User" && b.installations.owner_type === "User") {
         return 1;
       } else {
         return a.installations.created_at - b.installations.created_at;
@@ -64,18 +58,13 @@ export async function GET(req: NextRequest) {
 
     return new NextResponse(stringify(user), { status: 200 });
   } catch (err: any) {
-    console.error(err);
+    console.error("Error in get-user-info", err);
     if (err instanceof ZodError) {
-      return NextResponse.json(
-        { message: err.issues[0].message },
-        {
-          status: 400,
-        }
-      );
+      console.error("Zod validation error", err.issues);
+      return NextResponse.json({ message: err.issues }, { status: 400 });
     } else {
-      return new NextResponse(err, {
-        status: 400,
-      });
+      console.error("Unexpected error", err.message);
+      return new NextResponse(err, { status: 400 });
     }
   }
 }

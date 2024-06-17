@@ -115,6 +115,8 @@ export default function Pricing() {
           <div className="flex flex-col text-lg ">
             Billing Period
             <select
+              id="billingPeriod"
+              name="billingPeriod"
               className="border  rounded-lg outline-none"
               onChange={(e) => {
                 setBillingPeriod(e.target.value);
@@ -169,6 +171,8 @@ export default function Pricing() {
 
             <div className="relative items-center">
               <button
+                id="subscribe-or-manage-standard"
+                name="subscribe-or-manage-standard"
                 onClick={() => {
                   handleSubscribe();
                 }}
