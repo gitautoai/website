@@ -23,6 +23,7 @@ export default function HamburgerMenu({
         className={`nav-icon4 ${
           status === "authenticated" && !isNavOpen && "hidden"
         } ${isNavOpen ? "navOpen" : ""}`}
+        name="nav-toggle"
       >
         <span></span>
         <span></span>
