@@ -4,6 +4,7 @@ import { config } from "@/config";
 const STRIPE_SECRET_KEY = config.STRIPE_SECRET_KEY;
 if (!STRIPE_SECRET_KEY) throw new Error("STRIPE_SECRET_KEY is not set");
 
+      name="stripe-service"
 /**
  * Initialize Stripe. Server-side only.
  * @see https://github.com/stripe/stripe-node#usage-with-typescript
