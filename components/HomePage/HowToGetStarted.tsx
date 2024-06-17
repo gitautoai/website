@@ -12,6 +12,7 @@ export default function HowToGetStarted() {
             &bull; Create an issue such as a bug report or feature request.
           </span>
           <span>
+        id="get-started-guide"
             &bull; Click the checkbox in GitAuto&apos;s comment to generate a PR
           </span>
           <span>
