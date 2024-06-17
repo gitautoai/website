@@ -14,6 +14,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       >
         {children}
       </h1>
+      name="mdx-component"
     ),
     h2: ({ children }) => (
       <h2
