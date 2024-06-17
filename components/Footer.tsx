@@ -35,6 +35,7 @@ export default function Footer() {
                     });
                   }}
                   className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+            name="footer-link"
                 >
                   GitHub
                 </Link>
