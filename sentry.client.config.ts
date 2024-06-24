@@ -23,6 +23,13 @@ Sentry.init({
   // in development and sample at a lower rate in production
   replaysSessionSampleRate: 0.1,
 
+  ignoreErrors: [
+    // Error when Outlook scans our link: https://gitauto.ai, usually from a specific IP address like 40.94.33.28.
+    // https://github.com/getsentry/sentry-javascript/issues/3440
+    // https://docs.sentry.io/platforms/javascript/configuration/filtering/#using-
+    /Non-Error promise rejection captured with value: (undefined|Object Not Found Matching Id:\d+, MethodName:\w+, ParamCount:\d+)/,
+  ],
+
   // You can remove this option if you're not planning to use the Sentry Session Replay feature:
   integrations: [
     Sentry.replayIntegration({
