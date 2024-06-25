@@ -4,7 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback, useEffect } from "react";
+
 // Analytics
+import * as Sentry from "@sentry/nextjs";
 import { usePostHog } from "posthog-js/react";
 
 // Components
@@ -12,7 +14,6 @@ import { useAccountContext } from "@/components/Context/Account";
 
 // Third Party
 import { signIn } from "next-auth/react";
-
 import { Spinner } from "@chakra-ui/react";
 import {
   FREE_TIER_REQUEST_LIMIT,
@@ -66,7 +67,6 @@ export default function Pricing() {
       });
 
       const res = await response.json();
-      createPortalOrCheckoutURL();
       router.push(res);
     } else {
       // If not, redirect to installation page
@@ -77,23 +77,28 @@ export default function Pricing() {
   // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
   async function handleSubscribe() {
     setIsSubscribeLoading(true);
-    posthog.capture("$click", {
-      $event_type: "subscribe",
-      $current_url: window.location.href,
-    });
-    if (userId && jwtToken) {
-      // Has at least one installation
-      if (userInfos && userInfos.length > 0) {
-        createPortalOrCheckoutURL();
-      } else {
-        // Signed in but no intallation
-        router.push(config.REDIRECT_GITHUB_APP_URL);
-      }
-    } else {
+    posthog.capture("$click", { $event_type: "subscribe", $current_url: window.location.href });
+
+    try {
       // Not signed in, prompt sign in
-      await signIn("github", {
-        callbackUrl: `/?subscribe`,
-      });
+      if (!userId || !jwtToken) {
+        await signIn("github", { callbackUrl: `/?subscribe` });
+        return;
+      }
+
+      // Signed in but no installation
+      if (!userInfos || userInfos.length === 0) {
+        router.push(config.REDIRECT_GITHUB_APP_URL);
+        return;
+      }
+
+      // Has at least one installation
+      await createPortalOrCheckoutURL();
+    } catch (error) {
+      Sentry.captureException(error);
+      console.error("Error subscribing", error);
+    } finally {
+      setIsSubscribeLoading(false);
     }
   }
 
