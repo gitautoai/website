@@ -1,14 +1,16 @@
-import { config } from "@/config";
+import { isPrd } from "@/config";
 import { PrismaClient } from "@prisma/client";
 
+// Declare a global variable to hold the PrismaClient instance with type safety. unknown is used to avoid type errors when accessing the global object.
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-// import { NODE_ENV } from "/lib/constants";
-
+// Create a new PrismaClient instance if there's none, or reuse the existing one.
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
-    log: ["error"],
+    log: isPrd ? ["error"] : ["warn", "error"],
+    errorFormat: isPrd ? "minimal" : "pretty",
   });
 
-if (config.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+// If not in production, assign the PrismaClient instance to the global variable.
+if (!isPrd) globalForPrisma.prisma = prisma;

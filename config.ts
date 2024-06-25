@@ -12,6 +12,9 @@ function checkVar(variable: string) {
 }
 
 export const FREE_TIER_REQUEST_LIMIT = 5;
+export const isPrd = process.env.NODE_ENV === "production";
+
+// OpenAI Constants
 export const OPENAI_FREE_TOKENS = "13K";
 export const OPENAI_FREE_LINES = "2K";
 export const OPENAI_FREE_FILES = 9;
