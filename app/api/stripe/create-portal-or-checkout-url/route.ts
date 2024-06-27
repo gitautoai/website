@@ -1,8 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
-
 import { z, ZodError } from "zod";
+import * as Sentry from "@sentry/nextjs";
 import { isValidToken } from "@/utils/auth";
-
 import { createCheckoutSession, hasActiveSubscription } from "@/utils/stripe";
 import { config } from "@/config";
 import { createCustomerPortalSession } from "@/utils/stripe";
@@ -20,19 +19,11 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  let body;
   try {
-    const body = await req.json();
-    const {
-      userId,
-      jwtToken,
-      customerId,
-      email,
-      ownerType,
-      ownerId,
-      ownerName,
-      userName,
-      billingPeriod,
-    } = schema.parse(body);
+    body = await req.json();
+    const { userId, jwtToken, customerId, email, ownerId, ownerName, userName, billingPeriod } =
+      schema.parse(body);
 
     if (!isValidToken(userId.toString(), jwtToken)) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -67,17 +58,24 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(session.url, { status: 200 });
   } catch (err: any) {
     console.error(err);
-    if (err instanceof ZodError) {
-      return NextResponse.json(
-        { message: err.issues[0].message },
-        {
-          status: 400,
-        }
-      );
-    } else {
-      return new NextResponse(err, {
-        status: 400,
-      });
-    }
+
+    // If the error is a ZodError, return the first issue message
+    if (err instanceof ZodError)
+      return NextResponse.json({ message: err.issues[0].message }, { status: 400 });
+
+    // Capture the error with Sentry and return a generic error message
+    Sentry.captureException(err, {
+      extra: {
+        userId: body?.userId || null,
+        jwtToken: body?.jwtToken || null,
+        customerId: body?.customerId || null,
+        email: body?.email || null,
+        ownerId: body?.ownerId || null,
+        ownerName: body?.ownerName || null,
+        userName: body?.userName || null,
+        billingPeriod: body?.billingPeriod || null,
+      },
+    });
+    return NextResponse.json({ message: err.message }, { status: 400 });
   }
 }
