@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import HamburgerMenu from "./hamburgerMenu";
 import MobileDrawer from "./MobileMenu";
 
+import { debounce } from 'lodash';
 // Analytics
 import { usePostHog } from "posthog-js/react";
 
@@ -56,6 +57,15 @@ export default function Navbar() {
                 href="/#use-cases"
                 passHref
                 className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(debounce(() => {
+      // Handle resize
+    }, 100));
+  
+    resizeObserver.observe(document.body);
+    return () => resizeObserver.disconnect();
+  }, []);
+
               >
                 Use Cases
               </Link>
