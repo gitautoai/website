@@ -1,6 +1,8 @@
 export default function HowToGetStarted() {
   return (
+import { useEffect } from 'react';
     <div className="bg-light text-black w-[100vw] flex flex-col py-16 px-5">
+import { debounce } from 'lodash';
       <div className="flex flex-col items-center">
         <h2 className="text-center text-3xl font-helvetica font-medium">
           How to get started
@@ -14,6 +16,15 @@ export default function HowToGetStarted() {
           <span>
             &bull; Click the checkbox in GitAuto&apos;s comment to generate a PR
           </span>
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(debounce(() => {
+      // Handle resize
+    }, 100));
+  
+    resizeObserver.observe(document.body);
+    return () => resizeObserver.disconnect();
+  }, []);
+
           <span>
             &bull; That&apos;s it, your PR will soon be created. The progress is
             reflected in the comment
