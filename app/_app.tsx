@@ -14,12 +14,23 @@ const poppins = Poppins({
 });
 
 const lexend = Lexend({
+import { debounce } from 'lodash';
+import { useEffect } from 'react';
   subsets: ["latin"],
   variable: "--font-lexend",
 });
 
 export default function App({
   Component,
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(debounce(() => {
+      // Handle resize
+    }, 100));
+  
+    resizeObserver.observe(document.body);
+    return () => resizeObserver.disconnect();
+  }, []);
+
   pageProps: { session, ...pageProps },
 }: AppProps) {
   return (
