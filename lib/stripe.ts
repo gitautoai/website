@@ -9,7 +9,7 @@ if (!STRIPE_SECRET_KEY) throw new Error("STRIPE_SECRET_KEY is not set");
  * @see https://github.com/stripe/stripe-node#usage-with-typescript
  */
 const stripe = new Stripe(STRIPE_SECRET_KEY, {
-  apiVersion: "2023-10-16", // am not able to specify from env var
+  apiVersion: "2024-06-20", // am not able to specify from env var
   typescript: true,
   maxNetworkRetries: undefined, // Default is 0
   httpAgent: undefined,
