@@ -2,9 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-// Components
-import Footer from "@/components/Footer";
-
 // Analytics
 import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
@@ -17,7 +14,7 @@ export default function Home() {
   const pathname = usePathname();
   const posthog = usePostHog();
 
-  const [timeLeft, setTimeLeft] = useState(5);
+  const [timeLeft, setTimeLeft] = useState(10);
 
   useEffect(() => {
     if (pathname && posthog) {
@@ -34,8 +31,8 @@ export default function Home() {
     }, 1000);
 
     const timeout = setTimeout(() => {
-      router.push(config.NEXT_PUBLIC_GITHUB_APP_URL as string);
-    }, 5000);
+      router.push(config.NEXT_PUBLIC_GITHUB_APP_URL);
+    }, 10000);
 
     return () => {
       clearInterval(intervalId);
@@ -44,15 +41,10 @@ export default function Home() {
   }, [router]);
 
   return (
-    <div className="text-black ">
-      <div className="min-h-[calc(100vh-239px)] mx-5 text-center">
-        <div className="flex flex-col justify-center items-center text-xl sm:text-2xl gap-10 ">
-          <span className="mt-16">You have not installed our GitHub Marketplace App.</span>
-          <span>Please wait while we redirect you to the installation page...</span>
-          <span>You will be redirected in {timeLeft} seconds</span>
-        </div>
-      </div>
-      <Footer />
+    <div className="h-screen flex flex-col justify-center items-center text-xl sm:text-2xl gap-4 md:gap-10 text-center">
+      <span className="mt-16">You have not installed our GitHub Marketplace App.</span>
+      <span>Please wait while we redirect you to the installation page...</span>
+      <span>You will be redirected in {timeLeft} seconds</span>
     </div>
   );
 }
