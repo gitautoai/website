@@ -1,5 +1,6 @@
-import { config } from "@/config";
+import { config, RELATIVE_URLS } from "@/config";
 import stripe from "@/lib/stripe";
+
 /**
  * Create a Stripe checkout session.
  * @see https://stripe.com/docs/api/checkout/sessions/create
@@ -104,8 +105,8 @@ export const hasActiveSubscription = async (customerId: string) => {
 const createCustomerPortalConfiguration = async () => {
   const configuration = await stripe.billingPortal.configurations.create({
     business_profile: {
-      privacy_policy_url: `${process.env.NEXT_PUBLIC_SITE_URL}${config.PRIVACY_POLICY_URL}`,
-      terms_of_service_url: `${process.env.NEXT_PUBLIC_SITE_URL}${config.TERMS_OF_SERVICE_URL}`,
+      privacy_policy_url: `${process.env.NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRIVACY_POLICY}`,
+      terms_of_service_url: `${process.env.NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.TERMS_OF_SERVICE}`,
     },
     features: {
       customer_update: {

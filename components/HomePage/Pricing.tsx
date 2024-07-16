@@ -24,6 +24,7 @@ import {
   OPENAI_MAX_LINES,
   OPENAI_MAX_TOKENS,
   OPENAI_MODEL_NAME,
+  RELATIVE_URLS,
   config,
 } from "@/config";
 
@@ -70,7 +71,7 @@ export default function Pricing() {
       router.push(res);
     } else {
       // If not, redirect to installation page
-      router.push(config.REDIRECT_GITHUB_APP_URL);
+      router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
     }
   }, [email, jwtToken, router, selectedIndex, userId, userInfos, billingPeriod]);
 
@@ -88,7 +89,7 @@ export default function Pricing() {
 
       // Signed in but no installation
       if (!userInfos || userInfos.length === 0) {
-        router.push(config.REDIRECT_GITHUB_APP_URL);
+        router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
         return;
       }
 

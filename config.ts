@@ -53,11 +53,6 @@ export const URLS = {
 } as const;
 
 export const config = {
-  // Contants
-  REDIRECT_GITHUB_APP_URL: "/redirect-to-install",
-  PRIVACY_POLICY_URL: "/privacy-policy",
-  TERMS_OF_SERVICE_URL: "/terms-of-service",
-
   // Authentication
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || "",
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || "",

@@ -8,7 +8,7 @@ import { useAccountContext } from "@/components/Context/Account";
 import { usePostHog } from "posthog-js/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faXTwitter, faLinkedin, faYoutube } from "@fortawesome/free-brands-svg-icons";
-import { config } from "@/config";
+import { config, RELATIVE_URLS } from "@/config";
 
 export default function Footer() {
   // Analytics
@@ -43,7 +43,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/#pricing"
+                  href={RELATIVE_URLS.PRICING}
                   onClick={() => {
                     posthog.capture("$click", {
                       $event_type: "pricing",
@@ -57,7 +57,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href={config.PRIVACY_POLICY_URL}
+                  href={RELATIVE_URLS.PRIVACY_POLICY}
                   target="_blank"
                   onClick={() => {
                     posthog.capture("$click", {
@@ -72,7 +72,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href={config.TERMS_OF_SERVICE_URL}
+                  href={RELATIVE_URLS.TERMS_OF_SERVICE}
                   target="_blank"
                   onClick={() => {
                     posthog.capture("$click", {

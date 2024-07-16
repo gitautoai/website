@@ -13,7 +13,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useDisclosure } from "@chakra-ui/react";
 import SwitchAccount from "../HomePage/SwitchAccount";
-import { config } from "@/config";
+import { config, RELATIVE_URLS } from "@/config";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -65,7 +65,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
           <ol className={`flex flex-col items-center justify-center gap-16 mt-24`}>
             <li>
               <Link
-                href="/#use-cases"
+                href={RELATIVE_URLS.USE_CASES}
                 onClick={() => {
                   setIsNavOpen(false);
                 }}
@@ -76,7 +76,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
             </li>
             <li>
               <Link
-                href="/#pricing"
+                href={RELATIVE_URLS.PRICING}
                 onClick={() => {
                   setIsNavOpen(false);
                 }}
@@ -87,7 +87,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
             </li>
             <li>
               <Link
-                href="/#faq"
+                href={RELATIVE_URLS.FAQ}
                 onClick={() => {
                   setIsNavOpen(false);
                 }}
