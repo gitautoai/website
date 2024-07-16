@@ -160,8 +160,8 @@ export default function Pricing() {
           <div className="flex flex-col">
             <span>&bull; {OPENAI_MODEL_NAME}</span>
             <span>&bull; Up to {OPENAI_FREE_TOKENS} tokens</span>
-            <span className="ml-4"> Up to ~{OPENAI_FREE_LINES} lines of code</span>
-            <span className="ml-4"> Up to ~{OPENAI_FREE_FILES} files</span>
+            <span className="ml-4.5">Up to ~{OPENAI_FREE_LINES} lines of code</span>
+            <span className="ml-4.5">Up to ~{OPENAI_FREE_FILES} files</span>
             <span>&bull; {FREE_TIER_REQUEST_LIMIT} issues per month</span>
           </div>
         </div>
@@ -198,7 +198,7 @@ export default function Pricing() {
               <div
                 className={`absolute inset-0 flex items-center justify-center bg-pink-600 hover:bg-pink-700 opacity-50 rounded-lg ${
                   billingPeriod === "Monthly" ? "mt-14 mb-8" : "my-8"
-                } py-3 w-[250px] sm:w-[315px] lg:w-[210px] cursor-not-allowed`}
+                } py-3 w-full mx-auto cursor-not-allowed`}
               >
                 <Spinner size="md" color="white" />
               </div>
@@ -207,8 +207,8 @@ export default function Pricing() {
           <div className="flex flex-col">
             <span>&bull; {OPENAI_MODEL_NAME}</span>
             <span>&bull; Up to {OPENAI_MAX_TOKENS} tokens</span>
-            <span className="ml-4"> Up to ~{OPENAI_MAX_LINES} lines of code</span>
-            <span className="ml-4"> Up to ~{OPENAI_MAX_FILES} files</span>
+            <span className="ml-4.5">Up to ~{OPENAI_MAX_LINES} lines of code</span>
+            <span className="ml-4.5">Up to ~{OPENAI_MAX_FILES} files</span>
             <span>&bull; 30 issues per month</span>
           </div>
         </div>
@@ -235,8 +235,8 @@ export default function Pricing() {
           <div className="flex flex-col">
             <span>&bull; {OPENAI_MODEL_NAME}</span>
             <span>&bull; Up to {OPENAI_MAX_TOKENS} tokens</span>
-            <span className="ml-4"> Up to ~{OPENAI_MAX_LINES} lines of code</span>
-            <span className="ml-4"> Up to ~{OPENAI_MAX_FILES} files</span>
+            <span className="ml-4.5">Up to ~{OPENAI_MAX_LINES} lines of code</span>
+            <span className="ml-4.5">Up to ~{OPENAI_MAX_FILES} files</span>
             <span>&bull; Unlimited Issues</span>
             <span>&bull; Self OpenAI API key</span>
             <span>&bull; Self hosting</span>

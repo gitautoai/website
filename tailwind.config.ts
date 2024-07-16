@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      spacing: {
+        "4.5": "1.125rem",
+      },
       // https://tailwindcss.com/docs/height#customizing-your-theme
       height: {
         "26": "6.5rem",
