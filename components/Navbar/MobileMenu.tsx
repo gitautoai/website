@@ -60,26 +60,40 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
 
   return (
     <Drawer isOpen={isNavOpen} size="full" onClose={() => setIsNavOpen(!isNavOpen)}>
-      <DrawerContent className="text-3xl">
+      <DrawerContent className="text-2xl">
         <DrawerBody p={0}>
-          <ol className={`flex flex-col items-center justify-center gap-16 mt-24`}>
+          <ol className={`flex flex-col items-center justify-center gap-6 mt-24`}>
+            <li>
+              <Link
+                href={RELATIVE_URLS.HOW_IT_WORKS}
+                onClick={() => setIsNavOpen(false)}
+                className="whitespace-nowrap transition duration-[325ms] link outline-none"
+              >
+                How It Works
+              </Link>
+            </li>
             <li>
               <Link
                 href={RELATIVE_URLS.USE_CASES}
-                onClick={() => {
-                  setIsNavOpen(false);
-                }}
-                className="whitespace-nowrap transition duration-[325ms] link outline-none"
+                onClick={() => setIsNavOpen(false)}
+                className="whitespace-nowrap transition duration-[325ms] link"
               >
                 Use Cases
               </Link>
             </li>
             <li>
               <Link
+                href={RELATIVE_URLS.HOW_TO_GET_STARTED}
+                onClick={() => setIsNavOpen(false)}
+                className="whitespace-nowrap transition duration-[325ms] link"
+              >
+                How to Get Started
+              </Link>
+            </li>
+            <li>
+              <Link
                 href={RELATIVE_URLS.PRICING}
-                onClick={() => {
-                  setIsNavOpen(false);
-                }}
+                onClick={() => setIsNavOpen(false)}
                 className="whitespace-nowrap transition duration-[325ms] link"
               >
                 Pricing
@@ -88,9 +102,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
             <li>
               <Link
                 href={RELATIVE_URLS.FAQ}
-                onClick={() => {
-                  setIsNavOpen(false);
-                }}
+                onClick={() => setIsNavOpen(false)}
                 className="whitespace-nowrap transition duration-[325ms] link"
               >
                 FAQ
@@ -103,9 +115,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
                     href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
                     target="_blank"
                     onClick={() => {
-                      posthog.capture("$click", {
-                        $event_type: "github_app_install_nav",
-                      });
+                      posthog.capture("$click", { $event_type: "github_app_install_nav" });
                       setIsNavOpen(false);
                     }}
                     className={`${buttonStyles}`}
@@ -115,19 +125,9 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
                 </li>
                 <li>
                   <motion.button
-                    whileHover={{
-                      scale: 1.04,
-                      transition: { duration: 0.1 },
-                    }}
-                    whileTap={{
-                      scale: 0.98,
-                      transition: { duration: 0.1 },
-                    }}
-                    onClick={() => {
-                      signIn("github", {
-                        callbackUrl: `/`,
-                      });
-                    }}
+                    whileHover={{ scale: 1.04, transition: { duration: 0.1 } }}
+                    whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+                    onClick={() => signIn("github", { callbackUrl: `/` })}
                     className="border border-pink-600 text-black rounded-lg transition-colors duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer"
                   >
                     Sign In
