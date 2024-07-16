@@ -1,10 +1,8 @@
-import prisma from "@/lib/client";
-
 // Third party
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
-import { config } from "@/config";
+import { config, isPrd } from "@/config";
 
 const handler = NextAuth({
   providers: [
@@ -36,7 +34,7 @@ const handler = NextAuth({
       return token;
     },
   },
-  debug: true,
+  debug: isPrd, // https://next-auth.js.org/warnings#debug_enabled
   secret: config.NEXTAUTH_SECRET,
 });
 

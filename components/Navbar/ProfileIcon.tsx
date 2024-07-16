@@ -10,13 +10,7 @@ import { useAccountContext } from "@/components/Context/Account";
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
 
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, useDisclosure } from "@chakra-ui/react";
 
 interface ProfileIconProps {
   session: Session | null;
@@ -25,14 +19,8 @@ interface ProfileIconProps {
 const ProfileIcon = ({ session }: ProfileIconProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const {
-    userId,
-    jwtToken,
-    email,
-    userInfos,
-    selectedIndex,
-    userInfosSubscribed,
-  } = useAccountContext();
+  const { userId, jwtToken, email, userInfos, selectedIndex, userInfosSubscribed } =
+    useAccountContext();
 
   const router = useRouter();
 
@@ -47,13 +35,10 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
       body: JSON.stringify({
         userId: userId,
         jwtToken: jwtToken,
-        customerId:
-          userInfos[currentIndex].installations.owners.stripe_customer_id,
+        customerId: userInfos[currentIndex].installations.owners.stripe_customer_id,
         email: email,
         ownerType: userInfos[currentIndex].installations.owner_type,
-        ownerId: Number(
-          userInfos[currentIndex].installations.owner_id.replace("n", "")
-        ),
+        ownerId: Number(userInfos[currentIndex].installations.owner_id.replace("n", "")),
         ownerName: userInfos[currentIndex].installations.owner_name,
         userName: userInfos[currentIndex].users.user_name,
       }),
@@ -90,12 +75,7 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
                 <span
                   className={`link `}
                   onClick={() =>
-                    createPortalOrCheckoutURL(
-                      userId,
-                      jwtToken,
-                      userInfos,
-                      selectedIndex
-                    )
+                    createPortalOrCheckoutURL(userId, jwtToken, userInfos, selectedIndex)
                   }
                 >
                   Manage Payment

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAccountContext } from "@/components/Context/Account";
 
 // Styling
-import { Drawer, DrawerContent, DrawerBody, Text } from "@chakra-ui/react";
+import { Drawer, DrawerContent, DrawerBody } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
 // Third Party
@@ -13,7 +13,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useDisclosure } from "@chakra-ui/react";
 import SwitchAccount from "../HomePage/SwitchAccount";
-import { config } from "@/config";
+import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -21,9 +21,9 @@ interface MobileDrawerProps {
   posthog: any;
 }
 
-const buttonStyles = `bg-pink text-white rounded-lg transition-colors 
+const buttonStyles = `bg-pink-600 text-white rounded-lg transition-colors 
 duration-200 sm:text-md xl:text-lg py-2 px-3 shadow-lg hover:shadow-lg 
-cursor-pointer hover:bg-pinkHover font-semibold text-center md:w-auto `;
+cursor-pointer hover:bg-pink-700 font-semibold text-center md:w-auto `;
 
 export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: MobileDrawerProps) {
   const { status } = useSession();
@@ -60,41 +60,50 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
 
   return (
     <Drawer isOpen={isNavOpen} size="full" onClose={() => setIsNavOpen(!isNavOpen)}>
-      <DrawerContent className="text-3xl bg-white">
+      <DrawerContent className="text-2xl">
         <DrawerBody p={0}>
-          <ol className={`flex flex-col items-center justify-center gap-16 mt-24`}>
+          <ol className={`flex flex-col items-center justify-center gap-6 mt-24`}>
             <li>
               <Link
-                href="/#use-cases"
-                passHref
-                onClick={() => {
-                  setIsNavOpen(false);
-                }}
-                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link outline-none"
+                href={RELATIVE_URLS.HOW_IT_WORKS}
+                onClick={() => setIsNavOpen(false)}
+                className="whitespace-nowrap transition duration-[325ms] link outline-none"
+              >
+                How It Works
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={RELATIVE_URLS.USE_CASES}
+                onClick={() => setIsNavOpen(false)}
+                className="whitespace-nowrap transition duration-[325ms] link"
               >
                 Use Cases
               </Link>
             </li>
             <li>
               <Link
-                href="/#pricing"
-                passHref
-                onClick={() => {
-                  setIsNavOpen(false);
-                }}
-                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+                href={RELATIVE_URLS.HOW_TO_GET_STARTED}
+                onClick={() => setIsNavOpen(false)}
+                className="whitespace-nowrap transition duration-[325ms] link"
+              >
+                How to Get Started
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={RELATIVE_URLS.PRICING}
+                onClick={() => setIsNavOpen(false)}
+                className="whitespace-nowrap transition duration-[325ms] link"
               >
                 Pricing
               </Link>
             </li>
             <li>
               <Link
-                href="/#faq"
-                passHref
-                onClick={() => {
-                  setIsNavOpen(false);
-                }}
-                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+                href={RELATIVE_URLS.FAQ}
+                onClick={() => setIsNavOpen(false)}
+                className="whitespace-nowrap transition duration-[325ms] link"
               >
                 FAQ
               </Link>
@@ -103,13 +112,10 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
               <>
                 <li>
                   <Link
-                    href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
-                    passHref
+                    href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
                     target="_blank"
                     onClick={() => {
-                      posthog.capture("$click", {
-                        $event_type: "github_app_install_nav",
-                      });
+                      posthog.capture("$click", { $event_type: "github_app_install_nav" });
                       setIsNavOpen(false);
                     }}
                     className={`${buttonStyles}`}
@@ -119,21 +125,10 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
                 </li>
                 <li>
                   <motion.button
-                    whileHover={{
-                      scale: 1.04,
-                      transition: { duration: 0.1 },
-                    }}
-                    whileTap={{
-                      scale: 0.98,
-                      transition: { duration: 0.1 },
-                    }}
-                    onClick={() => {
-                      signIn("github", {
-                        callbackUrl: `/`,
-                      });
-                    }}
-                    className="bg-white border border-pink text-black rounded-lg transition-colors duration-200
-                py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover"
+                    whileHover={{ scale: 1.04, transition: { duration: 0.1 } }}
+                    whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+                    onClick={() => signIn("github", { callbackUrl: `/` })}
+                    className="border border-pink-600 text-black rounded-lg transition-colors duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer"
                   >
                     Sign In
                   </motion.button>

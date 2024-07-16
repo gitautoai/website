@@ -1,11 +1,11 @@
-## What does this PR do?
+## What does this pull request do?
 
 xxx
 
-## PR checklist
+## Pull request checklist
 
-- [ ] This PR is related to the issue: #xxx
-- [ ] This PR includes only changes related to this PR.
+- [ ] This pull request is related to the issue: #xxx
+- [ ] This pull request includes only changes related to this pull request.
 
 ## Test Cases
 
