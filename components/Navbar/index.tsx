@@ -48,7 +48,7 @@ export default function Navbar() {
           <Link href={RELATIVE_URLS.INDEX} className="mr-auto ml-5">
             <Image src="/og-logo.png" width={150} height={78} alt="GitAuto Logo" />
           </Link>
-          <ol className="hidden sm:flex items-center justify-center gap-5">
+          <ol className="hidden md:flex items-center justify-center gap-5">
             <li>
               <Link
                 href={RELATIVE_URLS.HOW_IT_WORKS}

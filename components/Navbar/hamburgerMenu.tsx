@@ -15,14 +15,11 @@ export default function HamburgerMenu({
   status,
 }: HamburgerMenuProps) {
   return (
-    <div
-      onClick={() => setIsNavOpen(!isNavOpen)}
-      className="mr-5 z-[1500] sm:hidden"
-    >
+    <div onClick={() => setIsNavOpen(!isNavOpen)} className="mr-5 z-[1500] md:hidden">
       <div
-        className={`nav-icon4 ${
-          status === "authenticated" && !isNavOpen && "hidden"
-        } ${isNavOpen ? "navOpen" : ""}`}
+        className={`nav-icon4 ${status === "authenticated" && !isNavOpen && "hidden"} ${
+          isNavOpen ? "navOpen" : ""
+        }`}
       >
         <span></span>
         <span></span>
