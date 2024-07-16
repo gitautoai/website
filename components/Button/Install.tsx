@@ -1,5 +1,5 @@
+import { ABSOLUTE_URLS } from "@/config";
 import Image from "next/image";
-import { config } from "@/config";
 import { usePostHog } from "posthog-js/react";
 
 interface InstallButtonProps {
@@ -10,7 +10,7 @@ const InstallButton = ({ text }: InstallButtonProps) => {
   const posthog = usePostHog();
   return (
     <a
-      href={config.NEXT_PUBLIC_GITHUB_APP_URL}
+      href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
       target="_blank"
       onClick={() => {
         posthog.capture("$click", {

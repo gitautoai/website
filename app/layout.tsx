@@ -19,7 +19,7 @@ import { Providers } from "./providers";
 // Analytics
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-import { DESCRIPTION, KEYWORDS, PRODUCT_NAME, RELATIVE_URLS, URLS } from "@/config";
+import { DESCRIPTION, KEYWORDS, PRODUCT_NAME, RELATIVE_URLS, ABSOLUTE_URLS } from "@/config";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,11 +36,11 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(URLS.GITAUTO.INDEX),
+  metadataBase: new URL(ABSOLUTE_URLS.GITAUTO.INDEX),
   openGraph: {
     title: PRODUCT_NAME,
     description: DESCRIPTION,
-    url: URLS.GITAUTO.INDEX,
+    url: ABSOLUTE_URLS.GITAUTO.INDEX,
     siteName: PRODUCT_NAME,
     images: [
       {

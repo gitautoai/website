@@ -43,11 +43,12 @@ export const RELATIVE_URLS = {
   TERMS_OF_SERVICE: "/terms-of-service",
   USE_CASES: "/#use-cases",
 } as const;
-export const URLS = {
+export const ABSOLUTE_URLS = {
   GITAUTO: {
     INDEX: "https://gitauto.ai",
   },
   GITHUB: {
+    INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai",
     INSTALLED_APPS: "https://github.com/settings/installations",
   },
 } as const;

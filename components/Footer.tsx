@@ -8,7 +8,7 @@ import { useAccountContext } from "@/components/Context/Account";
 import { usePostHog } from "posthog-js/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faXTwitter, faLinkedin, faYoutube } from "@fortawesome/free-brands-svg-icons";
-import { config, RELATIVE_URLS } from "@/config";
+import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config";
 
 export default function Footer() {
   // Analytics
@@ -28,7 +28,7 @@ export default function Footer() {
             <ol className="flex flex-wrap gap-5 items-center justify-center">
               <li>
                 <Link
-                  href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
+                  href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
                   target="_blank"
                   onClick={() => {
                     posthog.capture("$click", {
@@ -111,7 +111,7 @@ export default function Footer() {
           <span className=" text-black">&copy; 2024 GitAuto. All Rights Reserved</span>
           <div className="flex items-center gap-5">
             <Link
-              href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
+              href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
               target="_blank"
               onClick={() => {
                 posthog.capture("$click", {

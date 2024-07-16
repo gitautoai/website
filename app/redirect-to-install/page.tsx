@@ -1,11 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { ABSOLUTE_URLS } from "@/config";
 
 // Analytics
-import { usePathname } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import { config } from "@/config";
 
 export default function Home() {
   const router = useRouter();
@@ -31,7 +30,7 @@ export default function Home() {
     }, 1000);
 
     const timeout = setTimeout(() => {
-      router.push(config.NEXT_PUBLIC_GITHUB_APP_URL);
+      router.push(ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO);
     }, 10000);
 
     return () => {

@@ -1,7 +1,9 @@
-import { config, PRODUCT_NAME, RELATIVE_URLS, URLS } from "@/config";
+import { PRODUCT_NAME, RELATIVE_URLS, ABSOLUTE_URLS } from "@/config";
 import Link from "next/link";
+import { usePostHog } from "posthog-js/react";
 
 export default function HowToGetStarted() {
+  const posthog = usePostHog();
   return (
     <div id="how-to-get-started" className="h-screen flex flex-col items-center justify-center">
       <div className="flex flex-col items-center space-y-12 md:space-y-20">
@@ -10,14 +12,14 @@ export default function HowToGetStarted() {
           <li className="font-semibold">
             Install {PRODUCT_NAME} from{" "}
             <a
-              href={config.NEXT_PUBLIC_GITHUB_APP_URL}
+              href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
               target="_blank"
-              // onClick={() => {
-              //   posthog.capture("$click", {
-              //     $event_type: "github_app_install",
-              //     $current_url: window.location.href,
-              //   });
-              // }}
+              onClick={() => {
+                posthog.capture("$click", {
+                  $event_type: "github_app_install",
+                  $current_url: window.location.href,
+                });
+              }}
               className="text-pink-500 visited:text-pink-700 underline"
             >
               Github Marketplace
@@ -39,7 +41,7 @@ export default function HowToGetStarted() {
           <li className="font-semibold">
             Select the repositories you would like to use. You can change this anytime later{" "}
             <a
-              href={URLS.GITHUB.INSTALLED_APPS}
+              href={ABSOLUTE_URLS.GITHUB.INSTALLED_APPS}
               target="_blank"
               className="text-pink-500 visited:text-pink-700 underline"
             >
@@ -63,7 +65,10 @@ export default function HowToGetStarted() {
           </li>
           <li className="font-semibold">
             Now you&apos;re all set! Go to{" "}
-            <Link href={RELATIVE_URLS.HOW_IT_WORKS} className="text-pink-500 visited:text-pink-700 underline">
+            <Link
+              href={RELATIVE_URLS.HOW_IT_WORKS}
+              className="text-pink-500 visited:text-pink-700 underline"
+            >
               “How it works”
             </Link>{" "}
             section for further instructions.

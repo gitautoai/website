@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAccountContext } from "@/components/Context/Account";
 
 // Styling
-import { Drawer, DrawerContent, DrawerBody, Text } from "@chakra-ui/react";
+import { Drawer, DrawerContent, DrawerBody } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
 // Third Party
@@ -13,7 +13,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useDisclosure } from "@chakra-ui/react";
 import SwitchAccount from "../HomePage/SwitchAccount";
-import { config, RELATIVE_URLS } from "@/config";
+import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -100,7 +100,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
               <>
                 <li>
                   <Link
-                    href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
+                    href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
                     target="_blank"
                     onClick={() => {
                       posthog.capture("$click", {

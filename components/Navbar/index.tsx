@@ -17,7 +17,7 @@ import { useSession } from "next-auth/react";
 
 import { motion } from "framer-motion";
 import ProfileIcon from "./ProfileIcon";
-import { config, RELATIVE_URLS } from "@/config";
+import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config";
 
 const buttonStyles = `bg-pink-600 text-white rounded-lg transition-colors 
 duration-200 py-2 px-3 shadow-lg hover:shadow-lg 
@@ -93,7 +93,7 @@ export default function Navbar() {
               <>
                 <li>
                   <Link
-                    href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
+                    href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
                     target="_blank"
                     onClick={() => {
                       posthog.capture("$click", {

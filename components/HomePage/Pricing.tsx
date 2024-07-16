@@ -16,6 +16,7 @@ import { useAccountContext } from "@/components/Context/Account";
 import { signIn } from "next-auth/react";
 import { Spinner } from "@chakra-ui/react";
 import {
+  ABSOLUTE_URLS,
   FREE_TIER_REQUEST_LIMIT,
   OPENAI_FREE_FILES,
   OPENAI_FREE_LINES,
@@ -25,7 +26,6 @@ import {
   OPENAI_MAX_TOKENS,
   OPENAI_MODEL_NAME,
   RELATIVE_URLS,
-  config,
 } from "@/config";
 
 const pricingButtonStyles = `my-4 md:my-8 rounded-lg transition-colors duration-200 
@@ -138,7 +138,7 @@ export default function Pricing() {
             <span className="mt-2 text-2xl mx-auto">$0</span>
           </div>
           <Link
-            href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
+            href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
             target="_blank"
             onClick={() => {
               posthog.capture("$click", {
