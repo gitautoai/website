@@ -13,6 +13,7 @@ const nextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   experimental: {
     mdxRs: true,
+    // turbo: {}, // https://nextjs.org/docs/app/api-reference/next-config-js/turbo
   },
 };
 

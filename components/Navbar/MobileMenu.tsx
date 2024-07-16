@@ -21,9 +21,9 @@ interface MobileDrawerProps {
   posthog: any;
 }
 
-const buttonStyles = `bg-pink text-white rounded-lg transition-colors 
+const buttonStyles = `bg-pink-600 text-white rounded-lg transition-colors 
 duration-200 sm:text-md xl:text-lg py-2 px-3 shadow-lg hover:shadow-lg 
-cursor-pointer hover:bg-pinkHover font-semibold text-center md:w-auto `;
+cursor-pointer hover:bg-pink-700 font-semibold text-center md:w-auto `;
 
 export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: MobileDrawerProps) {
   const { status } = useSession();
@@ -60,17 +60,16 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
 
   return (
     <Drawer isOpen={isNavOpen} size="full" onClose={() => setIsNavOpen(!isNavOpen)}>
-      <DrawerContent className="text-3xl bg-white">
+      <DrawerContent className="text-3xl">
         <DrawerBody p={0}>
           <ol className={`flex flex-col items-center justify-center gap-16 mt-24`}>
             <li>
               <Link
                 href="/#use-cases"
-                passHref
                 onClick={() => {
                   setIsNavOpen(false);
                 }}
-                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link outline-none"
+                className="whitespace-nowrap transition duration-[325ms] link outline-none"
               >
                 Use Cases
               </Link>
@@ -78,11 +77,10 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
             <li>
               <Link
                 href="/#pricing"
-                passHref
                 onClick={() => {
                   setIsNavOpen(false);
                 }}
-                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+                className="whitespace-nowrap transition duration-[325ms] link"
               >
                 Pricing
               </Link>
@@ -90,11 +88,10 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
             <li>
               <Link
                 href="/#faq"
-                passHref
                 onClick={() => {
                   setIsNavOpen(false);
                 }}
-                className="whitespace-nowrap transition duration-[325ms]  hover:text-blue link"
+                className="whitespace-nowrap transition duration-[325ms] link"
               >
                 FAQ
               </Link>
@@ -104,7 +101,6 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
                 <li>
                   <Link
                     href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
-                    passHref
                     target="_blank"
                     onClick={() => {
                       posthog.capture("$click", {
@@ -132,8 +128,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
                         callbackUrl: `/`,
                       });
                     }}
-                    className="bg-white border border-pink text-black rounded-lg transition-colors duration-200
-                py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:bg-blueHover"
+                    className="border border-pink-600 text-black rounded-lg transition-colors duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer"
                   >
                     Sign In
                   </motion.button>

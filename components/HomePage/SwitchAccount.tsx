@@ -65,7 +65,7 @@ export default function SwitchAccount({
                                 }}
                                 className={`${
                                   selectedIndex == index &&
-                                  "border-l-2 p-1 border-pink"
+                                  "border-l-2 p-1 border-pink-600"
                                 }`}
                               >
                                 {item.installations.owner_name}
@@ -84,7 +84,7 @@ export default function SwitchAccount({
                                 }}
                                 className={`${
                                   selectedIndex == index &&
-                                  "border-l-2 p-1 border-pink"
+                                  "border-l-2 p-1 border-pink-600"
                                 }`}
                               >
                                 {item.installations.owner_name}{" "}

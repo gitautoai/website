@@ -11,6 +11,7 @@ import Navbar from "@/components/Navbar";
 import { PHProvider } from "@/components/PostHog";
 import SessionProvider from "@/components/SessionProvider";
 import { AccountContextWrapper } from "@/components/Context/Account";
+import Footer from "@/components/Footer";
 
 // 3rd Party Styles
 import { Providers } from "./providers";
@@ -18,48 +19,29 @@ import { Providers } from "./providers";
 // Analytics
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
+import { DESCRIPTION, KEYWORDS, PRODUCT_NAME, RELATIVE_URLS, URLS } from "@/config";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: { template: "%s | GitAuto", default: "GitAuto" },
-  description: "Automatic PR's for Bugs",
+  title: { template: "%s | GitAuto", default: PRODUCT_NAME },
+  description: DESCRIPTION,
   generator: "Next.js",
-  applicationName: "GitAuto",
+  applicationName: PRODUCT_NAME,
   referrer: "origin-when-cross-origin",
-  keywords: [
-    "AI",
-    "artificial intelligence",
-    "coding",
-    "pull requests",
-    "github",
-    "git",
-    "gitauto",
-    "git auto",
-    "git-auto",
-    "automatic pull requests",
-    "automatic prs",
-    "automatic pr",
-    "automatic pr for bugs",
-    "automatic pr for issues",
-    "automatic pr for issues",
-  ],
-  authors: [
-    { name: "Hiroshi Nishio" },
-    { name: "Nikita Malinovsky", url: "https://gitauto.ai" },
-  ],
+  keywords: KEYWORDS,
+  authors: [{ name: "GitAuto Marketing Team", url: RELATIVE_URLS.INDEX }],
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://gitauto.ai"),
+  metadataBase: new URL(URLS.GITAUTO.INDEX),
   openGraph: {
-    title: "GitAuto",
-    description:
-      "GitAuto is an AI engineer that generates GitHub PRs from issues.",
-    url: "https://gitauto.ai",
-    siteName: "GitAuto",
+    title: PRODUCT_NAME,
+    description: DESCRIPTION,
+    url: URLS.GITAUTO.INDEX,
+    siteName: PRODUCT_NAME,
     images: [
       {
         url: "https://gitauto.ai/og-logo.png", // Must be an absolute URL
@@ -73,9 +55,8 @@ export const metadata: Metadata = {
   twitter: {
     site: "@gitautoai",
     creator: "@hnishio0105",
-    description:
-      "GitAuto is an AI engineer that generates GitHub PRs from issues.",
-    title: "GitAuto",
+    description: DESCRIPTION,
+    title: PRODUCT_NAME,
     images: {
       url: "https://gitauto.ai/og-logo.png", // Must be an absolute URL
       width: 1200,
@@ -105,13 +86,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <PHProvider>
-        <body className={`${inter.className} min-h-full`}>
+        <body className={`${inter.className} w-full min-h-full md:text-xl`}>
           <Suspense>
             <SessionProvider>
               <AccountContextWrapper>
                 <Providers>
                   <Navbar />
                   {children}
+                  <Footer />
                   <SpeedInsights />
                   <Analytics mode={"production"} />
                 </Providers>

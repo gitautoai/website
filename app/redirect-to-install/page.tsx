@@ -44,7 +44,7 @@ export default function Home() {
   }, [router]);
 
   return (
-    <div className="bg-light text-black ">
+    <div className="text-black ">
       <div className="min-h-[calc(100vh-239px)] mx-5 text-center">
         <div className="flex flex-col justify-center items-center text-xl sm:text-2xl gap-10 ">
           <span className="mt-16">You have not installed our GitHub Marketplace App.</span>

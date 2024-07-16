@@ -18,15 +18,17 @@ export default function Footer() {
   const iconSize = "2x";
 
   return (
-    <div className="flex flex-col w-full justify-center font-helvetica items-center bg-light shadow-lg pb-4">
-      <div className="flex  w-[95vw]  sm:w-[80vw] 2xl:w-[1280px] flex-col justify-center ">
+    <div
+      id="footer"
+      className="flex flex-col w-full justify-center font-helvetica items-center bg-stone-200 shadow-lg pb-4"
+    >
+      <div className="flex w-[95vw] sm:w-[80vw] 2xl:w-[1280px] flex-col justify-center ">
         <div className="flex flex-col gap-10 sm:gap-0 sm:flex-row items-center py-10 mt-auto w-full text-black text-lg font-helvetica justify-center ">
           <div className="flex gap-20 xl:gap-36 w-auto mx-5">
             <ol className="flex flex-wrap gap-5 items-center justify-center">
               <li>
                 <Link
                   href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
-                  passHref
                   target="_blank"
                   onClick={() => {
                     posthog.capture("$click", {
@@ -34,33 +36,24 @@ export default function Footer() {
                       $current_url: window.location.href,
                     });
                   }}
-                  className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+                  className="whitespace-nowrap transition duration-[325ms]"
                 >
                   GitHub
                 </Link>
               </li>
-              {/* <li>
-                <Link
-                  href="/pricing"
-                  passHref
-                  className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
-                >
-                  Discord
-                </Link>
-              </li> */}
               <li>
-                <a
-                  href="#pricing"
+                <Link
+                  href="/#pricing"
                   onClick={() => {
                     posthog.capture("$click", {
                       $event_type: "pricing",
                       $current_url: window.location.href,
                     });
                   }}
-                  className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+                  className="whitespace-nowrap transition duration-[325ms]"
                 >
                   Pricing
-                </a>
+                </Link>
               </li>
               <li>
                 <Link
@@ -72,7 +65,7 @@ export default function Footer() {
                       $current_url: window.location.href,
                     });
                   }}
-                  className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+                  className="whitespace-nowrap transition duration-[325ms]"
                 >
                   Privacy Policy
                 </Link>
@@ -87,7 +80,7 @@ export default function Footer() {
                       $current_url: window.location.href,
                     });
                   }}
-                  className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+                  className="whitespace-nowrap transition duration-[325ms]"
                 >
                   Terms of Service
                 </Link>
@@ -99,14 +92,13 @@ export default function Footer() {
                   <li>
                     <Link
                       href="/?subscribe"
-                      passHref
                       onClick={() => {
                         posthog.capture("$click", {
                           $event_type: "manage_payment",
                           $current_url: window.location.href,
                         });
                       }}
-                      className="whitespace-nowrap transition duration-[325ms]  hover:text-blue"
+                      className="whitespace-nowrap transition duration-[325ms]"
                     >
                       Manage Payment
                     </Link>
@@ -120,7 +112,6 @@ export default function Footer() {
           <div className="flex items-center gap-5">
             <Link
               href={config.NEXT_PUBLIC_GITHUB_APP_URL as string}
-              passHref
               target="_blank"
               onClick={() => {
                 posthog.capture("$click", {
@@ -133,7 +124,6 @@ export default function Footer() {
             </Link>
             <Link
               href="https://twitter.com/gitautoai"
-              passHref
               target="_blank"
               onClick={() => {
                 posthog.capture("$click", {
@@ -146,7 +136,6 @@ export default function Footer() {
             </Link>
             <Link
               href="https://www.youtube.com/@gitauto"
-              passHref
               target="_blank"
               onClick={() => {
                 posthog.capture("$click", {
@@ -159,7 +148,6 @@ export default function Footer() {
             </Link>
             <Link
               href="https://www.linkedin.com/company/gitauto"
-              passHref
               target="_blank"
               onClick={() => {
                 posthog.capture("$click", {

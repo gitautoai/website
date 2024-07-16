@@ -17,7 +17,7 @@ export default function HamburgerMenu({
   return (
     <div
       onClick={() => setIsNavOpen(!isNavOpen)}
-      className="mr-5 z-[1500]  sm:hidden"
+      className="mr-5 z-[1500] sm:hidden"
     >
       <div
         className={`nav-icon4 ${
