@@ -41,6 +41,7 @@ export const RELATIVE_URLS = {
   PRIVACY_POLICY: "/privacy-policy",
   REDIRECT_TO_INSTALL: "/redirect-to-install",
   TERMS_OF_SERVICE: "/terms-of-service",
+  USE_CASES: "/#use-cases",
 } as const;
 export const URLS = {
   GITAUTO: {

@@ -17,7 +17,7 @@ import { useSession } from "next-auth/react";
 
 import { motion } from "framer-motion";
 import ProfileIcon from "./ProfileIcon";
-import { config } from "@/config";
+import { config, RELATIVE_URLS } from "@/config";
 
 const buttonStyles = `bg-pink-600 text-white rounded-lg transition-colors 
 duration-200 py-2 px-3 shadow-lg hover:shadow-lg 
@@ -42,18 +42,24 @@ export default function Navbar() {
   }, [pathname, posthog]);
 
   return (
-    <div className="absolute top-0 left-0 flex flex-col w-full justify-center items-center font-helvetica sm:text-md xl:text-lg bg-white">
-      <div className="flex flex-col w-[95vw] sm:w-[80vw] 2xl:w-[1280px]">
+    <div className="absolute top-0 left-0 flex flex-col w-full justify-center items-center font-helvetica sm:text-md xl:text-lg bg-white px-0 md:px-24">
+      <div className="flex flex-col w-full">
         <nav className="flex text-lg justify-center items-center">
-          <Link href="/" className="mr-auto ml-5">
-            <div className="flex items-center gap-2 text-black">
-              <Image src="/og-logo.png" width={150} height={78} alt="GitAuto Logo" />
-            </div>
+          <Link href={RELATIVE_URLS.INDEX} className="mr-auto ml-5">
+            <Image src="/og-logo.png" width={150} height={78} alt="GitAuto Logo" />
           </Link>
-          <ol className="hidden sm:flex items-center justify-center gap-4">
+          <ol className="hidden sm:flex items-center justify-center gap-5">
             <li>
               <Link
-                href="/#use-cases"
+                href={RELATIVE_URLS.HOW_IT_WORKS}
+                className="whitespace-nowrap transition duration-[325ms] link"
+              >
+                How It Works
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={RELATIVE_URLS.USE_CASES}
                 className="whitespace-nowrap transition duration-[325ms] link"
               >
                 Use Cases
@@ -61,7 +67,15 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href="/#pricing"
+                href={RELATIVE_URLS.HOW_TO_GET_STARTED}
+                className="whitespace-nowrap transition duration-[325ms] link"
+              >
+                How to Get Started
+              </Link>
+            </li>
+            <li>
+              <Link
+                href={RELATIVE_URLS.PRICING}
                 className="whitespace-nowrap transition duration-[325ms] link"
               >
                 Pricing
@@ -69,7 +83,7 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href="/#faq"
+                href={RELATIVE_URLS.FAQ}
                 className="whitespace-nowrap transition duration-[325ms] link"
               >
                 FAQ
