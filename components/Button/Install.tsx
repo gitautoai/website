@@ -20,7 +20,14 @@ const InstallButton = ({ text }: InstallButtonProps) => {
       }}
       className={`bg-pink-600 hover:bg-pink-700 text-white rounded-xl transition-colors duration-200 text-md sm:text-lg xl:text-xl py-3 md:py-4 px-8 shadow-xl hover:shadow-xl font-semibold md:w-auto mx-auto mt-6 sm:mt-2 md:mt-6 flex items-center gap-2`}
     >
-      <Image src="/icons/github.svg" width={30} height={30} alt="Github Logo" className="invert" />
+      <Image
+        src="/icons/github.svg"
+        width={30}
+        height={30}
+        alt="Github Logo"
+        loading="lazy"
+        className="invert"
+      />
       {text}
     </a>
   );

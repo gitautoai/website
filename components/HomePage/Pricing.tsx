@@ -155,6 +155,7 @@ export default function Pricing() {
               src="/icons/github.svg"
               width={30}
               height={30}
+              loading="lazy"
               className="invert"
               alt="Github Logo"
             />

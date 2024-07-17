@@ -15,6 +15,7 @@ export default function UseCases() {
                 src="/homepage/feature.png"
                 width={907}
                 height={252}
+                loading="lazy"
                 alt="Feature Request"
                 className="p-2 sm:p-2 md:p-4 bg-stone-200 rounded-lg"
               />
@@ -30,6 +31,7 @@ export default function UseCases() {
                 src="/homepage/bugfix.png"
                 width={907}
                 height={252}
+                loading="lazy"
                 alt="Feature Request"
                 className="p-2 sm:p-2 md:p-4 bg-stone-200 rounded-lg"
               />
