@@ -28,8 +28,8 @@ import {
   RELATIVE_URLS,
 } from "@/config";
 
-const pricingButtonStyles = `my-4 md:my-8 rounded-lg transition-colors duration-200 
-text-md sm:text-lg xl:text-xl py-2 md:py-3 w-full shadow-lg hover:shadow-lg 
+const pricingButtonStyles = `my-4 sm:my-2 md:my-8 rounded-lg transition-colors duration-200 
+text-md sm:text-lg xl:text-xl py-2 sm:py-1 md:py-3 w-full shadow-lg hover:shadow-lg 
 cursor-pointer font-semibold text-center mx-auto`;
 
 export default function Pricing() {
@@ -111,10 +111,13 @@ export default function Pricing() {
   }, [searchParams, userInfos, selectedIndex, userId, jwtToken, router, createPortalOrCheckoutURL]);
 
   return (
-    <div id="pricing" className="w-full md:h-screen flex flex-col justify-center items-center">
+    <div
+      id="pricing"
+      className="w-full sm:h-full md:h-screen py-4 md:py-0 flex flex-col justify-center items-center"
+    >
       <h2 className="text-3xl md:text-4xl">Pricing</h2>
-      <div className="w-full flex justify-center md:justify-end md:pr-24">
-        <div className="flex flex-col justify-end md:justify-end text-lg">
+      <div className="w-full flex justify-center sm:justify-end sm:pr-1 md:pr-24">
+        <div className="flex flex-col justify-end sm:justify-end text-lg sm:text-base md:text-lg">
           <span>Billing Period</span>
           <select
             id="billingPeriod"
@@ -130,12 +133,12 @@ export default function Pricing() {
           </select>
         </div>
       </div>
-      <div className="w-full flex flex-col lg:flex-row lg:gap-10 md:justify-center md:items-center px-4 sm:px-8 mt-5 sm:mt-8 space-y-8 md:space-y-0">
+      <div className="w-full flex flex-col sm:flex-row sm:gap-4 md:gap-10 sm:justify-center sm:items-stretch px-4 sm:px-0 md:px-4 mt-5 sm:mt-2 md:mt-8 space-y-8 sm:space-y-0">
         {/* Free Plan */}
-        <div className="flex flex-col h-full p-4 md:p-6 bg-stone-200 rounded-xl">
-          <div className="flex flex-col md:h-20">
-            <h3 className="text-3xl mx-auto">Free</h3>
-            <span className="mt-2 text-2xl mx-auto">$0</span>
+        <div className="flex flex-col p-4 sm:p-3 md:p-6 bg-stone-200 rounded-xl">
+          <div className="flex flex-col sm:h-20 md:h-20">
+            <h3 className="text-2xl sm:text-xl md:text-3xl mx-auto">Free</h3>
+            <span className="mt-2 sm:mt-0 md:mt-2 text-2xl sm:text-lg md:text-2xl mx-auto">$0</span>
           </div>
           <Link
             href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
@@ -146,7 +149,7 @@ export default function Pricing() {
                 $current_url: window.location.href,
               });
             }}
-            className={`${pricingButtonStyles} bg-pink-600 hover:bg-pink-700 text-white flex items-center justify-center gap-2 md:mt-14`}
+            className={`${pricingButtonStyles} bg-pink-600 hover:bg-pink-700 text-white flex items-center justify-center gap-2 sm:mt-1.5 md:mt-14`}
           >
             <Image
               src="/icons/github.svg"
@@ -157,20 +160,22 @@ export default function Pricing() {
             />
             Install
           </Link>
-          <div className="flex flex-col">
+          <div className="flex flex-col text-base sm:text-sm md:text-xl">
             <span>&bull; {OPENAI_MODEL_NAME}</span>
             <span>&bull; Up to {OPENAI_FREE_TOKENS} tokens</span>
-            <span className="ml-4.5">Up to ~{OPENAI_FREE_LINES} lines of code</span>
-            <span className="ml-4.5">Up to ~{OPENAI_FREE_FILES} files</span>
+            <span className="ml-3.5 sm:ml-3 md:ml-4.5">
+              Up to ~{OPENAI_FREE_LINES} lines of code
+            </span>
+            <span className="ml-3.5 sm:ml-3 md:ml-4.5">Up to ~{OPENAI_FREE_FILES} files</span>
             <span>&bull; {FREE_TIER_REQUEST_LIMIT} issues per month</span>
           </div>
         </div>
 
         {/* Standard Plan */}
-        <div className="flex flex-col h-full p-4 md:p-6 bg-stone-200 rounded-xl">
-          <div className="flex flex-col md:h-26">
-            <h3 className="text-3xl mx-auto">Standard</h3>
-            <span className="mt-2 text-2xl mx-auto">
+        <div className="flex flex-col p-4 sm:p-3 md:p-6 bg-stone-200 rounded-xl">
+          <div className="flex flex-col sm:h-18 md:h-26">
+            <h3 className="text-2xl sm:text-xl md:text-3xl mx-auto">Standard</h3>
+            <span className="mt-2 sm:mt-0 md:mt-2 text-2xl sm:text-lg md:text-2xl mx-auto">
               {billingPeriod === "Monthly" ? "$19/user/mo" : "$190/user/yr"}
             </span>
 
@@ -204,20 +209,24 @@ export default function Pricing() {
               </div>
             )}
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col text-base sm:text-sm md:text-xl">
             <span>&bull; {OPENAI_MODEL_NAME}</span>
             <span>&bull; Up to {OPENAI_MAX_TOKENS} tokens</span>
-            <span className="ml-4.5">Up to ~{OPENAI_MAX_LINES} lines of code</span>
-            <span className="ml-4.5">Up to ~{OPENAI_MAX_FILES} files</span>
+            <span className="ml-3.5 sm:ml-3 md:ml-4.5">
+              Up to ~{OPENAI_MAX_LINES} lines of code
+            </span>
+            <span className="ml-3.5 sm:ml-3 md:ml-4.5">Up to ~{OPENAI_MAX_FILES} files</span>
             <span>&bull; 30 issues per month</span>
           </div>
         </div>
 
         {/* Enterprise Plan */}
-        <div className="flex flex-col p-4 md:p-6 bg-stone-200 rounded-xl">
-          <div className="flex flex-col md:h-20">
-            <h3 className="text-3xl mx-auto">Enterprise</h3>
-            <span className="mt-2 text-2xl mx-auto">$Custom</span>
+        <div className="flex flex-col p-4 sm:p-3 md:p-6 bg-stone-200 rounded-xl">
+          <div className="flex flex-col sm:h-10 md:h-26">
+            <h3 className="text-2xl sm:text-xl md:text-3xl mx-auto">Enterprise</h3>
+            <span className="mt-2 sm:mt-0 md:mt-2 text-2xl sm:text-lg md:text-2xl mx-auto">
+              $Custom
+            </span>
           </div>
           <Link
             href="mailto:info@gitauto.ai"
@@ -228,15 +237,17 @@ export default function Pricing() {
                 $current_url: window.location.href,
               });
             }}
-            className={`${pricingButtonStyles} bg-pink-600 hover:bg-pink-700 text-white md:mt-14`}
+            className={`${pricingButtonStyles} bg-pink-600 hover:bg-pink-700 text-white sm:mt-12 md:mt-8`}
           >
             Contact Us
           </Link>
-          <div className="flex flex-col">
+          <div className="flex flex-col text-base sm:text-sm md:text-xl">
             <span>&bull; {OPENAI_MODEL_NAME}</span>
             <span>&bull; Up to {OPENAI_MAX_TOKENS} tokens</span>
-            <span className="ml-4.5">Up to ~{OPENAI_MAX_LINES} lines of code</span>
-            <span className="ml-4.5">Up to ~{OPENAI_MAX_FILES} files</span>
+            <span className="ml-3.5 sm:ml-3 md:ml-4.5">
+              Up to ~{OPENAI_MAX_LINES} lines of code
+            </span>
+            <span className="ml-3.5 sm:ml-3 md:ml-4.5">Up to ~{OPENAI_MAX_FILES} files</span>
             <span>&bull; Unlimited Issues</span>
             <span>&bull; Self OpenAI API key</span>
             <span>&bull; Self hosting</span>
