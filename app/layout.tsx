@@ -19,7 +19,7 @@ import { Providers } from "./providers";
 // Analytics
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-import { DESCRIPTION, KEYWORDS, PRODUCT_NAME, RELATIVE_URLS, ABSOLUTE_URLS } from "@/config";
+import { DESCRIPTION, KEYWORDS, PRODUCT_NAME, RELATIVE_URLS, ABSOLUTE_URLS, isPrd } from "@/config";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -94,8 +94,12 @@ export default function RootLayout({
                   <Navbar />
                   {children}
                   <Footer />
-                  <SpeedInsights />
-                  <Analytics mode={"production"} />
+                  {isPrd && (
+                    <>
+                      <SpeedInsights />
+                      <Analytics mode={"production"} />
+                    </>
+                  )}
                 </Providers>
               </AccountContextWrapper>
             </SessionProvider>
