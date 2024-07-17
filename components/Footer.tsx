@@ -108,7 +108,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mx-auto flex flex-col-reverse sm:flex-row items-center gap-5">
-          <span className=" text-black">&copy; 2024 GitAuto. All Rights Reserved</span>
+          <span className=" text-black">&copy; {new Date().getFullYear()} GitAuto, Inc. All Rights Reserved</span>
           <div className="flex items-center gap-5">
             <Link
               href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
