@@ -13,7 +13,8 @@ import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useDisclosure } from "@chakra-ui/react";
 import SwitchAccount from "../HomePage/SwitchAccount";
-import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config";
+import { ABSOLUTE_URLS } from "@/config";
+import { INTERNAL_LINKS } from "@/app/config/internal-links";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -60,54 +61,20 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
 
   return (
     <Drawer isOpen={isNavOpen} size="full" onClose={() => setIsNavOpen(!isNavOpen)}>
-      <DrawerContent className="text-2xl">
+      <DrawerContent className="text-xl">
         <DrawerBody p={0}>
-          <ol className={`flex flex-col items-center justify-center gap-6 mt-24`}>
-            <li>
-              <Link
-                href={RELATIVE_URLS.HOW_IT_WORKS}
-                onClick={() => setIsNavOpen(false)}
-                className="whitespace-nowrap transition duration-[325ms] link outline-none"
-              >
-                How It Works
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={RELATIVE_URLS.USE_CASES}
-                onClick={() => setIsNavOpen(false)}
-                className="whitespace-nowrap transition duration-[325ms] link"
-              >
-                Use Cases
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={RELATIVE_URLS.HOW_TO_GET_STARTED}
-                onClick={() => setIsNavOpen(false)}
-                className="whitespace-nowrap transition duration-[325ms] link"
-              >
-                How to Get Started
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={RELATIVE_URLS.PRICING}
-                onClick={() => setIsNavOpen(false)}
-                className="whitespace-nowrap transition duration-[325ms] link"
-              >
-                Pricing
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={RELATIVE_URLS.FAQ}
-                onClick={() => setIsNavOpen(false)}
-                className="whitespace-nowrap transition duration-[325ms] link"
-              >
-                FAQ
-              </Link>
-            </li>
+          <ol className={`h-screen flex flex-col items-center justify-center gap-5`}>
+            {INTERNAL_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  onClick={() => setIsNavOpen(false)}
+                  className="whitespace-nowrap transition duration-[325ms] link outline-none"
+                >
+                  {link.text}
+                </Link>
+              </li>
+            ))}
             {status === "unauthenticated" && (
               <>
                 <li>
