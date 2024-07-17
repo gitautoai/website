@@ -58,7 +58,7 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
             className="rounded-full"
             // loading="lazy"
             priority={true}
-            alt={session?.user?.name || ""}
+            alt={session?.user?.name || "A round user profile picture"}
             src={session?.user?.image || ""}
           />
         </MenuButton>
