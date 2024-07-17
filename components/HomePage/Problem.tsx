@@ -20,7 +20,7 @@ const Problem = () => {
             width={2666}
             height={1114}
             loading="lazy"
-            alt="Development team’s issues tree regarding development speed"
+            alt="Development team's issues tree regarding development speed"
             className=""
           />
         </div>
