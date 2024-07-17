@@ -16,7 +16,7 @@ export default function UseCases() {
                 width={907}
                 height={252}
                 loading="lazy"
-                alt="Feature Request"
+                alt="A feature request GitHub issue example for GitAuto"
                 className="p-2 sm:p-2 md:p-4 bg-stone-200 rounded-lg"
               />
             </div>
@@ -32,7 +32,7 @@ export default function UseCases() {
                 width={907}
                 height={252}
                 loading="lazy"
-                alt="Feature Request"
+                alt="A bug report GitHub issue example for GitAuto"
                 className="p-2 sm:p-2 md:p-4 bg-stone-200 rounded-lg"
               />
             </div>

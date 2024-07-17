@@ -18,7 +18,7 @@ export default function LoadingSpinner() {
 			w-[46px] h-[46px] ml-[27px]
 			md:w-[90px] md:h-[90px] md:ml-[55px]"
         >
-          <Image src="/logo.png" alt="Logo" fill loading="lazy" />
+          <Image src="/logo.png" alt="GitAuto Logo" fill loading="lazy" />
         </div>
       </div>
     </div>
