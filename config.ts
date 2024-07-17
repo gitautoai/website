@@ -2,9 +2,10 @@ export const FREE_TIER_REQUEST_LIMIT = 5;
 export const isPrd = process.env.NODE_ENV === "production";
 
 // GitAuto Constants
+export const EMAIL = "info@gitauto.ai";
 export const PRODUCT_NAME = "GitAuto";
 export const DESCRIPTION =
-  "GitAuto is an AI Coding Agent for backend. Based on your GitHub issues and the file tree, GitAuto reads necessary files in your repository, writes code, conducts self-reviews, and creates pull requests. GitAuto is like a human engineer who works for you. Then you can review the PRs, provide comments, edit them, and lastly merge them, enabling more bug fixes and more features.";
+  "GitAuto, an AI Coding Agent, helps engineering teams facing resource constraints and hiring challenges to fix more bugs and ship more features by automatically writing code and creating GitHub pull requests from your GitHub issues every day.";
 export const KEYWORDS = [
   "AI",
   "artificial intelligence",
@@ -50,6 +51,14 @@ export const ABSOLUTE_URLS = {
   GITHUB: {
     INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai",
     INSTALLED_APPS: "https://github.com/settings/installations",
+  },
+  LINKEDIN: "https://www.linkedin.com/company/gitauto",
+  TWITTER: "https://twitter.com/gitautoai",
+  YOUTUBE: {
+    HOME: "https://www.youtube.com/@gitauto",
+    DEMO: "https://www.youtube.com/watch?v=gulhHrKCPxQ",
+    INTRO_1MIN: "https://www.youtube.com/watch?v=oOzhH1rnVIk",
+    INTRO_3MIN: "https://www.youtube.com/watch?v=QvzEzJ9GJzU&t=6s",
   },
 } as const;
 
