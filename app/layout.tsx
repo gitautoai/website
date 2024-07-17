@@ -138,7 +138,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <PHProvider>
-        <body className={`${inter.className} w-full min-h-screen md:text-xl`}>
+        <body className={`${inter.className} w-full min-h-screen text-base sm:text-sm md:text-xl`}>
           <Suspense>
             <SessionProvider>
               <AccountContextWrapper>
