@@ -25,7 +25,7 @@ const SNS = () => {
         <FontAwesomeIcon icon={faGithub} size={iconSize} />
       </Link>
       <Link
-        href="https://twitter.com/gitautoai"
+        href={ABSOLUTE_URLS.TWITTER}
         target="_blank"
         onClick={() => {
           posthog.capture("$click", {
@@ -37,7 +37,7 @@ const SNS = () => {
         <FontAwesomeIcon icon={faXTwitter} size={iconSize} />
       </Link>
       <Link
-        href="https://www.youtube.com/@gitauto"
+        href={ABSOLUTE_URLS.YOUTUBE.HOME}
         target="_blank"
         onClick={() => {
           posthog.capture("$click", {
@@ -49,7 +49,7 @@ const SNS = () => {
         <FontAwesomeIcon icon={faYoutube} size={iconSize} />
       </Link>
       <Link
-        href="https://www.linkedin.com/company/gitauto"
+        href={ABSOLUTE_URLS.LINKEDIN}
         target="_blank"
         onClick={() => {
           posthog.capture("$click", {

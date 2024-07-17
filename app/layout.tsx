@@ -19,10 +19,15 @@ import { Providers } from "./providers";
 // Analytics
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
-import { DESCRIPTION, KEYWORDS, PRODUCT_NAME, RELATIVE_URLS, ABSOLUTE_URLS, isPrd } from "@/config";
+import { DESCRIPTION, KEYWORDS, PRODUCT_NAME, ABSOLUTE_URLS, isPrd, EMAIL } from "@/config";
 
 const inter = Inter({ subsets: ["latin"] });
 
+/**
+ * Metadata for the entire application
+ * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#metadata
+ * @see https://nextjs.org/docs/app/api-reference/functions/generate-metadata
+ */
 export const metadata: Metadata = {
   title: { template: "%s | GitAuto", default: PRODUCT_NAME },
   description: DESCRIPTION,
@@ -30,13 +35,23 @@ export const metadata: Metadata = {
   applicationName: PRODUCT_NAME,
   referrer: "origin-when-cross-origin",
   keywords: KEYWORDS,
-  authors: [{ name: "GitAuto Marketing Team", url: RELATIVE_URLS.INDEX }],
+  authors: [{ name: "GitAuto Marketing Team", url: ABSOLUTE_URLS.LINKEDIN }],
+  creator: "GitAuto Marketing Team",
+  publisher: PRODUCT_NAME,
+  abstract: DESCRIPTION,
+  // alternates: [],
+  // appleWebApp: {},
+  // appLinks: {},
+  // archives: [],
+  // assets: [],
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
   metadataBase: new URL(ABSOLUTE_URLS.GITAUTO.INDEX),
+
+  // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#opengraph
   openGraph: {
     title: PRODUCT_NAME,
     description: DESCRIPTION,
@@ -50,19 +65,46 @@ export const metadata: Metadata = {
       },
     ],
     locale: "en_US",
+    // alternateLocale: "ja_JP",
+    // countryName: "United States",
+    // determiner: "auto",
+    emails: [EMAIL],
+    // faxNumbers: ["+1-650-253-0000"],
+    // phoneNumbers: ["+1-650-253-0000"],
+    // ttl: 60 * 60 * 24 * 7, // 1 week
+    // audio: [],
+    videos: [
+      {
+        url: ABSOLUTE_URLS.YOUTUBE.DEMO,
+        width: 1280,
+        height: 720,
+      },
+    ],
     type: "website",
   },
+
+  // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#twitter
   twitter: {
-    site: "@gitautoai",
-    creator: "@hnishio0105",
-    description: DESCRIPTION,
+    card: "summary",
     title: PRODUCT_NAME,
+    description: DESCRIPTION,
+    site: "@gitautoai", // https://x.com/gitautoai
+    // siteId: "1234567890",
+    creator: "@hnishio0105", // https://x.com/hnishio0105
+    // creatorId: "1234567890",
     images: {
       url: "https://gitauto.ai/og-logo.png", // Must be an absolute URL
       width: 1200,
       height: 630,
     },
   },
+
+  // We have already verified the site in Google Search Console
+  // https://search.google.com/u/3/search-console/ownership?resource_id=sc-domain%3Agitauto.ai
+  // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#verification
+  // verification: {},
+
+  // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#robots
   robots: {
     index: false,
     follow: true,
@@ -76,8 +118,18 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+
+  // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#category
+  bookmarks: [ABSOLUTE_URLS.GITAUTO.INDEX],
+
+  // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#category
+  category: "AI Coding Agent",
 };
 
+/**
+ * Root Layout for the entire application
+ * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
