@@ -56,6 +56,7 @@ const ProfileIcon = ({ session }: ProfileIconProps) => {
             height="40"
             width="40"
             className="rounded-full"
+            // loading="lazy"
             priority={true}
             alt={session?.user?.name || ""}
             src={session?.user?.image || ""}

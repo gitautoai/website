@@ -46,7 +46,7 @@ export default function Navbar() {
       <div className="flex flex-col w-full">
         <nav className="flex text-lg justify-center items-center">
           <Link href={RELATIVE_URLS.INDEX} className="mr-auto ml-5">
-            <Image src="/og-logo.png" width={150} height={78} alt="GitAuto Logo" />
+            <Image src="/og-logo.png" width={150} height={78} loading="lazy" alt="GitAuto Logo" />
           </Link>
           <ol className="hidden md:flex items-center justify-center gap-5">
             <li>
