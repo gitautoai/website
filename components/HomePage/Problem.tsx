@@ -10,9 +10,9 @@ const Problem = () => {
       <h2 className="text-3xl sm:text-3xl md:text-4xl">Problem we tackle</h2>
       <div className="flex flex-col items-center gap-4 sm:gap-2 md:gap-4">
         <p className="w-full sm:w-10/12 md:w-10/12 text-center">
-          71% of SaaS companies aren't satisfied with their development speed. {PRODUCT_NAME} helps
-          SaaS engineering teams facing resource constraints, hiring challenges, and high pressure
-          to deliver more features and fix bugs faster.
+          71% of SaaS companies aren&apos;t satisfied with their development speed. {PRODUCT_NAME}{" "}
+          helps SaaS engineering teams facing resource constraints, hiring challenges, and high
+          pressure to deliver more features and fix bugs faster.
         </p>
         <div className="w-full sm:w-9/12 md:w-10/12">
           <Image
