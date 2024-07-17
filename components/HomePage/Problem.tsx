@@ -20,7 +20,7 @@ const Problem = () => {
             width={2666}
             height={1114}
             loading="lazy"
-            alt="Development team's issues tree regarding development speed"
+            alt="A tree diagram dissecting development speed for engineering teams"
             className=""
           />
         </div>
