@@ -7,7 +7,7 @@ const ValueProp = () => {
       className="h-screen flex flex-col items-center justify-center gap-4 sm:gap-2 md:gap-4 text-center"
     >
       <h1 className="text-4xl sm:text-4xl md:text-6xl font-semibold bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent pb-1 mt-10 sm:mt-14 md:mt-10">
-        Let your AI Coding Agent writes code.
+        Let your AI Coding Agent write code.
         {/* Let your AI coding agent resolve your issues.
             Let your AI coding agent fix your bugs.
             Let your AI coding agent develop your features.
