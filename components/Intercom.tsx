@@ -17,13 +17,11 @@ export default function IntercomMessenger() {
   const { userId, userName, email } = useAccountContext();
   useEffect(() => {
     if (!userId) return;
-    console.log("Intercom Key: ", INTERCOM_SECRET_KEY);
     const userIdentifier = userId.toString();
     const userHash = crypto
       .createHmac("sha256", INTERCOM_SECRET_KEY)
       .update(userIdentifier)
       .digest("hex");
-    console.log("IntercomMessenger: ", { userIdentifier, userHash });
 
     // Initialize Intercom
     Intercom({
@@ -35,6 +33,7 @@ export default function IntercomMessenger() {
       user_hash: userHash,
 
       // Optional settings
+      // api_base: "https://api-iam.intercom.io", // Or for EU: https://api-iam.eu.intercom.io, for AU: https://api-iam.au.intercom.io
       // action_color: "#1D1D1D",
       // alignment: "right",
       // avatar: {},
