@@ -12,6 +12,7 @@ import { PHProvider } from "@/components/PostHog";
 import SessionProvider from "@/components/SessionProvider";
 import { AccountContextWrapper } from "@/components/Context/Account";
 import Footer from "@/components/Footer";
+import IntercomMessenger from "@/components/Intercom";
 
 // 3rd Party Styles
 import { Providers } from "./providers";
@@ -141,6 +142,7 @@ export default function RootLayout({
                   <Navbar />
                   {children}
                   <Footer />
+                  <IntercomMessenger />
                   {isPrd && (
                     <>
                       <SpeedInsights />
