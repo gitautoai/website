@@ -35,7 +35,7 @@ export const TAGLINES = [
   "Enhance your engineering team's productivity.",
 ];
 
-// OpenAI Constants
+// OpenAI Credentials
 export const OPENAI_FREE_TOKENS = "13K";
 export const OPENAI_FREE_LINES = "2K";
 export const OPENAI_FREE_FILES = 9;
@@ -43,6 +43,9 @@ export const OPENAI_MAX_TOKENS = "128K";
 export const OPENAI_MAX_LINES = "18K";
 export const OPENAI_MAX_FILES = 90;
 export const OPENAI_MODEL_NAME = "GPT-4o";
+
+// Intercom Credentials
+export const INTERCOM_SECRET_KEY = process.env.NEXT_PUBLIC_INTERCOM_SECRET_KEY || "";
 
 // URLs
 export const RELATIVE_URLS = {
@@ -59,6 +62,7 @@ export const RELATIVE_URLS = {
 export const ABSOLUTE_URLS = {
   GITAUTO: {
     INDEX: "https://gitauto.ai",
+    THUMBNAIL: "https://gitauto.ai/homepage/thumbnail.jpg",
   },
   GITHUB: {
     INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai",

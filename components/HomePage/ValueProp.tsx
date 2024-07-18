@@ -14,7 +14,7 @@ const ValueProp = () => {
       );
     }, 7000);
     return () => clearInterval(interval);
-  }, [TAGLINES]);
+  }, []);
 
   // Type tagline every Y seconds
   useEffect(() => {
@@ -24,7 +24,7 @@ const ValueProp = () => {
       if (currentIndex < TAGLINES[currentTaglineIndex].length) {
         setDisplayedTagline(() => TAGLINES[currentTaglineIndex].slice(0, currentIndex));
         currentIndex++;
-        timeout = setTimeout(typeTagline, 10); // Typing speed
+        timeout = setTimeout(typeTagline, 1); // Typing speed
       } else {
         clearTimeout(timeout);
       }
@@ -35,7 +35,7 @@ const ValueProp = () => {
     typeTagline();
 
     return () => clearTimeout(timeout);
-  }, [currentTaglineIndex, TAGLINES]);
+  }, [currentTaglineIndex]);
 
   return (
     <div
