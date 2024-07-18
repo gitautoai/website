@@ -22,6 +22,18 @@ export const KEYWORDS = [
   "automatic pr for bugs",
   "automatic pr for issues",
 ];
+export const TAGLINES = [
+  "Let your AI Coding Agent write code.",
+  "Let your AI Coding Agent resolve your issues.",
+  "Let your AI Coding Agent fix your bugs.",
+  "Let your AI Coding Agent develop your features.",
+  "Let your AI Coding Agent create pull requests.",
+  "Let your AI Coding Agent draft code.",
+  "Hire your AI Coding Agent.",
+  "Accelerate your engineering team's velocity.",
+  "Increase your engineering team's output.",
+  "Enhance your engineering team's productivity.",
+];
 
 // OpenAI Constants
 export const OPENAI_FREE_TOKENS = "13K";
