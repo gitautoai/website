@@ -29,7 +29,7 @@ export const TAGLINES = [
   "Let your AI Coding Agent develop your features.",
   "Let your AI Coding Agent create pull requests.",
   "Let your AI Coding Agent draft code.",
-  "Hire your AI Coding Agent.",
+  "Hire your AI Coding Agent to fill resource gaps.",
   "Accelerate your engineering team's velocity.",
   "Increase your engineering team's output.",
   "Enhance your engineering team's productivity.",
