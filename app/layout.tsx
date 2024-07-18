@@ -22,6 +22,11 @@ import { Analytics } from "@vercel/analytics/react";
 import { DESCRIPTION, KEYWORDS, PRODUCT_NAME, ABSOLUTE_URLS, isPrd, EMAIL } from "@/config";
 
 const inter = Inter({ subsets: ["latin"] });
+const IMAGES = {
+  url: ABSOLUTE_URLS.GITAUTO.THUMBNAIL, // Must be an absolute URL
+  width: 960,
+  height: 540,
+} as const;
 
 /**
  * Metadata for the entire application
@@ -57,13 +62,7 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     url: ABSOLUTE_URLS.GITAUTO.INDEX,
     siteName: PRODUCT_NAME,
-    images: [
-      {
-        url: "https://gitauto.ai/og-logo.png", // Must be an absolute URL
-        width: 1200,
-        height: 630,
-      },
-    ],
+    images: [IMAGES],
     locale: "en_US",
     // alternateLocale: "ja_JP",
     // countryName: "United States",
@@ -92,11 +91,7 @@ export const metadata: Metadata = {
     // siteId: "1234567890",
     creator: "@hnishio0105", // https://x.com/hnishio0105
     // creatorId: "1234567890",
-    images: {
-      url: "https://gitauto.ai/og-logo.png", // Must be an absolute URL
-      width: 1200,
-      height: 630,
-    },
+    images: [IMAGES],
   },
 
   // We have already verified the site in Google Search Console

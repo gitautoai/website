@@ -59,6 +59,7 @@ export const RELATIVE_URLS = {
 export const ABSOLUTE_URLS = {
   GITAUTO: {
     INDEX: "https://gitauto.ai",
+    THUMBNAIL: "https://gitauto.ai/homepage/thumbnail.jpg",
   },
   GITHUB: {
     INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai",
