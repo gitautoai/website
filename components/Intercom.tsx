@@ -16,12 +16,10 @@ import { INTERCOM_SECRET_KEY } from "@/config";
 export default function IntercomMessenger() {
   const { userId, userName, email } = useAccountContext();
   useEffect(() => {
-    if (!userId) return;
-    const userIdentifier = userId.toString();
-    const userHash = crypto
-      .createHmac("sha256", INTERCOM_SECRET_KEY)
-      .update(userIdentifier)
-      .digest("hex");
+    const userIdentifier = userId ? userId.toString() : undefined;
+    const userHash = userId
+      ? crypto.createHmac("sha256", INTERCOM_SECRET_KEY).update(userId.toString()).digest("hex")
+      : undefined;
 
     // Initialize Intercom
     Intercom({
