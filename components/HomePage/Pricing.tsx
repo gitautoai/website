@@ -113,7 +113,7 @@ export default function Pricing() {
   return (
     <div
       id="pricing"
-      className="w-full sm:h-full md:h-screen py-4 md:py-0 flex flex-col justify-center items-center"
+      className="w-full min-h-screen h-full py-4 md:py-0 flex flex-col justify-center items-center"
     >
       <h2 className="text-3xl md:text-4xl">Pricing</h2>
       <div className="w-full flex justify-center sm:justify-end sm:pr-1 md:pr-24">

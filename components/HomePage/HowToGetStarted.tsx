@@ -5,7 +5,7 @@ import { usePostHog } from "posthog-js/react";
 export default function HowToGetStarted() {
   const posthog = usePostHog();
   return (
-    <div id="how-to-get-started" className="h-screen flex flex-col items-center justify-center">
+    <div id="how-to-get-started" className="min-h-screen h-screen flex flex-col items-center justify-center">
       <div className="flex flex-col items-center space-y-12 sm:space-y-6 md:space-y-20">
         <h2 className="text-center text-3xl md:text-4xl">How to get started</h2>
         <ul className="list-decimal list-outside space-y-1 md:space-y-4 ml-5 text-base sm:text-sm md:text-xl">

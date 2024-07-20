@@ -5,7 +5,7 @@ const Problem = () => {
   return (
     <div
       id="problem"
-      className="h-screen flex flex-col items-center justify-center gap-4 sm:gap-4 md:gap-10"
+      className="min-h-screen h-screen flex flex-col items-center justify-center gap-4 sm:gap-4 md:gap-10"
     >
       <h2 className="text-3xl sm:text-3xl md:text-4xl">Problem we tackle</h2>
       <div className="flex flex-col items-center gap-4 sm:gap-2 md:gap-4">
