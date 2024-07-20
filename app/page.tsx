@@ -28,7 +28,7 @@ export default function Home() {
   }, [pathname, posthog]);
 
   return (
-    <div className="flex flex-col justify-center items-center px-5 md:px-24">
+    <div className="flex flex-col justify-center items-center px-4 md:px-24">
       <ValueProp />
       <Problem />
       <HowItWorks />

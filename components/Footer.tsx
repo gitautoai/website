@@ -16,7 +16,7 @@ export default function Footer() {
   return (
     <div
       id="footer"
-      className="flex flex-col w-full justify-center font-helvetica items-center bg-stone-200 shadow-lg pb-4"
+      className="flex flex-col w-full justify-center font-helvetica items-center bg-stone-200 shadow-lg pb-4 mt-20"
     >
       <div className="flex w-full flex-col justify-center ">
         <div className="flex flex-col gap-10 sm:gap-0 sm:flex-row items-center py-10 mt-auto w-full text-black text-lg font-helvetica justify-center ">

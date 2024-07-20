@@ -49,7 +49,7 @@ export const INTERCOM_SECRET_KEY = process.env.NEXT_PUBLIC_INTERCOM_SECRET_KEY |
 
 // URLs
 export const RELATIVE_URLS = {
-  FAQ: "/#faq",
+  FAQ: "/#faqs",
   HOW_IT_WORKS: "/#how-it-works",
   HOW_TO_GET_STARTED: "/#how-to-get-started",
   INDEX: "/",
@@ -60,15 +60,20 @@ export const RELATIVE_URLS = {
   USE_CASES: "/#use-cases",
 } as const;
 export const ABSOLUTE_URLS = {
+  CALENDLY: "https://calendly.com/gitauto/30min",
   GITAUTO: {
     INDEX: "https://gitauto.ai",
     THUMBNAIL: "https://gitauto.ai/homepage/thumbnail.jpg",
   },
   GITHUB: {
+    EMAIL_SETTING: "https://github.com/settings/emails",
     INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai",
     INSTALLED_APPS: "https://github.com/settings/installations",
   },
   LINKEDIN: "https://www.linkedin.com/company/gitauto",
+  OPENAI: {
+    PRIVACY: "https://openai.com/enterprise-privacy/",
+  },
   TWITTER: "https://twitter.com/gitautoai",
   YOUTUBE: {
     HOME: "https://www.youtube.com/@gitauto",
@@ -77,6 +82,9 @@ export const ABSOLUTE_URLS = {
     INTRO_3MIN: "https://www.youtube.com/watch?v=QvzEzJ9GJzU&t=6s",
   },
 } as const;
+
+// HTML or CSS Classes
+export const REL = "noopener noreferrer"; // Prevents the new page from having access to the window.opener property
 
 export const config = {
   // Authentication

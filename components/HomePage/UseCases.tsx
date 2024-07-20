@@ -1,7 +1,7 @@
 import Image from "next/image";
 export default function UseCases() {
   return (
-    <div id="use-cases" className="h-screen flex flex-col justify-center">
+    <div id="use-cases" className="min-h-screen h-screen flex flex-col justify-center">
       <div className="flex flex-col items-center">
         <h2 className="text-3xl md:text-4xl">Use Cases</h2>
         <div className="mt-10 sm:mt-4 md:mt-16 space-y-10 sm:space-y-2 md:space-y-10">

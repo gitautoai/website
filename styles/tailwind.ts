@@ -1,0 +1,1 @@
+export const LINK_CLASS = "text-pink-500 visited:text-pink-700 underline";
