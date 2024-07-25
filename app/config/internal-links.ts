@@ -6,15 +6,15 @@ export const INTERNAL_LINKS = [
     eventType: "home",
     text: "Home",
   },
-  // {
-  //   href: RELATIVE_URLS.PROBLEM,
-  //   eventType: "problem",
-  //   text: "Problem",
-  // },
+  {
+    href: RELATIVE_URLS.PROBLEM,
+    eventType: "problem",
+    text: "Problem",
+  },
   {
     href: RELATIVE_URLS.HOW_IT_WORKS,
     eventType: "how_it_works",
-    text: "How It Works",
+    text: "Solution",
   },
   {
     href: RELATIVE_URLS.USE_CASES,
