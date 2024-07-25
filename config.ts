@@ -55,6 +55,7 @@ export const RELATIVE_URLS = {
   INDEX: "/",
   PRICING: "/#pricing",
   PRIVACY_POLICY: "/privacy-policy",
+  PROBLEM: "/#problem",
   REDIRECT_TO_INSTALL: "/redirect-to-install",
   TERMS_OF_SERVICE: "/terms-of-service",
   USE_CASES: "/#use-cases",
