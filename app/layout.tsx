@@ -105,6 +105,12 @@ export const metadata: Metadata = {
     index: true, // Allow all bots to index this page.
     follow: true, // Allow all bots to follow links on this page.
     nocache: false, // Allow caching if you want to improve load times for repeat visitors.
+    // noarchive: 
+    noimageindex: false, // false if you want images to be indexed.
+    nositelinkssearchbox: false, // false unless you want to prevent the sitelinks search box.
+    nosnippet: false, // false unless you want to prevent caching.
+    notranslate: false, // false unless you have specific reasons to prevent translation.
+    indexifembedded: true, // true to allow indexing even if the page is embedded.
     googleBot: {
       index: true,
       follow: true,
