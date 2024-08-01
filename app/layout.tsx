@@ -102,16 +102,16 @@ export const metadata: Metadata = {
 
   // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#robots
   robots: {
-    index: false,
-    follow: true,
-    nocache: true,
+    index: true, // Allow all bots to index this page.
+    follow: true, // Allow all bots to follow links on this page.
+    nocache: false, // Allow caching if you want to improve load times for repeat visitors.
     googleBot: {
       index: true,
-      follow: false,
-      noimageindex: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": -1, // No limit on video previews.
+      "max-image-preview": "large", // Allows large image previews.
+      "max-snippet": -1, // No limit on the length of text snippet.
     },
   },
 
