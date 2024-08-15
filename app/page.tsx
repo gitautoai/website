@@ -9,6 +9,7 @@ import Pricing from "@/components/HomePage/Pricing";
 import Problem from "@/components/HomePage/Problem";
 import UseCases from "@/components/HomePage/UseCases";
 import ValueProp from "@/components/HomePage/ValueProp";
+import TestimonialsSection from "@/components/HomePage/TestimonialsSection";
 
 // Analytics
 import { usePathname } from "next/navigation";
@@ -33,6 +34,7 @@ export default function Home() {
       <Problem />
       <HowItWorks />
       <UseCases />
+      <TestimonialsSection />
       <HowToGetStarted />
       <Pricing />
       <FAQ />
