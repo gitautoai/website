@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 // Components
 import FAQ from "@/components/HomePage/FAQ";
 import HowItWorks from "@/components/HomePage/HowItWorks";
+import TestimonialsSection from "@/components/HomePage/TestimonialsSection";
 import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
 import Pricing from "@/components/HomePage/Pricing";
 import Problem from "@/components/HomePage/Problem";
@@ -33,6 +34,7 @@ export default function Home() {
       <Problem />
       <HowItWorks />
       <UseCases />
+      <TestimonialsSection />
       <HowToGetStarted />
       <Pricing />
       <FAQ />
