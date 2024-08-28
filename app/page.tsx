@@ -1,4 +1,5 @@
 "use client";
+import Testimonials from "@/components/HomePage/Testimonials";
 import React, { useEffect } from "react";
 
 // Components
@@ -8,6 +9,7 @@ import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
 import Pricing from "@/components/HomePage/Pricing";
 import Problem from "@/components/HomePage/Problem";
 import UseCases from "@/components/HomePage/UseCases";
+      <Testimonials />
 import ValueProp from "@/components/HomePage/ValueProp";
 
 // Analytics
