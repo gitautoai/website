@@ -31,11 +31,6 @@ export const createCheckoutSession = async ({
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items,
       mode: "subscription", // "subscription" or "payment" or "setup"
-      discounts: [
-        {
-          coupon: "FREE30",
-        },
-      ],
       success_url: `${config.NEXT_PUBLIC_SITE_URL}?success=true`,
       cancel_url: `${config.NEXT_PUBLIC_SITE_URL}?success=false`,
       client_reference_id: customerId,
