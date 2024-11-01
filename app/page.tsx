@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import FAQ from "@/components/HomePage/FAQ";
 import HowItWorks from "@/components/HomePage/HowItWorks";
 import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
+import Integrations from "@/components/HomePage/Integrations";
 import Pricing from "@/components/HomePage/Pricing";
 import Problem from "@/components/HomePage/Problem";
 import UseCases from "@/components/HomePage/UseCases";
@@ -35,6 +36,7 @@ export default function Home() {
       <UseCases />
       <HowToGetStarted />
       <Pricing />
+      <Integrations />
       <FAQ />
     </div>
   );

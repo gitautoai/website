@@ -18,6 +18,8 @@ model Installation {
   owner_id           BigInt               @default(1)
   created_by         String?
   uninstalled_by     String?
+  jira_workspace_id  String?
+  repo_name          String?
   owners             Owner                @relation(fields: [owner_id], references: [owner_id], onDelete: NoAction, onUpdate: NoAction, map: "public_owners_owner_id_fkey")
   issues             Issue[]
   user_installations UserInstallation[]

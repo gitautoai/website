@@ -30,7 +30,7 @@ const IntegrationButton = ({text, integrationUrl, iconPath }: IntegrationButtonP
       <Image
         src={iconPath}
         width={200}
-        height={200}
+        height={50}
         alt="Integration Logo"
         loading="lazy"
         className="invert"
