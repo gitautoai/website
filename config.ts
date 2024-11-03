@@ -1,4 +1,3 @@
-export const FREE_TIER_REQUEST_LIMIT = 5;
 export const isPrd = process.env.NODE_ENV === "production";
 
 // GitAuto Constants
@@ -43,6 +42,10 @@ export const OPENAI_MAX_TOKENS = "128K";
 export const OPENAI_MAX_LINES = "18K";
 export const OPENAI_MAX_FILES = 90;
 export const OPENAI_MODEL_NAME = "GPT-4o";
+export const OPENAI_MODEL_GPT_4O_MINI = "GPT-4o-mini";
+export const OPENAI_MODEL_GPT_4O = "GPT-4o";
+export const OPENAI_MODEL_O1_MINI = "o1-mini";
+export const OPENAI_MODEL_O1 = "o1";
 
 // Intercom Credentials
 export const INTERCOM_SECRET_KEY = process.env.NEXT_PUBLIC_INTERCOM_SECRET_KEY || "";

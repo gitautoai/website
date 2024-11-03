@@ -11,20 +11,16 @@ import { usePostHog } from "posthog-js/react";
 
 // Components
 import { useAccountContext } from "@/components/Context/Account";
+import CheckMark from "@/components/Symbol/CheckMark";
 
 // Third Party
 import { signIn } from "next-auth/react";
 import { Spinner } from "@chakra-ui/react";
 import {
   ABSOLUTE_URLS,
-  FREE_TIER_REQUEST_LIMIT,
-  OPENAI_FREE_FILES,
-  OPENAI_FREE_LINES,
-  OPENAI_FREE_TOKENS,
-  OPENAI_MAX_FILES,
-  OPENAI_MAX_LINES,
-  OPENAI_MAX_TOKENS,
-  OPENAI_MODEL_NAME,
+  OPENAI_MODEL_GPT_4O,
+  OPENAI_MODEL_GPT_4O_MINI,
+  OPENAI_MODEL_O1_MINI,
   RELATIVE_URLS,
 } from "@/config";
 
@@ -135,7 +131,7 @@ export default function Pricing() {
       </div>
       <div className="w-full flex flex-col sm:flex-row sm:gap-4 md:gap-10 sm:justify-center sm:items-stretch px-4 sm:px-0 md:px-4 mt-5 sm:mt-2 md:mt-8 space-y-8 sm:space-y-0">
         {/* Free Plan */}
-        <div className="flex flex-col p-4 sm:p-3 md:p-6 bg-stone-200 rounded-xl">
+        <div className="flex flex-col p-4 sm:p-3 md:p-6 sm:w-1/3 bg-stone-200 rounded-xl">
           <div className="flex flex-col sm:h-20 md:h-20">
             <h3 className="text-2xl sm:text-xl md:text-3xl mx-auto">Free</h3>
             <span className="mt-2 sm:mt-0 md:mt-2 text-2xl sm:text-lg md:text-2xl mx-auto">$0</span>
@@ -161,35 +157,29 @@ export default function Pricing() {
             />
             Install
           </Link>
-          <div className="flex flex-col text-base sm:text-sm md:text-xl">
-            <span>&bull; {OPENAI_MODEL_NAME}</span>
-            <span>&bull; Up to {OPENAI_FREE_TOKENS} tokens</span>
-            <span className="ml-3.5 sm:ml-3 md:ml-4.5">
-              Up to ~{OPENAI_FREE_LINES} lines of code
-            </span>
-            <span className="ml-3.5 sm:ml-3 md:ml-4.5">Up to ~{OPENAI_FREE_FILES} files</span>
-            <span>&bull; {FREE_TIER_REQUEST_LIMIT} issues per month</span>
-          </div>
+          <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
+            <li><CheckMark /> {OPENAI_MODEL_GPT_4O_MINI}</li>
+            <li><CheckMark /> Up to 3 tickets per month</li>
+            <li><CheckMark /> GitHub Issue Templates</li>
+          </ul>
         </div>
 
         {/* Standard Plan */}
-        <div className="flex flex-col p-4 sm:p-3 md:p-6 bg-stone-200 rounded-xl">
+        <div className="flex flex-col p-4 sm:p-3 md:p-6 sm:w-1/3 bg-stone-200 rounded-xl">
           <div className="flex flex-col sm:h-18 md:h-26">
             <h3 className="text-2xl sm:text-xl md:text-3xl mx-auto">Standard</h3>
             <span className="mt-2 sm:mt-0 md:mt-2 text-2xl sm:text-lg md:text-2xl mx-auto">
-              {billingPeriod === "Monthly" ? "$19/user/mo" : "$190/user/yr"}
+              {billingPeriod === "Monthly" ? "$100/user/mo" : "$1,000/user/yr"}
             </span>
 
-            {billingPeriod === "Yearly" && <span className="mx-auto">Save $38/user/yr</span>}
+            {billingPeriod === "Yearly" && <span className="mx-auto">Save $200/user/yr</span>}
           </div>
 
           <div className="relative items-center">
             <button
               id="subscribe-or-manage-standard"
               name="subscribe-or-manage-standard"
-              onClick={() => {
-                handleSubscribe();
-              }}
+              onClick={handleSubscribe}
               className={`${pricingButtonStyles} bg-pink-600 hover:bg-pink-700 text-white ${
                 isSubscribeLoading && "opacity-0 pointer-events-none"
               }`}
@@ -210,19 +200,18 @@ export default function Pricing() {
               </div>
             )}
           </div>
-          <div className="flex flex-col text-base sm:text-sm md:text-xl">
-            <span>&bull; {OPENAI_MODEL_NAME}</span>
-            <span>&bull; Up to {OPENAI_MAX_TOKENS} tokens</span>
-            <span className="ml-3.5 sm:ml-3 md:ml-4.5">
-              Up to ~{OPENAI_MAX_LINES} lines of code
-            </span>
-            <span className="ml-3.5 sm:ml-3 md:ml-4.5">Up to ~{OPENAI_MAX_FILES} files</span>
-            <span>&bull; 30 issues per month</span>
-          </div>
+          <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
+            <li><CheckMark /> {OPENAI_MODEL_GPT_4O} & {OPENAI_MODEL_O1_MINI}</li>
+            <li><CheckMark /> Up to 10 tickets per month</li>
+            <li><CheckMark /> Everything in Free plan</li>
+            <li><CheckMark /> Retry on GitHub Actions</li>
+            <li><CheckMark /> Daily self-execution</li>
+            <li><CheckMark /> Zero Data Retention</li>
+          </ul>
         </div>
 
         {/* Enterprise Plan */}
-        <div className="flex flex-col p-4 sm:p-3 md:p-6 bg-stone-200 rounded-xl">
+        <div className="flex flex-col p-4 sm:p-3 md:p-6 sm:w-1/3 bg-stone-200 rounded-xl">
           <div className="flex flex-col sm:h-10 md:h-26">
             <h3 className="text-2xl sm:text-xl md:text-3xl mx-auto">Enterprise</h3>
             <span className="mt-2 sm:mt-0 md:mt-2 text-2xl sm:text-lg md:text-2xl mx-auto">
@@ -242,18 +231,18 @@ export default function Pricing() {
           >
             Contact Us
           </Link>
-          <div className="flex flex-col text-base sm:text-sm md:text-xl">
-            <span>&bull; {OPENAI_MODEL_NAME}</span>
-            <span>&bull; Up to {OPENAI_MAX_TOKENS} tokens</span>
-            <span className="ml-3.5 sm:ml-3 md:ml-4.5">
-              Up to ~{OPENAI_MAX_LINES} lines of code
-            </span>
-            <span className="ml-3.5 sm:ml-3 md:ml-4.5">Up to ~{OPENAI_MAX_FILES} files</span>
-            <span>&bull; Unlimited Issues</span>
-            <span>&bull; Self OpenAI API key</span>
-            <span>&bull; Self hosting</span>
-            <span>&bull; Fine tuning</span>
-          </div>
+          <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
+            <li>
+              <CheckMark /> {OPENAI_MODEL_GPT_4O} & {OPENAI_MODEL_O1_MINI}
+            </li>
+            <li><CheckMark /> Unlimited tickets</li>
+            <li><CheckMark /> Everything in Standard plan</li>
+            <li><CheckMark /> Self OpenAI API key</li>
+            <li><CheckMark /> Self hosting</li>
+            <li><CheckMark /> SAML / SSO</li>
+            <li><CheckMark /> Fine tuning</li>
+            <li><CheckMark /> Dedicated Customer Support</li>
+          </ul>
         </div>
       </div>
     </div>
