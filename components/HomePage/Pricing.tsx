@@ -112,16 +112,14 @@ export default function Pricing() {
       className="w-full min-h-screen h-full py-4 md:py-0 flex flex-col justify-center items-center"
     >
       <h2 className="text-3xl md:text-4xl">Pricing</h2>
-      <div className="w-full flex justify-center sm:justify-end sm:pr-1 md:pr-24">
+      <div className="w-full flex justify-center sm:justify-end sm:pr-1 md:pr-4">
         <div className="flex flex-col justify-end sm:justify-end text-lg sm:text-base md:text-lg">
           <span>Billing Period</span>
           <select
             id="billingPeriod"
             name="billingPeriod"
             className="border rounded-lg outline-none"
-            onChange={(e) => {
-              setBillingPeriod(e.target.value);
-            }}
+            onChange={(e) => setBillingPeriod(e.target.value)}
             value={billingPeriod}
           >
             <option>Monthly</option>
@@ -133,8 +131,8 @@ export default function Pricing() {
         {/* Free Plan */}
         <div className="flex flex-col p-4 sm:p-3 md:p-6 sm:w-1/3 bg-stone-200 rounded-xl">
           <div className="flex flex-col sm:h-20 md:h-20">
-            <h3 className="text-2xl sm:text-xl md:text-3xl mx-auto">Free</h3>
-            <span className="mt-2 sm:mt-0 md:mt-2 text-2xl sm:text-lg md:text-2xl mx-auto">$0</span>
+            <h3 className="text-xl sm:text-lg md:text-2xl mx-auto">Free</h3>
+            <span className="mt-2 sm:mt-0 md:mt-2 text-3xl sm:text-xl md:text-3xl mx-auto">$0</span>
           </div>
           <Link
             href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
@@ -167,12 +165,12 @@ export default function Pricing() {
         {/* Standard Plan */}
         <div className="flex flex-col p-4 sm:p-3 md:p-6 sm:w-1/3 bg-stone-200 rounded-xl">
           <div className="flex flex-col sm:h-18 md:h-26">
-            <h3 className="text-2xl sm:text-xl md:text-3xl mx-auto">Standard</h3>
-            <span className="mt-2 sm:mt-0 md:mt-2 text-2xl sm:text-lg md:text-2xl mx-auto">
-              {billingPeriod === "Monthly" ? "$100/user/mo" : "$1,000/user/yr"}
+            <h3 className="text-xl sm:text-lg md:text-2xl mx-auto">Standard</h3>
+            <span className="mt-2 sm:mt-0 md:mt-2 text-3xl sm:text-xl md:text-3xl mx-auto">
+              {billingPeriod === "Monthly" ? "$100/month" : "$1,000/year"}
             </span>
 
-            {billingPeriod === "Yearly" && <span className="mx-auto">Save $200/user/yr</span>}
+            {billingPeriod === "Yearly" && <span className="mx-auto">Save $200/year</span>}
           </div>
 
           <div className="relative items-center">
@@ -201,9 +199,11 @@ export default function Pricing() {
             )}
           </div>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
-            <li><CheckMark /> {OPENAI_MODEL_GPT_4O} & {OPENAI_MODEL_O1_MINI}</li>
-            <li><CheckMark /> Up to 10 tickets per month</li>
             <li><CheckMark /> Everything in Free plan</li>
+            <li><CheckMark /> {OPENAI_MODEL_GPT_4O} & {OPENAI_MODEL_O1_MINI}</li>
+            <li><CheckMark /> per 10 tickets per month</li>
+            <li><CheckMark /> per organization</li>
+            <li><CheckMark /> Unlimited repositories</li>
             <li><CheckMark /> Retry on GitHub Actions</li>
             <li><CheckMark /> Daily self-execution</li>
             <li><CheckMark /> Zero Data Retention</li>
@@ -213,8 +213,8 @@ export default function Pricing() {
         {/* Enterprise Plan */}
         <div className="flex flex-col p-4 sm:p-3 md:p-6 sm:w-1/3 bg-stone-200 rounded-xl">
           <div className="flex flex-col sm:h-10 md:h-26">
-            <h3 className="text-2xl sm:text-xl md:text-3xl mx-auto">Enterprise</h3>
-            <span className="mt-2 sm:mt-0 md:mt-2 text-2xl sm:text-lg md:text-2xl mx-auto">
+            <h3 className="text-xl sm:text-lg md:text-2xl mx-auto">Enterprise</h3>
+            <span className="mt-2 sm:mt-0 md:mt-2 text-3xl sm:text-xl md:text-3xl mx-auto">
               $Custom
             </span>
           </div>
@@ -232,15 +232,15 @@ export default function Pricing() {
             Contact Us
           </Link>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
+            <li><CheckMark /> Everything in Standard plan</li>
             <li>
               <CheckMark /> {OPENAI_MODEL_GPT_4O} & {OPENAI_MODEL_O1_MINI}
             </li>
             <li><CheckMark /> Unlimited tickets</li>
-            <li><CheckMark /> Everything in Standard plan</li>
             <li><CheckMark /> Self OpenAI API key</li>
             <li><CheckMark /> Self hosting</li>
             <li><CheckMark /> SAML / SSO</li>
-            <li><CheckMark /> Fine tuning</li>
+            <li><CheckMark /> Fine tuning with your data</li>
             <li><CheckMark /> Dedicated Customer Support</li>
           </ul>
         </div>
