@@ -1,4 +1,9 @@
+"use client";
+
 import React from "react";
+
+// Local
+import { useAccountContext } from "../Context/Account";
 import IntegrationButton from "../Button/Integration";
 
 const integrations = [
@@ -7,20 +12,11 @@ const integrations = [
     integrationUrl: "https://www.atlassian.com/software/jira",
     iconPath: "/icons/jira.svg",
   },
-  // {
-  //   text: "Slack",
-  //   integrationUrl: "https://slack.com/",
-  //   iconPath: "/icons/slack.svg",
-  // },
-  // {
-  //   text: "Trello",
-  //   integrationUrl: "https://trello.com/",
-  //   iconPath: "/icons/trello.svg",
-  // },
-  // Add more integrations as needed
 ];
 
 const Integrations = () => {
+  const { userInfos, mutateUserInfos, selectedIndex, userId, jwtToken } =
+  useAccountContext();
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <h2 className="text-3xl md:text-4xl">Integrations</h2>

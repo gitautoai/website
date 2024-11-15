@@ -13,22 +13,25 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { githubUsername, jiraProject, githubRepo } = schema.parse(body);
 
+    const { installation_id } = await prisma.installation.findFirst({
+      where: { owner_name: githubUsername, uninstalled_at: null },
+      select: { installation_id: true },
+    }) ?? { installation_id: null };
     
-    // const existingInstallation = await prisma.installation.findUnique({
-    //   where: { owner_name: githubUsername },
-    //   select: { installation_id: true },
-    // });
+    const existingInstallationId = installation_id ? Number(installation_id) : null;
 
-    const newInstallationId = 56165848;
+    if (!existingInstallationId) {
+      return NextResponse.json({ message: "No installation found for that user" }, { status: 404 });
+    }
 
     await prisma.installation.upsert({
-      where: { installation_id: newInstallationId},
+      where: { installation_id: existingInstallationId },
       update: {
         jira_workspace_id: jiraProject,
         repo_name: githubRepo,
       },
       create: {
-        installation_id: newInstallationId,
+        installation_id: existingInstallationId,
         owner_name: githubUsername,
         jira_workspace_id: jiraProject,
         repo_name: githubRepo,

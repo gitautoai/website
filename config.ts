@@ -93,6 +93,9 @@ export const config = {
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || "",
   JWT_SECRET: process.env.JWT_SECRET || "",
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "",
+  
+  ATLASSIAN_CLIENT_ID: process.env.ATLASSIAN_CLIENT_ID || "",
+  ATLASSIAN_CLIENT_SECRET: process.env.ATLASSIAN_CLIENT_SECRET || "",
 
   // Stripe
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
