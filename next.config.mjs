@@ -8,12 +8,12 @@ const nextConfig = {
       {
         hostname: "avatars.githubusercontent.com",
       },
-      // {
-      //   hostname: "secure.gravatar.com",
-      // },
-      // {
-      //   hostname: "avatar-management--avatars.us-west-2.prod.public.atl-paas.net",
-      // }
+      {
+        hostname: "secure.gravatar.com",
+      },
+      {
+        hostname: "avatar-management--avatars.us-west-2.prod.public.atl-paas.net",
+      }
     ],
   },
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
