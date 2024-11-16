@@ -43,9 +43,8 @@ export default function Pricing() {
 
   const createPortalOrCheckoutURL = useCallback(async () => {
     let currentIndex = 0;
-    if (selectedIndex) {
-      currentIndex = selectedIndex;
-    }
+    if (selectedIndex) currentIndex = selectedIndex;
+
     // If user has an installation, create portal or checkout session
     if (userInfos && userInfos.length > 0) {
       const response = await fetch("/api/stripe/create-portal-or-checkout-url", {

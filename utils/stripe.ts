@@ -38,11 +38,7 @@ export const createCheckoutSession = async ({
       metadata: metadata,
       customer: customerId,
       // More parameters are available here:
-      after_expiration: {
-        recovery: {
-          enabled: true,
-        },
-      },
+      after_expiration: { recovery: { enabled: true } },
       allow_promotion_codes: true,
       automatic_tax: { enabled: true },
       billing_address_collection: "auto", // "required" or "auto"
@@ -56,6 +52,7 @@ export const createCheckoutSession = async ({
             name: "auto", // "never" or "auto"
           }
         : undefined,
+      locale: "auto", // or "en", "ja", etc.
       payment_method_collection: "always", // "always" or "if_required"
       subscription_data: {
         description: "This subscription was created from Checkout Session",
@@ -76,24 +73,18 @@ export const createCheckoutSession = async ({
 };
 
 export const hasActiveSubscription = async (customerId: string) => {
-  const subscription = await stripe.subscriptions.list({
-    customer: customerId,
-  });
+  const subscription = await stripe.subscriptions.list({ customer: customerId });
 
-  if (
-    subscription &&
-    "data" in subscription &&
-    Array.isArray(subscription["data"]) &&
-    subscription["data"].length > 0
-  ) {
-    for (const sub of subscription["data"]) {
-      if (sub.status === "active") {
-        for (const item of sub.items.data) {
-          if (item.price.active === true && item.price.id !== config.STRIPE_FREE_TIER_PRICE_ID) {
-            return true;
-          }
-        }
-      }
+  if (!subscription) return false;
+  if (!("data" in subscription)) return false;
+  if (!Array.isArray(subscription["data"])) return false;
+  if (subscription["data"].length === 0) return false;
+
+  for (const sub of subscription["data"]) {
+    if (sub.status !== "active") continue;
+    for (const item of sub.items.data) {
+      if (item.price.active === true && item.price.id !== config.STRIPE_FREE_TIER_PRICE_ID)
+        return true;
     }
   }
 
