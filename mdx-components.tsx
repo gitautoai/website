@@ -24,15 +24,15 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ol: ({ children }) => (
       <ol
         type="1"
-        className="list-decimal list-outside space-y-1 md:space-y-1 ml-4 text-base md:text-lg"
+        className="list-decimal list-outside space-y-1 md:space-y-1 pl-4 text-base md:text-lg"
       >
         {children}
       </ol>
     ),
     ul: ({ children }) => (
-      <ol className="list-disc list-outside space-y-1 md:space-y-1 ml-4 text-base md:text-lg">
+      <ul className="list-disc list-outside space-y-1 md:space-y-1 pl-4 text-base md:text-lg">
         {children}
-      </ol>
+      </ul>
     ),
     li: ({ children }) => <li className="list-item">{children}</li>,
 
