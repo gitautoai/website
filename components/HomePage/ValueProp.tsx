@@ -50,6 +50,9 @@ const ValueProp = () => {
         fixing more bugs and shipping more features.
       </p>
       <InstallButton text="Get Started for Free" />
+      <p className="text-base sm:text-sm md:text-base lg:text-lg">
+        It requires GitHub sign-in.
+      </p>
     </div>
   );
 };
