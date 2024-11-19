@@ -16,9 +16,7 @@ const handler = NextAuth({
       clientSecret: config.ATLASSIAN_CLIENT_SECRET as string,
       authorization: {
         params: {
-          audience: "api.atlassian.com",
-          scope: "write:jira-work read:jira-work read:jira-user offline_access read:me",
-          prompt: "consent"
+          scope: "read:jira-work read:me",
         },
       },
     })
@@ -26,8 +24,20 @@ const handler = NextAuth({
   callbacks: {
     async session({ session, token }) {
       try {
-        session.user.userId = Number(token.user_id);
-        session.jwtToken = token.jwtToken as string;
+        if (token.provider === "github") {
+          session.user.userId = Number(token.user_id);
+          session.jwtToken = token.jwtToken as string;
+        } else if (token.provider === "atlassian") {
+          session.user.atlassianInfo = {
+            accessToken: token.atlassian_access_token as string,
+            userId: token.atlassian_user_id as string,
+            jwtToken: token.jwtToken as string,
+            expiresAt: token.exp as number,
+            name: token.name as string,
+            email: token.email as string,
+            picture: token.picture as string
+          }
+        }
       } catch (err) {
         console.error(err);
       }
@@ -42,6 +52,12 @@ const handler = NextAuth({
       }
       if (account) {
         token.user_id = account.providerAccountId;
+        token.provider = account.provider;
+        if (account.provider === "atlassian") {
+          token.atlassian_access_token = account.access_token;
+          token.atlassian_user_id = account.providerAccountId;
+          token.atlassian_cloud_id = account.cloudId;
+        }
       }
       return token;
     },
