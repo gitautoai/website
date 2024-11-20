@@ -53,13 +53,24 @@ const handler = NextAuth({
       console.log("token", token);
       if (account) {
         token.user_id = account.providerAccountId;
-        token.user = {
-          userId: user.id,
-          email: user.email,
-          access_token: account.access_token,
-          provider_type: account.type,
-          provider_id: account.provider,
-          provider_account_id: account.providerAccountId,
+        if (account.provider === "github") {
+          token.user = {
+            userId: user.id,
+            email: user.email,
+            access_token: account.access_token,
+            provider_type: account.type,
+            provider_id: account.provider,
+            provider_account_id: account.providerAccountId,
+          }
+        } else if (account.provider === "atlassian") {
+          token.user = {
+            userId: user.id,
+            email: user.email,
+            access_token: account.access_token,
+            provider_type: account.type,
+            provider_id: account.provider,
+            provider_account_id: account.providerAccountId,
+          }
         }
       }
       return token;

@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import { encrypt } from './transform';
+
 const prisma = new PrismaClient();
 
 export async function upsertAccount({
@@ -6,6 +8,7 @@ export async function upsertAccount({
 }: {
   user: any;
 }) {
+  const encryptedAccessToken = encrypt(user.access_token);
 
   const account = await prisma.account.upsert({
     where: {
@@ -15,13 +18,13 @@ export async function upsertAccount({
       },
     },
     update: {
-      access_token: user.access_token,
+      access_token: encryptedAccessToken,
       email: user.email,
       user_id: user.userId,
       provider_type: user.provider_type,
     },
     create: {
-      access_token: user.access_token,
+      access_token: encryptedAccessToken,
       email: user.email,
       user_id: user.userId,
       provider_type: user.provider_type,
