@@ -9,6 +9,18 @@ datasource db {
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
+model Account {
+  user_id            String
+  email              String
+  access_token       String
+  provider_type      String
+  provider_id        String
+  provider_account_id String
+
+  @@id([provider_id, provider_account_id])
+  @@map("accounts")
+}
+
 model Installation {
   created_at         DateTime             @default(now()) @db.Timestamptz(6)
   installation_id    BigInt               @id @unique(map: "owners_installation_id_key")

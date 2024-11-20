@@ -5,16 +5,13 @@ declare module "next-auth" {
   interface Session {
     jwtToken: string;
     user: {
-      userId: int;
-      atlassianInfo?: {
-        accessToken?: string;
-        userId?: string;
-        jwtToken: string;
-        expiresAt: number;
-        name: string;
-        email: string | null;
-        picture: string;
-      }
+      userId: string;
+      email: string;
+      access_token: string;
+      provider_type: string;
+      provider_id: string;
+      provider_account_id: string;
+
     } & DefaultSession["user"];
   }
 }
