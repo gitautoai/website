@@ -6,8 +6,8 @@ import { usePostHog } from "posthog-js/react";
 
 // Local imports
 import { useAccountContext } from "@/components/Context/Account";
+import { INTERNAL_LINKS } from "@/config/internal-links";
 import SNS from "./Button/SNS";
-import { INTERNAL_LINKS } from "@/app/config/internal-links";
 
 export default function Footer() {
   // Analytics

@@ -5,10 +5,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { isTokenExpired } from "@/utils/auth";
 
 // Third Party
+import { RELATIVE_URLS } from "@/config/index";
 import { signOut, useSession } from "next-auth/react";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
-import { RELATIVE_URLS } from "@/config";
 
 const AccountContext = createContext<{
   userInfos: any; // All users, installations, owners associated with this github account
@@ -67,7 +67,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
   // Get userinfos that have a live subscription
   if (userInfos) {
-    const customerIds = userInfos.map((user: any) => user.installations.owners.stripe_customer_id);
+    const customerIds: string[] = userInfos.map((user: any) => user.installations.owners.stripe_customer_id);
     getUserInfosSubscribed = `/api/stripe/get-userinfo-subscriptions?userId=${userId}&jwtToken=${jwtToken}&customerIds=${customerIds}`;
   }
 

@@ -12,9 +12,9 @@ import { motion } from "framer-motion";
 import { signIn, signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import { useDisclosure } from "@chakra-ui/react";
+import { ABSOLUTE_URLS } from "@/config/index";
+import { INTERNAL_LINKS } from "@/config/internal-links";
 import SwitchAccount from "../HomePage/SwitchAccount";
-import { ABSOLUTE_URLS } from "@/config";
-import { INTERNAL_LINKS } from "@/app/config/internal-links";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;

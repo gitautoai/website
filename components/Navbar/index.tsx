@@ -17,8 +17,8 @@ import { useSession } from "next-auth/react";
 
 import { motion } from "framer-motion";
 import ProfileIcon from "./ProfileIcon";
-import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config";
-import { INTERNAL_LINKS } from "@/app/config/internal-links";
+import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config/index";
+import { INTERNAL_LINKS } from "@/config/internal-links";
 
 const buttonStyles = `bg-pink-600 text-white rounded-lg transition-colors 
 duration-200 py-2 px-3 shadow-lg hover:shadow-lg 

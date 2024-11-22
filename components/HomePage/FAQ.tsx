@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { FAQItem, FAQS } from "@/app/config/faqs";
 import ChevronIcon from "../Icon/Chevron";
+import { FAQItem, FAQS } from "@/config/faqs";
 import convertToLinks from "@/utils/convert-to-links";
 
 const FAQ = () => {
