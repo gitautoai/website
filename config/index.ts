@@ -47,6 +47,9 @@ export const OPENAI_MODEL_GPT_4O = "GPT-4o";
 export const OPENAI_MODEL_O1_MINI = "o1-mini";
 export const OPENAI_MODEL_O1 = "o1";
 
+// Stripe Credentials
+export const STRIPE_STANDARD_PLAN_PRODUCT_ID = process.env.STRIPE_STANDARD_PLAN_PRODUCT_ID || "";
+
 // Intercom Credentials
 export const INTERCOM_SECRET_KEY = process.env.NEXT_PUBLIC_INTERCOM_SECRET_KEY || "";
 

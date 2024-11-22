@@ -1,4 +1,4 @@
-import { config, RELATIVE_URLS } from "@/config";
+import { config, RELATIVE_URLS } from "@/config/index";
 import stripe from "@/lib/stripe";
 
 /**
