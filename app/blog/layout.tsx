@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
+import { defaultMetadata } from "@/config/metadata";
+
+export const metadata: Metadata = defaultMetadata;
+
 /**
- * Root Layout for the entire application
- * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required
+ * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts
  */
 export default function BlogLayout({
   children,
