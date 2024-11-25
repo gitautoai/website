@@ -1,8 +1,3 @@
-import type { Metadata } from "next";
-import { defaultMetadata } from "@/config/metadata";
-
-export const metadata: Metadata = defaultMetadata;
-
 /**
  * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts
  */
