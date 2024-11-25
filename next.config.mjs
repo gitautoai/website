@@ -1,4 +1,5 @@
 import { withSentryConfig } from "@sentry/nextjs";
+import remarkGfm from "remark-gfm";
 import createMDX from "@next/mdx";
 
 /** @type {import('next').NextConfig} */
@@ -12,15 +13,15 @@ const nextConfig = {
   },
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   experimental: {
-    mdxRs: true,
+    mdxRs: false,
     // turbo: {}, // https://nextjs.org/docs/app/api-reference/next-config-js/turbo
   },
 };
 
 const withMDX = createMDX({
-  extention: /\mdx?$/,
+  extension: /\mdx?$/,
   options: {
-    remarkPlugins: [],
+    remarkPlugins: [remarkGfm],
     rehypePlugins: [],
   },
 });
