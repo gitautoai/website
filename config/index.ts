@@ -55,6 +55,7 @@ export const INTERCOM_SECRET_KEY = process.env.NEXT_PUBLIC_INTERCOM_SECRET_KEY |
 
 // URLs
 export const RELATIVE_URLS = {
+  BLOG: "/blog",
   FAQ: "/#faqs",
   HOW_IT_WORKS: "/#how-it-works",
   HOW_TO_GET_STARTED: "/#how-to-get-started",
