@@ -21,6 +21,11 @@ export const INTERNAL_LINKS = [
     eventType: "use_cases",
     text: "Use Cases",
   },
+  {
+    href: RELATIVE_URLS.BLOG,
+    eventType: "blog",
+    text: "Blog",
+  },
   // {
   //   href: RELATIVE_URLS.ADVANTAGES,
   //   eventType: "advantages",
