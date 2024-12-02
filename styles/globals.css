@@ -35,3 +35,10 @@ body {
 body {
   overflow-x: hidden;
 }
+
+h2 {
+  @apply text-2xl md:text-3xl text-center mt-16 mb-8 md:my-16 md:mb-12 font-semibold;
+}
+label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
+}
