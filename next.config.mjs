@@ -11,6 +11,8 @@ const nextConfig = {
       },
     ],
   },
+  // https://nextjs.org/docs/app/api-reference/next-config-js/logging
+  logging: false,
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   experimental: {
     mdxRs: false,
