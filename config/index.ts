@@ -54,6 +54,7 @@ export const STRIPE_STANDARD_PLAN_PRODUCT_ID = process.env.STRIPE_STANDARD_PLAN_
 export const INTERCOM_SECRET_KEY = process.env.NEXT_PUBLIC_INTERCOM_SECRET_KEY || "";
 
 // URLs
+export const NEXT_PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
 export const RELATIVE_URLS = {
   BLOG: "/blog",
   FAQ: "/#faqs",
@@ -114,6 +115,5 @@ export const config = {
 
   // Environment Specifcs
   NODE_ENV: process.env.NODE_ENV || "",
-  NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || "",
   NEXT_PUBLIC_GITHUB_APP_URL: process.env.NEXT_PUBLIC_GITHUB_APP_URL || "",
 };
