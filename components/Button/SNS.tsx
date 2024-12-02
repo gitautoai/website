@@ -22,7 +22,7 @@ const SNS = () => {
           });
         }}
       >
-        <FontAwesomeIcon icon={faGithub} size={iconSize} />
+        <FontAwesomeIcon icon={faGithub} size={iconSize} className="" />
       </Link>
       <Link
         href={ABSOLUTE_URLS.TWITTER}
@@ -34,7 +34,7 @@ const SNS = () => {
           });
         }}
       >
-        <FontAwesomeIcon icon={faXTwitter} size={iconSize} />
+        <FontAwesomeIcon icon={faXTwitter} size={iconSize} className="" />
       </Link>
       <Link
         href={ABSOLUTE_URLS.YOUTUBE.HOME}
@@ -46,7 +46,7 @@ const SNS = () => {
           });
         }}
       >
-        <FontAwesomeIcon icon={faYoutube} size={iconSize} />
+        <FontAwesomeIcon icon={faYoutube} size={iconSize} className="" />
       </Link>
       <Link
         href={ABSOLUTE_URLS.LINKEDIN}
@@ -58,7 +58,7 @@ const SNS = () => {
           });
         }}
       >
-        <FontAwesomeIcon icon={faLinkedin} size={iconSize} />
+        <FontAwesomeIcon icon={faLinkedin} size={iconSize} className="" />
       </Link>
     </div>
   );
