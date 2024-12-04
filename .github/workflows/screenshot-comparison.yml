@@ -58,7 +58,6 @@ jobs:
 
             // Delete previous comments created by this workflow
             for (const comment of comments.data) {
-              console.log({ comment });
               if (comment.body.includes('Before (main) | After (this branch)')) {
                 await github.rest.issues.deleteComment({
                   owner: context.repo.owner,

@@ -35,8 +35,10 @@ import path from "path";
 
   for (const url of urls) {
     const fileName = `${path.basename(url)}.png`.replace(/[^\w.-]/g, "_");
+    const filePath = path.join(outputDir, fileName);
+    console.log(`Taking screenshot of ${url} and saving to ${filePath}`);
     await page.goto(url, { waitUntil: "networkidle" }); // Wait for the page to load
-    await page.screenshot({ path: path.join(outputDir, fileName) }); // Take a screenshot
+    await page.screenshot({ path: filePath }); // Take a screenshot
   }
 
   await browser.close();
