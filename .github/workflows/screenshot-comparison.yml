@@ -80,19 +80,18 @@ jobs:
             for (let i = 0; i < mainFiles.length; i++) {
               const mainFile = mainFiles[i];
               const branchFile = branchFiles[i];
-              
               const routePath = decodeURIComponent(mainFile.replace('.png', ''));
 
               // Resize images to width 800px (height will adjust proportionally)
               const mainImage = await sharp(path.join(mainDir, mainFile))
-                .resize(800, null)
-                .png({ quality: 80 })
+                .resize(400, null)
+                .jpeg({ quality: 40, progressive: true })
                 .toBuffer()
                 .then(data => data.toString('base64'));
 
               const branchImage = await sharp(path.join(branchDir, branchFile))
-                .resize(800, null)
-                .png({ quality: 80 })
+                .resize(400, null)
+                .jpeg({ quality: 40, progressive: true })
                 .toBuffer()
                 .then(data => data.toString('base64'));
 
