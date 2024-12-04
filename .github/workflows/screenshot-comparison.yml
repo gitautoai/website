@@ -49,6 +49,24 @@ jobs:
             const fs = require('fs');
             const path = require('path');
 
+            // Get all comments for the pull request
+            const comments = await github.rest.issues.listComments({
+              issue_number: context.payload.pull_request.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            // Delete previous comments created by this workflow
+            for (const comment of comments.data) {
+              if (comment.body.includes('Before (main) | After (this branch)')) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: comment.id
+                });
+              }
+            }
+
             const mainDir = 'main-screenshots/';
             const branchDir = 'branch-screenshots/';
 
@@ -58,14 +76,17 @@ jobs:
             for (let i = 0; i < mainFiles.length; i++) {
               const mainFile = mainFiles[i];
               const branchFile = branchFiles[i];
-              const pageName = path.basename(mainFile, '.png');
+              const routePath = mainFile.replace('.png', '').replace(/_/g, '/');
 
+              // Create absolute URLs for the images using the repository URL
+              const baseUrl = `https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/${context.sha}`;
+              
               const body = `
-              ### ${pageName}
+              /${routePath}
 
-              | **Before (main)** | **After (this branch)** |
-              |-------------------|-------------------------|
-              | ![main](./main-screenshots/${mainFile}) | ![branch](./branch-screenshots/${branchFile}) |
+              | Before (main) | After (this branch) |
+              |--------------|---------------------|
+              | <img src="${baseUrl}/main-screenshots/${mainFile}" width="400"/> | <img src="${baseUrl}/branch-screenshots/${branchFile}" width="400"/> |
               `;
 
               github.rest.issues.createComment({
