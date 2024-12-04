@@ -19,6 +19,8 @@ jobs:
         run: npm install
 
       - name: Build project
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
         run: npm run build
 
       # "&" starts the server in the background, don't wait for it to finish, and move on
