@@ -3,6 +3,11 @@ name: Add Screenshot Comparison to PR
 on:
   pull_request:
 
+# Add these permissions at the top level
+permissions:
+  pull-requests: write
+  contents: read
+
 jobs:
   take-screenshots:
     runs-on: ubuntu-latest
