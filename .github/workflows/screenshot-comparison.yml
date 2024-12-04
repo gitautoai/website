@@ -58,6 +58,7 @@ jobs:
 
             // Delete previous comments created by this workflow
             for (const comment of comments.data) {
+              console.log({ comment });
               if (comment.body.includes('Before (main) | After (this branch)')) {
                 await github.rest.issues.deleteComment({
                   owner: context.repo.owner,
@@ -78,15 +79,16 @@ jobs:
               const branchFile = branchFiles[i];
               const routePath = mainFile.replace('.png', '').replace(/_/g, '/');
 
-              // Create absolute URLs for the images using the repository URL
-              const baseUrl = `https://raw.githubusercontent.com/${context.repo.owner}/${context.repo.repo}/${context.sha}`;
-              
+              // Read and encode the images
+              const mainImage = fs.readFileSync(path.join(mainDir, mainFile)).toString('base64');
+              const branchImage = fs.readFileSync(path.join(branchDir, branchFile)).toString('base64');
+
               const body = `
               /${routePath}
 
               | Before (main) | After (this branch) |
               |--------------|---------------------|
-              | <img src="${baseUrl}/main-screenshots/${mainFile}" width="400"/> | <img src="${baseUrl}/branch-screenshots/${branchFile}" width="400"/> |
+              | <img src="data:image/png;base64,${mainImage}" width="400"/> | <img src="data:image/png;base64,${branchImage}" width="400"/> |
               `;
 
               github.rest.issues.createComment({
