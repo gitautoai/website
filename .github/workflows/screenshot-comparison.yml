@@ -1,0 +1,68 @@
+name: Add Screenshot Comparison to PR
+
+on:
+  pull_request:
+
+jobs:
+  take-screenshots:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build
+
+      # "&" starts the server in the background, don't wait for it to finish, and move on
+      - name: Start local server
+        run: npm run start &
+
+      - name: Take screenshots (main)
+        run: node scripts/take-screenshots.ts main-screenshots/ https://gitauto.ai
+
+      # This localhost:3000 is the local server we started earlier
+      - name: Take screenshots (this branch)
+        run: node scripts/take-screenshots.ts branch-screenshots/ http://localhost:3000
+
+      # https://github.com/actions/github-script
+      - name: Post screenshot comparison
+        uses: actions/github-script@v7
+        with:
+          script: |
+            import fs from 'fs';
+            import path from 'path';
+
+            const mainDir = 'main-screenshots/';
+            const branchDir = 'branch-screenshots/';
+
+            const mainFiles = fs.readdirSync(mainDir).filter(file => file.endsWith('.png'));
+            const branchFiles = fs.readdirSync(branchDir).filter(file => file.endsWith('.png'));
+
+            for (let i = 0; i < mainFiles.length; i++) {
+              const mainFile = mainFiles[i];
+              const branchFile = branchFiles[i];
+              const pageName = path.basename(mainFile, '.png');
+
+              const body = `
+              ### ${pageName}
+
+              | **Before (main)** | **After (this branch)** |
+              |-------------------|-------------------------|
+              | ![main](./main-screenshots/${mainFile}) | ![branch](./branch-screenshots/${branchFile}) |
+              `;
+
+              github.rest.issues.createComment({
+                issue_number: context.payload.pull_request.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            }
