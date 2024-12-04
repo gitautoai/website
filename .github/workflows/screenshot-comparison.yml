@@ -28,11 +28,11 @@ jobs:
         run: npm run start &
 
       - name: Take screenshots (main)
-        run: node scripts/take-screenshots.ts main-screenshots/ https://gitauto.ai
+        run: node scripts/take-screenshots.mjs main-screenshots/ https://gitauto.ai
 
       # This localhost:3000 is the local server we started earlier
       - name: Take screenshots (this branch)
-        run: node scripts/take-screenshots.ts branch-screenshots/ http://localhost:3000
+        run: node scripts/take-screenshots.mjs branch-screenshots/ http://localhost:3000
 
       # https://github.com/actions/github-script
       - name: Post screenshot comparison
