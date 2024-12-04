@@ -83,13 +83,7 @@ jobs:
               const mainImage = fs.readFileSync(path.join(mainDir, mainFile)).toString('base64');
               const branchImage = fs.readFileSync(path.join(branchDir, branchFile)).toString('base64');
 
-              const body = `
-              /${routePath}
-
-              | Before (main) | After (this branch) |
-              |--------------|---------------------|
-              | <img src="data:image/png;base64,${mainImage}" width="400"/> | <img src="data:image/png;base64,${branchImage}" width="400"/> |
-              `;
+              const body = `/${routePath}\n\n| Before (main) | After (this branch) |\n|--------------|---------------------|\n| <img src="data:image/png;base64,${mainImage}" width="400"/> | <img src="data:image/png;base64,${branchImage}" width="400"/> |`;
 
               github.rest.issues.createComment({
                 issue_number: context.payload.pull_request.number,
