@@ -76,15 +76,17 @@ jobs:
             for (let i = 0; i < mainFiles.length; i++) {
               const mainFile = mainFiles[i];
               const branchFile = branchFiles[i];
-              const routePath = mainFile.replace('.png', '').replace(/_/g, '/');
+              
+              // Decode the URL path from filename
+              const routePath = decodeURIComponent(mainFile.replace('.png', ''));
 
               // Read and encode the images
               const mainImage = fs.readFileSync(path.join(mainDir, mainFile)).toString('base64');
               const branchImage = fs.readFileSync(path.join(branchDir, branchFile)).toString('base64');
 
-              const body = `/${routePath}\n\n| Before (main) | After (this branch) |\n|--------------|---------------------|\n| <img src="data:image/png;base64,${mainImage}" width="400"/> | <img src="data:image/png;base64,${branchImage}" width="400"/> |`;
+              const body = `${routePath}\n\n| Before (main) | After (this branch) |\n|--------------|---------------------|\n| <img src="data:image/png;base64,${mainImage}" width="400"/> | <img src="data:image/png;base64,${branchImage}" width="400"/> |`;
 
-              github.rest.issues.createComment({
+              await github.rest.issues.createComment({
                 issue_number: context.payload.pull_request.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,

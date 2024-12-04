@@ -30,15 +30,21 @@ import path from "path";
 
   // Launch the browser
   const browser = await chromium.launch();
-  const context = await browser.newContext(); // A new browser window
+  const context = await browser.newContext({
+    viewport: { width: 1920, height: 1080 },
+  }); // A new browser window
   const page = await context.newPage(); // A new tab in the browser window
 
   for (const url of urls) {
-    const fileName = `${path.basename(url)}.png`.replace(/[^\w.-]/g, "_");
+    // Use full URL path and encode it for safe filename
+    const urlObj = new URL(url);
+    const fullPath = `${urlObj.hostname}${urlObj.pathname}`;
+    const fileName = `${encodeURIComponent(fullPath)}.png`;
     const filePath = path.join(outputDir, fileName);
+
     console.log(`Taking screenshot of ${url} and saving to ${filePath}`);
     await page.goto(url, { waitUntil: "networkidle" }); // Wait for the page to load
-    await page.screenshot({ path: filePath }); // Take a screenshot
+    await page.screenshot({ path: filePath, fullPage: true }); // Take a screenshot
   }
 
   await browser.close();
