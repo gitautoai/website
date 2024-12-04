@@ -25,6 +25,9 @@ jobs:
           npm install
           npx playwright install --with-deps chromium
 
+      - name: Install Sharp
+        run: npm install sharp
+
       - name: Build project
         env:
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
@@ -48,6 +51,7 @@ jobs:
           script: |
             const fs = require('fs');
             const path = require('path');
+            const sharp = require('sharp');
 
             // Get all comments for the pull request
             const comments = await github.rest.issues.listComments({
@@ -77,12 +81,20 @@ jobs:
               const mainFile = mainFiles[i];
               const branchFile = branchFiles[i];
               
-              // Decode the URL path from filename
               const routePath = decodeURIComponent(mainFile.replace('.png', ''));
 
-              // Read and encode the images
-              const mainImage = fs.readFileSync(path.join(mainDir, mainFile)).toString('base64');
-              const branchImage = fs.readFileSync(path.join(branchDir, branchFile)).toString('base64');
+              // Resize images to width 800px (height will adjust proportionally)
+              const mainImage = await sharp(path.join(mainDir, mainFile))
+                .resize(800, null)
+                .png({ quality: 80 })
+                .toBuffer()
+                .then(data => data.toString('base64'));
+
+              const branchImage = await sharp(path.join(branchDir, branchFile))
+                .resize(800, null)
+                .png({ quality: 80 })
+                .toBuffer()
+                .then(data => data.toString('base64'));
 
               const body = `${routePath}\n\n| Before (main) | After (this branch) |\n|--------------|---------------------|\n| <img src="data:image/png;base64,${mainImage}" width="400"/> | <img src="data:image/png;base64,${branchImage}" width="400"/> |`;
 
