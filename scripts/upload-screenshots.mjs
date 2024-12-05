@@ -53,6 +53,7 @@ export async function compareScreenshots({ github, context }) {
   const branchFiles = fs.readdirSync(branchDir).filter((file) => file.endsWith(".png"));
 
   // Initialize S3 client
+  // https://us-east-1.console.aws.amazon.com/iam/home?region=us-west-1#/users/details/github-actions?section=security_credentials
   const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -69,6 +70,7 @@ export async function compareScreenshots({ github, context }) {
     const branchImageBuffer = fs.readFileSync(path.join(branchDir, branchFile));
 
     // Upload images to S3 (as PNG)
+    // https://us-west-1.console.aws.amazon.com/s3/buckets?region=us-west-1
     const mainImageUpload = await s3
       .upload({
         Bucket: process.env.AWS_S3_BUCKET_NAME,
