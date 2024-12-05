@@ -14,6 +14,7 @@ const nextConfig = {
   // https://nextjs.org/docs/app/api-reference/next-config-js/logging
   logging: false,
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  reactStrictMode: false,
   experimental: {
     mdxRs: false,
     // turbo: {}, // https://nextjs.org/docs/app/api-reference/next-config-js/turbo
