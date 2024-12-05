@@ -78,7 +78,6 @@ export async function compareScreenshots({ github, context }) {
           Key: `screenshots/main/${mainFile}`,
           Body: mainImageBuffer,
           ContentType: "image/png",
-          ACL: "public-read",
         })
         .promise();
 
@@ -88,7 +87,6 @@ export async function compareScreenshots({ github, context }) {
           Key: `screenshots/branch/${branchFile}`,
           Body: branchImageBuffer,
           ContentType: "image/png",
-          ACL: "public-read",
         })
         .promise();
 
