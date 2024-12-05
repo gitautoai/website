@@ -54,5 +54,5 @@ jobs:
           S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
         with:
           script: |
-            const { compareScreenshots } = await import('./scripts/upload-screenshots.mjs');
+            const { compareScreenshots } = await import('${{ github.workspace }}/scripts/upload-screenshots.mjs');
             await compareScreenshots({ github, context });
