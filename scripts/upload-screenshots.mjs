@@ -90,7 +90,7 @@ export async function compareScreenshots({ github, context }) {
         })
         .promise();
 
-      const body = `${routePath}\n\n| Before (main) | After (this branch) |\n|--------------|---------------------|\n| <img src="${mainImageUpload.Location}" width="400"/> | <img src="${branchImageUpload.Location}" width="400"/> |`;
+      const body = `${routePath}\n\n| Before (main) | After (this branch) |\n|--------------|---------------------|\n| <img src="${mainImageUpload.Location}" width="400" referrerpolicy="no-referrer"/> | <img src="${branchImageUpload.Location}" width="400" referrerpolicy="no-referrer"/> |`;
 
       await github.rest.issues.createComment({
         issue_number: context.payload.pull_request.number,
