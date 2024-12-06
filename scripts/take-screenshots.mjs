@@ -31,7 +31,8 @@ import path from "path";
   // Launch the browser
   const browser = await chromium.launch();
   const context = await browser.newContext({
-    viewport: { width: 1512, height: 982 },
+    viewport: { width: 1024, height: 768 },
+    deviceScaleFactor: 2,
   }); // A new browser window
   const page = await context.newPage(); // A new tab in the browser window
 
