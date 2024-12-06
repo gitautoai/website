@@ -34,6 +34,15 @@ export const TAGLINES = [
   "Enhance your engineering team's productivity.",
 ];
 
+// Atlassian Credentials
+export const ATLASSIAN_CLIENT_ID = process.env.ATLASSIAN_CLIENT_ID || "";
+export const ATLASSIAN_CLIENT_SECRET = process.env.ATLASSIAN_CLIENT_SECRET || "";
+export const ATLASSIAN_API_DOMAIN = "api.atlassian.com";
+export const ATLASSIAN_AUTHORIZE_URL = "https://auth.atlassian.com/authorize";
+export const ATLASSIAN_REDIRECT_URI = process.env.ATLASSIAN_REDIRECT_URI || "";
+export const ATLASSIAN_SCOPE = "read:jira-work";
+export const ATLASSIAN_TOKEN_URL = "https://auth.atlassian.com/oauth/token";
+
 // OpenAI Credentials
 export const OPENAI_FREE_TOKENS = "13K";
 export const OPENAI_FREE_LINES = "2K";

@@ -15,6 +15,7 @@ const AccountContext = createContext<{
   userId: number | null;
   userName: string | null;
   email: string | null;
+  installationIds: number[];
   jwtToken: string | null;
 }>({
   userInfos: null,
@@ -25,6 +26,7 @@ const AccountContext = createContext<{
   userId: null,
   userName: null,
   email: null,
+  installationIds: [],
   jwtToken: null,
 });
 
@@ -34,6 +36,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const [userId, setUserId] = useState<number | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
+  const [installationIds, setInstallationIds] = useState<number[]>([]);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const router = useRouter();
 
@@ -85,6 +88,9 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     // Set Selected Index if there is a selected user account
     if (userInfos) {
       const newIndex = userInfos.findIndex((user: any) => user.is_selected);
+      setInstallationIds(
+        userInfos.map((user: any) => user.installations.installation_id.replace("n", ""))
+      );
 
       // Should always have an account selected, this is a fallback
       if (newIndex == -1) {
@@ -112,6 +118,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         userId,
         userName,
         email,
+        installationIds,
         jwtToken,
       }}
     >
