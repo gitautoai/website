@@ -30,10 +30,9 @@ import path from "path";
 
   // Launch the browser
   const browser = await chromium.launch();
-  const context = await browser.newContext({
-    viewport: { width: 1512, height: 982 },
-  }); // A new browser window
+  const context = await browser.newContext(); // A new browser window
   const page = await context.newPage(); // A new tab in the browser window
+  await page.setViewportSize({ width: 1024, height: 768 });
 
   for (const url of urls) {
     // Use full URL path and encode it for safe filename
