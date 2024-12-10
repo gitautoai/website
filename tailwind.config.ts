@@ -24,6 +24,13 @@ module.exports = {
       lightHover: "#E0E0E0",
       analogueBlue: "#0900FF",
     },
+      dark: {
+        background: "#121212",
+        text: "#E4E4E4",
+        primary: "#BB86FC",
+        secondary: "#03DAC6",
+        error: "#CF6679",
+      },
     fontFamily: {
       sans: ["sans-serif", "sans-serif"],
       serif: ["Georgia", "serif"],
