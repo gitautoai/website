@@ -11,6 +11,13 @@ const theme = extendTheme({
     white: "#ffffff",
     red: "#E1341E",
     transparent: "transparent",
+    dark: {
+      background: "#121212",
+      text: "#E4E4E4",
+      primary: "#BB86FC",
+      secondary: "#03DAC6",
+      error: "#CF6679",
+    },
     light: "#F6F6F6 ", //grey
     darkBlue: "#004f98", // USAFA Blue
     switchBlueScheme: {
