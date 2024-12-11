@@ -42,7 +42,13 @@ import path from "path";
     const filePath = path.join(outputDir, fileName);
 
     console.log(`Taking screenshot of ${url} and saving to ${filePath}`);
-    await page.goto(url, { waitUntil: "networkidle" }); // Wait for the page to load
+    await page.goto(url, { waitUntil: "domcontentloaded" }); // Wait for the page to load
+    await page.waitForFunction(
+      () =>
+        !document.querySelector(".error-404") &&
+        document.querySelector("#root")?.children.length > 0,
+      { timeout: 10000 }
+    );
     await page.screenshot({ path: filePath, fullPage: true }); // Take a screenshot
   }
 
