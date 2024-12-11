@@ -35,25 +35,37 @@ import path from "path";
   await page.setViewportSize({ width: 1024, height: 768 });
 
   for (const url of urls) {
-    // Use full URL path and encode it for safe filename
     const urlObj = new URL(url);
     const fullPath = `${urlObj.hostname}${urlObj.pathname}`;
     const fileName = `${encodeURIComponent(fullPath)}.png`;
     const filePath = path.join(outputDir, fileName);
 
     console.log(`Taking screenshot of ${url} and saving to ${filePath}`);
-    await page.goto(url, { waitUntil: "domcontentloaded" }); // Wait for the page to load
     try {
-      await page.waitForFunction(
-        () =>
-          !document.querySelector(".error-404") &&
-          document.querySelector("#root")?.children.length > 0,
-        { timeout: 100000 } // 100 seconds
-      );
+      // Add timeout and wait for network idle
+      await page.goto(url, { waitUntil: ["domcontentloaded", "networkidle"], timeout: 30000 });
+
+      // Wait for content to be visible
+      await page.waitForSelector("#root", { state: "visible", timeout: 30000 });
+
+      // Add a small delay to ensure dynamic content loads
+      await page.waitForTimeout(2000);
+
+      // Check for error states
+      const hasError = await page.evaluate(() => {
+        return (
+          !!document.querySelector(".error-404") ||
+          !document.querySelector("#root")?.children.length
+        );
+      });
+      if (hasError) throw new Error("Page loaded with errors");
+
+      await page.screenshot({ path: filePath, fullPage: true });
+      console.log(`Successfully captured screenshot for ${url}`);
     } catch (error) {
-      console.warn(`Failed to take screenshot of ${url}`);
+      console.error(`Failed to take screenshot of ${url}:`, error.message);
+      // Continue with next URL instead of stopping
     }
-    await page.screenshot({ path: filePath, fullPage: true }); // Take a screenshot
   }
 
   await browser.close();
