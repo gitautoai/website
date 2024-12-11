@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import AWS from "aws-sdk";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 /**
  * @typedef {Object} GitHubContext
@@ -53,44 +53,50 @@ export async function compareScreenshots({ github, context }) {
     const mainFiles = fs.readdirSync(mainDir).filter((file) => file.endsWith(".png"));
     const branchFiles = fs.readdirSync(branchDir).filter((file) => file.endsWith(".png"));
 
-    // Initialize S3 client
-    // https://us-east-1.console.aws.amazon.com/iam/home?region=us-west-1#/users/details/github-actions?section=security_credentials
-    const s3 = new AWS.S3({
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    // Initialize S3 client (v3 syntax)
+    const s3Client = new S3Client({
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
       region: process.env.AWS_REGION,
     });
 
     for (let i = 0; i < mainFiles.length; i++) {
       const mainFile = mainFiles[i];
       const branchFile = branchFiles[i];
-      const routePath = decodeURIComponent(mainFile.replace(".png", ""));
-
-      // Read the image files directly without using sharp
+      const routePath = mainFile.replace(".png", "");
       const mainImageBuffer = fs.readFileSync(path.join(mainDir, mainFile));
       const branchImageBuffer = fs.readFileSync(path.join(branchDir, branchFile));
 
-      // Upload images to S3 (as PNG)
-      // https://us-west-1.console.aws.amazon.com/s3/buckets?region=us-west-1
-      const mainImageUpload = await s3
-        .upload({
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: `screenshots/main/${mainFile}`,
-          Body: mainImageBuffer,
-          ContentType: "image/png",
-        })
-        .promise();
+      // Upload images to S3 using v3 syntax
+      await Promise.all(
+        [
+          ["main", mainFile, mainImageBuffer],
+          ["branch", branchFile, branchImageBuffer],
+        ].map(([folder, file, buffer]) =>
+          s3Client.send(
+            new PutObjectCommand({
+              Bucket: process.env.AWS_S3_BUCKET_NAME,
+              Key: `screenshots/${folder}/${file}`,
+              Body: buffer,
+              ContentType: "image/png",
+            })
+          )
+        )
+      );
 
-      const branchImageUpload = await s3
-        .upload({
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: `screenshots/branch/${branchFile}`,
-          Body: branchImageBuffer,
-          ContentType: "image/png",
-        })
-        .promise();
+      // Construct S3 URLs manually since v3 doesn't return Location
+      const baseUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`;
+      const timestamp = Date.now();
+      const mainImageUrl = `${baseUrl}/screenshots/main/${encodeURIComponent(mainFile)}?t=${timestamp}`;
+      const branchImageUrl = `${baseUrl}/screenshots/branch/${encodeURIComponent(branchFile)}?t=${timestamp}`;
 
-      const body = `${routePath}\n\n| Before (main) | After (this branch) |\n|--------------|---------------------|\n| <img src="${mainImageUpload.Location}" width="400" referrerpolicy="no-referrer"/> | <img src="${branchImageUpload.Location}" width="400" referrerpolicy="no-referrer"/> |`;
+      // Log URLs for debugging
+      console.log(`Main Image URL: ${mainImageUrl}`);
+      console.log(`Branch Image URL: ${branchImageUrl}`);
+
+      const body = `${routePath}\n\n| Before (main) | After (this branch) |\n|--------------|---------------------|\n| <img src="${mainImageUrl}" width="400" referrerpolicy="no-referrer"/> | <img src="${branchImageUrl}" width="400" referrerpolicy="no-referrer"/> |`;
 
       await github.rest.issues.createComment({
         issue_number: context.payload.pull_request.number,

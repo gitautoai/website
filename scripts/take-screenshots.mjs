@@ -32,18 +32,24 @@ import path from "path";
   const browser = await chromium.launch();
   const context = await browser.newContext(); // A new browser window
   const page = await context.newPage(); // A new tab in the browser window
-  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.setViewportSize({ width: 1512, height: 982 });
 
   for (const url of urls) {
-    // Use full URL path and encode it for safe filename
     const urlObj = new URL(url);
     const fullPath = `${urlObj.hostname}${urlObj.pathname}`;
     const fileName = `${encodeURIComponent(fullPath)}.png`;
     const filePath = path.join(outputDir, fileName);
 
     console.log(`Taking screenshot of ${url} and saving to ${filePath}`);
-    await page.goto(url, { waitUntil: "networkidle" }); // Wait for the page to load
-    await page.screenshot({ path: filePath, fullPage: true }); // Take a screenshot
+    try {
+      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+      await page.waitForTimeout(10000);
+      await page.screenshot({ path: filePath, fullPage: true });
+      console.log(`Successfully captured screenshot for ${url}`);
+    } catch (error) {
+      console.error(`Failed to take screenshot of ${url}:`, error.message);
+      // Continue with next URL instead of stopping
+    }
   }
 
   await browser.close();

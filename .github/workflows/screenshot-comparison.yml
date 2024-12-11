@@ -25,8 +25,9 @@ jobs:
           npm install
           npx playwright install --with-deps chromium
 
+      # https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/introduction/
       - name: Install AWS SDK
-        run: npm install aws-sdk
+        run: npm install @aws-sdk/client-s3
 
       - name: Build project
         env:
