@@ -43,7 +43,7 @@ import path from "path";
     console.log(`Taking screenshot of ${url} and saving to ${filePath}`);
     try {
       // Add timeout and wait for network idle
-      await page.goto(url, { waitUntil: ["domcontentloaded", "networkidle"], timeout: 30000 });
+      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 
       // Wait for content to be visible
       await page.waitForSelector("#root", { state: "visible", timeout: 30000 });
