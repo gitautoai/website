@@ -41,6 +41,11 @@ export const INTERNAL_LINKS = [
     eventType: "pricing",
     text: "Pricing",
   },
+  {
+    href: RELATIVE_URLS.SETTINGS,
+    eventType: "settings",
+    text: "Settings",
+  },
   // {
   //   href: ABSOLUTE_URLS.GITHUB.SUPPORT,
   //   eventType: "support",

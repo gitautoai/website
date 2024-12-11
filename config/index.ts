@@ -74,6 +74,7 @@ export const RELATIVE_URLS = {
   PRIVACY_POLICY: "/privacy-policy",
   PROBLEM: "/#problem",
   REDIRECT_TO_INSTALL: "/redirect-to-install",
+  SETTINGS: "/settings/integrations/jira",
   TERMS_OF_SERVICE: "/terms-of-service",
   USE_CASES: "/#use-cases",
 } as const;

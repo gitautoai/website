@@ -63,7 +63,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
     <Drawer isOpen={isNavOpen} size="full" onClose={() => setIsNavOpen(!isNavOpen)}>
       <DrawerContent className="text-xl">
         <DrawerBody p={0}>
-          <ol className={`h-screen flex flex-col items-center justify-center gap-5`}>
+          <ol className={`h-screen flex flex-col items-center justify-center gap-3.5`}>
             {INTERNAL_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
