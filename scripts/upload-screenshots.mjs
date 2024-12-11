@@ -88,8 +88,8 @@ export async function compareScreenshots({ github, context }) {
 
       // Construct S3 URLs manually since v3 doesn't return Location
       const baseUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`;
-      const mainImageUrl = `${baseUrl}/screenshots/main/${encodeURIComponent(routePath)}.png`;
-      const branchImageUrl = `${baseUrl}/screenshots/branch/${encodeURIComponent(routePath)}.png`;
+      const mainImageUrl = `${baseUrl}/screenshots/main/${mainFile}`;
+      const branchImageUrl = `${baseUrl}/screenshots/branch/${branchFile}`;
 
       // Log URLs for debugging
       console.log(`Main Image URL: ${mainImageUrl}`);
