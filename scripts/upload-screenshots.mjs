@@ -66,34 +66,34 @@ export async function compareScreenshots({ github, context }) {
       const mainFile = mainFiles[i];
       const branchFile = branchFiles[i];
       const routePath = decodeURIComponent(mainFile.replace(".png", ""));
-
-      // Read the image files directly without using sharp
       const mainImageBuffer = fs.readFileSync(path.join(mainDir, mainFile));
       const branchImageBuffer = fs.readFileSync(path.join(branchDir, branchFile));
 
       // Upload images to S3 using v3 syntax
-      const mainImageUpload = await s3Client.send(
-        new PutObjectCommand({
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: `screenshots/main/${mainFile}`,
-          Body: mainImageBuffer,
-          ContentType: "image/png",
-        })
-      );
-
-      const branchImageUpload = await s3Client.send(
-        new PutObjectCommand({
-          Bucket: process.env.AWS_S3_BUCKET_NAME,
-          Key: `screenshots/branch/${branchFile}`,
-          Body: branchImageBuffer,
-          ContentType: "image/png",
-        })
+      await Promise.all(
+        [
+          ["main", mainFile, mainImageBuffer],
+          ["branch", branchFile, branchImageBuffer],
+        ].map(([folder, file, buffer]) =>
+          s3Client.send(
+            new PutObjectCommand({
+              Bucket: process.env.AWS_S3_BUCKET_NAME,
+              Key: `screenshots/${folder}/${file}`,
+              Body: buffer,
+              ContentType: "image/png",
+            })
+          )
+        )
       );
 
       // Construct S3 URLs manually since v3 doesn't return Location
       const baseUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com`;
       const mainImageUrl = `${baseUrl}/screenshots/main/${mainFile}`;
       const branchImageUrl = `${baseUrl}/screenshots/branch/${branchFile}`;
+
+      // Log URLs for debugging
+      console.log(`Main Image URL: ${mainImageUrl}`);
+      console.log(`Branch Image URL: ${branchImageUrl}`);
 
       const body = `${routePath}\n\n| Before (main) | After (this branch) |\n|--------------|---------------------|\n| <img src="${mainImageUrl}" width="400" referrerpolicy="no-referrer"/> | <img src="${branchImageUrl}" width="400" referrerpolicy="no-referrer"/> |`;
 
