@@ -43,6 +43,7 @@ import path from "path";
     console.log(`Taking screenshot of ${url} and saving to ${filePath}`);
     try {
       await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+      await page.waitForTimeout(10000);
       await page.screenshot({ path: filePath, fullPage: true });
       console.log(`Successfully captured screenshot for ${url}`);
     } catch (error) {
