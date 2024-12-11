@@ -32,7 +32,7 @@ import path from "path";
   const browser = await chromium.launch();
   const context = await browser.newContext(); // A new browser window
   const page = await context.newPage(); // A new tab in the browser window
-  await page.setViewportSize({ width: 1024, height: 768 });
+  await page.setViewportSize({ width: 1512, height: 982 });
 
   for (const url of urls) {
     const urlObj = new URL(url);
@@ -42,24 +42,7 @@ import path from "path";
 
     console.log(`Taking screenshot of ${url} and saving to ${filePath}`);
     try {
-      // Add timeout and wait for network idle
       await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
-
-      // Wait for content to be visible
-      // await page.waitForSelector("#root", { state: "visible", timeout: 30000 });
-
-      // Add a small delay to ensure dynamic content loads
-      await page.waitForTimeout(10000);
-
-      // Check for error states
-      // const hasError = await page.evaluate(() => {
-      //   return (
-      //     !!document.querySelector(".error-404") ||
-      //     !document.querySelector("#root")?.children.length
-      //   );
-      // });
-      // if (hasError) throw new Error("Page loaded with errors");
-
       await page.screenshot({ path: filePath, fullPage: true });
       console.log(`Successfully captured screenshot for ${url}`);
     } catch (error) {
