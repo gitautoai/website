@@ -43,12 +43,16 @@ import path from "path";
 
     console.log(`Taking screenshot of ${url} and saving to ${filePath}`);
     await page.goto(url, { waitUntil: "domcontentloaded" }); // Wait for the page to load
-    await page.waitForFunction(
-      () =>
-        !document.querySelector(".error-404") &&
-        document.querySelector("#root")?.children.length > 0,
-      { timeout: 10000 }
-    );
+    try {
+      await page.waitForFunction(
+        () =>
+          !document.querySelector(".error-404") &&
+          document.querySelector("#root")?.children.length > 0,
+        { timeout: 100000 } // 100 seconds
+      );
+    } catch (error) {
+      console.warn(`Failed to take screenshot of ${url}`);
+    }
     await page.screenshot({ path: filePath, fullPage: true }); // Take a screenshot
   }
 
