@@ -11,6 +11,7 @@ export function useIntegrations() {
   const { installationIds } = useAccountContext();
   const [jiraSites, setJiraSites] = useState<JiraSiteWithProjects[]>([]);
   const [githubOwners, setGithubOwners] = useState<GitHubOwnerWithRepos[]>([]);
+  const [page, setPage] = useState(1);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
 
