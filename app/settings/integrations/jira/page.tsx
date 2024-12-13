@@ -1,3 +1,4 @@
+// Implement pagination and lazy loading for Jira integrations data
 "use client";
 
 import { useIntegrations } from "./useIntegrations";
