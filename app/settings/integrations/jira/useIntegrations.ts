@@ -60,7 +60,7 @@ export function useIntegrations() {
 
       setGithubOwners(allOwners);
     };
-    fetchGitHubRepositories();
+    const debounceFetchGitHubRepositories = debounce(fetchGitHubRepositories, 300); debounceFetchGitHubRepositories();
   }, [installationIds]);
 
   const handleJiraAuth = async () => {
