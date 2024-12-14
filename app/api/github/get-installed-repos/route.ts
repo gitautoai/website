@@ -1,4 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { NextResponse } from "next/server";
+import { Octokit } from "@octokit/rest";
+import { createAppAuth } from "@octokit/auth-app";
 import { getSession } from 'next-auth/react';
 import { fetchInstalledRepos } from '@/lib/github';
 
@@ -8,9 +11,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const repos = await fetchInstalledRepos(session.user.userId);
   res.status(200).json(repos);
-import { NextResponse } from "next/server";
-import { Octokit } from "@octokit/rest";
-import { createAppAuth } from "@octokit/auth-app";
 
 export interface GitHubOwnerWithRepos {
   ownerId: number;
