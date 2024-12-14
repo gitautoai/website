@@ -2,8 +2,9 @@
 
 import { useIntegrations } from "./useIntegrations";
 import { useRows } from "./useRows";
-import { JiraHeader } from "./JiraHeader";
-import { JiraForm } from "./JiraForm";
+import dynamic from 'next/dynamic';
+const JiraHeader = dynamic(() => import('./JiraHeader'));
+const JiraForm = dynamic(() => import('./JiraForm'));
 
 export default function JiraIntegrationPage() {
   const { jiraSites, githubOwners, isConnected, isConnecting, handleJiraAuth } = useIntegrations();
