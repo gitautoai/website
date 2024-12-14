@@ -37,7 +37,7 @@ export function useIntegrations() {
       setJiraSites(sitesWithProjects);
     };
     fetchJiraProjects();
-  }, [session?.user?.userId, isConnected]);
+  }, [session?.user?.userId]);
 
   // Fetch GitHub repositories
   useEffect(() => {
@@ -61,7 +61,7 @@ export function useIntegrations() {
       setGithubOwners(allOwners);
     };
     fetchGitHubRepositories();
-  }, [installationIds]);
+  }, []);
 
   const handleJiraAuth = async () => {
     if (!session?.user?.userId) return;
