@@ -37,7 +37,7 @@ export function useIntegrations() {
       setJiraSites(sitesWithProjects);
     };
     fetchJiraProjects();
-  }, [session?.user?.userId, isConnected]);
+  }, [session?.user?.userId]);
 
   // Fetch GitHub repositories
   useEffect(() => {
