@@ -86,21 +86,28 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     }
 
     // Set Selected Index if there is a selected user account
-    if (userInfos) {
-      const newIndex = userInfos.findIndex((user: any) => user.is_selected);
-      setInstallationIds(
-        userInfos.map((user: any) => user.installations.installation_id.replace("n", ""))
-      );
+    if (!userInfos) return;
+    const newIndex = userInfos.findIndex((user: any) => user.is_selected);
 
-      // Should always have an account selected, this is a fallback
-      if (newIndex == -1) {
-        console.error("No selected index found");
-        setInstallationFallback();
-      } else {
-        setSelectedIndex(newIndex);
-      }
+    // Should always have an account selected, this is a fallback
+    if (newIndex === -1) {
+      console.error("No selected index found");
+      setInstallationFallback();
+    } else {
+      setSelectedIndex(newIndex);
     }
-  }, [userInfos, selectedIndex, userId, jwtToken, router]);
+  }, [userInfos, userId, jwtToken, router]);
+
+  useEffect(() => {
+    if (!userInfos) return;
+    const newInstallationIds = userInfos.map((user: any) =>
+      user.installations.installation_id.replace("n", "")
+    );
+
+    // Only update if the values are different
+    if (JSON.stringify(newInstallationIds) !== JSON.stringify(installationIds))
+      setInstallationIds(newInstallationIds);
+  }, [userInfos]);
 
   // If user has no accounts, redirect to github app
   useEffect(() => {
