@@ -36,7 +36,7 @@ export function useIntegrations() {
       if (!sitesWithProjects.length) return;
       setJiraSites(sitesWithProjects);
     };
-    fetchJiraProjects();
+    const debounceFetchJiraProjects = debounce(fetchJiraProjects, 300); debounceFetchJiraProjects();
   }, [session?.user?.userId, isConnected]);
 
   // Fetch GitHub repositories
