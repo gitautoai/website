@@ -60,7 +60,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   }
 
   const { data: userInfos, mutate: mutateUserInfos } = useSWR(getUserInfoUrl, async () => {
-    const res = await fetch(getUserInfoUrl);
+    const res = await fetch(getUserInfoUrl, { cache: 'force-cache' });
     return res.json();
   });
 
