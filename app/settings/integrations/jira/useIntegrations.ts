@@ -31,7 +31,7 @@ export function useIntegrations() {
     const fetchJiraProjects = async () => {
       if (!session?.user?.userId) return;
       const query = new URLSearchParams({ userId: session.user.userId });
-      const response = await fetch(`/api/jira/get-projects?${query}`);
+      const response = await fetch(`/api/jira/get-projects?${query}`, { cache: 'force-cache' });
       const sitesWithProjects: JiraSiteWithProjects[] = await response.json();
       if (!sitesWithProjects.length) return;
       setJiraSites(sitesWithProjects);
