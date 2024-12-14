@@ -48,7 +48,6 @@ export function useIntegrations() {
           const url = `/api/github/get-installed-repos?installationId=${installationId}`;
           const responseRepos = await fetch(url);
           const formattedData: GitHubOwnerWithRepos = await responseRepos.json();
-          // console.log("formattedData in useIntegrations: ", formattedData);
           return formattedData;
         })
       );
