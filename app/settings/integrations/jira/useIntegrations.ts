@@ -1,4 +1,5 @@
 "use client";
+import { debounce } from 'lodash';
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -36,7 +37,7 @@ export function useIntegrations() {
       if (!sitesWithProjects.length) return;
       setJiraSites(sitesWithProjects);
     };
-    fetchJiraProjects();
+    const debounceFetchJiraProjects = debounce(fetchJiraProjects, 300); debounceFetchJiraProjects();
   }, [session?.user?.userId, isConnected]);
 
   // Fetch GitHub repositories
@@ -60,7 +61,7 @@ export function useIntegrations() {
 
       setGithubOwners(allOwners);
     };
-    fetchGitHubRepositories();
+    const debounceFetchGitHubRepositories = debounce(fetchGitHubRepositories, 300); debounceFetchGitHubRepositories();
   }, [installationIds]);
 
   const handleJiraAuth = async () => {
