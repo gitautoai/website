@@ -13,11 +13,11 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - uses: actions/checkout@v4
-      
+
       # https://github.com/actions/setup-node
       - uses: actions/setup-node@v4
         with:
-          node-version: '20' # Updated to latest LTS version
+          node-version: "20" # Updated to latest LTS version
 
       # https://github.com/plhery/node-twitter-api-v2
       # https://github.com/linkedin-developers/linkedin-api-js-client#linkedin-api-javascript-client
@@ -38,9 +38,9 @@ jobs:
               accessToken: process.env.TWITTER_ACCESS_TOKEN,
               accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
             });
-            
+
             const tweet = `🚀 New release: ${context.payload.pull_request.title}\n\nhttps://gitauto.ai?utm_source=x&utm_medium=referral`;
-            
+
             // https://developer.x.com/en/docs/x-api/tweets/manage-tweets/api-reference/post-tweets
             await client.v2.tweet(tweet);
         env:
@@ -55,7 +55,7 @@ jobs:
           script: |
             const { RestliClient } = require('linkedin-api-client');
             const restliClient = new RestliClient();
-            
+
             // Create post using Posts API
             // https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/posts-api?view=li-lms-2024-11&viewFallbackFrom=li-lms-unversioned&tabs=http
             const post = await restliClient.create({
@@ -84,4 +84,3 @@ jobs:
             });
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
-
