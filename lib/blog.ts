@@ -39,5 +39,5 @@ export async function getBlogPosts() {
     .map((result) => result.value)
     .filter((post) => post !== null);
 
-  return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  return posts.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 }
