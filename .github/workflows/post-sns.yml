@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+permissions:
+  pull-requests: read
+  contents: read
+
 jobs:
   post-sns:
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'sns')
