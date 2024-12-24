@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+permissions:
+  pull-requests: read
+  contents: read
+
 jobs:
   post-sns:
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'sns')
@@ -46,9 +50,11 @@ jobs:
               pull_number: context.payload.pull_request.number
             });
 
+            let isBlog = false;
             let postUrl = 'https://gitauto.ai?utm_source=x&utm_medium=referral';
             for (const file of files.data) {
               if (file.filename.startsWith('app/blog/') && file.filename.endsWith('page.mdx')) {
+                isBlog = true;
                 const slug = file.filename.split('/')[2];
                 postUrl = `https://gitauto.ai/blog/${slug}?utm_source=x&utm_medium=referral`;
                 break;
@@ -56,7 +62,8 @@ jobs:
             }
 
             // https://developer.x.com/en/docs/x-api/tweets/manage-tweets/api-reference/post-tweets
-            const tweet = `🚀 New release: ${context.payload.pull_request.title}\n\n${postUrl}`;
+            const message = isBlog ? '📝 New blog post' : '🚀 New release';
+            const tweet = `${message}: ${context.payload.pull_request.title}\n\n${postUrl}`;
             await client.v2.tweet(tweet);
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
@@ -79,20 +86,23 @@ jobs:
               pull_number: context.payload.pull_request.number
             });
 
+            let isBlog = false;
             let postUrl = 'https://gitauto.ai?utm_source=linkedin&utm_medium=referral';
             for (const file of files.data) {
               if (file.filename.startsWith('app/blog/') && file.filename.endsWith('page.mdx')) {
+                isBlog = true;
                 const slug = file.filename.split('/')[2];
                 postUrl = `https://gitauto.ai/blog/${slug}?utm_source=linkedin&utm_medium=referral`;
                 break;
               }
             }
 
+            const message = isBlog ? '📝 New blog post' : '🚀 New release';
             const post = await restliClient.create({
               resourcePath: '/posts',
               entity: {
                 author: 'urn:li:organization:100932100',
-                commentary: `🚀 New release: ${context.payload.pull_request.title}`,
+                commentary: `${message}: ${context.payload.pull_request.title}`,
                 visibility: 'PUBLIC',
                 distribution: {
                   feedDistribution: 'MAIN_FEED',
