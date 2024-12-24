@@ -30,6 +30,9 @@ jobs:
           npm install twitter-api-v2
           npm install linkedin-api-client
 
+      - name: Wait for deployment
+        run: sleep 600  # Wait for 10 minutes (600 seconds)
+
       # https://github.com/actions/github-script
       - name: Post to X
         uses: actions/github-script@v7
