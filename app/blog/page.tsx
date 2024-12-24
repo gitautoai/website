@@ -9,9 +9,9 @@ export default async function BlogIndex() {
       <h1 className="text-3xl md:text-4xl text-center font-semibold mb-8">Blog Posts</h1>
       <div className="space-y-8">
         {posts.map((post) => (
-          <article key={post.slug} className="group border-t pt-8">
+          <article key={post.slug} className="group border-t">
             <Link href={`/blog/${post.slug}`} className="block">
-              <h2 className="text-xl md:text-2xl font-semibold group-hover:text-pink-600">
+              <h2 className="text-xl md:text-2xl font-semibold group-hover:text-pink-600 mt-8 mb-2">
                 {post.title}
               </h2>
               <time className="text-sm text-gray-600">
