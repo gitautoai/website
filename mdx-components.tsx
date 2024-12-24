@@ -71,12 +71,79 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     // table data
     td: ({ children }) => (
       <td
-        style={{ padding: "0.25rem 0.5rem", paddingTop: "0.5rem", paddingBottom: "0.5rem", lineHeight: "1.25" }}
+        style={{
+          padding: "0.25rem 0.5rem",
+          paddingTop: "0.5rem",
+          paddingBottom: "0.5rem",
+          lineHeight: "1.25",
+        }}
         className="md:px-3 md:py-2 border border-gray-200 leading-normal"
       >
         {children}
       </td>
     ),
+
+    // Add custom styling for diff blocks
+    pre: ({ children }) => <pre className="overflow-x-auto my-4">{children}</pre>,
+    code: ({ className, children }) => {
+      const language = className?.replace("language-", "") || "plaintext";
+
+      // Special handling for diff blocks
+      if (language.includes("diff")) {
+        return (
+          <code className={className} style={{ fontFamily: "monospace", fontSize: "1rem" }}>
+            {String(children)
+              .split("\n")
+              .map((line, i) => {
+                if (line.startsWith("+")) {
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        backgroundColor: "#e6ffe6",
+                        margin: "0 -1rem",
+                        padding: "0 1rem",
+                        fontFamily: "inherit",
+                        fontSize: "inherit",
+                      }}
+                    >
+                      {line}
+                    </div>
+                  );
+                }
+                if (line.startsWith("-")) {
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        backgroundColor: "#ffe6e6",
+                        margin: "0 -1rem",
+                        padding: "0 1rem",
+                        fontFamily: "inherit",
+                        fontSize: "inherit",
+                      }}
+                    >
+                      {line}
+                    </div>
+                  );
+                }
+                return (
+                  <div key={i} style={{ fontFamily: "inherit", fontSize: "inherit" }}>
+                    {line}
+                  </div>
+                );
+              })}
+          </code>
+        );
+      }
+
+      // Default code block styling
+      return (
+        <code className={className} style={{ fontFamily: "monospace", fontSize: "1rem" }}>
+          {children}
+        </code>
+      );
+    },
 
     ...components,
   };
