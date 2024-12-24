@@ -39,9 +39,24 @@ jobs:
               accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
             });
 
-            const tweet = `🚀 New release: ${context.payload.pull_request.title}\n\nhttps://gitauto.ai?utm_source=x&utm_medium=referral`;
+            // Check if PR contains blog post
+            const files = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+
+            let postUrl = 'https://gitauto.ai?utm_source=x&utm_medium=referral';
+            for (const file of files.data) {
+              if (file.filename.startsWith('app/blog/') && file.filename.endsWith('page.mdx')) {
+                const slug = file.filename.split('/')[2];
+                postUrl = `https://gitauto.ai/blog/${slug}?utm_source=x&utm_medium=referral`;
+                break;
+              }
+            }
 
             // https://developer.x.com/en/docs/x-api/tweets/manage-tweets/api-reference/post-tweets
+            const tweet = `🚀 New release: ${context.payload.pull_request.title}\n\n${postUrl}`;
             await client.v2.tweet(tweet);
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
@@ -56,8 +71,23 @@ jobs:
             const { RestliClient } = require('linkedin-api-client');
             const restliClient = new RestliClient();
 
-            // Create post using Posts API
+            // Check if PR contains blog post
             // https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/posts-api?view=li-lms-2024-11&viewFallbackFrom=li-lms-unversioned&tabs=http
+            const files = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number
+            });
+
+            let postUrl = 'https://gitauto.ai?utm_source=linkedin&utm_medium=referral';
+            for (const file of files.data) {
+              if (file.filename.startsWith('app/blog/') && file.filename.endsWith('page.mdx')) {
+                const slug = file.filename.split('/')[2];
+                postUrl = `https://gitauto.ai/blog/${slug}?utm_source=linkedin&utm_medium=referral`;
+                break;
+              }
+            }
+
             const post = await restliClient.create({
               resourcePath: '/posts',
               entity: {
@@ -72,7 +102,7 @@ jobs:
                 content: {
                   // https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/advertising-targeting/version/article-ads-integrations?view=li-lms-2024-11&tabs=http#workflow
                   article: {
-                    source: `https://gitauto.ai?utm_source=linkedin&utm_medium=referral`,
+                    source: postUrl,
                     title: context.payload.pull_request.title,
                     description: `Check out our latest release on GitAuto!`
                   }
