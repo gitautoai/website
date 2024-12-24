@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { JiraSiteWithProjects } from "@/lib/jira";
+import useSWR from 'swr';
 import { GitHubOwnerWithRepos } from "@/app/api/github/get-installed-repos/route";
 
 export interface IntegrationRow {
@@ -27,6 +28,7 @@ export function useRows() {
 
   useEffect(() => {
     const fetchInitialRows = async () => {
+      const { data: githubOwners, error } = useSWR('/api/github/get-installed-repos', fetch);
       try {
         const response = await fetch("/api/supabase/get-jira-github-link");
         const { data } = await response.json();
@@ -35,8 +37,8 @@ export function useRows() {
           const rows: IntegrationRow[] = data.map((link: any) => ({
             siteName: link.jira_site_name,
             projectName: link.jira_project_name,
-            githubOwner: link.github_owner_name,
-            githubRepository: link.github_repo_name,
+            githubOwner: githubOwners.find(owner => owner.ownerName === link.github_owner_name)?.ownerName || "",
+            githubRepository: githubOwners.find(owner => owner.ownerName === link.github_owner_name)?.repositories.find(repo => repo.repoName === link.github_repo_name)?.repoName || "",
             lastSyncDate: link.updated_at || "-",
           }));
           setIntegrationRows(rows);
