@@ -10,14 +10,22 @@ async function postHackerNews({ context, isBlog, postUrl }) {
   try {
     // Login to HN - specifically target the login form (not the create account form)
     await page.goto("https://news.ycombinator.com/login");
-    // Use a more specific selector that only matches the login form
+    await page.waitForLoadState("networkidle");
+
+    // Because there are login and create account forms, we need to target the login form specifically
     const loginForm = page.locator('form[action="login"]:not(:has(input[name="creating"]))');
     await loginForm.locator('input[name="acct"]').fill(process.env.HN_USERNAME);
     await loginForm.locator('input[name="pw"]').fill(process.env.HN_PASSWORD);
     await loginForm.locator('input[type="submit"]').click();
 
-    // Submit story
+    // Wait for login to complete (look for a logout link)
+    await page.waitForSelector('a[href="logout"]', { timeout: 10000 }); // Wait for 10 seconds
+
+    // Navigate to submit page and wait for it to load
     await page.goto("https://news.ycombinator.com/submit");
+    await page.waitForLoadState("networkidle");
+
+    // Submit story
     await page.fill('input[name="title"]', context.payload.pull_request.title);
     await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
     // await page.click('input[type="submit"]');
