@@ -38,7 +38,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { getBlogInfo } = require('./scripts/utils.js');
+            const { getBlogInfo } = require('.github/scripts/utils.js');
             const { isBlog, postUrl } = await getBlogInfo({ github, context });
             core.setOutput('isBlog', isBlog);
             core.setOutput('postUrl', postUrl);
@@ -48,7 +48,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const postTwitter = require('./scripts/post-twitter.js');
+            const postTwitter = require('.github/scripts/post-twitter.js');
             console.log('step.blog-check', ${{ steps.blog-check.outputs.isBlog }});
             const isBlog = ${{ steps.blog-check.outputs.isBlog }} === 'true';
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
@@ -65,7 +65,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const postLinkedIn = require('./scripts/post-linkedin.js');
+            const postLinkedIn = require('.github/scripts/post-linkedin.js');
             const isBlog = ${{ steps.blog-check.outputs.isBlog }} === 'true';
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
             console.log({ isBlog, postUrl });
