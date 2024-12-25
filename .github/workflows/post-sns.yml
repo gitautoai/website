@@ -54,7 +54,7 @@ jobs:
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
             console.log({ isBlog, postUrl });
 
-            // await postTwitter({ context, isBlog, postUrl });
+            # await postTwitter({ context, isBlog, postUrl });
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
@@ -70,6 +70,6 @@ jobs:
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
             console.log({ isBlog, postUrl });
 
-            // await postLinkedIn({ context, isBlog, postUrl });
+            # await postLinkedIn({ context, isBlog, postUrl });
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
