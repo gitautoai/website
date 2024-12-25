@@ -1,0 +1,46 @@
+const { chromium } = require("playwright");
+
+/**
+ * Posts to Hacker News using Playwright for browser automation
+ */
+async function postHackerNews({ context, isBlog, postUrl }) {
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+
+  try {
+    // Login to HN - specifically target the login form (not the create account form)
+    await page.goto("https://news.ycombinator.com/login");
+    // Use a more specific selector that only matches the login form
+    const loginForm = page.locator('form[action="login"]:not(:has(input[name="creating"]))');
+    await loginForm.fill('input[name="acct"]', process.env.HN_USERNAME);
+    await loginForm.fill('input[name="pw"]', process.env.HN_PASSWORD);
+    await loginForm.locator('input[type="submit"]').click();
+
+    // Submit story
+    await page.goto("https://news.ycombinator.com/submit");
+    await page.fill('input[name="title"]', context.payload.pull_request.title);
+    await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
+    // await page.click('input[type="submit"]');
+
+    // Wait for either an error message or successful submission
+    await Promise.race([
+      page.waitForSelector(".error", { timeout: 5000 }),
+      page.waitForURL(/item\?id=\d+/, { timeout: 5000 }),
+    ]);
+
+    // Check if there was an error
+    const error = await page
+      .locator(".error")
+      .first()
+      .textContent()
+      .catch(() => null);
+    if (error) throw new Error(`HN submission failed: ${error}`);
+
+    await browser.close();
+  } catch (error) {
+    await browser.close();
+    throw error;
+  }
+}
+
+module.exports = postHackerNews;
