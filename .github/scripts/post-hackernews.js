@@ -12,8 +12,8 @@ async function postHackerNews({ context, isBlog, postUrl }) {
     await page.goto("https://news.ycombinator.com/login");
     // Use a more specific selector that only matches the login form
     const loginForm = page.locator('form[action="login"]:not(:has(input[name="creating"]))');
-    await loginForm.fill('input[name="acct"]', process.env.HN_USERNAME);
-    await loginForm.fill('input[name="pw"]', process.env.HN_PASSWORD);
+    await loginForm.locator('input[name="acct"]').fill(process.env.HN_USERNAME);
+    await loginForm.locator('input[name="pw"]').fill(process.env.HN_PASSWORD);
     await loginForm.locator('input[type="submit"]').click();
 
     // Submit story
