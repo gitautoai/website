@@ -31,7 +31,7 @@ jobs:
           npm install linkedin-api-client
 
       - name: Wait for deployment
-        run: sleep 600 # Wait for 10 minutes (600 seconds)
+        run: sleep 6 # Wait for 10 minutes (600 seconds)
 
       - name: Check blog post
         id: blog-check
