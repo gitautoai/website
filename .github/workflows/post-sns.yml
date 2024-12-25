@@ -31,43 +31,30 @@ jobs:
           npm install linkedin-api-client
 
       - name: Wait for deployment
-        run: sleep 600  # Wait for 10 minutes (600 seconds)
+        run: sleep 600 # Wait for 10 minutes (600 seconds)
+
+      - name: Check blog post
+        id: blog-check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { getBlogInfo } = require('./scripts/utils.js');
+            const { isBlog, postUrl } = await getBlogInfo({ github, context });
+            core.setOutput('isBlog', isBlog);
+            core.setOutput('postUrl', postUrl);
 
       # https://github.com/actions/github-script
       - name: Post to X
         uses: actions/github-script@v7
         with:
           script: |
-            const { TwitterApi } = require('twitter-api-v2');
-            const client = new TwitterApi({
-              appKey: process.env.TWITTER_API_KEY,
-              appSecret: process.env.TWITTER_API_SECRET,
-              accessToken: process.env.TWITTER_ACCESS_TOKEN,
-              accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
-            });
+            const postTwitter = require('./scripts/post-twitter.js');
+            console.log('step.blog-check', ${{ steps.blog-check.outputs.isBlog }});
+            const isBlog = ${{ steps.blog-check.outputs.isBlog }} === 'true';
+            const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
+            console.log({ isBlog, postUrl });
 
-            // Check if PR contains blog post
-            const files = await github.rest.pulls.listFiles({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
-            });
-
-            let isBlog = false;
-            let postUrl = 'https://gitauto.ai?utm_source=x&utm_medium=referral';
-            for (const file of files.data) {
-              if (file.filename.startsWith('app/blog/') && file.filename.endsWith('page.mdx')) {
-                isBlog = true;
-                const slug = file.filename.split('/')[2];
-                postUrl = `https://gitauto.ai/blog/${slug}?utm_source=x&utm_medium=referral`;
-                break;
-              }
-            }
-
-            // https://developer.x.com/en/docs/x-api/tweets/manage-tweets/api-reference/post-tweets
-            const message = isBlog ? '📝 New blog post' : '🚀 New release';
-            const tweet = `${message}: ${context.payload.pull_request.title}\n\n${postUrl}`;
-            await client.v2.tweet(tweet);
+            # await postTwitter({ github, context, isBlog, postUrl });
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
@@ -78,52 +65,11 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { RestliClient } = require('linkedin-api-client');
-            const restliClient = new RestliClient();
+            const postLinkedIn = require('./scripts/post-linkedin.js');
+            const isBlog = ${{ steps.blog-check.outputs.isBlog }} === 'true';
+            const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
+            console.log({ isBlog, postUrl });
 
-            // Check if PR contains blog post
-            // https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/posts-api?view=li-lms-2024-11&viewFallbackFrom=li-lms-unversioned&tabs=http
-            const files = await github.rest.pulls.listFiles({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.pull_request.number
-            });
-
-            let isBlog = false;
-            let postUrl = 'https://gitauto.ai?utm_source=linkedin&utm_medium=referral';
-            for (const file of files.data) {
-              if (file.filename.startsWith('app/blog/') && file.filename.endsWith('page.mdx')) {
-                isBlog = true;
-                const slug = file.filename.split('/')[2];
-                postUrl = `https://gitauto.ai/blog/${slug}?utm_source=linkedin&utm_medium=referral`;
-                break;
-              }
-            }
-
-            const message = isBlog ? '📝 New blog post' : '🚀 New release';
-            const post = await restliClient.create({
-              resourcePath: '/posts',
-              entity: {
-                author: 'urn:li:organization:100932100',
-                commentary: `${message}: ${context.payload.pull_request.title}`,
-                visibility: 'PUBLIC',
-                distribution: {
-                  feedDistribution: 'MAIN_FEED',
-                  targetEntities: [],
-                  thirdPartyDistributionChannels: []
-                },
-                content: {
-                  // https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/advertising-targeting/version/article-ads-integrations?view=li-lms-2024-11&tabs=http#workflow
-                  article: {
-                    source: postUrl,
-                    title: context.payload.pull_request.title,
-                    description: `Check out our latest release on GitAuto!`
-                  }
-                },
-                lifecycleState: 'PUBLISHED',
-                isReshareDisabledByAuthor: false
-              },
-              accessToken: process.env.LINKEDIN_ACCESS_TOKEN
-            });
+            # await postLinkedIn({ github, context, isBlog, postUrl });
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
