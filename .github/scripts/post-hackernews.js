@@ -19,7 +19,7 @@ async function postHackerNews({ context, isBlog, postUrl }) {
     await loginForm.locator('input[type="submit"]').click();
 
     // Wait for login to complete (look for a logout link)
-    await page.waitForSelector('a[href="logout"]', { timeout: 10000 }); // Wait for 10 seconds
+    await page.waitForSelector('a[href^="logout"]', { timeout: 10000 }); // Use href^= to match links that start with "logout"
 
     // Navigate to submit page and wait for it to load
     await page.goto("https://news.ycombinator.com/submit");
