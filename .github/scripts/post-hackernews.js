@@ -28,7 +28,8 @@ async function postHackerNews({ context, isBlog, postUrl }) {
     // Submit story
     await page.fill('input[name="title"]', context.payload.pull_request.title);
     await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
-    // await page.click('input[type="submit"]');
+    await page.click('input[type="submit"]');
+    await page.waitForLoadState("networkidle");
 
     // Wait for either an error message or successful submission
     await Promise.race([

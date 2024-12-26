@@ -1,0 +1,94 @@
+export const metadata = {
+  title: "Case Study: Adding Code Coverage Badge with GitAuto",
+  excerpt:
+    "A real-world example of how GitAuto handles adding code coverage reporting and badges, demonstrating its ability to learn and improve through iterations.",
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["solution", "case-study", "code-coverage", "automation", "testing"],
+  createdAt: "2024-12-26",
+  updatedAt: "2024-12-26",
+};
+
+# Case Study: Adding Code Coverage Badge with GitAuto
+
+GitAuto shines when it comes to automated testing because it can analyze test failures and make fixes autonomously. Today, I want to share an interesting case where a customer had GitAuto continuously add automated tests. I thought it would be fun to demonstrate this in my repository too.
+
+## The Challenge
+
+I decided to add a code coverage badge to the README.md file. The original issue was simply titled ["Add code coverage ratio to README"](https://github.com/gitautoai/gitauto/issues/408) - just a basic TODO-style note without detailed requirements.
+
+## Improving GitAuto's Approach
+
+The initial pull requests weren't quite hitting the mark, so I made some improvements to GitAuto's behavior:
+
+1. Made it more proactive in asking questions - just like skilled engineers do ([see PR #433](https://github.com/gitautoai/gitauto/pull/433)). For example, "Which coverage reporting service should we use?" or "What about the necessary tokens?"
+2. Encouraged it to Google for the latest information before committing - again, mimicking what good engineers do to avoid using outdated practices ([see PR #435](https://github.com/gitautoai/gitauto/pull/435)).
+
+## The Conversation Begins
+
+With these improvements, GitAuto started by asking the right questions:
+
+1. Set Up a Coverage Reporting Service:
+   - Create an account with a coverage reporting service (Codecov or Coveralls)
+   - Obtain the necessary repository tokens
+2. Update Repository Secrets:
+   - Add the coverage service tokens to GitHub Settings for the workflows
+
+This was spot on! I hadn't actually added badges to README files before, so I was curious to see how it would handle this. I proceeded to create [a Codecov account](https://about.codecov.io/), link [this GitAuto open-source repository](https://github.com/gitautoai/gitauto), and generate a token.
+
+## The Solution
+
+Let's look at the resulting [pull request](https://github.com/gitautoai/gitauto/pull/429/files). First, the README change:
+
+```diff:README.md
+# GitAuto AI
++ [![codecov](https://codecov.io/gh/gitautoai/gitauto/graph/badge.svg?token=xxx)](https://codecov.io/gh/gitautoai/gitauto)
+
+## 1. What is GitAuto
+```
+
+I initially thought the badge should go above the h1, but after checking other repositories, this placement is actually the standard practice. GitAuto was smarter than me here! 😅
+
+Next, the coverage reporting setup:
+
+```diff:.github/workflows/main-pytest.yml
++    - name: Upload coverage to Codecov
++      uses: codecov/codecov-action@v5.1.2
++      with:
++        token: ${{ secrets.CODECOV_TOKEN }}
++        files: ./coverage.xml
++        flags: unittests
++        name: codecov-umbrella
+```
+
+Interestingly, GitAuto found the correct pytest workflow file without me specifying the path. It likely mimicked human behavior - scanning file names, opening promising ones, and confirming the content.
+
+## The Version Dilemma
+
+Initially, GitAuto consistently suggested `codecov/codecov-action@v3`. This might be due to cutoff knowledge, but the latest version is actually v5. This is where the "Google before committing" improvement really helped. You can see the difference between the [before](https://github.com/gitautoai/gitauto/pull/425/commits/4b92d4dfc05bcb51c08850ab4c9c8b41d0fc6660) and [after](https://github.com/gitautoai/gitauto/pull/429/commits/65809b9e1ea85383442fd7ad8088561e85e2986c) commits.
+
+The improvement didn't just update the version - it also led to better parameter usage following current best practices.
+
+## The Missing Piece
+
+After merging the PR, I noticed one missing piece:
+
+```diff:main-pytest.yml
+-      run: python -m pytest -r fE
++      run: python -m pytest -r fE --cov-branch --cov=./ --cov-report=xml
+```
+
+This command is actually necessary to calculate the coverage ratio. Interestingly, this was included in an [earlier attempt](https://github.com/gitautoai/gitauto/pull/418/files), but both GitAuto and I missed including it in the final PR.
+
+Why did GitAuto miss this? Well, it was primarily looking at [Codecov's GitHub README](https://github.com/codecov/codecov-action), which doesn't prominently feature this information. While it's in the full YAML example, it's not explicitly explained.
+
+I only caught this because I saw the pytest instructions while creating the Codecov token - information that wouldn't show up in a Google search. While a human engineer would likely notice this during token creation, GitAuto couldn't access this information.
+
+## Lessons Learned
+
+This case highlighted two potential improvements for GitAuto:
+
+1. Looking beyond just the top search results for documentation
+2. Implementing a self-review step to question "Have I done everything necessary in each file that I touched?"
+
+These kinds of real-world experiences help us continuously improve GitAuto's capabilities to better match human engineering practices.

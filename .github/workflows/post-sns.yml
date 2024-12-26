@@ -33,7 +33,7 @@ jobs:
           npx playwright install chromium
 
       - name: Wait for deployment
-        run: sleep 6 # Wait for 10 minutes (600 seconds)
+        run: sleep 600 # Wait for 10 minutes (600 seconds)
 
       - name: Check blog post
         id: blog-check
@@ -53,7 +53,7 @@ jobs:
             const postTwitter = require('.github/scripts/post-twitter.js');
             const isBlog = ${{ steps.blog-check.outputs.isBlog }} === 'true';
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
-            // await postTwitter({ context, isBlog, postUrl });
+            await postTwitter({ context, isBlog, postUrl });
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
@@ -67,7 +67,7 @@ jobs:
             const postLinkedIn = require('.github/scripts/post-linkedin.js');
             const isBlog = ${{ steps.blog-check.outputs.isBlog }} === 'true';
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
-            // await postLinkedIn({ context, isBlog, postUrl });
+            await postLinkedIn({ context, isBlog, postUrl });
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
 
