@@ -87,61 +87,85 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     pre: ({ children }) => <pre className="overflow-x-auto my-4">{children}</pre>,
     code: ({ className, children }) => {
       const language = className?.replace("language-", "") || "plaintext";
+      const [lang, path] = language.split(":");
 
       // Special handling for diff blocks
-      if (language.includes("diff")) {
+      if (lang.includes("diff")) {
         return (
-          <code className={className} style={{ fontFamily: "monospace", fontSize: "1rem" }}>
-            {String(children)
-              .split("\n")
-              .map((line, i) => {
-                if (line.startsWith("+")) {
+          <div>
+            {path && <div className="text-sm text-gray-500 mb-2">{path}</div>}
+            <code className={className} style={{ fontFamily: "monospace", fontSize: "1rem" }}>
+              {String(children)
+                .split("\n")
+                .map((line, i) => {
+                  if (line.startsWith("+")) {
+                    return (
+                      <div
+                        key={i}
+                        style={{
+                          backgroundColor: "#e6ffe6",
+                          margin: "0 -1rem",
+                          padding: "0 1rem",
+                          fontFamily: "inherit",
+                          fontSize: "inherit",
+                          whiteSpace: "pre-wrap",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {line}
+                      </div>
+                    );
+                  }
+                  if (line.startsWith("-")) {
+                    return (
+                      <div
+                        key={i}
+                        style={{
+                          backgroundColor: "#ffe6e6",
+                          margin: "0 -1rem",
+                          padding: "0 1rem",
+                          fontFamily: "inherit",
+                          fontSize: "inherit",
+                          whiteSpace: "pre-wrap",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {line}
+                      </div>
+                    );
+                  }
                   return (
                     <div
                       key={i}
                       style={{
-                        backgroundColor: "#e6ffe6",
-                        margin: "0 -1rem",
-                        padding: "0 1rem",
                         fontFamily: "inherit",
                         fontSize: "inherit",
+                        whiteSpace: "pre-wrap",
+                        wordBreak: "break-word",
                       }}
                     >
                       {line}
                     </div>
                   );
-                }
-                if (line.startsWith("-")) {
-                  return (
-                    <div
-                      key={i}
-                      style={{
-                        backgroundColor: "#ffe6e6",
-                        margin: "0 -1rem",
-                        padding: "0 1rem",
-                        fontFamily: "inherit",
-                        fontSize: "inherit",
-                      }}
-                    >
-                      {line}
-                    </div>
-                  );
-                }
-                return (
-                  <div key={i} style={{ fontFamily: "inherit", fontSize: "inherit" }}>
-                    {line}
-                  </div>
-                );
-              })}
-          </code>
+                })}
+            </code>
+          </div>
         );
       }
 
       // Default code block styling
       return (
-        <code className={className} style={{ fontFamily: "monospace", fontSize: "1rem" }}>
-          {children}
-        </code>
+        <div>
+          {path && <div className="text-sm text-gray-500 mb-2">{path}</div>}
+          <code className={`language-${lang}`} style={{
+            fontFamily: "monospace",
+            fontSize: "1rem",
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word"
+          }}>
+            {children}
+          </code>
+        </div>
       );
     },
 
