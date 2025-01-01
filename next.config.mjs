@@ -20,6 +20,13 @@ const nextConfig = {
     // turbo: {}, // https://nextjs.org/docs/app/api-reference/next-config-js/turbo
   },
 };
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap.xml',
+        destination: '/api/sitemap',
+      },
+    ];
 
 const withMDX = createMDX({
   extension: /\mdx?$/,
