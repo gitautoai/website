@@ -1,0 +1,34 @@
+name: Generate Sitemap
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Generate Sitemap
+      run: npx next-sitemap
+
+    - name: Commit sitemap
+      run: |
+        git config --local user.name 'github-actions'
+        git config --local user.email 'github-actions@github.com'
+        git add ./public/sitemap.xml
+        git commit -m 'chore: update sitemap' || echo 'No changes to commit'
+        git push origin main
