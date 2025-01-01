@@ -51,7 +51,7 @@ jobs:
         with:
           script: |
             const postTwitter = require('.github/scripts/post-twitter.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }} === 'true';
+            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
             await postTwitter({ context, isBlog, postUrl });
         env:
@@ -65,7 +65,7 @@ jobs:
         with:
           script: |
             const postLinkedIn = require('.github/scripts/post-linkedin.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }} === 'true';
+            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
             await postLinkedIn({ context, isBlog, postUrl });
         env:
@@ -76,7 +76,7 @@ jobs:
         with:
           script: |
             const postHackerNews = require('.github/scripts/post-hackernews.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }} === 'true';
+            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
             await postHackerNews({ context, isBlog, postUrl });
         env:
