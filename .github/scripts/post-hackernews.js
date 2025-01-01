@@ -31,10 +31,10 @@ async function postHackerNews({ context, isBlog, postUrl }) {
     await page.click('input[type="submit"]');
     await page.waitForLoadState("networkidle");
 
-    // Wait for either an error message or successful submission
+    // Wait for redirect to either newest page or error
     await Promise.race([
-      page.waitForSelector(".error", { timeout: 5000 }),
-      page.waitForURL(/item\?id=\d+/, { timeout: 5000 }),
+      page.waitForURL("https://news.ycombinator.com/newest"),
+      page.waitForSelector(".error", { timeout: 10000 }),
     ]);
 
     // Check if there was an error
