@@ -92,7 +92,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       // Special handling for diff blocks
       if (lang.includes("diff")) {
         return (
-          <div>
+          <>
             {path && <div className="text-sm text-gray-500 mb-2">{path}</div>}
             <code className={className} style={{ fontFamily: "monospace", fontSize: "1rem" }}>
               {String(children)
@@ -149,23 +149,26 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
                   );
                 })}
             </code>
-          </div>
+          </>
         );
       }
 
       // Default code block styling
       return (
-        <div>
+        <>
           {path && <div className="text-sm text-gray-500 mb-2">{path}</div>}
-          <code className={`language-${lang}`} style={{
-            fontFamily: "monospace",
-            fontSize: "1rem",
-            whiteSpace: "pre-wrap",
-            wordBreak: "break-word"
-          }}>
+          <code
+            className={`language-${lang}`}
+            style={{
+              fontFamily: "monospace",
+              fontSize: "1rem",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+            }}
+          >
             {children}
           </code>
-        </div>
+        </>
       );
     },
 
