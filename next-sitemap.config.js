@@ -1,6 +1,6 @@
 // https://www.npmjs.com/package/next-sitemap
 module.exports = {
   siteUrl: 'https://www.yourwebsite.com',
-  generateRobotsTxt: false,
+  generateRobotsTxt: true,
   // Additional configurations as needed
 };
