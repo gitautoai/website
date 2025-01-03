@@ -13,6 +13,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        ref: ${{ github.ref }}
 
     - name: Setup Node.js
       uses: actions/setup-node@v3
@@ -34,4 +36,4 @@ jobs:
         git config --local user.email 'github-actions@github.com'
         git add ./app/sitemap.xml
         git commit -m 'chore: update sitemap' || echo 'No changes to commit'
-        git push origin main
+        git push origin HEAD
