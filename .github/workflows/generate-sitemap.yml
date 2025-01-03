@@ -22,7 +22,6 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-      run: npx next-sitemap
 
     - name: Install next-sitemap
       run: npm install next-sitemap
