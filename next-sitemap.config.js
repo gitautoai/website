@@ -1,4 +1,4 @@
-// 参考URL: https://www.npmjs.com/package/next-sitemap
+// https://www.npmjs.com/package/next-sitemap
 module.exports = {
   siteUrl: 'https://www.yourwebsite.com',
   generateRobotsTxt: false,
