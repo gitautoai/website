@@ -24,6 +24,12 @@ jobs:
 
       run: npx next-sitemap
 
+    - name: Install next-sitemap
+      run: npm install next-sitemap
+
+    - name: Generate Sitemap
+      run: npx next-sitemap
+
     - name: Commit sitemap
       run: |
         git config --local user.name 'github-actions'
