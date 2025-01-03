@@ -22,8 +22,6 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-     - name: Install next-sitemap
-    - name: Generate Sitemap
       run: npx next-sitemap
 
     - name: Commit sitemap
