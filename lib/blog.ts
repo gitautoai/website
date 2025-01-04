@@ -25,7 +25,7 @@ export async function getBlogPosts() {
 
           if (!metadata?.title) throw new Error(`title is missing in ${dir}`);
           if (!metadata?.createdAt) throw new Error(`date is missing in ${dir}`);
-          if (!metadata?.excerpt) throw new Error(`excerpt is missing in ${dir}`);
+          if (!metadata?.description) throw new Error(`description is missing in ${dir}`);
           return { slug, ...metadata };
         } catch (error) {
           console.error(`Error processing ${dir}:`, error);

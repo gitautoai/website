@@ -21,7 +21,7 @@ export default async function BlogIndex() {
                   day: "numeric",
                 })}
               </time>
-              <p className="mt-2 text-gray-700">{post.excerpt}</p>
+              <p className="mt-2 text-gray-700">{post.description}</p>
             </Link>
           </article>
         ))}
