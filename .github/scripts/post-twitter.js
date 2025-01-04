@@ -11,7 +11,7 @@ async function postTwitter({ context, isBlog, postUrl }) {
     accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
   });
 
-  const message = isBlog ? "📝 New blog post" : "🚀 New release";
+  const message = isBlog ? "📝 New post" : "🚀 New release";
   const url = `${postUrl}?utm_source=x&utm_medium=referral`;
   const tweet = `${message}: ${context.payload.pull_request.title}\n\n${url}`;
   await client.v2.tweet(tweet);
