@@ -2,22 +2,22 @@ import { Metadata } from "next";
 import { headers } from "next/headers";
 import InstallButton from "@/components/Button/Install";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const headersList = await headers();
-  const referer = headersList.get("referer");
-  const url = new URL(referer || "");
-  const pathname = url.pathname;
-  console.log({ headersList });
+// export async function generateMetadata(): Promise<Metadata> {
+//   const headersList = await headers();
+//   const referer = headersList.get("referer");
+//   const url = new URL(referer || "");
+//   const pathname = url.pathname;
+//   console.log({ headersList });
 
-  return {
-    alternates: {
-      canonical: pathname,
-    },
-    openGraph: {
-      url: pathname,
-    },
-  };
-}
+//   return {
+//     alternates: {
+//       canonical: pathname,
+//     },
+//     openGraph: {
+//       url: pathname,
+//     },
+//   };
+// }
 
 /**
  * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts
