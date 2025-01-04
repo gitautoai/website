@@ -28,7 +28,7 @@ async function postDevTo({ isBlog, postUrl }) {
       body_markdown: content,
       published: true,
       canonical_url: postUrl,
-      description: metadata.excerpt,
+      description: metadata.description,
       tags: metadata.tags,
       organization_id: 10134, // https://dev.to/dashboard/organization/10134
     },

@@ -35,10 +35,14 @@ export const defaultMetadata: Metadata = {
   },
   metadataBase: new URL(ABSOLUTE_URLS.GITAUTO.INDEX),
 
+  alternates: {
+    canonical: ".",
+  },
+
   // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#opengraph
   openGraph: {
-    title: PRODUCT_NAME,
-    description: DESCRIPTION,
+    title: undefined,
+    description: undefined,
     url: ABSOLUTE_URLS.GITAUTO.INDEX,
     siteName: PRODUCT_NAME,
     images: [IMAGES],
@@ -64,8 +68,8 @@ export const defaultMetadata: Metadata = {
   // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#twitter
   twitter: {
     card: "summary",
-    title: PRODUCT_NAME,
-    description: DESCRIPTION,
+    title: undefined,
+    description: undefined,
     site: "@gitautoai", // https://x.com/gitautoai
     // siteId: "1234567890",
     creator: "@hnishio0105", // https://x.com/hnishio0105
