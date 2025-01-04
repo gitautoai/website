@@ -35,9 +35,9 @@ export const defaultMetadata: Metadata = {
   },
   metadataBase: new URL(ABSOLUTE_URLS.GITAUTO.INDEX),
 
-  alternates: {
-    canonical: ".",
-  },
+  // alternates: {
+  //   canonical: ".",
+  // },
 
   // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#opengraph
   openGraph: {

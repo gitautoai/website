@@ -7,7 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const referer = headersList.get("referer");
   const url = new URL(referer || "");
   const pathname = url.pathname;
-  console.log({ headersList });
+  // console.log({ headersList });
 
   return {
     alternates: {
