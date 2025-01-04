@@ -33,7 +33,7 @@ jobs:
           npx playwright install chromium
 
       - name: Wait for deployment
-        run: sleep 300 # Wait for 5 minutes (300 seconds)
+        run: sleep 600 # Wait for 10 minutes (600 seconds)
 
       - name: Check blog post
         id: blog-check
