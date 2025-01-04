@@ -93,7 +93,14 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       if (lang.includes("diff")) {
         return (
           <>
-            {path && <div className="text-sm text-gray-500 mb-2">{path}</div>}
+            {path && (
+              <div
+                className="text-sm text-gray-500 mb-2"
+                style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+              >
+                {path}
+              </div>
+            )}
             <code className={className} style={{ fontFamily: "monospace", fontSize: "1rem" }}>
               {String(children)
                 .split("\n")
@@ -156,7 +163,14 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       // Default code block styling
       return (
         <>
-          {path && <div className="text-sm text-gray-500 mb-2">{path}</div>}
+          {path && (
+            <div
+              className="text-sm text-gray-500 mb-2"
+              style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+            >
+              {path}
+            </div>
+          )}
           <code
             className={`language-${lang}`}
             style={{
