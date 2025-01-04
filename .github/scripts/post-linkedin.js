@@ -6,7 +6,7 @@ const { RestliClient } = require("linkedin-api-client");
 async function postLinkedIn({ context, isBlog, postUrl }) {
   const restliClient = new RestliClient();
 
-  const message = isBlog ? "📝 New blog post" : "🚀 New release";
+  const message = isBlog ? "📝 New post" : "🚀 New release";
   const url = `${postUrl}?utm_source=linkedin&utm_medium=referral`;
 
   await restliClient.create({
