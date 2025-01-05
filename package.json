@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint"
   },
@@ -37,6 +38,7 @@
     "jsonwebtoken": "^9.0.2",
     "next": "^15.0.3",
     "next-auth": "^4.24.10",
+    "next-sitemap": "^4.2.3",
     "playwright": "^1.49.0",
     "posthog-js": "^1.194.1",
     "react": "^18.3.1",
