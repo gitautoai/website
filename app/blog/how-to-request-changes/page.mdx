@@ -1,0 +1,126 @@
+export const metadata = {
+  title: "Case Study: Requesting Changes to GitAuto's Pull Requests",
+  description:
+    "A real-world example of how GitAuto handles review comments and iterates on its pull requests, demonstrating its ability to understand feedback and make appropriate changes.",
+  alternates: { canonical: "/blog/how-to-request-changes" },
+  openGraph: { url: "/blog/how-to-request-changes" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["solution", "case-study", "code-review", "automation"], // Up to 4 tags
+  createdAt: "2025-01-05",
+  updatedAt: "2025-01-05",
+};
+
+# Case Study: Requesting Changes to GitAuto's Pull Requests
+
+We've just released one of our most requested features - the ability to review and request changes to GitAuto's pull requests. Let's see it in action with a real-world example!
+
+## The Challenge
+
+I created an issue titled ["Make our sitemap dynamically updated using a library"](https://github.com/gitautoai/website/issues/167). Our website's sitemap was static, meaning new blog posts weren't automatically included - a minor but persistent annoyance. Being somewhat lazy (in a good way!), I only provided the title without any detailed requirements, letting GitAuto figure out the implementation details.
+
+## First Attempt
+
+Within minutes, GitAuto created [this pull request](https://github.com/gitautoai/website/pull/172/files). Since the PR's "Files changed" tab only shows the final state after all iterations, let's look at each commit individually. Here's the [initial commit](https://github.com/gitautoai/website/pull/172/commits/dc38d323436a2dcca12e92108cdac8fa59381d24):
+
+```diff:package.json
+-    "build": "next build",
++    "build": "next build && next-sitemap",
+•
+•
+•
+     "uuid": "^11.0.3",
++    "next-sitemap": "^4.2.3",
+```
+
+Interesting! GitAuto discovered the `next-sitemap` library - something I wasn't even aware of. While this looked promising, I quickly checked the library's documentation and noticed it required a configuration file (`next-sitemap.config.js`). Time for our first review comment!
+
+## Iteration 1: Configuration File
+
+After receiving my feedback, GitAuto promptly [added the configuration file](https://github.com/gitautoai/website/pull/172/commits/7ccc8a8828d4c9f4dff9900b6c484276cfdacbbc).
+
+```diff:next-sitemap.config.js
++ module.exports = {
++   siteUrl: 'https://www.yourwebsite.com',
++   generateRobotsTxt: true,
++ };
+```
+
+Only after seeing this did I realize we needed to specify how to obtain the site URL (these kinds of realizations often happen during review!). After pointing this out, GitAuto made [this change](https://github.com/gitautoai/website/pull/172/commits/05e02345b2ca8c39cfd9a48e0e44ecbb5f2d1302):
+
+```diff:next-sitemap.config.js
+-  siteUrl: 'https://www.yourwebsite.com',
++  siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+```
+
+## Iteration 2: Robots.txt Configuration
+
+I noticed `generateRobotsTxt` was set to `true` (most likely because that's what the library's documentation shows), but we already had a `robots.txt` file. While GitAuto had access to the file tree and theoretically could have noticed this, it didn't - a limitation we'll improve over time. After my review comment, it made [the fix](https://github.com/gitautoai/website/pull/172/commits/05dd9e5d8e44c8e375b3d138da5c3d2fb03cd825):
+
+```diff:next-sitemap.config.js
+-  generateRobotsTxt: true,
++  generateRobotsTxt: false,
+```
+
+## Iteration 3: Build Script Best Practices
+
+The documentation recommended using `postbuild` instead of modifying the `build` script directly. While both approaches seem to work, I requested we follow the documentation's recommendation. GitAuto immediately [updated the configuration](https://github.com/gitautoai/website/pull/172/commits/4cfc815bd25c2e105a42a4b08742554e4e2fa9c0).
+
+```diff:package.json
+-    "build": "next build && next-sitemap",
++    "build": "next build",
++    "postbuild": "next-sitemap",
+```
+
+## Final Polish: Package Order
+
+As a minor point, I noticed the `next-sitemap` dependency wasn't alphabetically ordered in `package.json`.
+
+```diff:package.json
+     "swr": "^2.2.5",
+     "uuid": "^11.0.3",
++    "next-sitemap": "^4.2.3",
+     "zod": "^3.23.8"
+```
+
+While not a functional issue, it's worth noting that current AI models often struggle with ordering tasks - whether it's alphabetical or numerical ordering, it's just not their strong suit. Still, just like with human teammates, it's important to be patient and provide clear feedback. GitAuto [fixed this](https://github.com/gitautoai/website/pull/172/commits/f28a7ef493575929ede2c12b92ed4864e14037ca) after receiving feedback.
+
+```diff:package.json
+     "next-auth": "^4.24.10",
++    "next-sitemap": "^4.2.3",
+     "playwright": "^1.49.0",
+...
+     "uuid": "^11.0.3",
+-    "next-sitemap": "^4.2.3",
+     "zod": "^3.23.8"
+```
+
+You can see the complete journey, including all review comments and the final merged pull request, [here](https://github.com/gitautoai/website/pull/172). I've intentionally left the review comments unresolved to make it easier for you to follow the conversation flow and see how the iterative process worked.
+
+## Caveats to this example
+
+I've skipped introducing some intermediate commits where my own instructions weren't entirely clear or where I changed my mind about requirements. This was a real, live development session, and I actually learned some things from GitAuto's PR, which caused some of my requirements to evolve. That's why there might be more back-and-forth than strictly necessary, but that's also what makes this example authentic!
+
+## The Power of Asynchronous Development
+
+You might be thinking, "Wouldn't it be faster to just do this myself using Copilot, Cursor, or Windsurf in my IDE?" And you're not wrong! The models' capabilities are similar. However, this misses a crucial point.
+
+Think of it this way: saying "I could do it faster myself" is like saying "I could do it faster than delegating to a team member." Of course you could - you know your repository better than anyone! But doing everything yourself isn't scalable.
+
+The real power of GitAuto's approach is asynchronous development:
+
+- You don't need to open your IDE
+- You can review and provide feedback even from your phone
+- While waiting for changes, you can review other pull requests by other team members or GitAuto
+
+## A Note on Tool Differences
+
+As someone who uses both GitAuto and Cursor, I've noticed some key differences:
+
+1. Cursor requires explicit file references - you'd need to provide `package.json` upfront in this case
+2. In long conversations, Cursor sometimes loses track of the latest file contents for some reason
+3. GitAuto refreshes its context with each interaction, leading to more consistent responses (and expensive for us actually... lol)
+
+This isn't to say one tool is better - they serve different purposes. GitAuto optimizes for asynchronous workflows and team collaboration for software engineering managers and teams, while IDE-integrated tools excel at real-time coding assistance for individual software engineers.
+
+The future of development isn't about replacing one tool with another - it's about knowing when to use each tool for maximum efficiency. Sometimes that means rapid local development with Copilot, and other times it means delegating to GitAuto while you focus on higher-level tasks.
