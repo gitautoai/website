@@ -9,7 +9,7 @@ async function postDevTo({ isBlog, postUrl }) {
 
   // Extract blog path from the URL
   const urlPath = new URL(postUrl).pathname;
-  const blogPath = path.join(process.cwd(), "website/app", urlPath, "page.mdx");
+  const blogPath = path.join(process.cwd(), "app", urlPath, "page.mdx");
   console.log({ urlPath, blogPath });
 
   // Read the blog content
