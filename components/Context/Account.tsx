@@ -107,6 +107,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     // Only update if the values are different
     if (JSON.stringify(newInstallationIds) !== JSON.stringify(installationIds))
       setInstallationIds(newInstallationIds);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInfos]);
 
   // If user has no accounts, redirect to github app
