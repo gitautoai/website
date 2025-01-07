@@ -8,7 +8,7 @@ import { config } from "./config";
 // import { NODE_ENV } from "@/lib/constants";
 
 Sentry.init({
-  dsn: "https://edc3c897ec77dbdf06de9dd08f70513b@o4506827828101120.ingest.us.sentry.io/4506827829346304",
+  dsn: process.env.NEXT_PUBLIC_SENTRY_DSN!,
 
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1,
