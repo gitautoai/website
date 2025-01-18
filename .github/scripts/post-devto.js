@@ -21,7 +21,12 @@ async function postDevTo({ isBlog, postUrl }) {
   console.log({ metadata });
 
   // Extract the actual markdown content (everything after the metadata)
-  const markdownContent = content.split(/export const metadata = {[\s\S]*?};/)[1].trim();
+  const utmParams = "?utm_source=devto&utm_medium=referral";
+  const markdownContent = content
+    .split(/export const metadata = {[\s\S]*?};/)[1]
+    .trim()
+    .replace(/\(\/([^)]*)\)/g, "(https://gitauto.ai/$1)") // Add domain to relative links
+    .replace(/(https:\/\/[^)\s]*?gitauto\.ai[^)\s]*?)(?=[\s)])/g, "$1" + utmParams); // Add utm params to gitauto.ai links
 
   // Prepare the article
   // https://developers.forem.com/api/v1#operation/createArticle
@@ -30,7 +35,7 @@ async function postDevTo({ isBlog, postUrl }) {
       title: metadata.title,
       body_markdown: markdownContent,
       published: true,
-      canonical_url: postUrl,
+      canonical_url: postUrl + utmParams,
       description: metadata.description,
       tags: metadata.tags.slice(0, 4), // dev.to limits tags to 4
       organization_id: 10134, // https://dev.to/dashboard/organization/10134
