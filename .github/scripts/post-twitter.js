@@ -13,7 +13,12 @@ async function postTwitter({ context, isBlog, postUrl }) {
 
   const message = isBlog ? "📝 New post" : "🚀 New release";
   const url = `${postUrl}?utm_source=x&utm_medium=referral`;
-  const tweet = `${message}: ${context.payload.pull_request.title}\n\n${url}`;
+  const title = context.payload.pull_request.title;
+  const description = context.payload.pull_request.body || "";
+
+  // Non-paid account, we can only post 280 characters. Paid account can post 250,000 characters.
+  const combinedText = description ? `${title}\n\n${description}` : title;
+  const tweet = `${message}: ${combinedText}\n\n${url}`;
   await client.v2.tweet(tweet);
 }
 

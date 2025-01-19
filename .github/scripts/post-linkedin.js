@@ -8,12 +8,14 @@ async function postLinkedIn({ context, isBlog, postUrl }) {
 
   const message = isBlog ? "📝 New post" : "🚀 New release";
   const url = `${postUrl}?utm_source=linkedin&utm_medium=referral`;
+  const title = context.payload.pull_request.title;
+  const description = context.payload.pull_request.body || "";
 
   await restliClient.create({
     resourcePath: "/posts",
     entity: {
       author: "urn:li:organization:100932100",
-      commentary: `${message}: ${context.payload.pull_request.title}`,
+      commentary: `${message}: ${title}${description ? `\n\n${description}` : ""}`,
       visibility: "PUBLIC",
       distribution: {
         feedDistribution: "MAIN_FEED",
@@ -25,8 +27,8 @@ async function postLinkedIn({ context, isBlog, postUrl }) {
       content: {
         article: {
           source: url,
-          title: context.payload.pull_request.title,
-          description: `Check out our latest release on GitAuto!`,
+          title: title,
+          description: description || `Check out our latest release on GitAuto!`,
         },
       },
       lifecycleState: "PUBLISHED",

@@ -26,8 +26,15 @@ async function postHackerNews({ context, isBlog, postUrl }) {
     await page.waitForLoadState("networkidle");
 
     // Submit story
-    await page.fill('input[name="title"]', context.payload.pull_request.title);
+    const title = context.payload.pull_request.title;
+    const description = context.payload.pull_request.body;
+
+    await page.fill('input[name="title"]', title);
     await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
+
+    // If there's a description, submit as a "text" post with both URL and description
+    if (description) await page.fill('textarea[name="text"]', description);
+
     await page.click('input[type="submit"]');
     await page.waitForLoadState("networkidle");
 
