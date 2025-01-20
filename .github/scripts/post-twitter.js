@@ -60,8 +60,10 @@ async function postTwitter({ context, isBlog, postUrl }) {
 
   // Like each other's tweets
   // https://github.com/PLhery/node-twitter-api-v2/blob/master/doc/v2.md#like-a-tweet
-  await clientGitAuto.v2.like(wesTweet.data.id);
-  await clientWes.v2.like(gitAutoTweet.data.id);
+  const userGitAuto = await clientGitAuto.v2.me();
+  await clientGitAuto.v2.like(userGitAuto.data.id, wesTweet.data.id);
+  const userWes = await clientWes.v2.me();
+  await clientWes.v2.like(userWes.data.id, gitAutoTweet.data.id);
   await Promise.all(communityTweets.map((tweet) => clientWes.v2.like(tweet.data.id)));
 }
 
