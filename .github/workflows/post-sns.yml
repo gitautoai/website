@@ -48,6 +48,7 @@ jobs:
       # https://github.com/actions/github-script
       - name: Post to X
         uses: actions/github-script@v7
+        continue-on-error: true
         with:
           script: |
             const postTwitter = require('.github/scripts/post-twitter.js');
@@ -59,9 +60,14 @@ jobs:
           TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
           TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
           TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          TWITTER_API_KEY_WES: ${{ secrets.TWITTER_API_KEY_WES }}
+          TWITTER_API_SECRET_WES: ${{ secrets.TWITTER_API_SECRET_WES }}
+          TWITTER_ACCESS_TOKEN_WES: ${{ secrets.TWITTER_ACCESS_TOKEN_WES }}
+          TWITTER_ACCESS_TOKEN_SECRET_WES: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET_WES }}
 
       - name: Post to LinkedIn
         uses: actions/github-script@v7
+        continue-on-error: true
         with:
           script: |
             const postLinkedIn = require('.github/scripts/post-linkedin.js');
@@ -73,6 +79,7 @@ jobs:
 
       - name: Post to Hacker News
         uses: actions/github-script@v7
+        continue-on-error: true
         with:
           script: |
             const postHackerNews = require('.github/scripts/post-hackernews.js');
@@ -85,6 +92,7 @@ jobs:
 
       - name: Post to Dev.to
         uses: actions/github-script@v7
+        continue-on-error: true
         with:
           script: |
             const postDevTo = require('.github/scripts/post-devto.js');
