@@ -1,5 +1,6 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import remarkGfm from "remark-gfm";
+  performance: { hints: false },
 import createMDX from "@next/mdx";
 
 /** @type {import('next').NextConfig} */
