@@ -8,6 +8,7 @@ import { usePostHog } from "posthog-js/react";
 import { useAccountContext } from "@/components/Context/Account";
 import { INTERNAL_LINKS } from "@/config/internal-links";
 import SNS from "./Button/SNS";
+import atlassianIcon from '../public/icons/atlassian.svg';
 
 export default function Footer() {
   // Analytics
@@ -59,6 +60,11 @@ export default function Footer() {
                 )}
             </ol>
           </div>
+        </div>
+        <div className="flex justify-center mt-4">
+          <a href="https://marketplace.atlassian.com/apps/1236220/gitauto" target="_blank" rel="noopener noreferrer">
+            <img src={atlassianIcon} alt="Atlassian" className="h-6 w-auto" />
+          </a>
         </div>
         <div className="mx-auto flex flex-col items-center gap-5">
           <SNS />
