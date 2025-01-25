@@ -8,12 +8,14 @@ export const metadata = {
   authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
   tags: ["solution", "tutorial", "jira"],
   createdAt: "2025-01-18",
-  updatedAt: "2025-01-18",
+  updatedAt: "2025-01-24",
 };
 
 # How to Open Pull Requests from Jira Issues with GitAuto
 
 Did you know GitAuto can open pull requests directly from Jira issues? Yep, you read that right! Instead of creating GitHub issues, you can use your existing Jira workflow as input, and GitAuto will output GitHub pull requests.
+
+Note: As of Jan 24, 2025, GitAuto for Jira is now approved by Atlassian and available on [the Atlassian Marketplace](https://marketplace.atlassian.com/apps/1236220/gitauto).
 
 ## TL;DR: Quick Steps
 
@@ -36,7 +38,7 @@ First things first - you'll need to install GitAuto from install button on [top 
 
 ## 2. Install GitAuto for Jira
 
-If you're only creating pull requests from GitHub issues, you can skip the following steps. But since you want to use Jira issues as your input source, you'll need to install GitAuto for Jira as well because GitAuto for GitHub itself can't accept your Jira issues as input. You can find it in the Atlassian Marketplace or install it directly from [here](https://developer.atlassian.com/console/install/f434bcc5-834f-45e5-ba1d-62e2ee8952cd?signature=AYABeEchfnTQm0DzEIWIFTMxNjkAAAADAAdhd3Mta21zAEthcm46YXdzOmttczp1cy1lYXN0LTE6NzA5NTg3ODM1MjQzOmtleS83ZjcxNzcxZC02OWM4LTRlOWItYWU5Ny05MzJkMmNhZjM0NDIAuAECAQB4KZa3ByJMxgsvFlMeMgRb2S0t8rnCLHGz2RGbmY8aB5YB2HvMN5vEx6BzEFMONpVMZAAAAH4wfAYJKoZIhvcNAQcGoG8wbQIBADBoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDB23k8aOiu8RF3sc7wIBEIA7VWJuQo1MVqOCeBgJzePZhaApK2YIUZYaUjSbiDyLM3o4AfHDF18LLA9iyTAwmC0CR4ZuHkJUTfRY%2Bm4AB2F3cy1rbXMAS2Fybjphd3M6a21zOmV1LXdlc3QtMTo3MDk1ODc4MzUyNDM6a2V5LzU1OWQ0NTE2LWE3OTEtNDdkZi1iYmVkLTAyNjFlODY4ZWE1YwC4AQICAHhHSGfAZiYvvl%2F9LQQFkXnRjF1ris3bi0pNob1s2MiregHHH6YxNJHTc%2F1p9UD4LsYXAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMiqTYMYB2DiAWYT2GAgEQgDvNz69g2YKYfA8cRhZYFzrKP1TAJAC2oseAdJjNLF8F9NcuOOin6Js64Ojb0%2F3e3FQOj9ldw8F3SQnd3wAHYXdzLWttcwBLYXJuOmF3czprbXM6dXMtd2VzdC0yOjcwOTU4NzgzNTI0MzprZXkvM2M0YjQzMzctYTQzOS00ZmNhLWEwZDItNDcyYzE2ZWRhZmRjALgBAgIAePadDOCfSw%2BMRVmOIDQhHhGooaxQ%2FiwGaLB334n1X9RCAW2%2F%2B61RV%2FeJ6nMR%2FJ%2FtGo4AAAB%2BMHwGCSqGSIb3DQEHBqBvMG0CAQAwaAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyimYifInrsYmTFdRwCARCAO7xvpj6DI%2Bl96Qs%2FF7lAsl5Ls6Hrr8B1Bb0FXT1nGrCl7y2ZJ1t%2BvC%2F7%2BtUR%2FkxyIbLSP5aNCiUqGJ5xAgAAAAAMAAAQAAAAAAAAAAAAAAAAAA68V0BYSTYxkW3XgAnKhTD%2F%2F%2F%2F%2FAAAAAQAAAAAAAAAAAAAAAQAAADLlIzU8Jwjx6%2B7MLDV7cTSXqOm5oyCdUFNGv34EJQlegiKQE53En9LhqgiSvYzozrsB9BCpAtvvC%2FNEvWH6WJINatA%3D&product=jira).
+If you're only creating pull requests from GitHub issues, you can skip the following steps. But since you want to use Jira issues as your input source, you'll need to install GitAuto for Jira as well because GitAuto for GitHub itself can't accept your Jira issues as input. You can find it in [the Atlassian Marketplace](https://marketplace.atlassian.com/apps/1236220/gitauto) or install it directly from [here](https://developer.atlassian.com/console/install/f434bcc5-834f-45e5-ba1d-62e2ee8952cd?signature=AYABeEchfnTQm0DzEIWIFTMxNjkAAAADAAdhd3Mta21zAEthcm46YXdzOmttczp1cy1lYXN0LTE6NzA5NTg3ODM1MjQzOmtleS83ZjcxNzcxZC02OWM4LTRlOWItYWU5Ny05MzJkMmNhZjM0NDIAuAECAQB4KZa3ByJMxgsvFlMeMgRb2S0t8rnCLHGz2RGbmY8aB5YB2HvMN5vEx6BzEFMONpVMZAAAAH4wfAYJKoZIhvcNAQcGoG8wbQIBADBoBgkqhkiG9w0BBwEwHgYJYIZIAWUDBAEuMBEEDB23k8aOiu8RF3sc7wIBEIA7VWJuQo1MVqOCeBgJzePZhaApK2YIUZYaUjSbiDyLM3o4AfHDF18LLA9iyTAwmC0CR4ZuHkJUTfRY%2Bm4AB2F3cy1rbXMAS2Fybjphd3M6a21zOmV1LXdlc3QtMTo3MDk1ODc4MzUyNDM6a2V5LzU1OWQ0NTE2LWE3OTEtNDdkZi1iYmVkLTAyNjFlODY4ZWE1YwC4AQICAHhHSGfAZiYvvl%2F9LQQFkXnRjF1ris3bi0pNob1s2MiregHHH6YxNJHTc%2F1p9UD4LsYXAAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMiqTYMYB2DiAWYT2GAgEQgDvNz69g2YKYfA8cRhZYFzrKP1TAJAC2oseAdJjNLF8F9NcuOOin6Js64Ojb0%2F3e3FQOj9ldw8F3SQnd3wAHYXdzLWttcwBLYXJuOmF3czprbXM6dXMtd2VzdC0yOjcwOTU4NzgzNTI0MzprZXkvM2M0YjQzMzctYTQzOS00ZmNhLWEwZDItNDcyYzE2ZWRhZmRjALgBAgIAePadDOCfSw%2BMRVmOIDQhHhGooaxQ%2FiwGaLB334n1X9RCAW2%2F%2B61RV%2FeJ6nMR%2FJ%2FtGo4AAAB%2BMHwGCSqGSIb3DQEHBqBvMG0CAQAwaAYJKoZIhvcNAQcBMB4GCWCGSAFlAwQBLjARBAyimYifInrsYmTFdRwCARCAO7xvpj6DI%2Bl96Qs%2FF7lAsl5Ls6Hrr8B1Bb0FXT1nGrCl7y2ZJ1t%2BvC%2F7%2BtUR%2FkxyIbLSP5aNCiUqGJ5xAgAAAAAMAAAQAAAAAAAAAAAAAAAAAA68V0BYSTYxkW3XgAnKhTD%2F%2F%2F%2F%2FAAAAAQAAAAAAAAAAAAAAAQAAADLlIzU8Jwjx6%2B7MLDV7cTSXqOm5oyCdUFNGv34EJQlegiKQE53En9LhqgiSvYzozrsB9BCpAtvvC%2FNEvWH6WJINatA%3D&product=jira).
 
 Let's walk through the installation process. First, you'll see the GitAuto for Jira app Installation page like this:
 
