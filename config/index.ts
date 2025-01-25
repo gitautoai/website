@@ -100,6 +100,9 @@ export const ABSOLUTE_URLS = {
     INTRO_1MIN: "https://www.youtube.com/watch?v=oOzhH1rnVIk",
     INTRO_3MIN: "https://www.youtube.com/watch?v=QvzEzJ9GJzU&t=6s",
   },
+  ATLASSIAN: {
+    MARKETPLACE: "https://marketplace.atlassian.com/apps/1236220/gitauto",
+  },
 } as const;
 
 // HTML or CSS Classes
