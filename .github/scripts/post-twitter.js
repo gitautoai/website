@@ -43,14 +43,26 @@ async function postTwitter({ context, isBlog, postUrl }) {
   // https://github.com/PLhery/node-twitter-api-v2/blob/master/doc/v2.md#create-a-tweet
   const gitAutoTweet = await clientGitAuto.v2.tweet(tweet);
   const wesTweet = await clientWes.v2.tweet(tweet);
+
+  // https://docs.x.com/x-api/posts/creation-of-a-post
   const communityTweets = await Promise.all(
-    communityIds.map((communityId) =>
-      clientWes.v2.tweet({
-        text: tweet,
-        reply: { in_reply_to_tweet_id: null },
-        community: { id: communityId },
-      })
-    )
+    communityIds.map(async (communityId) => {
+      const response = await fetch("https://api.x.com/2/tweets", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN_WES}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: tweet, community_id: communityId }),
+      });
+
+      if (!response.ok) {
+        console.error(`Failed to post to community ${communityId}:`, await response.json());
+        return null;
+      }
+
+      return await response.json();
+    })
   );
 
   // Wait for a random amount of time
