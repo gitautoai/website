@@ -30,7 +30,7 @@ async function postDevTo({ isBlog, postUrl }) {
 
   // Prepare the article
   // https://developers.forem.com/api/v1#operation/createArticle
-  const article = {
+  const newArticle = {
     article: {
       title: metadata.title,
       body_markdown: markdownContent,
@@ -42,20 +42,35 @@ async function postDevTo({ isBlog, postUrl }) {
     },
   };
 
-  // Post to dev.to
-  const response = await fetch("https://dev.to/api/articles", {
-    method: "POST",
-    headers: {
-      accept: "application/vnd.forem.api-v1+json",
-      "api-key": process.env.DEVTO_API_KEY,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(article),
+  // Common headers for dev.to API requests
+  const headers = {
+    accept: "application/vnd.forem.api-v1+json",
+    "api-key": process.env.DEVTO_API_KEY,
+    "Content-Type": "application/json",
+  };
+
+  // Search for existing article with the same canonical URL
+  const searchResponse = await fetch(`https://dev.to/api/articles/me/all?per_page=1000`, {
+    headers,
   });
 
-  if (!response.ok) {
-    throw new Error(`Failed to post to dev.to: ${response.statusText}`);
-  }
+  if (!searchResponse.ok)
+    throw new Error(`Failed to search dev.to articles: ${searchResponse.statusText}`);
+
+  const articles = await searchResponse.json();
+  const existingArticle = articles.find(
+    (a) => a.canonical_url === newArticle.article.canonical_url
+  );
+
+  // Update or create the article
+  const endpoint = existingArticle
+    ? `https://dev.to/api/articles/${existingArticle.id}`
+    : "https://dev.to/api/articles";
+  const method = existingArticle ? "PUT" : "POST";
+  const body = JSON.stringify(newArticle);
+  const response = await fetch(endpoint, { method, headers, body });
+
+  if (!response.ok) throw new Error(`Failed to ${method} to dev.to: ${response.statusText}`);
 }
 
 module.exports = postDevTo;
