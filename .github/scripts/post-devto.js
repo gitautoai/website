@@ -73,6 +73,22 @@ async function postDevTo({ isBlog, postUrl }) {
   const response = await fetch(endpoint, { method, headers, body });
 
   if (!response.ok) throw new Error(`Failed to ${method} to dev.to: ${response.statusText}`);
+
+  // Get the article data from the response
+  const articleData = await response.json();
+
+  // Send to Slack webhook
+  const slackResponse = await fetch(process.env.SLACK_WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      msg: `New article published on dev.to: ${articleData.url}`,
+    }),
+  });
+
+  if (!slackResponse.ok) {
+    console.warn(`Failed to send Slack notification: ${slackResponse.statusText}`);
+  }
 }
 
 module.exports = postDevTo;

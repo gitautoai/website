@@ -101,3 +101,4 @@ jobs:
             await postDevTo({ isBlog, postUrl });
         env:
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY_WES }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
