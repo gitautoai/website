@@ -58,9 +58,11 @@ async function postDevTo({ isBlog, postUrl }) {
     throw new Error(`Failed to search dev.to articles: ${searchResponse.statusText}`);
 
   const articles = await searchResponse.json();
-  const existingArticle = articles.find(
-    (a) => a.canonical_url === newArticle.article.canonical_url
-  );
+  const existingArticle = articles.find((a) => {
+    console.log("a.canonical_url", a.canonical_url);
+    console.log("newArticle.article.canonical_url", newArticle.article.canonical_url);
+    return a.canonical_url === newArticle.article.canonical_url;
+  });
 
   // Update or create the article
   const endpoint = existingArticle
