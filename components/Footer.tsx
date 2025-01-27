@@ -37,7 +37,7 @@ export default function Footer() {
         <div className="flex flex-col gap-10 sm:gap-8 py-10 mt-auto w-full justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-5xl mx-auto px-6">
             {/* Product Links with conditional Manage Payment */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 text-center sm:text-left">
               <h3 className="font-bold text-gray-900">{categoryTitles.product}</h3>
               <ul className="flex flex-col gap-3">
                 {groupedLinks.product.map((link) => (
@@ -78,7 +78,7 @@ export default function Footer() {
             </div>
 
             {/* Resources Links */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 text-center sm:text-left">
               <h3 className="font-bold text-gray-900">{categoryTitles.resources}</h3>
               <ul className="flex flex-col gap-3">
                 {groupedLinks.resources.map((link) => (
@@ -101,7 +101,7 @@ export default function Footer() {
             </div>
 
             {/* Legal Links */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 text-center sm:text-left">
               <h3 className="font-bold text-gray-900">{categoryTitles.legal}</h3>
               <ul className="flex flex-col gap-3">
                 {groupedLinks.legal.map((link) => (
@@ -124,7 +124,7 @@ export default function Footer() {
             </div>
 
             {/* SNS Links */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 text-center sm:text-left">
               <h3 className="font-bold text-gray-900">{categoryTitles.sns}</h3>
               <ul className="flex flex-col gap-3">
                 {Object.entries(SNS_LINKS).map(([key, value]) => (
