@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 
 interface JiraHeaderProps {
@@ -14,7 +15,23 @@ const description = [
   "Connect your Jira projects with GitHub repositories.",
   "Manage multiple project integrations.",
   "Toggle integration on/off at any time.",
-  "Need help? Contact us via the chat icon in the bottom right corner or email info@gitauto.ai.",
+  <>
+    Need help? Contact us via the chat icon in the bottom right corner or email{" "}
+    <Link href="mailto:info@gitauto.ai" className="text-pink-500 visited:text-pink-700 underline">
+      info@gitauto.ai
+    </Link>
+    .
+  </>,
+  <>
+    For detailed instructions with images, please visit our{" "}
+    <Link
+      href="/blog/how-to-open-pull-requests-from-jira-issues"
+      className="text-pink-500 visited:text-pink-700 underline"
+    >
+      guide
+    </Link>
+    .
+  </>,
 ];
 
 export function JiraHeader({ isConnected, isConnecting, onAuth }: JiraHeaderProps) {
