@@ -86,6 +86,7 @@ export const ABSOLUTE_URLS = {
   },
   GITHUB: {
     EMAIL_SETTING: "https://github.com/settings/emails",
+    MARKETPLACE: "https://github.com/marketplace/gitauto-ai",
     INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai",
     INSTALLED_APPS: "https://github.com/settings/installations",
   },
@@ -103,6 +104,13 @@ export const ABSOLUTE_URLS = {
   ATLASSIAN: {
     MARKETPLACE: "https://marketplace.atlassian.com/apps/1236220/gitauto",
   },
+} as const;
+export const SNS_LINKS = {
+  GitHub: ABSOLUTE_URLS.GITHUB.MARKETPLACE,
+  Atlassian: ABSOLUTE_URLS.ATLASSIAN.MARKETPLACE,
+  LinkedIn: ABSOLUTE_URLS.LINKEDIN,
+  Twitter: ABSOLUTE_URLS.TWITTER,
+  YouTube: ABSOLUTE_URLS.YOUTUBE.HOME,
 } as const;
 
 // HTML or CSS Classes
