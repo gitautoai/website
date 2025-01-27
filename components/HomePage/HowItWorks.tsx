@@ -18,7 +18,7 @@ const HowItWorks = () => {
           <li className="font-semibold">Run GitAuto to create a pull request by:</li>
           <ul className="list-disc list-outside pl-4 sm:pl-4 md:pl-5 space-y-0 sm:space-y-0 md:space-y-1">
             <li>Checking the checkbox in the issue comments.</li>
-            <li>Or, label the issue with "gitauto".</li>
+            <li>Or, label the issue with &quot;gitauto&quot;.</li>
             <li>Or, it proactively runs every weekday.</li>
           </ul>
           <li className="font-semibold">Review the pull request.</li>
