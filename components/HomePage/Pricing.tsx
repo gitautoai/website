@@ -203,6 +203,7 @@ export default function Pricing() {
             <li><CheckMark /> per 10 tickets per month</li>
             <li><CheckMark /> per organization</li>
             <li><CheckMark /> Unlimited repositories</li>
+            <li><CheckMark /> Unlimited users</li>
             <li><CheckMark /> Retry on GitHub Actions</li>
             <li><CheckMark /> Daily self-execution</li>
             <li><CheckMark /> Zero Data Retention</li>
