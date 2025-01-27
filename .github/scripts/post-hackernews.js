@@ -52,6 +52,15 @@ async function postHackerNews({ context, isBlog, postUrl }) {
       .catch(() => null);
     if (error) throw new Error(`HN submission failed: ${error}`);
 
+    // Send to Slack webhook
+    const slackResponse = await fetch(process.env.SLACK_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        msg: `Posted to Hacker News! https://news.ycombinator.com/newest`,
+      }),
+    });
+
     await browser.close();
   } catch (error) {
     await browser.close();
