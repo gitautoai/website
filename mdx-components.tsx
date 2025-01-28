@@ -30,16 +30,52 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     },
     h3: ({ children }) => <h3 className="text-xl md:text-2xl my-8 font-semibold">{children}</h3>,
     p: ({ children }) => <p className="text-base md:text-lg py-1">{children}</p>,
-    a: ({ href, children }) => (
-      <a
-        href={href}
-        target="_blank"
-        rel="noreferer noopener"
-        className="cursor-pointer text-pink-500 visited:text-pink-700 underline text-base md:text-lg"
-      >
-        {children}
-      </a>
-    ),
+    a: ({ href, children }) => {
+      // Skip empty hrefs
+      if (!href) {
+        return (
+          <a
+            href={href}
+            className="cursor-pointer text-pink-500 visited:text-pink-700 underline text-base md:text-lg"
+          >
+            {children}
+          </a>
+        );
+      }
+
+      // Check if the URL is for our domain
+      const url = new URL(href, "https://gitauto.ai");
+      const isInternalLink =
+        url.hostname === "gitauto.ai" || href.startsWith("#") || href.startsWith("/");
+
+      if (isInternalLink) {
+        // Use pathname + search + hash for internal links
+        const internalHref =
+          href.startsWith("#") || href.startsWith("/")
+            ? href
+            : url.pathname + url.search + url.hash;
+        return (
+          <Link
+            href={internalHref}
+            className="cursor-pointer text-pink-500 visited:text-pink-700 underline text-base md:text-lg"
+          >
+            {children}
+          </Link>
+        );
+      }
+
+      // External link
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferer noopener"
+          className="cursor-pointer text-pink-500 visited:text-pink-700 underline text-base md:text-lg"
+        >
+          {children}
+        </a>
+      );
+    },
     ol: ({ children }) => (
       <ol
         type="1"
