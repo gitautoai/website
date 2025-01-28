@@ -45,25 +45,25 @@ async function postTwitter({ context, isBlog, postUrl }) {
   const wesTweet = await clientWes.v2.tweet(tweet);
 
   // https://docs.x.com/x-api/posts/creation-of-a-post
-  const communityTweets = await Promise.all(
-    communityIds.map(async (communityId) => {
-      const response = await fetch("https://api.x.com/2/tweets", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN_WES}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text: tweet, community_id: communityId }),
-      });
+  // const communityTweets = await Promise.all(
+  //   communityIds.map(async (communityId) => {
+  //     const response = await fetch("https://api.x.com/2/tweets", {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN_WES}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ text: tweet, community_id: communityId }),
+  //     });
 
-      if (!response.ok) {
-        console.error(`Failed to post to community ${communityId}:`, await response.json());
-        return null;
-      }
+  //     if (!response.ok) {
+  //       console.error(`Failed to post to community ${communityId}:`, await response.json());
+  //       return null;
+  //     }
 
-      return await response.json();
-    })
-  );
+  //     return await response.json();
+  //   })
+  // );
 
   // Wait for a random amount of time
   const getRandomDelay = () => Math.floor(Math.random() * 55000 + 5000);
@@ -76,7 +76,7 @@ async function postTwitter({ context, isBlog, postUrl }) {
   await clientGitAuto.v2.like(userGitAuto.data.id, wesTweet.data.id);
   const userWes = await clientWes.v2.me();
   await clientWes.v2.like(userWes.data.id, gitAutoTweet.data.id);
-  await Promise.all(communityTweets.map((tweet) => clientWes.v2.like(tweet.data.id)));
+  // await Promise.all(communityTweets.map((tweet) => clientWes.v2.like(tweet.data.id)));
 }
 
 module.exports = postTwitter;
