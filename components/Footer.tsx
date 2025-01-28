@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
 
 // Local imports
+import AtlassianLogo from "@/public/icons/atlassian.svg";
 import { useAccountContext } from "@/components/Context/Account";
 import { SNS_LINKS } from "@/config";
 import { INTERNAL_LINKS } from "@/config/internal-links";
@@ -151,6 +152,11 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} GitAuto, Inc. All Rights Reserved
           </span>
         </div>
+          <a href="https://marketplace.atlassian.com/apps/1236220/gitauto" target="_blank" rel="noopener noreferrer">
+            <img src={AtlassianLogo} alt="Atlassian Logo" className="h-6 mx-2" />
+          </a>
+
+
       </div>
     </div>
   );
