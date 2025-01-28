@@ -187,6 +187,16 @@ How many open GitHub issues do you have right now (A)? And how many issues did y
 
 `A/B = Estimated months to close all current issues`
 
-This quick calculation can give you a reality check on your issue backlog. If this number is higher than you (or your boss) would like, it might be time to consider adding resources. While hiring human engineers is great if you have the budget and time for recruitment, coding agents like GitAuto can be a practical alternative when you need to move faster or work within budget constraints.
+This quick calculation can give you a reality check on your issue backlog. Let's look at a real-world example:
+
+Microsoft's VSCode, one of the most popular open-source repositories, has 8,262 open issues:
+
+![VSCode's open issues count](/blog/how-to-open-pull-requests-from-github-issues/step7-1.png)
+
+In the last three months (Oct-Dec 2024), they closed 5,656 issues (excluding PRs), averaging about 1,885 issues per month (using the GitHub query `is:issue closed:2024-10-01..2024-12-31 -is:pr`):
+
+![VSCode's closed issues in last 3 months](/blog/how-to-open-pull-requests-from-github-issues/step7-2.png)
+
+Using our formula: 8,262 / 1,885 = 4.4 months. This means if you filed an issue today and joined the end of the queue (assuming no queue-jumping), you'd theoretically wait about 4.4 months for your issue to be addressed. Try calculating this number for your repository - is the result acceptable for your team and users? If this number is higher than you (or your boss) would like, it might be time to consider adding resources.
 
 Have questions or need help? Feel free to reach out through the chat icon in the bottom right corner or email us at info@gitauto.ai. We'd love to hear about your experience!
