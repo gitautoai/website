@@ -1,0 +1,202 @@
+export const metadata = {
+  title: "How to Open Pull Requests from GitHub Issues with GitAuto",
+  description:
+    "A step-by-step guide on how to automatically create pull requests from your GitHub issues using GitAuto.",
+  alternates: { canonical: "/blog/how-to-open-pull-requests-from-github-issues" },
+  openGraph: { url: "/blog/how-to-open-pull-requests-from-github-issues" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["solution", "tutorial", "github"],
+  createdAt: "2025-01-28",
+  updatedAt: "2025-01-28",
+};
+
+# How to Open Pull Requests from GitHub Issues with GitAuto
+
+Already have GitAuto installed? Great! If not, you can install it directly from [GitHub Marketplace](https://github.com/marketplace/gitauto-ai) or check out our detailed [installation guide](/blog/how-to-install-gitauto).
+
+## TL;DR - Quick Steps
+
+1. [Creating Your First GitHub Issue](#1-creating-your-first-github-issue)
+2. [Assigning GitAuto to Your Issue](#2-assigning-gitauto-to-your-issue)
+3. [How GitAuto Works](#3-how-gitauto-works)
+4. [Reviewing the Pull Request](#4-reviewing-the-pull-request)
+5. [Usage and Pricing](#5-usage-and-pricing)
+6. [What's Next?](#6-whats-next)
+7. [Why Use GitAuto?](#7-why-use-gitauto)
+
+Need more details? Read on for a detailed step-by-step guide below.
+
+## 1. Creating Your First GitHub Issue
+
+First, let's create a new GitHub issue. Look for the "Issues" tab in your repository:
+
+![GitHub repository page with Issues tab highlighted in red](/blog/how-to-open-pull-requests-from-github-issues/step1-1.png)
+
+If you don't see it, you'll need to enable issues in your repository settings first (they're disabled by default):
+
+![Repository settings page showing how to enable Issues feature](/blog/how-to-open-pull-requests-from-github-issues/step1-2.png)
+
+Once you click the Issues tab, you'll see the issues list:
+
+![GitHub Issues list page](/blog/how-to-open-pull-requests-from-github-issues/step1-3.png)
+
+Click the green "New issue" button:
+
+![New Issue button highlighted](/blog/how-to-open-pull-requests-from-github-issues/step1-4.png)
+
+You'll see the issue creation form:
+
+![Issue creation form](/blog/how-to-open-pull-requests-from-github-issues/step1-5.png)
+
+Don't overthink your first issue! While you can use existing issues (we'll cover that later), let's start fresh. For your first try, a simple title is enough. Need ideas? Here's an example: "Add a folder structure to README.md"
+
+![Issue form with example title "Add folder structure summary to README.md"](/blog/how-to-open-pull-requests-from-github-issues/step1-6.png)
+
+Other good starter examples:
+
+- "Write unit tests for function B in file A"
+- "Improve performance of function B in file A"
+
+Click "Create issue" and you're done!
+
+![Newly created issue](/blog/how-to-open-pull-requests-from-github-issues/step1-7.png)
+
+Pro tip: If you have specific requirements in mind, adding them to the description will improve accuracy. But don't worry if you don't - GitAuto can work with just a title, and you can always refine requirements after seeing the initial pull request.
+
+## 2. Assigning GitAuto to Your Issue
+
+Once you create your issue, GitAuto will automatically comment on it. You'll see something like this:
+
+![GitAuto's initial comment with a checkbox](/blog/how-to-open-pull-requests-from-github-issues/step2-1.png)
+
+To assign the issue to GitAuto, simply check the checkbox in its comment. Why this approach? While GitHub issues have an assignee field, it can't accept GitHub Apps as assignees, so we use this checkbox method instead.
+
+### 2-1. Working with Existing Issues
+
+For existing issues that don't have GitAuto's comment, simply add the `gitauto` label to the issue. The first time you do this, you'll need to create the label by typing "gitauto" manually. After that, the label will be available in your repository's label list, and you can find it quickly by typing part of the word like "git" in the label field.
+
+![Adding gitauto label to an issue](/blog/how-to-open-pull-requests-from-github-issues/step2-2.png)
+
+This labeling approach is particularly useful for bulk assignments - you can label multiple issues at once to assign them to GitAuto!
+
+![Labeling multiple issues at once](/blog/how-to-open-pull-requests-from-github-issues/step2-3.png)
+
+### 2-2. Working with Sub-Issues
+
+GitHub recently released sub-issues, a feature that was previously missing and made GitHub Issues less convenient compared to other issue platforms like Jira, as you couldn't create parent-child issue relationships. This limitation has now been resolved, and GitAuto can be assigned to these sub-issues as well!
+
+![Sub-issues](/blog/how-to-open-pull-requests-from-github-issues/step2-4.png)
+
+## 3. How GitAuto Works
+
+While GitAuto is working, it'll keep you updated on its progress. Here's what's happening behind the scenes:
+
+1. **Input Analysis**: Reviews issue title, description, and comments
+2. **Repository Analysis**: Checks folder structure and configuration files (like package.json or requirements.txt)
+3. **File Location**: Identifies files to modify through directory traversal or targeted searches
+4. **Research**: Validates approach against current best practices and latest library versions
+5. **Implementation**: Makes changes and commits them
+6. **Iteration**: Repeats steps 3-5 until the issue's goals are met
+7. **Pull Request**: Creates a PR and links it back to the issue
+
+Let's see this process in action:
+
+![GitAuto analyzing the issue and planning changes](/blog/how-to-open-pull-requests-from-github-issues/step3-1.png)
+
+![GitAuto creating a remote branch](/blog/how-to-open-pull-requests-from-github-issues/step3-2.png)
+
+![GitAuto opening and analyzing README.md](/blog/how-to-open-pull-requests-from-github-issues/step3-3.png)
+
+![GitAuto creating the pull request](/blog/how-to-open-pull-requests-from-github-issues/step3-4.png)
+
+When the process is complete, GitAuto will comment on your issue with a link to the new pull request:
+
+![GitAuto's comment with PR link](/blog/how-to-open-pull-requests-from-github-issues/step3-5.png)
+
+## 4. Reviewing the Pull Request
+
+Click through to the pull request to review the changes. You'll see GitAuto's proposed modifications, complete with:
+
+![Pull request overview tab showing title and description](/blog/how-to-open-pull-requests-from-github-issues/step4-1.png)
+
+- A clear title linking back to the original issue
+- A description explaining the changes
+- The actual code changes with inline comments explaining key decisions
+
+![Pull request Files Changed tab showing code modifications](/blog/how-to-open-pull-requests-from-github-issues/step4-2.png)
+
+Review the changes and if they look good, go ahead and merge!
+
+If not, you have several options:
+
+1. **Major Changes Needed?** Add your requirements to the original issue's description and reassign GitAuto:
+
+   - Either uncheck and recheck the checkbox in GitAuto's comment
+   - Or remove and re-add the `gitauto` label
+
+   For example, in our "Add folder structure to README.md" case, you might realize: "Actually, we only need the root-level or main-level structure, not every single file. That would be overkill." While the model might handle this intuitively, it's a specific requirement worth adding to ensure the right level of detail. If you want certainty, it's better to make such requirements explicit.
+
+2. **Minor Tweaks?** Just leave review comments like you would for any human engineer:
+
+   For example, in our case, you might notice that the added "4. Folder Structure" h2 heading is too close to the text above - missing one blank line. While this kind of spacing issue might be slightly irritating, let's use it as a chance to practice the review comment workflow.
+
+Click the blue "+" button that appears when you hover over line numbers to add a review comment:
+
+![GitHub pull request Files Changed tab showing how to write a review comment](/blog/how-to-open-pull-requests-from-github-issues/step4-3.png)
+
+Write your comment explaining what needs to be changed:
+
+![GitHub pull request Files Changed tab showing pending review comments](/blog/how-to-open-pull-requests-from-github-issues/step4-4.png)
+
+Submit your review as "Request Changes":
+
+![GitHub pull request Files Changed tab showing how to submit review as Request Changes](/blog/how-to-open-pull-requests-from-github-issues/step4-5.png)
+
+No need to mention GitAuto specifically - it will automatically receive notifications for any review comments on its pull requests and start working on the changes:
+
+![GitHub pull request showing GitAuto implementing requested changes](/blog/how-to-open-pull-requests-from-github-issues/step4-6.png)
+
+And here's the result - a properly spaced heading with an added blank line:
+
+![GitHub pull request showing the added blank line](/blog/how-to-open-pull-requests-from-github-issues/step4-7.png)
+
+## 5. Usage and Pricing
+
+As of writing, GitAuto offers several pricing tiers:
+
+- Free Plan: Up to 3 issues per month
+- Standard Plan: $100 per 10 issues per month (e.g., $200 for 20 issues)
+- Enterprise Plan: Unlimited issues available
+
+Important notes about issue counting:
+
+- Multiple iterations on the same issue count as one issue
+- This includes both reassignments from the issue and review comments on the PR
+- When bulk assigning issues, each issue counts separately (e.g., assigning 10 issues at once consumes 10 from your quota)
+
+You can check your remaining issue count by creating a new issue (e.g., creating a test issue).
+
+## 6. What's Next?
+
+Now that you know how to use GitAuto with GitHub issues, why not try it out? Start with something simple - maybe that documentation update you've been putting off? Let GitAuto handle the initial PR while you focus on more complex tasks.
+
+## 7. Why Use GitAuto?
+
+How many open GitHub issues do you have right now (A)? And how many issues did your team close this month/last month (B)? Using a simple formula:
+
+`A/B = Estimated months to close all current issues`
+
+This quick calculation can give you a reality check on your issue backlog. Let's look at a real-world example:
+
+Microsoft's VSCode, one of the most popular open-source repositories, has 8,262 open issues:
+
+![VSCode's open issues count](/blog/how-to-open-pull-requests-from-github-issues/step7-1.png)
+
+In the last three months (Oct-Dec 2024), they closed 5,656 issues (excluding PRs), averaging about 1,885 issues per month (using the GitHub query `is:issue closed:2024-10-01..2024-12-31 -is:pr`):
+
+![VSCode's closed issues in last 3 months](/blog/how-to-open-pull-requests-from-github-issues/step7-2.png)
+
+Using our formula: 8,262 / 1,885 = 4.4 months. This means if you filed an issue today and joined the end of the queue (assuming no queue-jumping), you'd theoretically wait about 4.4 months for your issue to be addressed. Try calculating this number for your repository - is the result acceptable for your team and users? If this number is higher than you (or your boss) would like, it might be time to consider adding resources.
+
+Have questions or need help? Feel free to reach out through the chat icon in the bottom right corner or email us at info@gitauto.ai. We'd love to hear about your experience!
