@@ -1,4 +1,14 @@
 import type { MDXComponents } from "mdx/types";
+import Link from "next/link";
+
+// Helper function to convert text to URL-safe slug
+const toSlug = (text: string) => {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9 -]/g, "") // Remove invalid chars
+    .replace(/\s+/g, "-") // Replace spaces with -
+    .replace(/-+/g, "-"); // Replace multiple - with single -
+};
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -6,11 +16,18 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     h1: ({ children }) => (
       <h1 className="text-3xl md:text-4xl text-center mt-24 mb-8 font-semibold">{children}</h1>
     ),
-    h2: ({ children }) => (
-      <h2 className="text-2xl md:text-3xl text-center mt-16 mb-8 md:my-16 md:mb-12 font-semibold">
-        {children}
-      </h2>
-    ),
+    h2: ({ children }) => {
+      const text = String(children);
+      const slug = toSlug(text);
+      return (
+        <h2
+          id={slug}
+          className="text-2xl md:text-3xl text-center mt-16 mb-8 md:my-16 md:mb-12 font-semibold"
+        >
+          {children}
+        </h2>
+      );
+    },
     h3: ({ children }) => <h3 className="text-xl md:text-2xl my-8 font-semibold">{children}</h3>,
     p: ({ children }) => <p className="text-base md:text-lg py-1">{children}</p>,
     a: ({ href, children }) => (
