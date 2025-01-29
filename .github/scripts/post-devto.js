@@ -58,11 +58,11 @@ async function postDevTo({ isBlog, postUrl }) {
     throw new Error(`Failed to search dev.to articles: ${searchResponse.statusText}`);
 
   const articles = await searchResponse.json();
-  const existingArticle = articles.find((a) => {
-    console.log("a.canonical_url", a.canonical_url);
-    console.log("newArticle.article.canonical_url", newArticle.article.canonical_url);
-    return a.canonical_url === newArticle.article.canonical_url;
-  });
+  // Strip UTM parameters for comparison
+  const stripUtm = (url) => url?.split("?")[0];
+  const existingArticle = articles.find(
+    (a) => stripUtm(a.canonical_url) === stripUtm(newArticle.article.canonical_url)
+  );
 
   // Update or create the article
   const endpoint = existingArticle
@@ -72,7 +72,16 @@ async function postDevTo({ isBlog, postUrl }) {
   const body = JSON.stringify(newArticle);
   const response = await fetch(endpoint, { method, headers, body });
 
-  if (!response.ok) throw new Error(`Failed to ${method} to dev.to: ${response.statusText}`);
+  if (!response.ok) {
+    const errorDetail = await response.json();
+    console.error("Dev.to API Error:", {
+      status: response.status,
+      statusText: response.statusText,
+      error: errorDetail,
+      article: newArticle,
+    });
+    throw new Error(`Failed to ${method} to dev.to: ${response.statusText}`);
+  }
 
   // Get the article data from the response
   const articleData = await response.json();
