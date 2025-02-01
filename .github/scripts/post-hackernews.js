@@ -53,7 +53,7 @@ async function postHackerNews({ context, isBlog, postUrl }) {
     if (error) throw new Error(`HN submission failed: ${error}`);
 
     // Send to Slack webhook
-    const slackResponse = await fetch(process.env.SLACK_WEBHOOK_URL, {
+    await fetch(process.env.SLACK_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
