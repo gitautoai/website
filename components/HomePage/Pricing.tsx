@@ -19,10 +19,12 @@ import { Spinner } from "@chakra-ui/react";
 import {
   ABSOLUTE_URLS,
   OPENAI_MODEL_GPT_4O,
-  OPENAI_MODEL_GPT_4O_MINI,
   OPENAI_MODEL_O1_MINI,
+  OPENAI_MODEL_O3_MINI,
   RELATIVE_URLS,
 } from "@/config";
+import { ANTHROPIC_MODEL_CLAUDE_35_SONNET } from "@/config/anthropic";
+import { DEEPSEEK_MODEL_R1 } from "@/config/deepseek";
 
 const pricingButtonStyles = `my-4 sm:my-2 md:my-8 rounded-lg transition-colors duration-200 
 text-md sm:text-lg xl:text-xl py-2 sm:py-1 md:py-3 w-full shadow-lg hover:shadow-lg 
@@ -155,7 +157,7 @@ export default function Pricing() {
             Install
           </Link>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
-            <li><CheckMark /> {OPENAI_MODEL_GPT_4O_MINI}</li>
+            <li><CheckMark /> {OPENAI_MODEL_GPT_4O} & {OPENAI_MODEL_O1_MINI}</li>
             <li><CheckMark /> Up to 3 tickets per month</li>
             <li><CheckMark /> GitHub Issue Templates</li>
           </ul>
@@ -199,7 +201,7 @@ export default function Pricing() {
           </div>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
             <li><CheckMark /> Everything in Free plan</li>
-            <li><CheckMark /> {OPENAI_MODEL_GPT_4O} & {OPENAI_MODEL_O1_MINI}</li>
+            <li><CheckMark /> {OPENAI_MODEL_O3_MINI}</li>
             <li><CheckMark /> per 10 tickets per month</li>
             <li><CheckMark /> per organization</li>
             <li><CheckMark /> Unlimited repositories</li>
@@ -233,9 +235,7 @@ export default function Pricing() {
           </Link>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
             <li><CheckMark /> Everything in Standard plan</li>
-            <li>
-              <CheckMark /> {OPENAI_MODEL_GPT_4O} & {OPENAI_MODEL_O1_MINI}
-            </li>
+            <li><CheckMark /> {OPENAI_MODEL_O3_MINI}, {ANTHROPIC_MODEL_CLAUDE_35_SONNET}, and {DEEPSEEK_MODEL_R1} etc.</li>
             <li><CheckMark /> Unlimited tickets</li>
             <li><CheckMark /> Self OpenAI API key</li>
             <li><CheckMark /> Self hosting</li>
