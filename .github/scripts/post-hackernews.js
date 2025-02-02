@@ -26,7 +26,7 @@ async function postHackerNews({ context, isBlog, postUrl }) {
     await page.waitForLoadState("networkidle");
 
     // Submit story
-    const title = context.payload.pull_request.title;
+    const title = context.payload.pull_request.title.substring(0, 80);
     const description = context.payload.pull_request.body;
 
     await page.fill('input[name="title"]', title);
