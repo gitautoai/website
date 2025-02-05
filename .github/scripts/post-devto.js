@@ -37,7 +37,11 @@ async function postDevTo({ isBlog, postUrl }) {
       published: true,
       canonical_url: postUrl + utmParams,
       description: metadata.description,
-      tags: metadata.tags.slice(0, 4), // dev.to limits tags to 4
+      tags: metadata.tags
+        .map((tag) => tag.toLowerCase())
+        .map((tag) => tag.replace(/[^a-z0-9]/g, "")) // Remove non-alphanumeric characters from tags because dev.to doesn't support them
+        .filter((tag) => tag.length > 0)
+        .slice(0, 4), // dev.to limits tags to 4 because dev.to limits 4 tags
       organization_id: 10134, // https://dev.to/dashboard/organization/10134
     },
   };
