@@ -10,7 +10,8 @@ async function postDevTo({ isBlog, postUrl }) {
   // Extract blog path from the URL
   const urlPath = new URL(postUrl).pathname;
   const blogPath = path.join(process.cwd(), "app", urlPath, "page.mdx");
-  console.log({ urlPath, blogPath });
+  const imagePath = path.join(process.cwd(), "app", urlPath, "thumbnail-devto.png");
+  console.log({ urlPath, blogPath, imagePath });
 
   // Read the blog content
   const content = fs.readFileSync(blogPath, "utf-8");
@@ -37,6 +38,7 @@ async function postDevTo({ isBlog, postUrl }) {
       published: true,
       canonical_url: postUrl + utmParams,
       description: metadata.description,
+      main_image: imagePath,
       tags: metadata.tags
         .map((tag) => tag.toLowerCase())
         .map((tag) => tag.replace(/[^a-z0-9]/g, "")) // Remove non-alphanumeric characters from tags because dev.to doesn't support them
