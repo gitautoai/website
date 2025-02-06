@@ -10,8 +10,8 @@ async function postDevTo({ isBlog, postUrl }) {
   // Extract blog path from the URL
   const urlPath = new URL(postUrl).pathname;
   const blogPath = path.join(process.cwd(), "app", urlPath, "page.mdx");
-  const imagePath = path.join(process.cwd(), "app", urlPath, "thumbnail-devto.png");
-  console.log({ urlPath, blogPath, imagePath });
+  const imageUrl = `https://gitauto.ai${urlPath}/thumbnail-devto.png`;
+  console.log({ urlPath, blogPath, imageUrl });
 
   // Read the blog content
   const content = fs.readFileSync(blogPath, "utf-8");
@@ -38,11 +38,12 @@ async function postDevTo({ isBlog, postUrl }) {
       published: true,
       canonical_url: postUrl + utmParams,
       description: metadata.description,
-      main_image: imagePath,
+      main_image: imageUrl,
       tags: metadata.tags
         .map((tag) => tag.toLowerCase())
         .map((tag) => tag.replace(/[^a-z0-9]/g, "")) // Remove non-alphanumeric characters from tags because dev.to doesn't support them
         .filter((tag) => tag.length > 0)
+        .filter((tag) => !["solution", "casestudy"].includes(tag)) // Remove "solution" and "casestudy" tags
         .slice(0, 4), // dev.to limits tags to 4 because dev.to limits 4 tags
       organization_id: 10134, // https://dev.to/dashboard/organization/10134
     },
