@@ -61,9 +61,9 @@ async function postLinkedIn({ context, isBlog, postUrl }) {
 
   // Post from both accounts
   const gitautoPost = await createPost(gitautoUrn);
-  const gitautoPostUrn = `urn:li:share:${gitautoPost.id}`;
+  const gitautoPostUrn = gitautoPost.headers["x-restli-id"];
   const wesPost = await createPost(wesUrn);
-  const wesPostUrn = `urn:li:share:${wesPost.id}`;
+  const wesPostUrn = wesPost.headers["x-restli-id"];
 
   // Wait and like each other's posts
   await sleep(getRandomDelay());
