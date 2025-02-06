@@ -1,25 +1,36 @@
 export const metadata = {
-  title: "Case Study: Adding an Automated Unit Test with GitAuto",
+  title: "How to Add an Automated Unit Test with a Coding Agent",
   description:
     "A real-world example of how GitAuto handles adding an automated unit test autonomously, demonstrating its ability to understand requirements and adapt through iterations.",
   alternates: { canonical: "/blog/add-a-unit-test" },
   openGraph: { url: "/blog/add-a-unit-test" },
   author: "Wes Nishio",
   authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
-  tags: ["solution", "case-study", "unit-testing", "automation", "testing"],
+  tags: ["solution", "case-study", "unit-testing", "python", "pytest", "GitHub Actions"],
   createdAt: "2025-01-01",
-  updatedAt: "2025-01-01",
+  updatedAt: "2025-02-06",
 };
 
-# Case Study: Adding an Automated Unit Test with GitAuto
+# How to Add an Automated Unit Test with a Coding Agent, GitAuto
 
 We all know unit testing is important. But let me guess - while you agree with its importance, you haven't been able to prioritize it? There are customer-facing features waiting to be developed, critical bugs to be fixed, and it's hard to justify slowing down development to add tests? Well, what if we could delegate this task to an AI Coding Agent? If it works, your human engineers can continue focusing on their current priorities!
 
-## The Challenge
+## TL;DR - What's the story?
+
+1. [The Challenge](#1-the-challenge)
+2. [First Attempt](#2-first-attempt)
+3. [Iteration 1: Constants](#3-iteration-1-constants)
+4. [Iteration 2: Class vs. Functions](#4-iteration-2-class-vs-functions)
+5. [Iteration 3: Mocking Strategy](#5-iteration-3-mocking-strategy)
+6. [Meeting the Requirements](#6-meeting-the-requirements)
+7. [Test Execution](#7-test-execution)
+8. [The Bigger Picture](#8-the-bigger-picture)
+
+## 1. The Challenge
 
 Let's start with a simple test case. I created an issue titled ["Add unit tests to services/github/branch_manager.py"](https://github.com/gitautoai/gitauto/issues/440). This file, `services/github/branch_manager.py`, is from [GitAuto's own repository](https://github.com/gitautoai/gitauto) and handles GitHub branch operations. I'll admit - I developed this without unit tests initially. Let's see how GitAuto handles adding them.
 
-## First Attempt
+## 2. First Attempt
 
 I simply assigned the issue to GitAuto with just the title - no detailed requirements. Within a minute, it created [this pull request](https://github.com/gitautoai/gitauto/pull/441/files). The result was surprisingly good, and it even taught me something about unit testing:
 
@@ -31,7 +42,7 @@ I simply assigned the issue to GitAuto with just the title - no detailed require
 
 Interesting! It used the `@patch` decorator to mock external dependencies, isolating the unit test from external libraries and functions. It even correctly handled multiple decorators, maintaining the proper order between decorators and function arguments.
 
-## Iteration 1: Constants
+## 3. Iteration 1: Constants
 
 While the implementation looked good, there was one issue:
 
@@ -45,7 +56,7 @@ While the implementation looked good, there was one issue:
 
 These hardcoded values would be frequently used across tests. For better maintainability, they should be in a separate constants file. I added this as a requirement to [the original issue](https://github.com/gitautoai/gitauto/issues/440) and had GitAuto try again.
 
-## Iteration 2: Class vs. Functions
+## 4. Iteration 2: Class vs. Functions
 
 The [next GitAuto's attempt](https://github.com/gitautoai/gitauto/pull/443/files) introduced a class-based approach:
 
@@ -57,7 +68,7 @@ The [next GitAuto's attempt](https://github.com/gitautoai/gitauto/pull/443/files
 
 This highlights an interesting aspect of current AI models - their non-deterministic nature can be both a blessing and a curse. In my repository, we avoid using classes for tests, but GitAuto couldn't know this without exploring other files (which we currently limit to maintain focus). This will eventually be configurable through GitAuto's homepage as a repository-specific coding style setting, for example, `Prefer using classes or functions`.
 
-## Iteration 3: Mocking Strategy
+## 5. Iteration 3: Mocking Strategy
 
 The [third GitAuto's attempt](https://github.com/gitautoai/gitauto/pull/444/files) looked promising but was missing the patch decorator:
 
@@ -68,7 +79,7 @@ The [third GitAuto's attempt](https://github.com/gitautoai/gitauto/pull/444/file
 
 This was actually my fault - I hadn't specified that we wanted to use patch decorators for mocking. Previous attempts included it by chance. Whether to use patch decorators or other mocking approaches is often a matter of preference and can depend on the repository's size and testing philosophy. I would go with patch decorators for this case so I added it to the requirements to [the original issue](https://github.com/gitautoai/gitauto/issues/440).
 
-## Meeting the Requirements
+## 6. Meeting the Requirements
 
 The [latest pull request](https://github.com/gitautoai/gitauto/pull/446/files) met all our specified requirements. GitAuto even provided a clear explanation in the PR description:
 
@@ -81,7 +92,7 @@ The [latest pull request](https://github.com/gitautoai/gitauto/pull/446/files) m
 4. Use the @patch decorator for mocking requests: This approach isolates tests by mocking external HTTP requests, ensuring tests are fast, reliable, and do not depend on external services.
 ```
 
-## Test Execution
+## 7. Test Execution
 
 OK, the code looks good, so let's run the tests. Surprisingly, they failed! Wait! Looking at the [error log](https://github.com/gitautoai/gitauto/actions/runs/12570821948/job/35041040734), we see:
 
@@ -121,7 +132,7 @@ Indeed, we're importing pytest but not using it directly. This is something we c
 
 After fixing these issues manually ([see the commit](https://github.com/gitautoai/gitauto/pull/446/commits/fb9b33edc2fc2bf2e9b6b45d8e138563298b8369)), the tests [passed successfully](https://github.com/gitautoai/gitauto/actions/runs/12571075555/job/35041570883?pr=446). Time to merge! You can see the complete journey in the [final merged pull request](https://github.com/gitautoai/gitauto/pull/446).
 
-## The Bigger Picture
+## 8. The Bigger Picture
 
 Can you see the potential? By creating multiple unit test tickets and assigning them to GitAuto, you can improve test coverage while only needing human engineers for review. This means you can enhance release safety without sacrificing development speed on your primary tasks.
 
