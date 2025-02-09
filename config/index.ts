@@ -4,7 +4,7 @@ export const isPrd = process.env.NODE_ENV === "production";
 export const EMAIL = "info@gitauto.ai";
 export const PRODUCT_NAME = "GitAuto";
 export const DESCRIPTION =
-  "GitAuto, an AI Coding Agent, helps engineering teams facing resource constraints and hiring challenges to fix more bugs and ship more features by automatically writing code and creating GitHub pull requests from your GitHub issues every day.";
+  "GitAuto, an AI Coding Agent, helps engineering teams facing resource constraints and hiring challenges to fix more bugs and ship more features by automatically writing code and creating GitHub pull requests from your GitHub and Jira issues every day.";
 export const KEYWORDS = [
   "AI",
   "artificial intelligence",
@@ -22,16 +22,15 @@ export const KEYWORDS = [
   "automatic pr for issues",
 ];
 export const TAGLINES = [
-  "Let your AI Coding Agent write code.",
-  "Let your AI Coding Agent resolve your issues.",
-  "Let your AI Coding Agent fix your bugs.",
-  "Let your AI Coding Agent develop your features.",
-  "Let your AI Coding Agent create pull requests.",
-  "Let your AI Coding Agent draft code.",
-  "Hire your AI Coding Agent to fill resource gaps.",
-  "Accelerate your engineering team's velocity.",
-  "Increase your engineering team's output.",
-  "Enhance your engineering team's productivity.",
+  "Have GitAuto write your code.",
+  "Have GitAuto resolve your issues.",
+  "Have GitAuto create pull requests.",
+  "Have GitAuto write unit test cases.",
+  "Have GitAuto write integration test cases.",
+  "Have GitAuto write E2E test cases.",
+  "Have GitAuto fix bugs from error logs.",
+  "Hire GitAuto to fill your resource gaps.",
+  "Assign GitAuto to your open issues.",
 ];
 
 // Atlassian Credentials
