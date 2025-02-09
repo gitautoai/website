@@ -46,13 +46,10 @@ const ValueProp = () => {
         {TAGLINES[currentTaglineIndex]}
       </h1>
       <p className="text-lg sm:text-lg md:text-2xl lg:text-3xl">
-        GitAuto automatically writes code and creates pull requests daily for your issues on GitHub,
-        fixing more bugs and shipping more features.
+        GitAuto writes code and opens pull requests from GitHub & Jira issues for automated test case creation.
       </p>
       <InstallButton text="Get Started for Free" />
-      <p className="text-base sm:text-sm md:text-base lg:text-lg">
-        It requires GitHub sign-in.
-      </p>
+      <p className="text-base sm:text-sm md:text-base lg:text-lg">It requires GitHub sign-in.</p>
     </div>
   );
 };
