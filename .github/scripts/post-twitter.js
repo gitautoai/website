@@ -26,8 +26,8 @@ async function postTwitter({ context, isBlog, postUrl }) {
   const description = context.payload.pull_request.body || "";
 
   // Non-paid account, we can only post 280 characters. Paid account can post 250,000 characters.
-  const combinedText = description ? `${title}\n\n${description}` : title;
-  const tweet = `${message}: ${combinedText}\n\n${url}`;
+  const combinedText = description ? `${title} ${url}\n\n${description}` : `${title} ${url}`;
+  const tweet = `${message}: ${combinedText}`;
 
   // Senders have to be in the community
   // https://x.com/hnishio0105/communities
