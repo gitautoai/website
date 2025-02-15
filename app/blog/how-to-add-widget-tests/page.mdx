@@ -37,7 +37,7 @@ Today's case study involves a Flutter UI widget (component) library project. Sin
 
 ## 2. Creating the Test Case
 
-I created a GitHub issue titled "Add a widget test for lib/components/badge/gf_badge.dart":
+I created a GitHub issue titled ["Add a widget test for lib/components/badge/gf_badge.dart"](https://github.com/gitautoai/sample-flutter-getwidget/issues/7):
 
 ![GitHub Issue Creation](/blog/how-to-add-widget-tests/step2.png)
 
@@ -45,7 +45,7 @@ Notice that I didn't specify any test requirements - let's see what GitAuto come
 
 ## 3. Analyzing GitAuto's Implementation
 
-Here's the initial pull request and commit from GitAuto:
+[Here](https://github.com/gitautoai/sample-flutter-getwidget/pull/10/commits/8b1bc15e0a10d2122e09287272fd574f4d570db6) is the initial pull request and commit from GitAuto:
 
 ![Initial Pull Request](/blog/how-to-add-widget-tests/step3-1.png)
 
@@ -67,11 +67,11 @@ For those new to Flutter testing (like myself), here's a quick explanation of th
 
 ## 4. Test Execution and Self-Healing
 
-The initial test run failed:
+[The initial test run](https://github.com/gitautoai/sample-flutter-getwidget/actions/runs/13336680469/job/37253368952) failed:
 
 ![Failed Test Run](/blog/how-to-add-widget-tests/step4-1.png)
 
-However, GitAuto demonstrated its self-healing capability by automatically creating a fix commit:
+However, GitAuto demonstrated its self-healing capability by automatically creating [a fix commit](https://github.com/gitautoai/sample-flutter-getwidget/pull/10/commits/c2c2a6efe37e451405253844464d8c42a595137e):
 
 ![Fix Commit](/blog/how-to-add-widget-tests/step4-2.png)
 
@@ -79,7 +79,7 @@ Interestingly, the fix was in an unrelated file. Looking at the error logs, I co
 
 ![GitHub Actions Configuration](/blog/how-to-set-up-automated-test-with-github-actions/step4-1.png)
 
-The tests were automatically re-run and passed successfully:
+The tests were automatically re-run and [passed successfully](https://github.com/gitautoai/sample-flutter-getwidget/actions/runs/13336708219/job/37253454679):
 
 ![Successful Test Run](/blog/how-to-add-widget-tests/step4-4.png)
 
