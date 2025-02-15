@@ -34,19 +34,19 @@ Let's see how we can leverage GitAuto, a QA Coding Agent, to set this up!
 
 ## 1. The Challenge
 
-The first step was to set up GitHub Actions for automated testing. I created a GitHub issue with the title "Add a GitHub Actions workflow to automatically conduct flutter test". I only specified the trigger conditions in the description:
+The first step was to set up GitHub Actions for automated testing. I created a GitHub issue with the title ["Add a GitHub Actions workflow to automatically conduct flutter test"](https://github.com/gitautoai/sample-flutter-getwidget/issues/8). I only specified the trigger conditions in the description:
 
 ![GitHub Issue Creation](/blog/how-to-set-up-automated-test-with-github-actions/step1.png)
 
 ## 2. Initial Setup
 
-Here's what GitAuto came up with - interestingly, it even provided a dummy test without being explicitly asked:
+[Here](https://github.com/gitautoai/sample-flutter-getwidget/pull/9/files) is what GitAuto came up with - interestingly, it even provided a dummy test without being explicitly asked:
 
 ![GitHub Actions Workflow](/blog/how-to-set-up-automated-test-with-github-actions/step2.png)
 
 ## 3. Verification
 
-Let's check if the automated tests are actually running. Looking at the pull request checks:
+Let's check if the automated tests are actually running. Looking at the pull request [checks](https://github.com/gitautoai/sample-flutter-getwidget/actions/runs/13319607830/job/37201547739):
 
 ![PR Checks Green](/blog/how-to-set-up-automated-test-with-github-actions/step3-1.png)
 
