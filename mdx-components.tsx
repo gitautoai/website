@@ -36,7 +36,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         return (
           <a
             href={href}
-            className="cursor-pointer text-pink-500 visited:text-pink-700 underline text-base md:text-lg"
+            className="cursor-pointer text-orange-500 visited:text-orange-700 underline text-base md:text-lg"
           >
             {children}
           </a>
