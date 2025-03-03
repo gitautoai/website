@@ -7,12 +7,12 @@ export const INTERNAL_LINKS = [
     text: "Home",
     category: "product",
   },
-  {
-    href: RELATIVE_URLS.PROBLEM,
-    eventType: "problem",
-    text: "Problem",
-    category: "product",
-  },
+  // {
+  //   href: RELATIVE_URLS.PROBLEM,
+  //   eventType: "problem",
+  //   text: "Problem",
+  //   category: "product",
+  // },
   {
     href: RELATIVE_URLS.HOW_IT_WORKS,
     eventType: "how_it_works",
