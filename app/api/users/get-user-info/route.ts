@@ -12,6 +12,13 @@ const schema = z.object({
   jwtToken: z.string(),
 });
 export async function GET(req: NextRequest) {
+  const startTime = performance.now();
+
+  // Add caching headers
+  const headers = {
+    "Cache-Control": "public, max-age=60, s-maxage=120, stale-while-revalidate=300",
+  };
+
   try {
     const url = new URL(req.url);
     const params = new URLSearchParams(url.searchParams);
@@ -34,7 +41,14 @@ export async function GET(req: NextRequest) {
       include: {
         installations: {
           include: {
-            owners: true,
+            owners: {
+              select: {
+                owner_id: true,
+                stripe_customer_id: true,
+                created_at: true,
+                created_by: true,
+              },
+            },
           },
         },
         users: {
@@ -43,20 +57,21 @@ export async function GET(req: NextRequest) {
           },
         },
       },
+      orderBy: [
+        {
+          installations: {
+            owner_type: "desc", // Make sure "User" comes first
+          },
+        },
+        {
+          installations: {
+            created_at: "asc",
+          },
+        },
+      ],
     });
 
-    // owner_type == "User" comes first in the list of users
-    user.sort((a: any, b: any) => {
-      if (a.installations.owner_type === "User" && b.installations.owner_type !== "User") {
-        return -1;
-      } else if (a.installations.owner_type !== "User" && b.installations.owner_type === "User") {
-        return 1;
-      } else {
-        return a.installations.created_at - b.installations.created_at;
-      }
-    });
-
-    return new NextResponse(stringify(user), { status: 200 });
+    return new NextResponse(stringify(user), { status: 200, headers });
   } catch (err: any) {
     console.error("Error in get-user-info", err);
     if (err instanceof ZodError) {
@@ -66,5 +81,8 @@ export async function GET(req: NextRequest) {
       console.error("Unexpected error", err.message);
       return new NextResponse(err, { status: 400 });
     }
+  } finally {
+    const endTime = performance.now();
+    console.log(`get-user-info execution time: ${endTime - startTime}ms`);
   }
 }

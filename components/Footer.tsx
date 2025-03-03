@@ -3,6 +3,7 @@
 // Third party imports
 import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
+import { usePathname } from "next/navigation";
 
 // Local imports
 import { useAccountContext } from "@/components/Context/Account";
@@ -14,6 +15,9 @@ export default function Footer() {
   // Analytics
   const posthog = usePostHog();
   const { userInfosSubscribed, selectedIndex } = useAccountContext();
+  const pathname = usePathname();
+  const isSettingsPage = pathname?.startsWith("/settings");
+  if (isSettingsPage) return null;
 
   const groupedLinks = INTERNAL_LINKS.reduce((acc, link) => {
     if (!acc[link.category]) acc[link.category] = [] as (typeof INTERNAL_LINKS)[number][];

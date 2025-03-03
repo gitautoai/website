@@ -6,8 +6,47 @@ import useSWR from "swr";
 import { isTokenExpired } from "@/utils/auth";
 import { RELATIVE_URLS } from "@/config/index";
 
+interface Owner {
+  owner_id: string;
+  stripe_customer_id: string;
+  created_at: string;
+  created_by: string | null;
+}
+
+interface Installation {
+  installation_id: string;
+  owner_id: string;
+  owner_type: "User" | "Organization";
+  owner_name: string;
+  owners: Owner;
+  uninstalled_at: string | null;
+  uninstalled_by: string | null;
+  created_at: string;
+  created_by: string | null;
+}
+
+interface User {
+  user_name: string;
+}
+
+interface UserInfo {
+  id: string;
+  user_id: string;
+  installation_id: string;
+  is_user_assigned: boolean;
+  first_issue: boolean;
+  is_selected: boolean;
+  is_active: boolean;
+  installations: Installation;
+  users: User;
+  created_at: string;
+  created_by: string | null;
+  deleted_at: string | null;
+  deleted_by: string | null;
+}
+
 const AccountContext = createContext<{
-  userInfos: any; // All users, installations, owners associated with this github account
+  userInfos: UserInfo[] | undefined;
   mutateUserInfos: () => void;
   userInfosSubscribed: boolean[] | null; // whether a given userInfo has a live subscription or not
   selectedIndex: number | null; // Index of selected account
@@ -18,7 +57,7 @@ const AccountContext = createContext<{
   installationIds: number[];
   jwtToken: string | null;
 }>({
-  userInfos: null,
+  userInfos: undefined,
   mutateUserInfos: () => {},
   userInfosSubscribed: null,
   selectedIndex: null,
@@ -43,39 +82,62 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   // Get userId and jwtToken from session object
   useEffect(() => {
     if (!session) return;
-    const fetchSession = async () => {
-      setUserId(session.user.userId);
-      setUserName(session.user.name || "Unknown User Name");
-      setEmail(session.user.email || "Unknown Email");
-      if (isTokenExpired(session.jwtToken)) signOut({ callbackUrl: "/" });
-      setJwtToken(session.jwtToken);
-    };
-    fetchSession();
-  }, [session]);
+    console.log("session", session);
+    setUserId(session.user.userId);
+    setUserName(session.user.name || "Unknown User Name");
+    setEmail(session.user.email || "Unknown Email");
+    if (isTokenExpired(session.jwtToken)) {
+      signOut({ callbackUrl: "/" });
+      return;
+    }
+    setJwtToken(session.jwtToken);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.jwtToken, session?.user.email, session?.user.name, session?.user.userId]);
 
   let getUserInfoUrl = "";
   let getUserInfosSubscribed = "";
-  if (userId && jwtToken) {
+  if (userId && jwtToken)
     getUserInfoUrl = `/api/users/get-user-info?userId=${userId}&jwtToken=${jwtToken}`;
-  }
 
-  const { data: userInfos, mutate: mutateUserInfos } = useSWR(getUserInfoUrl, async () => {
-    const res = await fetch(getUserInfoUrl);
-    return res.json();
-  });
+  // Common SWR options
+  const swrOptions = {
+    revalidateOnFocus: false,
+    dedupingInterval: 300000, // 5 minutes
+    suspense: true,
+    keepPreviousData: true,
+  };
+
+  // Common fetch function
+  const fetchWithCache = async (url: string, logLabel: string) => {
+    const res = await fetch(url, {
+      next: { revalidate: 300 }, // Tell Next.js to cache the response for 300 seconds
+      cache: "force-cache", // Tell fetch to use the browser's HTTP cache
+    });
+
+    if (!res.ok) throw new Error(`Failed to fetch ${logLabel}`);
+
+    return await res.json();
+  };
+
+  const { data: userInfos, mutate: mutateUserInfos } = useSWR<UserInfo[]>(
+    getUserInfoUrl,
+    () => fetchWithCache(getUserInfoUrl, "userInfos"),
+    swrOptions
+  );
 
   // Get userinfos that have a live subscription
   if (userInfos) {
     const customerIds: string[] = userInfos.map(
-      (user: any) => user.installations.owners.stripe_customer_id
+      (user: UserInfo) => user.installations.owners.stripe_customer_id
     );
     getUserInfosSubscribed = `/api/stripe/get-userinfo-subscriptions?userId=${userId}&jwtToken=${jwtToken}&customerIds=${customerIds}`;
   }
 
-  const { data: userInfosSubscribed } = useSWR(getUserInfosSubscribed, async () => {
-    const res = await fetch(getUserInfosSubscribed);
-    return res.json();
-  });
+  const { data: userInfosSubscribed } = useSWR(
+    getUserInfosSubscribed,
+    () => fetchWithCache(getUserInfosSubscribed, "userInfosSubscribed"),
+    swrOptions
+  );
 
   useEffect(() => {
     async function setInstallationFallback() {

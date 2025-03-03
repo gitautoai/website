@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 // Components
 import HamburgerMenu from "./hamburgerMenu";
 import MobileDrawer from "./MobileMenu";
+import AuthControls from "@/components/AuthControls";
 
 // Analytics
 import { usePostHog } from "posthog-js/react";
@@ -28,6 +29,7 @@ export default function Navbar() {
   // Analytics
   const pathname = usePathname();
   const posthog = usePostHog();
+  const isSettingsPage = pathname?.startsWith("/settings");
 
   const { data: session, status } = useSession();
 
@@ -42,6 +44,7 @@ export default function Navbar() {
     }
   }, [pathname, posthog]);
 
+  if (isSettingsPage) return null;
   return (
     <div className="absolute top-0 left-0 flex flex-col w-full justify-center items-center font-helvetica sm:text-md xl:text-lg bg-white px-0 md:px-24">
       <div className="flex flex-col w-full">
@@ -60,46 +63,7 @@ export default function Navbar() {
                 </Link>
               </li>
             ))}
-            {status === "unauthenticated" && (
-              <>
-                <li>
-                  <Link
-                    href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
-                    target="_blank"
-                    onClick={() => {
-                      posthog.capture("$click", {
-                        $event_type: "github_app_install_nav",
-                        $current_url: window.location.href,
-                      });
-                    }}
-                    className={`${buttonStyles}`}
-                  >
-                    Get Started
-                  </Link>
-                </li>
-                <li>
-                  <motion.button
-                    whileHover={{
-                      scale: 1.04,
-                      transition: { duration: 0.1 },
-                    }}
-                    whileTap={{
-                      scale: 0.98,
-                      transition: { duration: 0.1 },
-                    }}
-                    onClick={() => {
-                      signIn("github", {
-                        callbackUrl: `/`,
-                      });
-                    }}
-                    className="border border-pink-600 text-black rounded-lg transition-colors duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer mr-5"
-                  >
-                    Sign In
-                  </motion.button>
-                </li>
-              </>
-            )}
-            {status === "authenticated" && <ProfileIcon session={session} />}
+            <AuthControls />
           </ol>
           <HamburgerMenu
             setIsNavOpen={setIsNavOpen}
