@@ -12,6 +12,7 @@ import Navbar from "@/components/Navbar";
 import { PHProvider } from "@/components/PostHog";
 import SessionProvider from "@/components/SessionProvider";
 import { AccountContextWrapper } from "@/components/Context/Account";
+import { GitHubProvider } from "@/components/Context/GitHub";
 import Footer from "@/components/Footer";
 import IntercomMessenger from "@/components/Intercom";
 
@@ -31,11 +32,7 @@ export const metadata: Metadata = defaultMetadata;
  * Root Layout for the entire application
  * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required
  */
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       {isPrd && (
@@ -48,20 +45,20 @@ export default function RootLayout({
           <Suspense>
             <SessionProvider>
               <AccountContextWrapper>
-                <Providers>
-                  <Navbar />
-                  <main className="px-4 sm:px-8 md:px-16">
-                    {children}
-                  </main>
-                  <Footer />
-                  <IntercomMessenger />
-                  {isPrd && (
-                    <>
-                      <SpeedInsights />
-                      <Analytics mode={"production"} />
-                    </>
-                  )}
-                </Providers>
+                <GitHubProvider>
+                  <Providers>
+                    <Navbar />
+                    <main className="px-4 sm:px-8 md:px-16">{children}</main>
+                    <Footer />
+                    <IntercomMessenger />
+                    {isPrd && (
+                      <>
+                        <SpeedInsights />
+                        <Analytics mode={"production"} />
+                      </>
+                    )}
+                  </Providers>
+                </GitHubProvider>
               </AccountContextWrapper>
             </SessionProvider>
           </Suspense>

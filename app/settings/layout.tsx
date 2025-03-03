@@ -1,0 +1,38 @@
+"use client";
+import { useState } from "react";
+import SettingsMenu from "./components/SettingsMenu";
+import MobileSettingsMenu from "./components/MobileSettingsMenu";
+import AuthControls from "@/components/AuthControls";
+
+export default function SettingsLayout({ children }: { children: React.ReactNode }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen flex">
+      {/* Desktop Menu */}
+      <div className="hidden lg:block lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-64 lg:bg-gray-50 lg:border-r">
+        <SettingsMenu />
+      </div>
+
+      {/* Auth Controls - Top Right with mobile menu toggle functionality */}
+      <div className="fixed top-6 right-6 z-40 flex items-center gap-2">
+        <div className="hidden lg:block">
+          <AuthControls callbackUrl="/settings" />
+        </div>
+        <div className="lg:hidden">
+          <div onClick={() => setIsMobileMenuOpen(true)}>
+            <AuthControls callbackUrl="/settings" mobileMenuTrigger={true} />
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <MobileSettingsMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
+
+      {/* Main Content */}
+      <main className="flex-1 lg:ml-64">
+        <div className="max-w-7xl mx-auto p-8">{children}</div>
+      </main>
+    </div>
+  );
+}

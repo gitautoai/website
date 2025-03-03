@@ -26,7 +26,9 @@ export function useRows() {
   const [integrationRows, setIntegrationRows] = useState<IntegrationRow[]>([createDefaultRow()]);
 
   useEffect(() => {
-    const fetchInitialRows = async () => {
+    // setTimeout to move async process to microtask queue
+    console.log("API call: get-jira-github-link");
+    setTimeout(async () => {
       try {
         const response = await fetch("/api/supabase/get-jira-github-link");
         const { data } = await response.json();
@@ -45,9 +47,7 @@ export function useRows() {
         console.error("Failed to fetch initial rows:", error);
         setIntegrationRows([createDefaultRow()]);
       }
-    };
-
-    fetchInitialRows();
+    }, 0);
   }, []);
 
   const addNewRow = () => setIntegrationRows([...integrationRows, createDefaultRow()]);

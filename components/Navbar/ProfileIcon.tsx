@@ -14,15 +14,30 @@ import { Menu, MenuButton, MenuList, MenuItem, useDisclosure } from "@chakra-ui/
 
 interface ProfileIconProps {
   session: Session | null;
+  mobileMenuTrigger?: boolean;
 }
 
-const ProfileIcon = ({ session }: ProfileIconProps) => {
+const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { userId, jwtToken, email, userInfos, selectedIndex, userInfosSubscribed } =
     useAccountContext();
 
   const router = useRouter();
+
+  // Skip rendering the menu if this is a mobile menu trigger
+  if (mobileMenuTrigger) {
+    return (
+      <Image
+        height="40"
+        width="40"
+        className="rounded-full"
+        priority={true}
+        alt={session?.user?.name || "A round user profile picture"}
+        src={session?.user?.image || ""}
+      />
+    );
+  }
 
   const createPortalOrCheckoutURL = async (
     userId: number | null,

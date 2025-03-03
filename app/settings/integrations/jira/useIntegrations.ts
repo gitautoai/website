@@ -14,53 +14,63 @@ export function useIntegrations() {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
 
-  // Jira connection status
+  // Jira connection status - move async process to microtask queue
   useEffect(() => {
-    const fetchJiraConnection = async () => {
-      if (!session?.user?.userId) return;
-      const query = new URLSearchParams({ userId: session.user.userId, serviceName: "jira" });
-      const response = await fetch(`/api/supabase/get-oauth-token?${query}`);
-      const data = await response.json();
-      setIsConnected(!!data.accessToken);
-    };
-    fetchJiraConnection();
-  }, [session]);
+    if (!session?.user?.userId) return;
+    console.log("API call: get-oauth-token");
+
+    // setTimeout with 0ms delay to move async process to microtask queue
+    setTimeout(async () => {
+      try {
+        const query = new URLSearchParams({ userId: session.user.userId, serviceName: "jira" });
+        const response = await fetch(`/api/supabase/get-oauth-token?${query}`);
+        const data = await response.json();
+        setIsConnected(!!data.accessToken);
+      } catch (error) {
+        console.error("Failed to fetch Jira connection:", error);
+      }
+    }, 0);
+  }, [session?.user?.userId]);
 
   // Fetch Jira sites and projects
   useEffect(() => {
-    const fetchJiraProjects = async () => {
-      if (!session?.user?.userId) return;
-      const query = new URLSearchParams({ userId: session.user.userId });
-      const response = await fetch(`/api/jira/get-projects?${query}`);
-      const sitesWithProjects: JiraSiteWithProjects[] = await response.json();
-      if (!sitesWithProjects.length) return;
-      setJiraSites(sitesWithProjects);
-    };
-    fetchJiraProjects();
+    if (!session?.user?.userId) return;
+    console.log("API call: get-projects");
+    // setTimeout to move async process to microtask queue
+    setTimeout(async () => {
+      try {
+        const query = new URLSearchParams({ userId: session.user.userId });
+        const response = await fetch(`/api/jira/get-projects?${query}`);
+        const sitesWithProjects: JiraSiteWithProjects[] = await response.json();
+        if (!sitesWithProjects.length) return;
+        setJiraSites(sitesWithProjects);
+      } catch (error) {
+        console.error("Failed to fetch Jira projects:", error);
+      }
+    }, 0);
   }, [session?.user?.userId]);
 
   // Fetch GitHub repositories
   useEffect(() => {
     if (!installationIds.length) return;
-    const fetchGitHubRepositories = async () => {
-      const results = await Promise.allSettled(
-        installationIds.map(async (installationId) => {
-          const url = `/api/github/get-installed-repos?installationId=${installationId}`;
-          const responseRepos = await fetch(url);
-          const formattedData: GitHubOwnerWithRepos = await responseRepos.json();
-          // console.log("formattedData in useIntegrations: ", formattedData);
-          return formattedData;
-        })
-      );
+    console.log("API call: get-installed-repos");
+    // setTimeout to move async process to microtask queue
+    setTimeout(async () => {
+      try {
+        const response = await fetch("/api/github/get-installed-repos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ installationIds }),
+        });
 
-      const allOwners = results.reduce<GitHubOwnerWithRepos[]>((acc, result) => {
-        if (result.status === "fulfilled") return [...acc, result.value];
-        return acc;
-      }, []);
-
-      setGithubOwners(allOwners);
-    };
-    fetchGitHubRepositories();
+        if (!response.ok) throw new Error("Failed to fetch GitHub repositories");
+        const owners: GitHubOwnerWithRepos[] = await response.json();
+        setGithubOwners(owners);
+      } catch (error) {
+        console.error("Error fetching GitHub repositories:", error);
+        setGithubOwners([]);
+      }
+    }, 0);
   }, [installationIds]);
 
   const handleJiraAuth = async () => {

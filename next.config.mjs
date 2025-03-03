@@ -13,6 +13,12 @@ const nextConfig = {
   },
   // https://nextjs.org/docs/app/api-reference/next-config-js/logging
   logging: false,
+  // logging: {
+  //   fetches: {
+  //     fullUrl: true,
+  //   },
+  //   level: "debug",
+  // },
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   reactStrictMode: false,
   experimental: {
