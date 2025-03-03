@@ -6,7 +6,7 @@ import FAQ from "@/components/HomePage/FAQ";
 import HowItWorks from "@/components/HomePage/HowItWorks";
 import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
 import Pricing from "@/components/HomePage/Pricing";
-import Problem from "@/components/HomePage/Problem";
+// import Problem from "@/components/HomePage/Problem";
 import UseCases from "@/components/HomePage/UseCases";
 import ValueProp from "@/components/HomePage/ValueProp";
 
@@ -30,7 +30,7 @@ export default function Home() {
   return (
     <div className="flex flex-col justify-center items-center px-4 md:px-24">
       <ValueProp />
-      <Problem />
+      {/* <Problem /> */}
       <HowItWorks />
       <UseCases />
       <HowToGetStarted />
