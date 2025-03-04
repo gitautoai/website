@@ -1,0 +1,44 @@
+ = API Documentation: /api/auth/nextauth
+ 
+ == Endpoint Overview
+ * Path: /api/auth/nextauth
+ * Methods: GET, POST
+ * Description: Implements authentication using NextAuth with a GitHub provider. Supports session retrieval and OAuth based authentication.
+ 
+ == Request Parameters
+ * Query Parameters: None.
+ * Request Body (POST):
+   --
+   Typically, the OAuth flow handles credentials and redirection. There is no manual credential input.
+   --
+ 
+ == Response Format
+ * HTTP Status Codes:
+   ** 200 OK - Successful authentication or session retrieval.
+   ** 400 Bad Request - Invalid request parameters.
+   ** 500 Internal Server Error - Server-side error.
+ * Response Body Example:
+   ----
+   {
+     "user": {
+       "userId": 123,
+       "name": "User Name"
+     },
+     "jwtToken": "generated-jwt-token"
+   }
+   ----
+ 
+ == Error Handling
+ * Logs errors and returns appropriate status codes.
+ * 401 Unauthorized may be returned if session validation fails.
+ 
+ == Authentication & Authorization
+ * Uses GitHub OAuth via NextAuth.
+ * Requires GitHub client credentials as specified in the configuration.
+ * JWT token is signed using the HS256 algorithm.
+ 
+ == Rate Limits
+ * Not enforced.
+ 
+ == Versioning
+ * No specific API version is provided.
