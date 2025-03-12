@@ -16,14 +16,8 @@ import CheckMark from "@/components/Symbol/CheckMark";
 // Third Party
 import { signIn } from "next-auth/react";
 import { Spinner } from "@chakra-ui/react";
-import {
-  ABSOLUTE_URLS,
-  OPENAI_MODEL_GPT_4O,
-  OPENAI_MODEL_O1_MINI,
-  OPENAI_MODEL_O3_MINI,
-  RELATIVE_URLS,
-} from "@/config";
-import { ANTHROPIC_MODEL_CLAUDE_35_SONNET } from "@/config/anthropic";
+import { ABSOLUTE_URLS, OPENAI_MODEL_O3_MINI, RELATIVE_URLS } from "@/config";
+import { ANTHROPIC_MODEL_CLAUDE_35, ANTHROPIC_MODEL_CLAUDE_37 } from "@/config/anthropic";
 import { DEEPSEEK_MODEL_R1 } from "@/config/deepseek";
 
 const pricingButtonStyles = `my-4 sm:my-2 md:my-8 rounded-lg transition-colors duration-200 
@@ -157,9 +151,15 @@ export default function Pricing() {
             Install
           </Link>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
-            <li><CheckMark /> {OPENAI_MODEL_GPT_4O} & {OPENAI_MODEL_O1_MINI}</li>
-            <li><CheckMark /> Up to 3 tickets per month</li>
-            <li><CheckMark /> GitHub Issue Templates</li>
+            <li>
+              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_35}
+            </li>
+            <li>
+              <CheckMark /> Up to 3 tickets per month
+            </li>
+            <li>
+              <CheckMark /> GitHub Issue Templates
+            </li>
           </ul>
         </div>
 
@@ -200,15 +200,33 @@ export default function Pricing() {
             )}
           </div>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
-            <li><CheckMark /> Everything in Free plan</li>
-            <li><CheckMark /> {OPENAI_MODEL_O3_MINI}</li>
-            <li><CheckMark /> per 10 tickets per month</li>
-            <li><CheckMark /> per organization</li>
-            <li><CheckMark /> Unlimited repositories</li>
-            <li><CheckMark /> Unlimited users</li>
-            <li><CheckMark /> Retry on GitHub Actions</li>
-            <li><CheckMark /> Daily self-execution</li>
-            <li><CheckMark /> Zero Data Retention</li>
+            <li>
+              <CheckMark /> Everything in Free plan
+            </li>
+            <li>
+              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_35}
+            </li>
+            <li>
+              <CheckMark /> per 10 tickets per month
+            </li>
+            <li>
+              <CheckMark /> per organization
+            </li>
+            <li>
+              <CheckMark /> Unlimited repositories
+            </li>
+            <li>
+              <CheckMark /> Unlimited users
+            </li>
+            <li>
+              <CheckMark /> Retry on GitHub Actions
+            </li>
+            <li>
+              <CheckMark /> Daily self-execution
+            </li>
+            <li>
+              <CheckMark /> Zero Data Retention
+            </li>
           </ul>
         </div>
 
@@ -234,14 +252,31 @@ export default function Pricing() {
             Contact Us
           </Link>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
-            <li><CheckMark /> Everything in Standard plan</li>
-            <li><CheckMark /> {OPENAI_MODEL_O3_MINI}, {ANTHROPIC_MODEL_CLAUDE_35_SONNET}, and {DEEPSEEK_MODEL_R1} etc.</li>
-            <li><CheckMark /> Unlimited tickets</li>
-            <li><CheckMark /> Self OpenAI API key</li>
-            <li><CheckMark /> Self hosting</li>
-            <li><CheckMark /> SAML / SSO</li>
-            <li><CheckMark /> Fine tuning with your data</li>
-            <li><CheckMark /> Dedicated Customer Support</li>
+            <li>
+              <CheckMark /> Everything in Standard plan
+            </li>
+            <li>
+              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_35}, {ANTHROPIC_MODEL_CLAUDE_37},{" "}
+              {OPENAI_MODEL_O3_MINI}, and {DEEPSEEK_MODEL_R1} etc.
+            </li>
+            <li>
+              <CheckMark /> Unlimited tickets
+            </li>
+            <li>
+              <CheckMark /> Self OpenAI API key
+            </li>
+            <li>
+              <CheckMark /> Self hosting
+            </li>
+            <li>
+              <CheckMark /> SAML / SSO
+            </li>
+            <li>
+              <CheckMark /> Fine tuning with your data
+            </li>
+            <li>
+              <CheckMark /> Dedicated Customer Support
+            </li>
           </ul>
         </div>
       </div>
