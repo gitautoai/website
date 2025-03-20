@@ -103,7 +103,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const swrOptions = {
     revalidateOnFocus: false,
     dedupingInterval: 300000, // 5 minutes
-    suspense: true,
+    suspense: false,
     keepPreviousData: true,
   };
 
