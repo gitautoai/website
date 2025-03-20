@@ -50,7 +50,7 @@ export function GitHubProvider({ children }: { children: React.ReactNode }) {
   const swrOptions = {
     revalidateOnFocus: false,
     dedupingInterval: 300000,
-    suspense: true,
+    suspense: false,
     keepPreviousData: true,
   };
 
