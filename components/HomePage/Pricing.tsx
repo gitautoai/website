@@ -28,7 +28,7 @@ export default function Pricing() {
   // Analytics
   const posthog = usePostHog();
 
-  const { userId, jwtToken, email, selectedIndex, userInfos, userInfosSubscribed } =
+  const { userId, jwtToken, email, selectedIndex, installations, installationsSubscribed } =
     useAccountContext();
 
   const router = useRouter();
@@ -42,18 +42,18 @@ export default function Pricing() {
     if (selectedIndex) currentIndex = selectedIndex;
 
     // If user has an installation, create portal or checkout session
-    if (userInfos && userInfos.length > 0) {
+    if (installations && installations.length > 0) {
       const response = await fetch("/api/stripe/create-portal-or-checkout-url", {
         method: "POST",
         body: JSON.stringify({
           userId: userId,
           jwtToken: jwtToken,
-          customerId: userInfos[currentIndex].installations.owners.stripe_customer_id,
+          customerId: installations[currentIndex].stripe_customer_id,
           email: email,
-          ownerType: userInfos[currentIndex].installations.owner_type,
-          ownerId: Number(userInfos[currentIndex].installations.owner_id.replace("n", "")),
-          ownerName: userInfos[currentIndex].installations.owner_name,
-          userName: userInfos[currentIndex].users.user_name,
+          ownerType: installations[currentIndex].owner_type,
+          ownerId: Number(installations[currentIndex].owner_id),
+          ownerName: installations[currentIndex].owner_name,
+          userName: installations[currentIndex].user_name,
           billingPeriod: billingPeriod,
         }),
       });
@@ -64,7 +64,7 @@ export default function Pricing() {
       // If not, redirect to installation page
       router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
     }
-  }, [email, jwtToken, router, selectedIndex, userId, userInfos, billingPeriod]);
+  }, [email, jwtToken, router, selectedIndex, userId, installations, billingPeriod]);
 
   // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
   async function handleSubscribe() {
@@ -79,7 +79,7 @@ export default function Pricing() {
       }
 
       // Signed in but no installation
-      if (!userInfos || userInfos.length === 0) {
+      if (!installations || installations.length === 0) {
         router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
         return;
       }
@@ -96,10 +96,18 @@ export default function Pricing() {
 
   // If "subscribe" in query parameter create checkout session or portal
   useEffect(() => {
-    if (searchParams.has("subscribe") && userInfos) {
+    if (searchParams.has("subscribe") && installations) {
       createPortalOrCheckoutURL();
     }
-  }, [searchParams, userInfos, selectedIndex, userId, jwtToken, router, createPortalOrCheckoutURL]);
+  }, [
+    searchParams,
+    installations,
+    selectedIndex,
+    userId,
+    jwtToken,
+    router,
+    createPortalOrCheckoutURL,
+  ]);
 
   return (
     <div
@@ -184,8 +192,8 @@ export default function Pricing() {
               }`}
             >
               {selectedIndex != null &&
-              userInfosSubscribed &&
-              userInfosSubscribed[selectedIndex] === true
+              installationsSubscribed &&
+              installationsSubscribed[selectedIndex] === true
                 ? "Manage Plan"
                 : "Subscribe"}
             </button>

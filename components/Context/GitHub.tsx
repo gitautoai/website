@@ -17,10 +17,15 @@ interface Organization {
 
 interface GitHubContextType {
   organizations: Organization[];
-  selectedRepo: string | null;
+  currentOwnerId: number | null;
+  currentOwnerName: string | null;
+  currentRepoId: number | null;
+  currentRepoName: string | null;
+  currentInstallationId: number | null;
   isLoading: boolean;
   error: string | null;
-  setSelectedRepo: (repoName: string | null) => void;
+  setCurrentOwnerName: (ownerName: string | null) => void;
+  setCurrentRepoName: (repoName: string | null) => void;
   refreshData: () => Promise<void>;
   loadSettings: (ownerName: string, repoName: string) => Promise<any>;
   saveSettings: (
@@ -33,10 +38,15 @@ interface GitHubContextType {
 
 const GitHubContext = createContext<GitHubContextType>({
   organizations: [],
-  selectedRepo: null,
+  currentOwnerId: null,
+  currentOwnerName: null,
+  currentRepoId: null,
+  currentRepoName: null,
+  currentInstallationId: null,
   isLoading: true,
   error: null,
-  setSelectedRepo: () => {},
+  setCurrentOwnerName: () => {},
+  setCurrentRepoName: () => {},
   refreshData: async () => {},
   loadSettings: async () => {},
   saveSettings: async () => {},
@@ -44,7 +54,8 @@ const GitHubContext = createContext<GitHubContextType>({
 
 export function GitHubProvider({ children }: { children: React.ReactNode }) {
   const { installationIds, jwtToken, userId } = useAccountContext();
-  const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
+  const [currentOwnerName, setCurrentOwnerName] = useState<string | null>(null);
+  const [currentRepoName, setCurrentRepoName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const swrOptions = {
@@ -95,12 +106,26 @@ export function GitHubProvider({ children }: { children: React.ReactNode }) {
     }
   );
 
-  // Load settings from Supabase
+  const currentOwnerId = currentOwnerName
+    ? organizations?.find((org) => org.ownerName === currentOwnerName)?.ownerId || null
+    : null;
+
+  const currentRepoId =
+    currentRepoName && currentOwnerName
+      ? organizations
+          ?.find((org) => org.ownerName === currentOwnerName)
+          ?.repositories.find((repo) => repo.repoName === currentRepoName)?.repoId || null
+      : null;
+
+  const currentInstallationId = currentOwnerName
+    ? installationIds.find((index) => organizations?.[index]?.ownerName === currentOwnerName) ||
+      null
+    : null;
+
   const loadSettings = async (ownerName: string, repoName: string) => {
     const startTime = performance.now();
 
     try {
-      // Find organization and repository IDs
       const org = organizations?.find((o) => o.ownerName === ownerName);
       const repo = org?.repositories.find((r) => r.repoName === repoName);
 
@@ -112,8 +137,8 @@ export function GitHubProvider({ children }: { children: React.ReactNode }) {
       const url = `/api/supabase/get-repository-settings?ownerId=${org.ownerId}&repoId=${repo.repoId}`;
       const response = await fetch(url, {
         priority: "high",
-        cache: "no-store", // Don't cache
-        next: { revalidate: 0 }, // Don't revalidate
+        cache: "no-store",
+        next: { revalidate: 0 },
       });
 
       if (!response.ok) throw new Error("Failed to fetch repository settings");
@@ -129,7 +154,6 @@ export function GitHubProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Save settings to Supabase (unified method)
   const saveSettings = async (
     ownerName: string,
     repoName: string,
@@ -138,7 +162,6 @@ export function GitHubProvider({ children }: { children: React.ReactNode }) {
   ) => {
     const startTime = performance.now();
     try {
-      // Find organization and repository IDs
       const org = organizations?.find((o) => o.ownerName === ownerName);
       const repo = org?.repositories.find((r) => r.repoName === repoName);
 
@@ -171,23 +194,73 @@ export function GitHubProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const handleOwnerSelection = (ownerName: string | null) => {
+    setCurrentOwnerName(ownerName);
+
+    if (ownerName) {
+      const org = organizations?.find((o) => o.ownerName === ownerName);
+      if (org && org.repositories.length > 0) {
+        setCurrentRepoName(org.repositories[0].repoName);
+      } else {
+        setCurrentRepoName(null);
+      }
+    } else {
+      setCurrentRepoName(null);
+    }
+  };
+
+  const handleRepoSelection = (repoName: string | null) => {
+    setCurrentRepoName(repoName);
+
+    if (repoName && !currentOwnerName) {
+      for (const org of organizations || []) {
+        const repo = org.repositories.find((r) => r.repoName === repoName);
+        if (repo) {
+          setCurrentOwnerName(org.ownerName);
+          break;
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     if (!organizations) return;
 
-    // Set first repo as default if none selected
-    if (!selectedRepo && organizations.length > 0 && organizations[0].repositories.length > 0) {
-      setSelectedRepo(organizations[0].repositories[0].repoName);
+    const savedRepo = localStorage.getItem("currentRepo");
+    const savedOwner = localStorage.getItem("currentOwner");
+
+    if (savedRepo && savedOwner) {
+      const orgExists = organizations.some((org) => org.ownerName === savedOwner);
+      const repoExists = organizations.some((org) =>
+        org.repositories.some((repo) => repo.repoName === savedRepo)
+      );
+
+      if (orgExists && repoExists) {
+        setCurrentOwnerName(savedOwner);
+        setCurrentRepoName(savedRepo);
+        return;
+      }
     }
-  }, [organizations, selectedRepo]);
+
+    if (organizations.length > 0 && organizations[0].repositories.length > 0) {
+      setCurrentOwnerName(organizations[0].ownerName);
+      setCurrentRepoName(organizations[0].repositories[0].repoName);
+    }
+  }, [organizations]);
 
   return (
     <GitHubContext.Provider
       value={{
         organizations: organizations || [],
-        selectedRepo,
+        currentOwnerId,
+        currentOwnerName,
+        currentRepoId,
+        currentRepoName,
+        currentInstallationId,
         isLoading: !error && !organizations,
         error,
-        setSelectedRepo,
+        setCurrentOwnerName: handleOwnerSelection,
+        setCurrentRepoName: handleRepoSelection,
         refreshData: async () => {
           await mutateOrganizations();
           return;

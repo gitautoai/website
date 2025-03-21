@@ -12,7 +12,7 @@ import SaveButton from "../components/SaveButton";
 export default function RulesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { selectedRepo, organizations, loadSettings, saveSettings } = useGitHub();
+  const { currentRepoName, currentOwnerName, loadSettings, saveSettings } = useGitHub();
   const [settings, setSettings] = useState<RulesSettingsType>({
     orgRules: "",
     repoRules: "",
@@ -30,15 +30,7 @@ export default function RulesPage() {
   useEffect(() => {
     const handleLoadSettings = async () => {
       const startTime = performance.now();
-      if (!selectedRepo || !organizations.length) {
-        setIsLoading(false);
-        return;
-      }
-
-      const currentOrg = organizations.find((org) =>
-        org.repositories.some((repo) => repo.repoName === selectedRepo)
-      );
-      if (!currentOrg) {
+      if (!currentRepoName || !currentOwnerName) {
         setIsLoading(false);
         return;
       }
@@ -46,7 +38,7 @@ export default function RulesPage() {
       try {
         setError(null);
         setIsLoading(true);
-        const data = await loadSettings(currentOrg.ownerName, selectedRepo);
+        const data = await loadSettings(currentOwnerName, currentRepoName);
         if (data) {
           const newSettings = {
             orgRules: data.org_rules || "",
@@ -71,8 +63,7 @@ export default function RulesPage() {
     };
 
     handleLoadSettings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRepo, organizations]);
+  }, [currentRepoName, currentOwnerName]);
 
   // Remove debounced save and replace with explicit save
   const handleChange = useCallback((field: keyof RulesSettingsType, value: string) => {
@@ -92,17 +83,14 @@ export default function RulesPage() {
   }, []);
 
   const handleSave = useCallback(async () => {
-    const currentOrg = organizations.find((org) =>
-      org.repositories.some((repo) => repo.repoName === selectedRepo)
-    );
-    if (!currentOrg || !selectedRepo) return;
+    if (!currentOwnerName || !currentRepoName) return;
 
     setIsSaving(true);
     setError(null);
     const startTime = performance.now();
 
     try {
-      const result = await saveSettings(currentOrg.ownerName, selectedRepo, settings, "rules");
+      const result = await saveSettings(currentOwnerName, currentRepoName, settings, "rules");
 
       if (!result) throw new Error("Failed to save settings");
     } catch (error) {
@@ -113,7 +101,7 @@ export default function RulesPage() {
       const endTime = performance.now();
       console.log(`Rules page saveSettings time: ${endTime - startTime}ms`);
     }
-  }, [organizations, saveSettings, selectedRepo, settings]);
+  }, [currentOwnerName, currentRepoName, saveSettings, settings]);
 
   const renderRuleSection = useCallback(
     (field: keyof typeof RULES_CONTENT) => (

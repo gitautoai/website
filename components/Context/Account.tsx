@@ -106,7 +106,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
   // Get installations that have a live subscription
   if (installations) {
-    console.log("installations: ", installations);
     const customerIds: string[] = installations.map(
       (installation: Installation) => installation.stripe_customer_id
     );
@@ -122,14 +121,14 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   useEffect(() => {
     // Set Selected Index based on localStorage instead of is_selected flag
     if (!installations) return;
-    
+
     const currentOwnerName = localStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
-    
+
     if (currentOwnerName) {
       const newIndex = installations.findIndex(
         (installation: Installation) => installation.owner_name === currentOwnerName
       );
-      
+
       if (newIndex !== -1) {
         setSelectedIndex(newIndex);
       } else if (installations.length > 0) {

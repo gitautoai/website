@@ -12,15 +12,19 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
+    // https://next-auth.js.org/configuration/callbacks#session-callback
     async session({ session, token }) {
       try {
-        session.user.userId = Number(token.user_id);
         session.jwtToken = token.jwtToken as string;
+        session.accessToken = token.accessToken as string;
+        session.user.userId = Number(token.user_id);
       } catch (err) {
         console.error(err);
       }
       return session;
     },
+
+    // https://next-auth.js.org/configuration/callbacks#jwt-callback
     async jwt({ token, account, user }) {
       if (user) {
         token.jwtToken = sign(user, config.JWT_SECRET as string, {
@@ -30,6 +34,7 @@ const handler = NextAuth({
       }
       if (account) {
         token.user_id = account.providerAccountId;
+        token.accessToken = account.access_token;
       }
       return token;
     },

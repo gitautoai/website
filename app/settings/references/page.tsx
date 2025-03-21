@@ -10,7 +10,13 @@ import SaveButton from "../components/SaveButton";
 export default function ReferencesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { selectedRepo, organizations, loadSettings, saveSettings } = useGitHub();
+  const {
+    currentOwnerId,
+    currentOwnerName,
+    currentRepoName,
+    loadSettings,
+    saveSettings,
+  } = useGitHub();
   const [settings, setSettings] = useState<ReferenceSettingsType>({
     webUrls: [""],
     filePaths: [""],
@@ -27,15 +33,7 @@ export default function ReferencesPage() {
   useEffect(() => {
     const handleLoadSettings = async () => {
       const startTime = performance.now();
-      if (!selectedRepo || !organizations.length) {
-        setIsLoading(false);
-        return;
-      }
-
-      const currentOrg = organizations.find((org) =>
-        org.repositories.some((repo) => repo.repoName === selectedRepo)
-      );
-      if (!currentOrg) {
+      if (!currentRepoName || !currentOwnerName) {
         setIsLoading(false);
         return;
       }
@@ -43,7 +41,7 @@ export default function ReferencesPage() {
       try {
         setError(null);
         setIsLoading(true);
-        const data = await loadSettings(currentOrg.ownerName, selectedRepo);
+        const data = await loadSettings(currentOwnerName, currentRepoName);
         console.log("Loaded data: ", data);
         if (data) {
           setSettings({
@@ -69,8 +67,7 @@ export default function ReferencesPage() {
     };
 
     handleLoadSettings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRepo, organizations]);
+  }, [currentRepoName, currentOwnerName]);
 
   // Remove debounced save and replace with explicit save
   const handleChange = useCallback((newSettings: Partial<ReferenceSettingsType>) => {
@@ -107,22 +104,17 @@ export default function ReferencesPage() {
   // Add file path validation function
   const validateFilePath = useCallback(
     async (path: string, index: number) => {
-      if (!path.trim() || !selectedRepo) {
+      if (!path.trim() || !currentRepoName) {
         setFilePathValidationStatus((prev) => ({ ...prev, [index]: null }));
         return;
       }
-
-      const currentOrg = organizations.find((org) =>
-        org.repositories.some((repo) => repo.repoName === selectedRepo)
-      );
-      if (!currentOrg) return;
 
       setFilePathValidationStatus((prev) => ({ ...prev, [index]: "checking" }));
 
       try {
         // First get the installation ID for this owner
         const installResponse = await fetch(
-          `/api/supabase/get-installation-id?ownerId=${currentOrg.ownerId}`
+          `/api/supabase/get-installation-id?ownerId=${currentOwnerId}`
         );
         if (!installResponse.ok) {
           throw new Error("Failed to get installation ID");
@@ -138,8 +130,8 @@ export default function ReferencesPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            owner: currentOrg.ownerName,
-            repo: selectedRepo,
+            owner: currentOwnerName,
+            repo: currentRepoName,
             path,
             installationId,
           }),
@@ -155,7 +147,7 @@ export default function ReferencesPage() {
         setFilePathValidationStatus((prev) => ({ ...prev, [index]: "invalid" }));
       }
     },
-    [selectedRepo, organizations]
+    [currentRepoName, currentOwnerName]
   );
 
   // Update canSave to check file paths too
@@ -181,10 +173,7 @@ export default function ReferencesPage() {
 
   // Handle save with URL validation
   const handleSave = useCallback(async () => {
-    const currentOrg = organizations.find((org) =>
-      org.repositories.some((repo) => repo.repoName === selectedRepo)
-    );
-    if (!currentOrg || !selectedRepo) return;
+    if (!currentOwnerName || !currentRepoName) return;
 
     // Check if all URLs are valid before saving
     if (!canSave()) {
@@ -202,8 +191,8 @@ export default function ReferencesPage() {
       const filePaths = settings.filePaths?.filter((path) => path !== "") || [];
 
       const result = await saveSettings(
-        currentOrg.ownerName,
-        selectedRepo,
+        currentOwnerName,
+        currentRepoName,
         { webUrls, filePaths },
         "reference"
       );
@@ -217,7 +206,7 @@ export default function ReferencesPage() {
       const endTime = performance.now();
       console.log(`References page saveSettings time: ${endTime - startTime}ms`);
     }
-  }, [organizations, saveSettings, selectedRepo, settings, canSave]);
+  }, [currentOwnerName, currentRepoName, saveSettings, settings, canSave]);
 
   return (
     <div className="relative min-h-screen">
