@@ -6,7 +6,7 @@ import { Octokit } from "@octokit/rest";
 // Utils
 import { stringify } from "@/utils/transform";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const startTime = performance.now();
 
   // Add caching headers
@@ -15,10 +15,8 @@ export async function GET(req: NextRequest) {
   };
 
   try {
-    const url = new URL(req.url);
-    const params = new URLSearchParams(url.searchParams);
-    const userId = params.get("userId");
-    const accessToken = params.get("accessToken");
+    const body = await req.json();
+    const { userId, accessToken } = body;
 
     if (!userId || !accessToken) {
       return new NextResponse("Missing required parameters: userId or accessToken", {

@@ -74,10 +74,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     session?.accessToken,
   ]);
 
-  let getInstallationsUrl = "";
-  let getInstallationsSubscribed = "";
-  if (userId) getInstallationsUrl = `/api/users/get-user-info?userId=${userId}`;
-
   // Common SWR options
   const swrOptions = {
     revalidateOnFocus: false,
@@ -86,35 +82,48 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     keepPreviousData: true,
   };
 
-  // Common fetch function
-  const fetchWithCache = async (url: string, logLabel: string) => {
-    const res = await fetch(url, {
-      next: { revalidate: 300 }, // Tell Next.js to cache the response for 300 seconds
-      cache: "force-cache", // Tell fetch to use the browser's HTTP cache
+  // Fetch installations using POST
+  const fetchInstallations = async () => {
+    if (!userId || !accessToken) return [];
+
+    const res = await fetch("/api/users/get-user-info", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, accessToken }),
+      cache: "no-store",
     });
 
-    if (!res.ok) throw new Error(`Failed to fetch ${logLabel}`);
-
+    if (!res.ok) throw new Error("Failed to fetch installations");
     return await res.json();
   };
 
   const { data: installations, mutate: mutateInstallations } = useSWR<Installation[]>(
-    getInstallationsUrl,
-    () => fetchWithCache(getInstallationsUrl, "installations"),
+    userId ? `fetchInstallations-${userId}` : null,
+    fetchInstallations,
     swrOptions
   );
 
-  // Get installations that have a live subscription
-  if (installations) {
-    const customerIds: string[] = installations.map(
+  const fetchSubscriptionStatus = async () => {
+    if (!userId || !jwtToken || !installations) return null;
+
+    const customerIds = installations.map(
       (installation: Installation) => installation.stripe_customer_id
     );
-    getInstallationsSubscribed = `/api/stripe/get-userinfo-subscriptions?userId=${userId}&jwtToken=${jwtToken}&customerIds=${customerIds}`;
-  }
+
+    const res = await fetch("/api/stripe/get-userinfo-subscriptions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, jwtToken, customerIds }),
+      cache: "no-store",
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch subscription status");
+    return await res.json();
+  };
 
   const { data: installationsSubscribed } = useSWR(
-    getInstallationsSubscribed,
-    () => fetchWithCache(getInstallationsSubscribed, "installationsSubscribed"),
+    userId ? `fetchSubscriptionStatus-${userId}` : null,
+    fetchSubscriptionStatus,
     swrOptions
   );
 
@@ -132,15 +141,11 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       if (newIndex !== -1) {
         setSelectedIndex(newIndex);
       } else if (installations.length > 0) {
-        // If stored owner not found, default to first installation
         setSelectedIndex(0);
-        // Update localStorage with the first installation's owner name
         localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, installations[0].owner_name);
       }
     } else if (installations.length > 0) {
-      // No owner in localStorage, default to first installation
       setSelectedIndex(0);
-      // Update localStorage with the first installation's owner name
       localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, installations[0].owner_name);
     }
   }, [installations]);
@@ -154,7 +159,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     // Only update if the values are different
     if (JSON.stringify(newInstallationIds) !== JSON.stringify(installationIds))
       setInstallationIds(newInstallationIds);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [installations]);
 
   // If user has no accounts, redirect to github app
