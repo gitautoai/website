@@ -5,50 +5,23 @@ import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { isTokenExpired } from "@/utils/auth";
 import { RELATIVE_URLS } from "@/config/index";
+import { STORAGE_KEYS } from "@/lib/constants";
 
-interface Owner {
-  owner_id: string;
-  stripe_customer_id: string;
-  created_at: string;
-  created_by: string | null;
-}
-
-interface Installation {
+export interface Installation {
+  id: string;
   installation_id: string;
   owner_id: string;
   owner_type: "User" | "Organization";
   owner_name: string;
-  owners: Owner;
-  uninstalled_at: string | null;
-  uninstalled_by: string | null;
-  created_at: string;
-  created_by: string | null;
-}
-
-interface User {
-  user_name: string;
-}
-
-interface UserInfo {
-  id: string;
   user_id: string;
-  installation_id: string;
-  is_user_assigned: boolean;
-  first_issue: boolean;
-  is_selected: boolean;
-  is_active: boolean;
-  installations: Installation;
-  users: User;
-  created_at: string;
-  created_by: string | null;
-  deleted_at: string | null;
-  deleted_by: string | null;
+  user_name: string;
+  stripe_customer_id: string;
 }
 
 const AccountContext = createContext<{
-  userInfos: UserInfo[] | undefined;
-  mutateUserInfos: () => void;
-  userInfosSubscribed: boolean[] | null; // whether a given userInfo has a live subscription or not
+  installations: Installation[] | undefined;
+  mutateInstallations: () => void;
+  installationsSubscribed: boolean[] | null; // whether a given installation has a live subscription or not
   selectedIndex: number | null; // Index of selected account
   setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
   userId: number | null;
@@ -57,9 +30,9 @@ const AccountContext = createContext<{
   installationIds: number[];
   jwtToken: string | null;
 }>({
-  userInfos: undefined,
-  mutateUserInfos: () => {},
-  userInfosSubscribed: null,
+  installations: undefined,
+  mutateInstallations: () => {},
+  installationsSubscribed: null,
   selectedIndex: null,
   setSelectedIndex: () => {},
   userId: null,
@@ -77,12 +50,12 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const [email, setEmail] = useState<string | null>(null);
   const [installationIds, setInstallationIds] = useState<number[]>([]);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
   const router = useRouter();
 
   // Get userId and jwtToken from session object
   useEffect(() => {
     if (!session) return;
-    console.log("session", session);
     setUserId(session.user.userId);
     setUserName(session.user.name || "Unknown User Name");
     setEmail(session.user.email || "Unknown Email");
@@ -91,13 +64,19 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       return;
     }
     setJwtToken(session.jwtToken);
+    setAccessToken(session.accessToken);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.jwtToken, session?.user.email, session?.user.name, session?.user.userId]);
+  }, [
+    session?.jwtToken,
+    session?.user.email,
+    session?.user.name,
+    session?.user.userId,
+    session?.accessToken,
+  ]);
 
-  let getUserInfoUrl = "";
-  let getUserInfosSubscribed = "";
-  if (userId && jwtToken)
-    getUserInfoUrl = `/api/users/get-user-info?userId=${userId}&jwtToken=${jwtToken}`;
+  let getInstallationsUrl = "";
+  let getInstallationsSubscribed = "";
+  if (userId) getInstallationsUrl = `/api/users/get-user-info?userId=${userId}`;
 
   // Common SWR options
   const swrOptions = {
@@ -119,70 +98,77 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     return await res.json();
   };
 
-  const { data: userInfos, mutate: mutateUserInfos } = useSWR<UserInfo[]>(
-    getUserInfoUrl,
-    () => fetchWithCache(getUserInfoUrl, "userInfos"),
+  const { data: installations, mutate: mutateInstallations } = useSWR<Installation[]>(
+    getInstallationsUrl,
+    () => fetchWithCache(getInstallationsUrl, "installations"),
     swrOptions
   );
 
-  // Get userinfos that have a live subscription
-  if (userInfos) {
-    const customerIds: string[] = userInfos.map(
-      (user: UserInfo) => user.installations.owners.stripe_customer_id
+  // Get installations that have a live subscription
+  if (installations) {
+    console.log("installations: ", installations);
+    const customerIds: string[] = installations.map(
+      (installation: Installation) => installation.stripe_customer_id
     );
-    getUserInfosSubscribed = `/api/stripe/get-userinfo-subscriptions?userId=${userId}&jwtToken=${jwtToken}&customerIds=${customerIds}`;
+    getInstallationsSubscribed = `/api/stripe/get-userinfo-subscriptions?userId=${userId}&jwtToken=${jwtToken}&customerIds=${customerIds}`;
   }
 
-  const { data: userInfosSubscribed } = useSWR(
-    getUserInfosSubscribed,
-    () => fetchWithCache(getUserInfosSubscribed, "userInfosSubscribed"),
+  const { data: installationsSubscribed } = useSWR(
+    getInstallationsSubscribed,
+    () => fetchWithCache(getInstallationsSubscribed, "installationsSubscribed"),
     swrOptions
   );
 
   useEffect(() => {
-    async function setInstallationFallback() {
-      await fetch("/api/users/set-installation-fallback", {
-        method: "POST",
-        body: JSON.stringify({ userId: userId, jwtToken: jwtToken }),
-      });
+    // Set Selected Index based on localStorage instead of is_selected flag
+    if (!installations) return;
+    
+    const currentOwnerName = localStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
+    
+    if (currentOwnerName) {
+      const newIndex = installations.findIndex(
+        (installation: Installation) => installation.owner_name === currentOwnerName
+      );
+      
+      if (newIndex !== -1) {
+        setSelectedIndex(newIndex);
+      } else if (installations.length > 0) {
+        // If stored owner not found, default to first installation
+        setSelectedIndex(0);
+        // Update localStorage with the first installation's owner name
+        localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, installations[0].owner_name);
+      }
+    } else if (installations.length > 0) {
+      // No owner in localStorage, default to first installation
+      setSelectedIndex(0);
+      // Update localStorage with the first installation's owner name
+      localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, installations[0].owner_name);
     }
-
-    // Set Selected Index if there is a selected user account
-    if (!userInfos) return;
-    const newIndex = userInfos.findIndex((user: any) => user.is_selected);
-
-    // Should always have an account selected, this is a fallback
-    if (newIndex === -1) {
-      console.error("No selected index found");
-      setInstallationFallback();
-    } else {
-      setSelectedIndex(newIndex);
-    }
-  }, [userInfos, userId, jwtToken, router]);
+  }, [installations]);
 
   useEffect(() => {
-    if (!userInfos) return;
-    const newInstallationIds = userInfos.map((user: any) =>
-      user.installations.installation_id.replace("n", "")
+    if (!installations) return;
+    const newInstallationIds = installations.map((installation: Installation) =>
+      Number(installation.installation_id)
     );
 
     // Only update if the values are different
     if (JSON.stringify(newInstallationIds) !== JSON.stringify(installationIds))
       setInstallationIds(newInstallationIds);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userInfos]);
+  }, [installations]);
 
   // If user has no accounts, redirect to github app
   useEffect(() => {
-    if (userInfos && userInfos.length === 0) router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
-  }, [userInfos, router]);
+    if (installations && installations.length === 0) router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
+  }, [installations, router]);
 
   return (
     <AccountContext.Provider
       value={{
-        userInfos,
-        mutateUserInfos,
-        userInfosSubscribed,
+        installations,
+        mutateInstallations,
+        installationsSubscribed,
         selectedIndex,
         setSelectedIndex,
         userId,
