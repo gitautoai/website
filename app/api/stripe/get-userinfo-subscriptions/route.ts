@@ -10,33 +10,25 @@ const schema = z.object({
   customerIds: z.array(z.string()),
 });
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const startTime = performance.now();
   const headers = {
     "Cache-Control": "public, max-age=300, s-maxage=600, stale-while-revalidate=900",
   };
 
   try {
-    const url = new URL(req.url);
-    const params = new URLSearchParams(url.searchParams);
-    const { userId, jwtToken, customerIds } = schema.parse({
-      userId: Number(params.get("userId")),
-      jwtToken: params.get("jwtToken"),
-      customerIds: params.getAll("customerIds"),
-    });
+    const body = await req.json();
+    const { userId, jwtToken, customerIds } = schema.parse(body);
 
     // Return 401 if the token is invalid
     if (!isValidToken(userId.toString(), jwtToken))
       return new NextResponse("Unauthorized", { status: 401 });
 
     // If no customerIds are passed, return an empty array
-    if (customerIds.length === 1 && customerIds[0].length === 0)
+    if (!customerIds || customerIds.length === 0)
       return NextResponse.json([], { status: 200, headers });
 
-    // Passing an array through api query params results in ['string1,string2'] format
-    const customerIdsSplit = customerIds[0].split(",");
-
-    const subscriptionPromises = customerIdsSplit.map((customerId) =>
+    const subscriptionPromises = customerIds.map((customerId) =>
       hasActiveSubscription(customerId)
     );
 
