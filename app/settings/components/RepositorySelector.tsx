@@ -1,28 +1,45 @@
 "use client";
 import { useGitHub } from "@/components/Context/GitHub";
 import { useEffect } from "react";
+import { STORAGE_KEYS } from "@/lib/constants";
 
 type RepositorySelectorProps = {
   onRepoChange?: (repo: string) => void;
 };
 
 export default function RepositorySelector({ onRepoChange }: RepositorySelectorProps) {
-  const { organizations, selectedRepo, setSelectedRepo, isLoading } = useGitHub();
+  const {
+    organizations,
+    currentRepoName,
+    setCurrentRepoName,
+    currentOwnerName,
+    setCurrentOwnerName,
+    isLoading,
+  } = useGitHub();
 
   // Load saved repo from localStorage on component mount
   useEffect(() => {
-    const savedRepo = localStorage.getItem("selectedRepo");
-    if (savedRepo && !selectedRepo) {
-      setSelectedRepo(savedRepo);
+    const savedRepo = localStorage.getItem(STORAGE_KEYS.CURRENT_REPO_NAME);
+    const savedOwner = localStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
+
+    if (savedRepo && savedOwner && !currentRepoName) {
+      setCurrentRepoName(savedRepo);
+      setCurrentOwnerName(savedOwner);
       onRepoChange?.(savedRepo);
     }
-  }, [organizations, selectedRepo, setSelectedRepo, onRepoChange]);
+  }, [
+    organizations,
+    currentRepoName,
+    currentOwnerName,
+    setCurrentRepoName,
+    setCurrentOwnerName,
+    onRepoChange,
+  ]);
 
   const handleRepoChange = (repo: string) => {
     const startTime = performance.now();
-    setSelectedRepo(repo);
-    // Save to localStorage
-    localStorage.setItem("selectedRepo", repo);
+    setCurrentRepoName(repo);
+    localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, repo);
     onRepoChange?.(repo);
     const endTime = performance.now();
     console.log(`Repository selection change time: ${endTime - startTime}ms`);
@@ -30,7 +47,7 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
 
   // Find current org based on selected repo
   const currentOrg = organizations.find((org) =>
-    org.repositories.some((repo) => repo.repoName === selectedRepo)
+    org.repositories.some((repo) => repo.repoName === currentRepoName)
   );
 
   return (
@@ -39,11 +56,13 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
       <div className="flex-1">
         <label className="block text-sm font-medium text-gray-700 mb-2">Organization</label>
         <select
-          value={currentOrg?.ownerName || ""}
+          value={currentOwnerName || ""}
           onChange={(e) => {
             const startTime = performance.now();
             const org = organizations.find((o) => o.ownerName === e.target.value);
             if (org && org.repositories.length > 0) {
+              setCurrentOwnerName(e.target.value);
+              localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, e.target.value);
               handleRepoChange(org.repositories[0].repoName);
             }
             const endTime = performance.now();
@@ -65,7 +84,7 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
       <div className="flex-1">
         <label className="block text-sm font-medium text-gray-700 mb-2">Repository</label>
         <select
-          value={selectedRepo || ""}
+          value={currentRepoName || ""}
           onChange={(e) => handleRepoChange(e.target.value)}
           className={`w-full p-2 border rounded-lg ${
             !currentOrg || isLoading ? "bg-gray-100" : "bg-white"

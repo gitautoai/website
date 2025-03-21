@@ -1,16 +1,11 @@
 "use server";
 import { NextResponse, NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { z, ZodError } from "zod";
+import { supabase } from "@/lib/supabase";
+import { Octokit } from "@octokit/rest";
 
 // Utils
-import { isValidToken } from "@/utils/auth";
 import { stringify } from "@/utils/transform";
 
-const schema = z.object({
-  userId: z.string(),
-  jwtToken: z.string(),
-});
 export async function GET(req: NextRequest) {
   const startTime = performance.now();
 
@@ -22,65 +17,62 @@ export async function GET(req: NextRequest) {
   try {
     const url = new URL(req.url);
     const params = new URLSearchParams(url.searchParams);
-    const { userId, jwtToken } = schema.parse({
-      userId: params.get("userId"),
-      jwtToken: params.get("jwtToken"),
-    });
+    const userId = params.get("userId");
+    const accessToken = params.get("accessToken");
 
-    if (!isValidToken(userId, jwtToken)) {
-      return new NextResponse("Unauthorized", { status: 401 });
+    if (!userId || !accessToken) {
+      return new NextResponse("Missing required parameters: userId or accessToken", {
+        status: 400,
+      });
     }
 
-    const user = await prisma.userInstallation.findMany({
-      where: {
-        user_id: Number(userId),
-        installations: {
-          uninstalled_at: null,
-        },
-      },
-      include: {
-        installations: {
-          include: {
-            owners: {
-              select: {
-                owner_id: true,
-                stripe_customer_id: true,
-                created_at: true,
-                created_by: true,
-              },
-            },
-          },
-        },
-        users: {
-          select: {
-            user_name: true,
-          },
-        },
-      },
-      orderBy: [
-        {
-          installations: {
-            owner_type: "desc", // Make sure "User" comes first
-          },
-        },
-        {
-          installations: {
-            created_at: "asc",
-          },
-        },
-      ],
-    });
+    // Use GitHub API to get organizations the user belongs to
+    const octokit = new Octokit({ auth: accessToken });
 
-    return new NextResponse(stringify(user), { status: 200, headers });
+    // Get user's organizations
+    const { data: orgs } = await octokit.orgs.listForAuthenticatedUser();
+    console.log("GitHub organizations: ", orgs);
+
+    // Combine user's own ID with organization IDs
+    const ownerIds = [userId, ...orgs.map((org) => org.id)];
+
+    // Get installations for these owners
+    const { data: installationsData, error: installationsError } = await supabase
+      .from("installations")
+      .select(
+        `
+        *,
+        owners (
+          owner_id,
+          stripe_customer_id,
+          created_at,
+          created_by
+        )
+      `
+      )
+      .in("owner_id", ownerIds)
+      .is("uninstalled_at", null);
+
+    if (installationsError) throw installationsError;
+
+    // Transform the data to match the expected format
+    const installations = installationsData.map((installation) => ({
+      installation_id: installation.installation_id,
+
+      // Owner properties
+      owner_id: installation.owner_id,
+      owner_type: installation.owner_type,
+      owner_name: installation.owner_name,
+
+      // Other properties
+      stripe_customer_id: installation.owners?.stripe_customer_id || null,
+    }));
+
+    return new NextResponse(stringify(installations), { status: 200, headers });
   } catch (err: any) {
-    console.error("Error in get-user-info", err);
-    if (err instanceof ZodError) {
-      console.error("Zod validation error", err.issues);
-      return NextResponse.json({ message: err.issues }, { status: 400 });
-    } else {
-      console.error("Unexpected error", err.message);
-      return new NextResponse(err, { status: 400 });
-    }
+    console.error("Error in get-user-info:", err);
+    const errorMessage = err.message || "An unexpected error occurred";
+    return NextResponse.json({ error: errorMessage }, { status: 400 });
   } finally {
     const endTime = performance.now();
     console.log(`get-user-info execution time: ${endTime - startTime}ms`);

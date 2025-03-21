@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { ScreenshotSettingsType } from "../types";
 import RepositorySelector from "../components/RepositorySelector";
 import { useGitHub } from "@/components/Context/GitHub";
@@ -10,7 +10,7 @@ import SaveButton from "../components/SaveButton";
 export default function ScreenshotsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { selectedRepo, organizations, loadSettings, saveSettings } = useGitHub();
+  const { currentRepoName, currentOwnerName, loadSettings, saveSettings } = useGitHub();
   const [settings, setSettings] = useState<ScreenshotSettingsType>({
     useScreenshots: false,
     productionUrl: "",
@@ -23,15 +23,7 @@ export default function ScreenshotsPage() {
   useEffect(() => {
     const handleLoadSettings = async () => {
       const startTime = performance.now();
-      if (!selectedRepo || !organizations.length) {
-        setIsLoading(false);
-        return;
-      }
-
-      const currentOrg = organizations.find((org) =>
-        org.repositories.some((repo) => repo.repoName === selectedRepo)
-      );
-      if (!currentOrg) {
+      if (!currentRepoName || !currentOwnerName) {
         setIsLoading(false);
         return;
       }
@@ -39,7 +31,7 @@ export default function ScreenshotsPage() {
       try {
         setError(null);
         setIsLoading(true);
-        const data = await loadSettings(currentOrg.ownerName, selectedRepo);
+        const data = await loadSettings(currentOwnerName, currentRepoName);
         if (data) {
           setSettings({
             useScreenshots: data.use_screenshots || false,
@@ -67,8 +59,7 @@ export default function ScreenshotsPage() {
     };
 
     handleLoadSettings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedRepo, organizations]);
+  }, [currentRepoName, currentOwnerName]);
 
   const handleChange = useCallback((field: keyof ScreenshotSettingsType, value: any) => {
     // Update state immediately without saving
@@ -76,17 +67,14 @@ export default function ScreenshotsPage() {
   }, []);
 
   const handleSave = useCallback(async () => {
-    const currentOrg = organizations.find((org) =>
-      org.repositories.some((repo) => repo.repoName === selectedRepo)
-    );
-    if (!currentOrg || !selectedRepo) return;
+    if (!currentOwnerName || !currentRepoName) return;
 
     setIsSaving(true);
     setError(null);
     const startTime = performance.now();
 
     try {
-      const result = await saveSettings(currentOrg.ownerName, selectedRepo, settings, "screenshot");
+      const result = await saveSettings(currentOwnerName, currentRepoName, settings, "screenshot");
 
       if (!result) throw new Error("Failed to save settings");
     } catch (error) {
@@ -97,7 +85,7 @@ export default function ScreenshotsPage() {
       const endTime = performance.now();
       console.log(`Screenshots page saveSettings time: ${endTime - startTime}ms`);
     }
-  }, [organizations, saveSettings, selectedRepo, settings]);
+  }, [currentOwnerName, currentRepoName, saveSettings, settings]);
 
   const isValidPort = (port: string) => {
     // 0~1023 are system ports. 2^16 - 1 = 65535

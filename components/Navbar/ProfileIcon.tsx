@@ -3,8 +3,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 // components
-import SwitchAccount from "@/components/HomePage/SwitchAccount";
-import { useAccountContext } from "@/components/Context/Account";
+import OwnerSelector from "@/components/HomePage/OwnerSelector";
+import { useAccountContext, Installation } from "@/components/Context/Account";
 
 // Third Party
 import { signOut } from "next-auth/react";
@@ -20,7 +20,7 @@ interface ProfileIconProps {
 const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { userId, jwtToken, email, userInfos, selectedIndex, userInfosSubscribed } =
+  const { userId, jwtToken, email, installations, selectedIndex, installationsSubscribed } =
     useAccountContext();
 
   const router = useRouter();
@@ -42,7 +42,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
   const createPortalOrCheckoutURL = async (
     userId: number | null,
     jwtToken: string | null,
-    userInfos: any,
+    installations: Installation[],
     currentIndex: number
   ) => {
     const response = await fetch("/api/stripe/create-portal-or-checkout-url", {
@@ -50,12 +50,12 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
       body: JSON.stringify({
         userId: userId,
         jwtToken: jwtToken,
-        customerId: userInfos[currentIndex].installations.owners.stripe_customer_id,
+        customerId: installations[currentIndex].stripe_customer_id,
         email: email,
-        ownerType: userInfos[currentIndex].installations.owner_type,
-        ownerId: Number(userInfos[currentIndex].installations.owner_id.replace("n", "")),
-        ownerName: userInfos[currentIndex].installations.owner_name,
-        userName: userInfos[currentIndex].users.user_name,
+        ownerType: installations[currentIndex].owner_type,
+        ownerId: Number(installations[currentIndex].owner_id),
+        ownerName: installations[currentIndex].owner_name,
+        userName: installations[currentIndex].user_name,
       }),
     });
 
@@ -79,8 +79,10 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
         </MenuButton>
         <MenuList>
           {selectedIndex != null &&
-            userInfosSubscribed &&
-            userInfosSubscribed[selectedIndex] === true && (
+            installations &&
+            installations.length > 0 &&
+            installationsSubscribed &&
+            installationsSubscribed[selectedIndex] === true && (
               <MenuItem
                 _hover={{
                   bg: "none",
@@ -91,7 +93,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
                 <span
                   className={`link `}
                   onClick={() =>
-                    createPortalOrCheckoutURL(userId, jwtToken, userInfos, selectedIndex)
+                    createPortalOrCheckoutURL(userId, jwtToken, installations, selectedIndex)
                   }
                 >
                   Manage Payment
@@ -99,7 +101,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
               </MenuItem>
             )}
 
-          {userInfos && userInfos.length > 0 && (
+          {installations && installations.length > 0 && (
             <MenuItem
               _hover={{
                 bg: "none",
@@ -124,7 +126,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
           </MenuItem>
         </MenuList>
       </Menu>
-      <SwitchAccount isOpen={isOpen} onClose={onClose} />
+      <OwnerSelector isOpen={isOpen} onClose={onClose} />
     </>
   );
 };

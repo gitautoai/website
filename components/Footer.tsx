@@ -14,7 +14,7 @@ import SNS from "./Button/SNS";
 export default function Footer() {
   // Analytics
   const posthog = usePostHog();
-  const { userInfosSubscribed, selectedIndex } = useAccountContext();
+  const { installationsSubscribed, selectedIndex } = useAccountContext();
   const pathname = usePathname();
   const isSettingsPage = pathname?.startsWith("/settings");
   if (isSettingsPage) return null;
@@ -61,8 +61,8 @@ export default function Footer() {
                   </li>
                 ))}
                 {selectedIndex != null &&
-                  userInfosSubscribed &&
-                  userInfosSubscribed[selectedIndex] === true && (
+                  installationsSubscribed &&
+                  installationsSubscribed[selectedIndex] === true && (
                     <li>
                       <Link
                         href="/?subscribe"
