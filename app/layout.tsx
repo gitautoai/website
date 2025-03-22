@@ -12,7 +12,6 @@ import Navbar from "@/components/Navbar";
 import { PHProvider } from "@/components/PostHog";
 import SessionProvider from "@/components/SessionProvider";
 import { AccountContextWrapper } from "@/components/Context/Account";
-import { GitHubProvider } from "@/components/Context/GitHub";
 import Footer from "@/components/Footer";
 import IntercomMessenger from "@/components/Intercom";
 
@@ -45,7 +44,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Suspense>
             <SessionProvider>
               <AccountContextWrapper>
-                <GitHubProvider>
                   <Providers>
                     <Navbar />
                     <main className="px-4 sm:px-8 md:px-16">{children}</main>
@@ -58,7 +56,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       </>
                     )}
                   </Providers>
-                </GitHubProvider>
               </AccountContextWrapper>
             </SessionProvider>
           </Suspense>
