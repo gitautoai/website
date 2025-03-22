@@ -1,16 +1,14 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
-// components
-import OwnerSelector from "@/components/HomePage/OwnerSelector";
-import { useAccountContext, Installation } from "@/components/Context/Account";
-
-// Third Party
-import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
-
+import { signOut } from "next-auth/react";
 import { Menu, MenuButton, MenuList, MenuItem, useDisclosure } from "@chakra-ui/react";
+
+// Local
+import OwnerSelector from "@/components/HomePage/OwnerSelector";
+import { useAccountContext } from "@/components/Context/Account";
+import { Installation } from "@/types/github";
 
 interface ProfileIconProps {
   session: Session | null;

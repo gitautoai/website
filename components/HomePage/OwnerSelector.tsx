@@ -1,9 +1,10 @@
 "use client";
 
 // Local
-import { useAccountContext, Installation } from "../Context/Account";
-import { STORAGE_KEYS } from "@/lib/constants";
+import { useAccountContext } from "../Context/Account";
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay } from "@chakra-ui/react";
+import { STORAGE_KEYS } from "@/lib/constants";
+import { Installation } from "@/types/github";
 
 export default function OwnerSelector({
   isOpen,

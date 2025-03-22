@@ -1,20 +1,19 @@
+// Third Party
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 // Components
-import { useAccountContext, Installation } from "@/components/Context/Account";
+import { useDisclosure } from "@chakra-ui/react";
+import { useAccountContext } from "@/components/Context/Account";
+import { ABSOLUTE_URLS } from "@/config/index";
+import { INTERNAL_LINKS } from "@/config/internal-links";
+import { Installation } from "@/types/github";
+import OwnerSelector from "../HomePage/OwnerSelector";
 
 // Styling
 import { Drawer, DrawerContent, DrawerBody } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-
-// Third Party
-import { signIn, signOut } from "next-auth/react";
-import { useSession } from "next-auth/react";
-import { useDisclosure } from "@chakra-ui/react";
-import { ABSOLUTE_URLS } from "@/config/index";
-import { INTERNAL_LINKS } from "@/config/internal-links";
-import OwnerSelector from "../HomePage/OwnerSelector";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
