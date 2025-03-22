@@ -4,32 +4,14 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 import { isTokenExpired } from "@/utils/auth";
+import { fetchWithTiming } from "@/utils/fetch";
+import { swrOptions, extendedSwrOptions } from "@/config/swr";
 import { RELATIVE_URLS } from "@/config/index";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { Installation, Organization, SettingsType } from "@/types/github";
+import { AccountContextType } from "@/types/account";
 
-export interface Installation {
-  id: string;
-  installation_id: string;
-  owner_id: string;
-  owner_type: "User" | "Organization";
-  owner_name: string;
-  user_id: string;
-  user_name: string;
-  stripe_customer_id: string;
-}
-
-const AccountContext = createContext<{
-  installations: Installation[] | undefined;
-  mutateInstallations: () => void;
-  installationsSubscribed: boolean[] | null; // whether a given installation has a live subscription or not
-  selectedIndex: number | null; // Index of selected account
-  setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
-  userId: number | null;
-  userName: string | null;
-  email: string | null;
-  installationIds: number[];
-  jwtToken: string | null;
-}>({
+const AccountContext = createContext<AccountContextType>({
   installations: undefined,
   mutateInstallations: () => {},
   installationsSubscribed: null,
@@ -40,6 +22,18 @@ const AccountContext = createContext<{
   email: null,
   installationIds: [],
   jwtToken: null,
+  organizations: [],
+  currentOwnerId: null,
+  currentOwnerName: null,
+  currentRepoId: null,
+  currentRepoName: null,
+  currentInstallationId: null,
+  isLoading: true,
+  setCurrentOwnerName: () => {},
+  setCurrentRepoName: () => {},
+  refreshData: async () => {},
+  loadSettings: async () => {},
+  saveSettings: async () => {},
 });
 
 export function AccountContextWrapper({ children }: { children: React.ReactNode }) {
@@ -51,9 +45,11 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const [installationIds, setInstallationIds] = useState<number[]>([]);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
+  const [currentOwnerName, setCurrentOwnerName] = useState<string | null>(null);
+  const [currentRepoName, setCurrentRepoName] = useState<string | null>(null);
   const router = useRouter();
 
-  // Get userId and jwtToken from session object
+  // Process session information
   useEffect(() => {
     if (!session) return;
     setUserId(session.user.userId);
@@ -65,7 +61,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     }
     setJwtToken(session.jwtToken);
     setAccessToken(session.accessToken);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     session?.jwtToken,
     session?.user.email,
@@ -74,27 +69,16 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     session?.accessToken,
   ]);
 
-  // Common SWR options
-  const swrOptions = {
-    revalidateOnFocus: false,
-    dedupingInterval: 300000, // 5 minutes
-    suspense: false,
-    keepPreviousData: true,
-  };
-
-  // Fetch installations using POST
+  // Fetch installation information
   const fetchInstallations = async () => {
     if (!userId || !accessToken) return [];
 
-    const res = await fetch("/api/users/get-user-info", {
+    return fetchWithTiming("/api/users/get-user-info", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, accessToken }),
       cache: "no-store",
     });
-
-    if (!res.ok) throw new Error("Failed to fetch installations");
-    return await res.json();
   };
 
   const { data: installations, mutate: mutateInstallations } = useSWR<Installation[]>(
@@ -103,6 +87,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     swrOptions
   );
 
+  // Fetch subscription status
   const fetchSubscriptionStatus = async () => {
     if (!userId || !jwtToken || !installations) return null;
 
@@ -110,15 +95,12 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       (installation: Installation) => installation.stripe_customer_id
     );
 
-    const res = await fetch("/api/stripe/get-userinfo-subscriptions", {
+    return fetchWithTiming("/api/stripe/get-userinfo-subscriptions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, jwtToken, customerIds }),
       cache: "no-store",
     });
-
-    if (!res.ok) throw new Error("Failed to fetch subscription status");
-    return await res.json();
   };
 
   const { data: installationsSubscribed } = useSWR(
@@ -127,8 +109,8 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     swrOptions
   );
 
+  // Handle installation selection
   useEffect(() => {
-    // Set Selected Index based on localStorage instead of is_selected flag
     if (!installations) return;
 
     const currentOwnerName = localStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
@@ -150,21 +132,158 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     }
   }, [installations]);
 
+  // Update installation IDs
   useEffect(() => {
     if (!installations) return;
     const newInstallationIds = installations.map((installation: Installation) =>
       Number(installation.installation_id)
     );
 
-    // Only update if the values are different
     if (JSON.stringify(newInstallationIds) !== JSON.stringify(installationIds))
       setInstallationIds(newInstallationIds);
   }, [installations]);
 
-  // If user has no accounts, redirect to github app
+  // Redirect if no installations
   useEffect(() => {
     if (installations && installations.length === 0) router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
   }, [installations, router]);
+
+  // Fetch organizations
+  const fetchOrganizations = async (installationIds: number[]) => {
+    return fetchWithTiming("/api/github/get-installed-repos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ installationIds }),
+      next: { revalidate: 300 },
+    });
+  };
+
+  const { data: organizations, mutate: mutateOrganizations } = useSWR<Organization[]>(
+    installationIds.length > 0 ? ["github-organizations", installationIds.join(",")] : null,
+    () => fetchOrganizations(installationIds),
+    extendedSwrOptions
+  );
+
+  // Calculate current selection information
+  const currentOwnerId = currentOwnerName
+    ? organizations?.find((org) => org.ownerName === currentOwnerName)?.ownerId || null
+    : null;
+
+  const currentRepoId =
+    currentRepoName && currentOwnerName
+      ? organizations
+          ?.find((org) => org.ownerName === currentOwnerName)
+          ?.repositories.find((repo) => repo.repoName === currentRepoName)?.repoId || null
+      : null;
+
+  const currentInstallationId = currentOwnerName
+    ? installationIds.find((index) => organizations?.[index]?.ownerName === currentOwnerName) ||
+      null
+    : null;
+
+  // Load settings
+  const loadSettings = async (ownerName: string, repoName: string) => {
+    const org = organizations?.find((o) => o.ownerName === ownerName);
+    const repo = org?.repositories.find((r) => r.repoName === repoName);
+
+    if (!org || !repo) {
+      console.error("Organization or repository not found");
+      return null;
+    }
+
+    const url = `/api/supabase/get-repository-settings?ownerId=${org.ownerId}&repoId=${repo.repoId}`;
+    return fetchWithTiming(url, {
+      priority: "high",
+      cache: "no-store",
+      next: { revalidate: 0 },
+    });
+  };
+
+  // Save settings
+  const saveSettings = async (
+    ownerName: string,
+    repoName: string,
+    settingsData: any,
+    settingsType: SettingsType
+  ) => {
+    const org = organizations?.find((o) => o.ownerName === ownerName);
+    const repo = org?.repositories.find((r) => r.repoName === repoName);
+
+    if (!org || !repo) {
+      console.error("Organization or repository not found");
+      return null;
+    }
+
+    return fetchWithTiming("/api/supabase/save-repository-settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwtToken}` },
+      body: JSON.stringify({
+        ownerId: org.ownerId,
+        repoId: repo.repoId,
+        repoName: repoName,
+        userId,
+        settingsType,
+        ...settingsData,
+      }),
+    });
+  };
+
+  // Handle owner selection
+  const handleOwnerSelection = (ownerName: string | null) => {
+    setCurrentOwnerName(ownerName);
+
+    if (ownerName) {
+      const org = organizations?.find((o) => o.ownerName === ownerName);
+      if (org && org.repositories.length > 0) {
+        setCurrentRepoName(org.repositories[0].repoName);
+      } else {
+        setCurrentRepoName(null);
+      }
+    } else {
+      setCurrentRepoName(null);
+    }
+  };
+
+  // Handle repository selection
+  const handleRepoSelection = (repoName: string | null) => {
+    setCurrentRepoName(repoName);
+
+    if (repoName && !currentOwnerName) {
+      for (const org of organizations || []) {
+        const repo = org.repositories.find((r) => r.repoName === repoName);
+        if (repo) {
+          setCurrentOwnerName(org.ownerName);
+          break;
+        }
+      }
+    }
+  };
+
+  // Save current owner & repo selection to localStorage
+  useEffect(() => {
+    if (!organizations) return;
+
+    const savedRepo = localStorage.getItem("currentRepo");
+    const savedOwner = localStorage.getItem("currentOwner");
+
+    if (savedRepo && savedOwner) {
+      const orgExists = organizations.some((org) => org.ownerName === savedOwner);
+      const repoExists = organizations.some((org) =>
+        org.repositories.some((repo) => repo.repoName === savedRepo)
+      );
+
+      if (orgExists && repoExists) {
+        setCurrentOwnerName(savedOwner);
+        setCurrentRepoName(savedRepo);
+        return;
+      }
+    }
+
+    if (organizations.length > 0 && organizations[0].repositories.length > 0) {
+      setCurrentOwnerName(organizations[0].ownerName);
+      setCurrentRepoName(organizations[0].repositories[0].repoName);
+    }
+  }, [organizations]);
 
   return (
     <AccountContext.Provider
@@ -179,6 +298,21 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         email,
         installationIds,
         jwtToken,
+        organizations: organizations || [],
+        currentOwnerId,
+        currentOwnerName,
+        currentRepoId,
+        currentRepoName,
+        currentInstallationId,
+        isLoading: !organizations,
+        setCurrentOwnerName: handleOwnerSelection,
+        setCurrentRepoName: handleRepoSelection,
+        refreshData: async () => {
+          await mutateOrganizations();
+          return;
+        },
+        loadSettings,
+        saveSettings,
       }}
     >
       {children}

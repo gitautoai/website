@@ -2,17 +2,17 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import type { RulesSettingsType } from "../types";
 import RepositorySelector from "../components/RepositorySelector";
-import { useGitHub } from "@/components/Context/GitHub";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { RULES_CONTENT } from "../constants/rulesDefaults";
 import { countTokens } from "@/utils/tokens";
 import { PLAN_LIMITS } from "../constants/plans";
 import SaveButton from "../components/SaveButton";
+import { useAccountContext } from "@/components/Context/Account";
 
 export default function RulesPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { currentRepoName, currentOwnerName, loadSettings, saveSettings } = useGitHub();
+  const { currentRepoName, currentOwnerName, loadSettings, saveSettings } = useAccountContext();
   const [settings, setSettings] = useState<RulesSettingsType>({
     orgRules: "",
     repoRules: "",

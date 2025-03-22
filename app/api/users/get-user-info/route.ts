@@ -29,7 +29,6 @@ export async function POST(req: NextRequest) {
 
     // Get user's organizations
     const { data: orgs } = await octokit.orgs.listForAuthenticatedUser();
-    console.log("GitHub organizations: ", orgs);
 
     // Combine user's own ID with organization IDs
     const ownerIds = [userId, ...orgs.map((org) => org.id)];
