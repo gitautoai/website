@@ -2,10 +2,10 @@
 import { useEffect, useState, useCallback } from "react";
 import type { ReferenceSettingsType } from "../types";
 import RepositorySelector from "../components/RepositorySelector";
-import { useGitHub } from "@/components/Context/GitHub";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { PLAN_LIMITS } from "../constants/plans";
 import SaveButton from "../components/SaveButton";
+import { useAccountContext } from "@/components/Context/Account";
 
 export default function ReferencesPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -16,7 +16,7 @@ export default function ReferencesPage() {
     currentRepoName,
     loadSettings,
     saveSettings,
-  } = useGitHub();
+  } = useAccountContext();
   const [settings, setSettings] = useState<ReferenceSettingsType>({
     webUrls: [""],
     filePaths: [""],

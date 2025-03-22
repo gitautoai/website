@@ -2,15 +2,15 @@
 import { useEffect, useState, useCallback } from "react";
 import type { ScreenshotSettingsType } from "../types";
 import RepositorySelector from "../components/RepositorySelector";
-import { useGitHub } from "@/components/Context/GitHub";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { PLAN_LIMITS } from "../constants/plans";
 import SaveButton from "../components/SaveButton";
+import { useAccountContext } from "@/components/Context/Account";
 
 export default function ScreenshotsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { currentRepoName, currentOwnerName, loadSettings, saveSettings } = useGitHub();
+  const { currentRepoName, currentOwnerName, loadSettings, saveSettings } = useAccountContext();
   const [settings, setSettings] = useState<ScreenshotSettingsType>({
     useScreenshots: false,
     productionUrl: "",

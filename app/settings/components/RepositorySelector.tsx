@@ -1,6 +1,6 @@
 "use client";
-import { useGitHub } from "@/components/Context/GitHub";
 import { useEffect } from "react";
+import { useAccountContext } from "@/components/Context/Account";
 import { STORAGE_KEYS } from "@/lib/constants";
 
 type RepositorySelectorProps = {
@@ -15,7 +15,7 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
     currentOwnerName,
     setCurrentOwnerName,
     isLoading,
-  } = useGitHub();
+  } = useAccountContext();
 
   // Load saved repo from localStorage on component mount
   useEffect(() => {
