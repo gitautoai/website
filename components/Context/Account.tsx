@@ -177,8 +177,8 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       : null;
 
   const currentInstallationId = currentOwnerName
-    ? installationIds.find((index) => organizations?.[index]?.ownerName === currentOwnerName) ||
-      null
+    ? installations?.find((installation) => installation.owner_name === currentOwnerName)
+        ?.installation_id || null
     : null;
 
   // Load settings
@@ -233,14 +233,21 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     setCurrentOwnerName(ownerName);
 
     if (ownerName) {
+      localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, ownerName);
+
       const org = organizations?.find((o) => o.ownerName === ownerName);
       if (org && org.repositories.length > 0) {
-        setCurrentRepoName(org.repositories[0].repoName);
+        const repoName = org.repositories[0].repoName;
+        setCurrentRepoName(repoName);
+        localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, repoName);
       } else {
         setCurrentRepoName(null);
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);
       }
     } else {
       setCurrentRepoName(null);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);
     }
   };
 
@@ -248,14 +255,21 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const handleRepoSelection = (repoName: string | null) => {
     setCurrentRepoName(repoName);
 
-    if (repoName && !currentOwnerName) {
-      for (const org of organizations || []) {
-        const repo = org.repositories.find((r) => r.repoName === repoName);
-        if (repo) {
-          setCurrentOwnerName(org.ownerName);
-          break;
+    if (repoName) {
+      localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, repoName);
+
+      if (!currentOwnerName) {
+        for (const org of organizations || []) {
+          const repo = org.repositories.find((r) => r.repoName === repoName);
+          if (repo) {
+            setCurrentOwnerName(org.ownerName);
+            localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, org.ownerName);
+            break;
+          }
         }
       }
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);
     }
   };
 
@@ -263,8 +277,8 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   useEffect(() => {
     if (!organizations) return;
 
-    const savedRepo = localStorage.getItem("currentRepo");
-    const savedOwner = localStorage.getItem("currentOwner");
+    const savedRepo = localStorage.getItem(STORAGE_KEYS.CURRENT_REPO_NAME);
+    const savedOwner = localStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
 
     if (savedRepo && savedOwner) {
       const orgExists = organizations.some((org) => org.ownerName === savedOwner);

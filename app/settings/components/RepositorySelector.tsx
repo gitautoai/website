@@ -1,7 +1,5 @@
 "use client";
-import { useEffect } from "react";
 import { useAccountContext } from "@/components/Context/Account";
-import { STORAGE_KEYS } from "@/lib/constants";
 
 type RepositorySelectorProps = {
   onRepoChange?: (repo: string) => void;
@@ -17,29 +15,9 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
     isLoading,
   } = useAccountContext();
 
-  // Load saved repo from localStorage on component mount
-  useEffect(() => {
-    const savedRepo = localStorage.getItem(STORAGE_KEYS.CURRENT_REPO_NAME);
-    const savedOwner = localStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
-
-    if (savedRepo && savedOwner && !currentRepoName) {
-      setCurrentRepoName(savedRepo);
-      setCurrentOwnerName(savedOwner);
-      onRepoChange?.(savedRepo);
-    }
-  }, [
-    organizations,
-    currentRepoName,
-    currentOwnerName,
-    setCurrentRepoName,
-    setCurrentOwnerName,
-    onRepoChange,
-  ]);
-
   const handleRepoChange = (repo: string) => {
     const startTime = performance.now();
     setCurrentRepoName(repo);
-    localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, repo);
     onRepoChange?.(repo);
     const endTime = performance.now();
     console.log(`Repository selection change time: ${endTime - startTime}ms`);
@@ -62,7 +40,6 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
             const org = organizations.find((o) => o.ownerName === e.target.value);
             if (org && org.repositories.length > 0) {
               setCurrentOwnerName(e.target.value);
-              localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, e.target.value);
               handleRepoChange(org.repositories[0].repoName);
             }
             const endTime = performance.now();
