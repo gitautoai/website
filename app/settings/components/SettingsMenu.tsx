@@ -20,15 +20,19 @@ export default function SettingsMenu({ onItemClick }: { onItemClick?: () => void
       <ul className="space-y-2">
         {menuItems.map((item) => (
           <li key={item.id}>
-            <Link
-              href={item.href}
-              onClick={onItemClick}
-              className={`block w-full text-left p-3 rounded-lg transition-colors ${
-                pathname === item.href ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"
-              }`}
-            >
-              <div className="font-medium">{item.label}</div>
-            </Link>
+            {item.isHeader ? (
+              <div className="text-sm font-semibold text-gray-500 px-3 py-2 mt-4">{item.label}</div>
+            ) : (
+              <Link
+                href={item.href}
+                onClick={onItemClick}
+                className={`block w-full text-left p-3 rounded-lg transition-colors ${
+                  pathname === item.href ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"
+                }`}
+              >
+                <div className="font-medium">{item.label}</div>
+              </Link>
+            )}
           </li>
         ))}
       </ul>

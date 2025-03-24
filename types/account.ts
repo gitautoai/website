@@ -11,6 +11,7 @@ export interface AccountContextType {
   email: string | null;
   installationIds: number[];
   jwtToken: string | null;
+  accessToken: string | undefined;
   organizations: Organization[];
   currentOwnerId: number | null;
   currentOwnerName: string | null;
