@@ -55,24 +55,24 @@ export default function CoveragePage() {
   // Add state for success popup
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const [startTime, setStartTime] = useState(new Date());
+
   const fetchCoverageData = useCallback(async () => {
     if (!currentRepoName || !currentOwnerName || !currentOwnerId || !currentRepoId) {
       setIsLoading(false);
-      return;
+      return [];
     }
 
     try {
       setError(null);
       setIsLoading(true);
 
-      const response = await fetch(`/api/supabase/get-coverage-data`, {
+      const data = await fetchWithTiming<CoverageData[]>(`/api/supabase/get-coverage-data`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ownerId: currentOwnerId, repoId: currentRepoId }),
       });
-      if (!response.ok) throw new Error("Failed to fetch coverage data");
 
-      const data = await response.json();
       setCoverageData(data);
 
       // Extract unique package names and levels for filters
@@ -85,9 +85,13 @@ export default function CoveragePage() {
       });
 
       setPackageNames(Array.from(packagesSet));
+      setStartTime(new Date());
+
+      return data;
     } catch (error) {
       setError("Failed to load coverage data");
       console.error("Error loading coverage data:", error);
+      return [];
     } finally {
       setIsLoading(false);
     }
@@ -267,6 +271,7 @@ export default function CoveragePage() {
       setIsRefreshing(true);
       setError(null);
 
+      console.log("Refreshing coverage");
       await fetchWithTiming(`/api/proxy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -282,8 +287,25 @@ export default function CoveragePage() {
           },
         }),
       });
+      console.log("Refreshed coverage");
 
-      await fetchCoverageData();
+      // Poll for coverage data every 1 minute
+      const interval = setInterval(async () => {
+        console.log("Polling for coverage data");
+        const data = await fetchCoverageData();
+        if (data.some((item) => new Date(item.updated_at).getTime() > startTime.getTime())) {
+          clearInterval(interval);
+          setIsRefreshing(false);
+          console.log("Found new coverage data, stopping polling");
+        }
+      }, 1 * 60 * 1000);
+
+      // Timeout after 10 minutes
+      setTimeout(() => {
+        clearInterval(interval);
+        setIsRefreshing(false);
+        console.log("Polling timeout reached");
+      }, 10 * 60 * 1000);
     } catch (error) {
       console.error("Error refreshing coverage:", error);
       setError(
@@ -291,7 +313,6 @@ export default function CoveragePage() {
           ? String(error.message)
           : "Failed to refresh coverage data"
       );
-    } finally {
       setIsRefreshing(false);
     }
   };

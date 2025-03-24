@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { fetchWithTiming } from "@/utils/fetch";
 
 export async function POST(request: Request) {
   try {
@@ -10,26 +11,13 @@ export async function POST(request: Request) {
         ? "https://5ze2tkqk7c27bpl5opy5sbilsi0vrdim.lambda-url.us-west-1.on.aws"
         : "https://gitauto.ngrok.dev";
 
-    const response = await fetch(`${baseUrl}${endpoint}`, {
+    fetchWithTiming(`${baseUrl}${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorMessage;
-      try {
-        const errorData = JSON.parse(errorText);
-        errorMessage = errorData.detail || `Error: ${response.status}`;
-      } catch {
-        errorMessage = `Error: ${response.status} - ${errorText}`;
-      }
-      throw new Error(errorMessage);
-    }
-
-    const result = await response.json();
-    return NextResponse.json(result);
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Proxy error:", error);
     return NextResponse.json(
