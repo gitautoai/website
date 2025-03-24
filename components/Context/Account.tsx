@@ -11,6 +11,7 @@ import { swrOptions, extendedSwrOptions } from "@/config/swr";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { AccountContextType } from "@/types/account";
 import { Installation, Organization, SettingsType } from "@/types/github";
+import { isTokenExpired } from "@/utils/auth";
 import { fetchWithTiming } from "@/utils/fetch";
 
 const AccountContext = createContext<AccountContextType>({
