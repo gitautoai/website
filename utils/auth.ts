@@ -18,13 +18,3 @@ export function isValidToken(userId: string, jwtToken: string) {
 
   return false;
 }
-
-export function isTokenExpired(jwtToken: string) {
-  const decodedToken: any = jwt.decode(jwtToken);
-  const currentTime = Math.floor(Date.now() / 1000);
-
-  if (decodedToken && decodedToken.exp && decodedToken.exp < currentTime) {
-    return true;
-  }
-  return false;
-}

@@ -1,7 +1,7 @@
 "use client";
 // Third party imports
 import { useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { createContext, useContext, useState, useEffect } from "react";
 import useSWR from "swr";
 
@@ -11,7 +11,6 @@ import { swrOptions, extendedSwrOptions } from "@/config/swr";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { AccountContextType } from "@/types/account";
 import { Installation, Organization, SettingsType } from "@/types/github";
-import { isTokenExpired } from "@/utils/auth";
 import { fetchWithTiming } from "@/utils/fetch";
 
 const AccountContext = createContext<AccountContextType>({
@@ -56,13 +55,10 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   // Process session information
   useEffect(() => {
     if (!session) return;
+    console.log("Session: ", session);
     setUserId(session.user.userId);
     setUserName(session.user.name || "Unknown User Name");
     setEmail(session.user.email || "Unknown Email");
-    if (isTokenExpired(session.jwtToken)) {
-      signOut({ callbackUrl: "/" });
-      return;
-    }
     setJwtToken(session.jwtToken);
     setAccessToken(session.accessToken);
   }, [
