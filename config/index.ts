@@ -75,6 +75,7 @@ export const RELATIVE_URLS = {
   // PROBLEM: "/#problem",
   REDIRECT_TO_INSTALL: "/redirect-to-install",
   SETTINGS: "/settings",
+  COVERAGES: "/settings/coverage",
   TERMS_OF_SERVICE: "/terms-of-service",
   USE_CASES: "/#use-cases",
 } as const;
@@ -82,6 +83,7 @@ export const ABSOLUTE_URLS = {
   CALENDLY: "https://calendly.com/gitauto/30min",
   GITAUTO: {
     INDEX: "https://gitauto.ai",
+    COVERAGES: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.COVERAGES}`,
     THUMBNAIL: "https://gitauto.ai/homepage/thumbnail.jpg",
   },
   GITHUB: {

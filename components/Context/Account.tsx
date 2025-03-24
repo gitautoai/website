@@ -1,15 +1,17 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
-import { signOut, useSession } from "next-auth/react";
+// Third party imports
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { createContext, useContext, useState, useEffect } from "react";
 import useSWR from "swr";
-import { isTokenExpired } from "@/utils/auth";
-import { fetchWithTiming } from "@/utils/fetch";
-import { swrOptions, extendedSwrOptions } from "@/config/swr";
+
+// Local imports
 import { RELATIVE_URLS } from "@/config/index";
+import { swrOptions, extendedSwrOptions } from "@/config/swr";
 import { STORAGE_KEYS } from "@/lib/constants";
-import { Installation, Organization, SettingsType } from "@/types/github";
 import { AccountContextType } from "@/types/account";
+import { Installation, Organization, SettingsType } from "@/types/github";
+import { fetchWithTiming } from "@/utils/fetch";
 
 const AccountContext = createContext<AccountContextType>({
   installations: undefined,
@@ -22,6 +24,7 @@ const AccountContext = createContext<AccountContextType>({
   email: null,
   installationIds: [],
   jwtToken: null,
+  accessToken: undefined,
   organizations: [],
   currentOwnerId: null,
   currentOwnerName: null,
@@ -73,7 +76,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const fetchInstallations = async () => {
     if (!userId || !accessToken) return [];
 
-    return fetchWithTiming("/api/users/get-user-info", {
+    return fetchWithTiming<Installation[]>("/api/users/get-user-info", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, accessToken }),
@@ -95,7 +98,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       (installation: Installation) => installation.stripe_customer_id
     );
 
-    return fetchWithTiming("/api/stripe/get-userinfo-subscriptions", {
+    return fetchWithTiming<boolean[]>("/api/stripe/get-userinfo-subscriptions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId, jwtToken, customerIds }),
@@ -103,7 +106,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     });
   };
 
-  const { data: installationsSubscribed } = useSWR(
+  const { data: installationsSubscribed = null } = useSWR(
     userId ? `fetchSubscriptionStatus-${userId}` : null,
     fetchSubscriptionStatus,
     swrOptions
@@ -150,7 +153,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
   // Fetch organizations
   const fetchOrganizations = async (installationIds: number[]) => {
-    return fetchWithTiming("/api/github/get-installed-repos", {
+    return fetchWithTiming<Organization[]>("/api/github/get-installed-repos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ installationIds }),
@@ -312,6 +315,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         email,
         installationIds,
         jwtToken,
+        accessToken,
         organizations: organizations || [],
         currentOwnerId,
         currentOwnerName,

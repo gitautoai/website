@@ -10,11 +10,11 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   return (
     <div className="min-h-screen flex">
       {/* Desktop Menu */}
-      <div className="hidden lg:block lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-64 lg:bg-gray-50 lg:border-r">
+      <div className="hidden lg:block lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-56 lg:bg-gray-50 lg:border-r">
         <SettingsMenu />
       </div>
 
-      {/* Auth Controls - Top Right with mobile menu toggle functionality */}
+      {/* Auth Controls - Top Right */}
       <div className="fixed top-6 right-6 z-40 flex items-center gap-2">
         <div className="hidden lg:block">
           <AuthControls callbackUrl="/settings" />
@@ -30,8 +30,8 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
       <MobileSettingsMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
 
       {/* Main Content */}
-      <main className="flex-1 lg:ml-64">
-        <div className="max-w-7xl mx-auto p-8">{children}</div>
+      <main className="flex-1 lg:ml-48">
+        <div className="max-w-7xl mx-auto px-0 py-8 lg:p-8">{children}</div>
       </main>
     </div>
   );
