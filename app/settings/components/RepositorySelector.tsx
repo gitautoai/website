@@ -13,7 +13,25 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
     currentOwnerName,
     setCurrentOwnerName,
     isLoading,
+    installations,
+    setSelectedIndex,
   } = useAccountContext();
+
+  const handleOwnerChange = (ownerName: string) => {
+    const currentOrg = organizations.find((o) => o.ownerName === ownerName);
+
+    if (currentOrg && currentOrg.repositories.length > 0) {
+      setCurrentOwnerName(ownerName);
+
+      const newIndex = installations?.findIndex(
+        (installation) => installation.owner_name === ownerName
+      );
+      if (newIndex !== -1) setSelectedIndex(newIndex);
+
+      const firstRepo = currentOrg.repositories[0].repoName;
+      handleRepoChange(firstRepo);
+    }
+  };
 
   const handleRepoChange = (repo: string) => {
     const startTime = performance.now();
@@ -35,16 +53,7 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
         <label className="block text-sm font-medium text-gray-700 mb-2">Organization</label>
         <select
           value={currentOwnerName || ""}
-          onChange={(e) => {
-            const startTime = performance.now();
-            const org = organizations.find((o) => o.ownerName === e.target.value);
-            if (org && org.repositories.length > 0) {
-              setCurrentOwnerName(e.target.value);
-              handleRepoChange(org.repositories[0].repoName);
-            }
-            const endTime = performance.now();
-            console.log(`Organization selection change time: ${endTime - startTime}ms`);
-          }}
+          onChange={(e) => handleOwnerChange(e.target.value)}
           className={`w-full p-2 border rounded-lg ${isLoading ? "bg-gray-100" : "bg-white"}`}
           disabled={isLoading}
         >

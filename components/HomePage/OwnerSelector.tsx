@@ -13,17 +13,35 @@ export default function OwnerSelector({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const { installations, mutateInstallations, selectedIndex, setSelectedIndex } =
-    useAccountContext();
+  const {
+    installations,
+    mutateInstallations,
+    selectedIndex,
+    setSelectedIndex,
+    organizations,
+    setCurrentRepoName,
+    setCurrentOwnerName,
+  } = useAccountContext();
 
   function selectOwner(index: number) {
     if (!installations) return;
 
-    // Store the selected owner in localStorage
-    localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, installations[index].owner_name);
+    const newOwnerName = installations[index].owner_name;
 
-    // Update the selected index directly
+    // Store the selected owner in localStorage
+    localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, newOwnerName);
+
+    // Update the selected index and owner name
     setSelectedIndex(index);
+    setCurrentOwnerName(newOwnerName);
+
+    // Find the first repository of the selected owner and set it
+    const newOwner = organizations?.find((org) => org.ownerName === newOwnerName);
+    if (newOwner && newOwner.repositories.length > 0) {
+      const firstRepo = newOwner.repositories[0].repoName;
+      localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, firstRepo);
+      setCurrentRepoName(firstRepo);
+    }
 
     mutateInstallations();
     onClose();

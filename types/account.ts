@@ -4,8 +4,8 @@ export interface AccountContextType {
   installations: Installation[] | undefined;
   mutateInstallations: () => void;
   installationsSubscribed: boolean[] | null;
-  selectedIndex: number | null;
-  setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  selectedIndex: number | undefined;
+  setSelectedIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
   userId: number | null;
   userName: string;
   email: string | null;
@@ -14,6 +14,7 @@ export interface AccountContextType {
   accessToken: string | undefined;
   organizations: Organization[];
   currentOwnerId: number | null;
+  currentOwnerType: "User" | "Organization" | null;
   currentOwnerName: string | null;
   currentRepoId: number | null;
   currentRepoName: string | null;
