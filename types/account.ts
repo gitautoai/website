@@ -7,7 +7,7 @@ export interface AccountContextType {
   selectedIndex: number | null;
   setSelectedIndex: React.Dispatch<React.SetStateAction<number | null>>;
   userId: number | null;
-  userName: string | null;
+  userName: string;
   email: string | null;
   installationIds: number[];
   jwtToken: string | null;

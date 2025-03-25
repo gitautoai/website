@@ -20,7 +20,7 @@ const AccountContext = createContext<AccountContextType>({
   selectedIndex: null,
   setSelectedIndex: () => {},
   userId: null,
-  userName: null,
+  userName: "Unknown User",
   email: null,
   installationIds: [],
   jwtToken: null,
@@ -57,7 +57,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     if (!session) return;
     console.log("Session: ", session);
     setUserId(session.user.userId);
-    setUserName(session.user.name || "Unknown User Name");
+    setUserName(session.user.name || "Unknown User");
     setEmail(session.user.email || "Unknown Email");
     setJwtToken(session.jwtToken);
     setAccessToken(session.accessToken);
