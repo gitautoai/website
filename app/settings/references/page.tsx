@@ -147,7 +147,7 @@ export default function ReferencesPage() {
         setFilePathValidationStatus((prev) => ({ ...prev, [index]: "invalid" }));
       }
     },
-    [currentRepoName, currentOwnerName]
+    [currentRepoName, currentOwnerName, currentOwnerId]
   );
 
   // Update canSave to check file paths too
