@@ -7,10 +7,11 @@ import { fetchWithTiming } from "@/utils/fetch";
 
 type TokenResponse = {
   access_token: string;
-  refresh_token?: string;
-  expires_in?: number;
-  scope?: string;
-  token_type?: string;
+  expires_in: number;
+  refresh_token: string;
+  refresh_token_expires_in: number;
+  scope: string;
+  token_type: string; // "Bearer"
 };
 
 const handler = NextAuth({
@@ -28,25 +29,32 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
+    // JWT Callback triggers on:
+    // 1. Initial sign in (account & user params available)
+    // 2. Every page load using getServerSession()
+    // 3. Every client render using useSession()
+    // 4. Every API call using getServerSession()
+    // 5. Automatic session refresh attempts
+    // For cases 2-5, only the token parameter is available
     // https://next-auth.js.org/configuration/callbacks#jwt-callback
     async jwt({ token, account, user }) {
       if (account && user) {
         // First time sign in
-        console.log("Account in NextAuth: ", account);
-        token.jwtToken = sign(user, config.JWT_SECRET as string, {
-          algorithm: "HS256",
-          expiresIn: "100d",
-        });
+        token.jwtToken = sign(user, config.JWT_SECRET, { algorithm: "HS256", expiresIn: "100d" });
         token.user_id = account.providerAccountId;
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
+        token.accessTokenExpires = account.expires_at as number;
+        token.refreshTokenExpiresIn = account.refresh_token_expires_in;
       }
 
       // Token refresh check on subsequent requests
       const now = Math.floor(Date.now() / 1000);
-      if (typeof token.expiresAt === "number" && now > token.expiresAt - 300) {
+      const expiresAt = token.accessTokenExpires as number;
+      if (!expiresAt || now > expiresAt - 300) {
+        console.log("Refreshing token with NextAuth");
         // https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/refreshing-user-access-tokens#refreshing-a-user-access-token-with-a-refresh-token
-        const tokens = await fetchWithTiming<TokenResponse>(
+        const newToken = await fetchWithTiming<TokenResponse>(
           "https://github.com/login/oauth/access_token",
           {
             method: "POST",
@@ -59,17 +67,18 @@ const handler = NextAuth({
             }),
           }
         );
-        console.log("Tokens: ", tokens);
 
         return {
           ...token,
-          accessToken: tokens.access_token,
-          refreshToken: tokens.refresh_token ?? token.refreshToken,
+          accessToken: newToken.access_token,
+          refreshToken: newToken.refresh_token ?? token.refreshToken,
         };
       }
 
       return token;
     },
+
+    // Always runs AFTER jwt callback
     // https://next-auth.js.org/configuration/callbacks#session-callback
     async session({ session, token }) {
       try {
