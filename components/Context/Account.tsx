@@ -76,7 +76,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
   // Fetch installation information
   const fetchInstallations = async () => {
-    if (!userId || !accessToken) return [];
+    if (!userId || !accessToken) return undefined;
 
     return fetchWithTiming<Installation[]>("/api/users/get-user-info", {
       method: "POST",
@@ -86,7 +86,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     });
   };
 
-  const { data: installations, mutate: mutateInstallations } = useSWR<Installation[]>(
+  const { data: installations, mutate: mutateInstallations } = useSWR<Installation[] | undefined>(
     userId ? `fetchInstallations-${userId}` : null,
     fetchInstallations,
     swrOptions
@@ -147,11 +147,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     if (JSON.stringify(newInstallationIds) !== JSON.stringify(installationIds))
       setInstallationIds(newInstallationIds);
   }, [installations]);
-
-  // Redirect if no installations
-  useEffect(() => {
-    if (installations && installations.length === 0) router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
-  }, [installations, router]);
 
   // Fetch organizations
   const fetchOrganizations = async (installationIds: number[]) => {
