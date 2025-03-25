@@ -38,10 +38,12 @@ const handler = NextAuth({
     // For cases 2-5, only the token parameter is available
     // https://next-auth.js.org/configuration/callbacks#jwt-callback
     async jwt({ token, account, user }) {
+      console.log("account in jwt callback", account);
+      console.log("user in jwt callback", user);
+      console.log("token in jwt callback", token);
+
       if (account && user) {
         // First time sign in
-        console.log("user in jwt callback", user);
-        console.log("account in jwt callback", account);
         token.jwtToken = sign(user, config.JWT_SECRET, { algorithm: "HS256", expiresIn: "100d" });
         token.user_id = account.providerAccountId;
         token.accessToken = account.access_token;
@@ -52,7 +54,6 @@ const handler = NextAuth({
 
       // Token refresh check on subsequent requests
       const now = Math.floor(Date.now() / 1000);
-      console.log("token in jwt callback", token);
       const expiresAt = token.accessTokenExpires as number;
       if (!expiresAt || now > expiresAt - 300) {
         console.log("Refreshing token with NextAuth");
