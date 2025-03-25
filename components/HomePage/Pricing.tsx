@@ -60,7 +60,7 @@ export default function Pricing() {
           ownerType: installations[currentIndex].owner_type,
           ownerId: Number(installations[currentIndex].owner_id),
           ownerName: installations[currentIndex].owner_name,
-          userName: userName || "Unknown User",
+          userName,
           billingPeriod: billingPeriod,
         }),
       });

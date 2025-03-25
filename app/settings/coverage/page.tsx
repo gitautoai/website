@@ -262,10 +262,7 @@ export default function CoveragePage() {
   const hasPackages = packageNames.length > 0;
 
   const refreshCoverage = async () => {
-    if (!currentRepoName || !currentOwnerName || !currentOwnerId || !currentRepoId) {
-      setError("Please select a repository first");
-      return;
-    }
+    if (!currentRepoName || !currentOwnerName || !currentOwnerId || !currentRepoId) return;
 
     try {
       setIsRefreshing(true);
@@ -485,7 +482,14 @@ export default function CoveragePage() {
                     setIsActionsOpen(false);
                   }}
                   className="w-full px-4 py-2 text-left hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
-                  disabled={isRefreshing || !currentRepoName}
+                  disabled={
+                    isRefreshing ||
+                    !currentRepoId ||
+                    !currentRepoName ||
+                    !currentOwnerId ||
+                    !currentOwnerName ||
+                    !currentInstallationId
+                  }
                 >
                   {isRefreshing ? (
                     <>

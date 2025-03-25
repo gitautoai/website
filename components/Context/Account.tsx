@@ -17,16 +17,17 @@ const AccountContext = createContext<AccountContextType>({
   installations: undefined,
   mutateInstallations: () => {},
   installationsSubscribed: null,
-  selectedIndex: null,
+  selectedIndex: undefined,
   setSelectedIndex: () => {},
   userId: null,
-  userName: null,
+  userName: "Unknown User",
   email: null,
   installationIds: [],
   jwtToken: null,
   accessToken: undefined,
   organizations: [],
   currentOwnerId: null,
+  currentOwnerType: null,
   currentOwnerName: null,
   currentRepoId: null,
   currentRepoName: null,
@@ -41,15 +42,19 @@ const AccountContext = createContext<AccountContextType>({
 
 export function AccountContextWrapper({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined);
   const [userId, setUserId] = useState<number | null>(null);
-  const [userName, setUserName] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>("Unknown User");
   const [email, setEmail] = useState<string | null>(null);
   const [installationIds, setInstallationIds] = useState<number[]>([]);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
+  const [currentOwnerId, setCurrentOwnerId] = useState<number | null>(null);
+  const [currentOwnerType, setCurrentOwnerType] = useState<"User" | "Organization" | null>(null);
   const [currentOwnerName, setCurrentOwnerName] = useState<string | null>(null);
+  const [currentRepoId, setCurrentRepoId] = useState<number | null>(null);
   const [currentRepoName, setCurrentRepoName] = useState<string | null>(null);
+  const [currentInstallationId, setCurrentInstallationId] = useState<number | null>(null);
   const router = useRouter();
 
   // Process session information
@@ -57,7 +62,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     if (!session) return;
     console.log("Session: ", session);
     setUserId(session.user.userId);
-    setUserName(session.user.name || "Unknown User Name");
+    setUserName(session.user.name || "Unknown User");
     setEmail(session.user.email || "Unknown Email");
     setJwtToken(session.jwtToken);
     setAccessToken(session.accessToken);
@@ -164,22 +169,47 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     extendedSwrOptions
   );
 
-  // Calculate current selection information
-  const currentOwnerId = currentOwnerName
-    ? organizations?.find((org) => org.ownerName === currentOwnerName)?.ownerId || null
-    : null;
+  // Add useEffect to update the values when dependencies change
+  useEffect(() => {
+    if (!organizations || !currentOwnerName) {
+      setCurrentOwnerId(null);
+      setCurrentOwnerType(null);
+      return;
+    }
 
-  const currentRepoId =
-    currentRepoName && currentOwnerName
-      ? organizations
-          ?.find((org) => org.ownerName === currentOwnerName)
-          ?.repositories.find((repo) => repo.repoName === currentRepoName)?.repoId || null
-      : null;
+    const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+    if (currentOrg) {
+      setCurrentOwnerId(currentOrg.ownerId);
+      setCurrentOwnerType(currentOrg.ownerType);
+    }
+  }, [organizations, currentOwnerName]);
 
-  const currentInstallationId = currentOwnerName
-    ? installations?.find((installation) => installation.owner_name === currentOwnerName)
-        ?.installation_id || null
-    : null;
+  useEffect(() => {
+    if (!organizations || !currentOwnerName || !currentRepoName) {
+      setCurrentRepoId(null);
+      return;
+    }
+
+    const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+    const currentRepo = currentOrg?.repositories.find((repo) => repo.repoName === currentRepoName);
+    console.log("currentOrg: ", currentOrg);
+    console.log("currentRepo: ", currentRepo);
+    if (currentRepo) setCurrentRepoId(currentRepo.repoId);
+  }, [organizations, currentOwnerName, currentRepoName]);
+
+  useEffect(() => {
+    if (!installations || !currentOwnerName) {
+      setCurrentInstallationId(null);
+      return;
+    }
+
+    const currentInstallation = installations.find(
+      (installation) => installation.owner_name === currentOwnerName
+    );
+    if (currentInstallation) {
+      setCurrentInstallationId(Number(currentInstallation.installation_id));
+    }
+  }, [installations, currentOwnerName]);
 
   // Load settings
   const loadSettings = async (ownerName: string, repoName: string) => {
@@ -315,6 +345,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         accessToken,
         organizations: organizations || [],
         currentOwnerId,
+        currentOwnerType,
         currentOwnerName,
         currentRepoId,
         currentRepoName,
