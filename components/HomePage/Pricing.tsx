@@ -28,8 +28,15 @@ export default function Pricing() {
   // Analytics
   const posthog = usePostHog();
 
-  const { userId, jwtToken, email, selectedIndex, installations, installationsSubscribed } =
-    useAccountContext();
+  const {
+    userId,
+    jwtToken,
+    email,
+    selectedIndex,
+    installations,
+    installationsSubscribed,
+    userName,
+  } = useAccountContext();
 
   const router = useRouter();
 
@@ -53,7 +60,7 @@ export default function Pricing() {
           ownerType: installations[currentIndex].owner_type,
           ownerId: Number(installations[currentIndex].owner_id),
           ownerName: installations[currentIndex].owner_name,
-          userName: installations[currentIndex].user_name,
+          userName: userName || "Unknown User",
           billingPeriod: billingPeriod,
         }),
       });
