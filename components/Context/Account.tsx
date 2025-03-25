@@ -148,13 +148,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       setInstallationIds(newInstallationIds);
   }, [installations]);
 
-  // Redirect if no installations
-  useEffect(() => {
-    if (!userId || !accessToken) return;
-    if (!installations) return;
-    if (installations.length === 0) router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
-  }, [installations, router, userId, accessToken]);
-
   // Fetch organizations
   const fetchOrganizations = async (installationIds: number[]) => {
     return fetchWithTiming<Organization[]>("/api/github/get-installed-repos", {
