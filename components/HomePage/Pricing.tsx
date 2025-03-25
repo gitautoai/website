@@ -71,7 +71,7 @@ export default function Pricing() {
       // If not, redirect to installation page
       router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
     }
-  }, [email, jwtToken, router, selectedIndex, userId, installations, billingPeriod]);
+  }, [email, jwtToken, router, selectedIndex, userId, installations, billingPeriod, userName]);
 
   // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
   async function handleSubscribe() {
