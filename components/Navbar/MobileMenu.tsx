@@ -29,8 +29,15 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
   const { status } = useSession();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { userId, jwtToken, email, installations, selectedIndex, installationsSubscribed } =
-    useAccountContext();
+  const {
+    userId,
+    jwtToken,
+    email,
+    installations,
+    selectedIndex,
+    installationsSubscribed,
+    userName,
+  } = useAccountContext();
 
   const router = useRouter();
 
@@ -50,7 +57,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
         ownerType: installations[currentIndex].owner_type,
         ownerId: Number(installations[currentIndex].owner_id),
         ownerName: installations[currentIndex].owner_name,
-        userName: installations[currentIndex].user_name,
+        userName: userName || "Unknown User",
       }),
     });
 
