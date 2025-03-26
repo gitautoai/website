@@ -11,7 +11,8 @@ export async function POST(request: Request) {
         ? "https://5ze2tkqk7c27bpl5opy5sbilsi0vrdim.lambda-url.us-west-1.on.aws"
         : "https://gitauto.ngrok.dev";
 
-    fetchWithTiming(`${baseUrl}${endpoint}`, {
+    console.log("Proxying request to:", `${baseUrl}${endpoint}`);
+    await fetchWithTiming(`${baseUrl}${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

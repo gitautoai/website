@@ -268,12 +268,12 @@ export default function CoveragePage() {
       setIsRefreshing(true);
       setError(null);
 
-      console.log("Refreshing coverage");
+      console.log("Requesting to refresh coverage");
       await fetchWithTiming(`/api/proxy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          endpoint: "/api/repository/coverage",
+          endpoint: "/coverage",
           data: {
             owner_id: currentOwnerId,
             owner_name: currentOwnerName,
@@ -284,7 +284,7 @@ export default function CoveragePage() {
           },
         }),
       });
-      console.log("Refreshed coverage");
+      console.log("Requested to refresh coverage");
 
       // Poll for coverage data every 1 minute
       const interval = setInterval(async () => {
