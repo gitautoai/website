@@ -6,7 +6,6 @@ import { createContext, useContext, useState, useEffect } from "react";
 import useSWR from "swr";
 
 // Local imports
-import { RELATIVE_URLS } from "@/config/index";
 import { swrOptions, extendedSwrOptions } from "@/config/swr";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { AccountContextType } from "@/types/account";
