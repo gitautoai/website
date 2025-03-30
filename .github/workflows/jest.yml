@@ -1,0 +1,34 @@
+name: Jest Coverage
+
+on:
+  push:
+    branches-ignore:
+      - "main"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      # ci stands for "clean install", used for CICD
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Jest with coverage
+        run: npm test -- --coverage --coverageReporters="text" --coverageReporters="lcov"
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
