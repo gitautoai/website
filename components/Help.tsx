@@ -97,6 +97,28 @@ interface HelpStepProps {
 }
 
 function HelpStep({ number, title, content, items, note }: HelpStepProps) {
+  const renderText = (text: string) => {
+    const parts = text.split(/(\[[^\]]+\]\([^)]+\))/);
+    return parts.map((part, index) => {
+      const match = part.match(/\[([^\]]+)\]\(([^)]+)\)/);
+      if (match) {
+        const [_, linkText, url] = match;
+        return (
+          <a
+            key={index}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-pink-700"
+          >
+            {linkText}
+          </a>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <div className="flex gap-4">
       <div className="flex-shrink-0">
@@ -118,7 +140,7 @@ function HelpStep({ number, title, content, items, note }: HelpStepProps) {
 
         {note && (
           <div className="mt-2 text-sm text-pink-600 bg-pink-50 px-3 py-2 rounded-lg">
-            Note: {note}
+            Note: {renderText(note)}
           </div>
         )}
       </div>

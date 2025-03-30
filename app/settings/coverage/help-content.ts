@@ -11,7 +11,7 @@ export const coverageDashboardHelp = {
         "Workflow must include 'flutter test --coverage' command",
         "Coverage report must be uploaded as an artifact",
       ],
-      note: "Currently only Flutter projects are supported (alpha version)",
+      note: "Currently only Flutter projects are supported (alpha version). For detailed setup instructions, see our guide [here](/blog/how-to-detect-low-test-coverage-files-in-flutter).",
     },
     {
       title: "Select Repository",
