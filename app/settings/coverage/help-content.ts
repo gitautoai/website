@@ -1,17 +1,18 @@
 export const coverageDashboardHelp = {
   title: "Coverage Dashboard Help",
   description:
-    "This dashboard shows test coverage data for repositories where GitAuto is installed and helps you create GitHub issues for improving test coverage. Currently in alpha and only supports Flutter projects.",
+    "This dashboard shows test coverage data for repositories where GitAuto is installed and helps you create GitHub issues for improving test coverage. Currently in alpha and supports Jest and Flutter test coverage.",
   steps: [
     {
       title: "Prerequisites",
       content: "Your repository must meet these requirements:",
       subItems: [
         "GitHub Actions workflow.yml file must be configured",
-        "Workflow must include 'flutter test --coverage' command",
+        "For Jest: Workflow must include 'jest --coverage --coverageReporters=\"lcov\"' command",
+        "For Flutter: Workflow must include 'flutter test --coverage' command",
         "Coverage report must be uploaded as an artifact",
       ],
-      note: "Currently only Flutter projects are supported (alpha version). For detailed setup instructions, see our guide [here](/blog/how-to-detect-low-test-coverage-files-in-flutter).",
+      note: "Supports Jest and Flutter projects. For detailed setup instructions, see our guides [here](/blog/how-to-detect-low-test-coverage-files-in-jest) for Jest and [here](/blog/how-to-detect-low-test-coverage-files-in-flutter) for Flutter.",
     },
     {
       title: "Select Repository",
