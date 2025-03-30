@@ -1,0 +1,116 @@
+export const metadata = {
+  title: "How to Detect Low Test Coverage Files in Flutter / Dart",
+  description:
+    "A step-by-step guide on setting up test coverage reporting in Flutter / Dart projects and using GitAuto to improve coverage automatically.",
+  alternates: { canonical: "/blog/how-to-detect-low-test-coverage-files-in-flutter" },
+  openGraph: { url: "/blog/how-to-detect-low-test-coverage-files-in-flutter" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["solution", "Flutter", "Dart", "Test Coverage", "GitHub Actions"],
+  createdAt: "2025-03-30",
+  updatedAt: "2025-03-30",
+};
+
+# How to Detect Low Test Coverage Files in Flutter / Dart
+
+Through observing our customers' behavior, we've noticed a common challenge when teams want to improve their test coverage: identifying which files to tackle first. Without a clear overview of low-coverage files, developers often resort to randomly selecting files or relying on gut feelings. This initial hurdle of "where do we even start?" can significantly slow down or even halt test coverage initiatives, often leading teams to abandon the task entirely.
+
+That's why we're introducing this coverage dashboard. It provides an instant, clear view of which files need attention, eliminating the guesswork from test coverage improvement. In this guide, we'll show you how to set up automated test coverage reporting for your Flutter / Dart project and use GitAuto to improve coverage systematically.
+
+## TL;DR - What's the story?
+
+1. [Prerequisites](#1-prerequisites)
+2. [Setting Up GitHub Actions](#2-setting-up-github-actions)
+3. [Viewing Coverage Reports](#3-viewing-coverage-reports)
+4. [Creating Issues for Low Coverage](#4-creating-issues-for-low-coverage)
+5. [Automating Coverage Improvement](#5-automating-coverage-improvement)
+
+## 1. Prerequisites
+
+Before we begin, ensure you have:
+
+- A Flutter project hosted on GitHub
+- GitHub Actions enabled in your repository
+- GitAuto installed in your repository
+
+## 2. Setting Up GitHub Actions
+
+First, let's set up GitHub Actions to run tests and generate coverage reports. Create a workflow file in your `.github/workflows/` directory (the file name can be anything, but we'll use `flutter_test.yml` in this example):
+
+![GitHub Actions Workflow Setup](/blog/how-to-detect-low-test-coverage-files-in-flutter/step2.png)
+
+Key points in this configuration:
+
+- `flutter test --coverage` generates the coverage report
+- The report is uploaded as an artifact named `coverage-report` (any name containing "coverage" is fine)
+- We specify the exact file path `coverage/lcov.info` to upload only this file (don't change the file name or upload the entire directory)
+
+## 3. Viewing Coverage Reports
+
+Once your workflow runs successfully:
+
+![Successful Test Run](/blog/how-to-detect-low-test-coverage-files-in-flutter/step3-1.png)
+
+![Successful Artifact Upload](/blog/how-to-detect-low-test-coverage-files-in-flutter/step3-2.png)
+
+GitAuto will automatically process the coverage reports [here](/settings/coverage):
+
+![Coverage Dashboard](/blog/how-to-detect-low-test-coverage-files-in-flutter/step3-3.png)
+
+The coverage data updates automatically whenever your GitHub Actions workflow runs. In this example configuration, that happens when:
+
+- You push to any branch except master (e.g., when pushing your feature branch for a pull request)
+- You push additional commits to an existing pull request
+- You manually trigger the workflow from the GitHub Actions page using "workflow_dispatch"
+
+This ensures you always see the latest coverage information as your code evolves.
+
+## 4. Creating Issues for Low Coverage
+
+From the coverage dashboard, you can:
+
+1. View files with low test coverage
+2. Create GitHub issues for specific files
+3. Assign issues to GitAuto for automated improvement
+
+![Selecting Files for Coverage Improvement](/blog/how-to-detect-low-test-coverage-files-in-flutter/step4-1.png)
+
+![Creating Issues from Actions Menu](/blog/how-to-detect-low-test-coverage-files-in-flutter/step4-2.png)
+
+![Successfully Created Issues](/blog/how-to-detect-low-test-coverage-files-in-flutter/step4-3.png)
+
+After issues are created, the file names become clickable links. Clicking these links takes you to the corresponding GitHub issues:
+
+![Created Issue Example](/blog/how-to-detect-low-test-coverage-files-in-flutter/step4-4.png)
+
+![Issues List View](/blog/how-to-detect-low-test-coverage-files-in-flutter/step4-5.png)
+
+You can create issues either:
+
+- One by one for targeted improvement
+- In bulk for systematic coverage enhancement
+
+Theoretically, you could create issues for all low-coverage files at once and have GitAuto generate pull requests for all of them simultaneously. While this would consume a significant number of credits, it means you could potentially improve your test coverage from 0% to nearly 100% in a single day - just be mindful of your credit usage!
+
+## 5. Automating Coverage Improvement
+
+After creating issues and assigning them to GitAuto, GitAuto will:
+
+1. Analyze the code in files with low coverage
+2. Create pull requests with appropriate test cases
+3. Run the tests to verify coverage improvement
+
+Each time the workflow runs, new coverage data is collected and processed, allowing you to track improvements over time.
+
+## Next Steps
+
+Now that you have automated coverage reporting set up, you can:
+
+- Monitor coverage trends over time
+- Identify critical areas needing testing
+- Let GitAuto handle the creation of test cases
+- Review and merge the generated test cases
+
+For more examples of how GitAuto can help with testing, check out our guides on [adding unit tests](/blog/add-a-unit-test) and [widget tests](/blog/how-to-add-widget-tests).
+
+Questions or feedback? Contact us at [info@gitauto.com](mailto:info@gitauto.com).
