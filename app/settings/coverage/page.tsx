@@ -476,7 +476,7 @@ export default function CoveragePage() {
             <>
               <div className="fixed inset-0 z-10" onClick={() => setIsActionsOpen(false)} />
               <div className="absolute right-0 mt-1 bg-white border rounded-md shadow-lg py-1 min-w-[200px] z-20">
-                <button
+                {/* <button
                   onClick={() => {
                     refreshCoverage();
                     setIsActionsOpen(false);
@@ -499,7 +499,7 @@ export default function CoveragePage() {
                   ) : (
                     "Refresh Coverage"
                   )}
-                </button>
+                </button> */}
                 <button
                   onClick={() => {
                     handleCreateIssues();
