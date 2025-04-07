@@ -16,6 +16,8 @@ type TokenResponse = {
 
 const handler = NextAuth({
   // https://next-auth.js.org/providers/github
+  // OAuth App (Dev): https://github.com/organizations/gitautoai/settings/applications/2952819
+  // OAuth App (Prd): https://github.com/organizations/gitautoai/settings/applications/2517210
   providers: [
     GithubProvider({
       clientId: config.GITHUB_CLIENT_ID as string,
@@ -23,7 +25,6 @@ const handler = NextAuth({
       authorization: {
         params: {
           scope: "read:user user:email read:org repo",
-          access_type: "offline",
         },
       },
     }),
@@ -47,39 +48,7 @@ const handler = NextAuth({
         token.jwtToken = sign(user, config.JWT_SECRET, { algorithm: "HS256", expiresIn: "100d" });
         token.user_id = account.providerAccountId;
         token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
-        token.accessTokenExpires = account.expires_at as number;
-        token.refreshTokenExpiresIn = account.refresh_token_expires_in;
       }
-
-      // Token refresh check on subsequent requests
-      const now = Math.floor(Date.now() / 1000);
-      const expiresAt = token.accessTokenExpires as number;
-      if (!expiresAt || now > expiresAt - 300) {
-        console.log("Refreshing token with NextAuth");
-        // https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/refreshing-user-access-tokens#refreshing-a-user-access-token-with-a-refresh-token
-        const newToken = await fetchWithTiming<TokenResponse>(
-          "https://github.com/login/oauth/access_token",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json", Accept: "application/json" },
-            body: JSON.stringify({
-              client_id: config.GITHUB_CLIENT_ID,
-              client_secret: config.GITHUB_CLIENT_SECRET,
-              grant_type: "refresh_token",
-              refresh_token: token.refreshToken,
-            }),
-          }
-        );
-        console.log("newToken in jwt callback", newToken);
-
-        return {
-          ...token,
-          accessToken: newToken.access_token,
-          refreshToken: newToken.refresh_token ?? token.refreshToken,
-        };
-      }
-
       return token;
     },
 
