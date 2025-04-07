@@ -123,10 +123,14 @@ export default function CoveragePage() {
   };
 
   const handleSelectAll = () => {
+    const fileOnlyData = filteredData.filter((item) => item.level === "file");
     const isCurrentlySelected =
-      selectedRows.length > 0 && selectedRows.length === filteredData.length;
+      selectedRows.length > 0 &&
+      selectedRows.length === fileOnlyData.length &&
+      fileOnlyData.every((item) => selectedRows.includes(item.id));
+
     if (!isCurrentlySelected) {
-      setSelectedRows(filteredData.map((item) => item.id));
+      setSelectedRows(fileOnlyData.map((item) => item.id));
     } else {
       setSelectedRows([]);
     }
@@ -476,30 +480,6 @@ export default function CoveragePage() {
             <>
               <div className="fixed inset-0 z-10" onClick={() => setIsActionsOpen(false)} />
               <div className="absolute right-0 mt-1 bg-white border rounded-md shadow-lg py-1 min-w-[200px] z-20">
-                {/* <button
-                  onClick={() => {
-                    refreshCoverage();
-                    setIsActionsOpen(false);
-                  }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
-                  disabled={
-                    isRefreshing ||
-                    !currentRepoId ||
-                    !currentRepoName ||
-                    !currentOwnerId ||
-                    !currentOwnerName ||
-                    !currentInstallationId
-                  }
-                >
-                  {isRefreshing ? (
-                    <>
-                      <SpinnerIcon />
-                      <span>Refreshing...</span>
-                    </>
-                  ) : (
-                    "Refresh Coverage"
-                  )}
-                </button> */}
                 <button
                   onClick={() => {
                     handleCreateIssues();
@@ -549,7 +529,12 @@ export default function CoveragePage() {
                     <input
                       type="checkbox"
                       checked={
-                        selectedRows.length > 0 && selectedRows.length === filteredData.length
+                        selectedRows.length > 0 &&
+                        selectedRows.length ===
+                          filteredData.filter((item) => item.level === "file").length &&
+                        filteredData
+                          .filter((item) => item.level === "file")
+                          .every((item) => selectedRows.includes(item.id))
                       }
                       readOnly
                       className="rounded"
@@ -638,15 +623,19 @@ export default function CoveragePage() {
                       className={`hover:bg-pink-50 border-b ${getLevelStyle(item.level)}`}
                     >
                       <td
-                        className="py-2 px-2 border-r text-center align-middle cursor-pointer"
-                        onClick={() => handleSelectRow(item.id)}
+                        className={`py-2 px-2 border-r text-center align-middle ${
+                          item.level === "file" ? "cursor-pointer" : ""
+                        }`}
+                        onClick={() => item.level === "file" && handleSelectRow(item.id)}
                       >
-                        <input
-                          type="checkbox"
-                          checked={selectedRows.includes(item.id)}
-                          readOnly
-                          className="rounded"
-                        />
+                        {item.level === "file" && (
+                          <input
+                            type="checkbox"
+                            checked={selectedRows.includes(item.id)}
+                            readOnly
+                            className="rounded"
+                          />
+                        )}
                       </td>
                       <td
                         className="py-2 px-2 border-r break-words whitespace-normal lg:truncate"
