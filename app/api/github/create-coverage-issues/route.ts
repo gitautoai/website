@@ -25,15 +25,17 @@ export async function POST(request: Request) {
         const title = `Low Test Coverage: ${coverage.full_path}`;
         const body = `## File: ${coverage.full_path}
 
-- Statement Coverage: ${Math.floor(coverage.statement_coverage)}%
-- Function Coverage: ${Math.floor(coverage.function_coverage)}%
-- Branch Coverage: ${Math.floor(coverage.branch_coverage)}%
 - Line Coverage: ${Math.floor(coverage.line_coverage)}%
 ${coverage.uncovered_lines ? `\nUncovered Lines: ${coverage.uncovered_lines}` : ""}
+- Statement Coverage: ${Math.floor(coverage.statement_coverage)}%
+- Function Coverage: ${Math.floor(coverage.function_coverage)}%
+${coverage.uncovered_functions ? `\nUncovered Functions: ${coverage.uncovered_functions}` : ""}
+- Branch Coverage: ${Math.floor(coverage.branch_coverage)}%
+${coverage.uncovered_branches ? `\nUncovered Branches: ${coverage.uncovered_branches}` : ""}
 
 Last Updated: ${new Date(coverage.updated_at).toLocaleString()}
 
-Please improve the test coverage for this file to ensure better code quality.
+Write comprehensive test cases to achieve 100% coverage across all metrics (line, statement, function, and branch), including both happy paths, error cases, edge cases, and corner cases. Add to existing test file if available, or create a new one.
 
 ## Coverage Dashboard
 

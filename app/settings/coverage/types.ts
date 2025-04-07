@@ -3,11 +3,14 @@ export interface CoverageData {
   package_name: string;
   level: "repository" | "directory" | "file";
   full_path: string;
-  statement_coverage: number;
-  function_coverage: number;
-  branch_coverage: number;
   line_coverage: number;
   uncovered_lines: string;
+  statement_coverage: number;
+  // uncovered_statements: string;
+  function_coverage: number;
+  uncovered_functions: string;
+  branch_coverage: number;
+  uncovered_branches: string;
   primary_language: string;
   github_issue_url: string;
   updated_at: string;
