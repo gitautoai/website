@@ -23,15 +23,23 @@ export async function POST(request: Request) {
     const createdIssues = await Promise.all(
       selectedCoverages.map(async (coverage: CoverageData) => {
         const title = `Low Test Coverage: ${coverage.full_path}`;
+
+        const uncoveredLines = coverage.uncovered_lines
+          ? `(Uncovered Lines: ${coverage.uncovered_lines})`
+          : "";
+        const uncoveredFunctions = coverage.uncovered_functions
+          ? `(Uncovered Functions: ${coverage.uncovered_functions})`
+          : "";
+        const uncoveredBranches = coverage.uncovered_branches
+          ? `(Uncovered Branches: ${coverage.uncovered_branches})`
+          : "";
+
         const body = `## File: ${coverage.full_path}
 
-- Line Coverage: ${Math.floor(coverage.line_coverage)}%
-${coverage.uncovered_lines ? `\nUncovered Lines: ${coverage.uncovered_lines}` : ""}
+- Line Coverage: ${Math.floor(coverage.line_coverage)}% ${uncoveredLines}
 - Statement Coverage: ${Math.floor(coverage.statement_coverage)}%
-- Function Coverage: ${Math.floor(coverage.function_coverage)}%
-${coverage.uncovered_functions ? `\nUncovered Functions: ${coverage.uncovered_functions}` : ""}
-- Branch Coverage: ${Math.floor(coverage.branch_coverage)}%
-${coverage.uncovered_branches ? `\nUncovered Branches: ${coverage.uncovered_branches}` : ""}
+- Function Coverage: ${Math.floor(coverage.function_coverage)}% ${uncoveredFunctions}
+- Branch Coverage: ${Math.floor(coverage.branch_coverage)}% ${uncoveredBranches}
 
 Last Updated: ${new Date(coverage.updated_at).toLocaleString()}
 
