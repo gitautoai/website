@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { createAppAuth } from "@octokit/auth-app";
+import { graphql } from "@octokit/graphql";
 
 // Cache Octokit instances
 const octokitCache = new Map();
@@ -33,4 +34,12 @@ export const getOctokitForUser = (accessToken: string) => {
   }
 
   return octokit;
+};
+
+export const getGraphQL = (accessToken: string) => {
+  return graphql.defaults({
+    headers: {
+      authorization: `token ${accessToken}`,
+    },
+  });
 };

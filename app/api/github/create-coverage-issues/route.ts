@@ -1,24 +1,49 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { getOctokitForUser } from "@/lib/github";
+import { getGraphQL } from "@/lib/github";
 import { ABSOLUTE_URLS } from "@/config";
 import { CoverageData } from "@/app/settings/coverage/types";
 
+type CreateIssueResponse = {
+  createIssue: {
+    issue: {
+      number: number;
+      url: string;
+    };
+  };
+};
+
 export async function POST(request: Request) {
   try {
-    const { selectedCoverages, ownerName, repoName, accessToken } = await request.json();
+    const { selectedCoverages, ownerName, repoName, accessToken, parentNodeId } =
+      await request.json();
 
-    if (!selectedCoverages?.length || !ownerName || !repoName || !accessToken) {
+    if (!selectedCoverages?.length || !ownerName || !repoName || !accessToken || !parentNodeId) {
       console.error("Missing parameters:", {
         hasCoverages: !!selectedCoverages?.length,
         hasOwner: !!ownerName,
         hasRepo: !!repoName,
         hasToken: !!accessToken,
+        hasParentNodeId: !!parentNodeId,
       });
       return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
     }
 
-    const octokit = getOctokitForUser(accessToken);
+    const graphqlClient = getGraphQL(accessToken);
+
+    // Get repository Node ID
+    const getRepoId = await graphqlClient<{ repository: { id: string } }>(
+      `
+      query getRepoId($owner: String!, $name: String!) {
+        repository(owner: $owner, name: $name) {
+          id
+        }
+      }
+      `,
+      { owner: ownerName, name: repoName }
+    );
+
+    const repositoryId = getRepoId.repository.id;
 
     const createdIssues = await Promise.all(
       selectedCoverages.map(async (coverage: CoverageData) => {
@@ -49,19 +74,30 @@ Write comprehensive test cases to achieve 100% coverage across all metrics (line
 
 View full coverage details in the [Coverage Dashboard](${ABSOLUTE_URLS.GITAUTO.COVERAGES})`;
 
-        // https://docs.github.com/en/rest/issues/issues?apiVersion=2022-11-28#create-an-issue
-        const { data: issue } = await octokit.issues.create({
-          owner: ownerName,
-          repo: repoName,
-          title,
-          body,
-          // labels: ["coverage"],
-          // assignees: ["jason-s-dev"],
-        });
+        const response = await graphqlClient<CreateIssueResponse>(
+          `
+          mutation createIssue($input: CreateIssueInput!) {
+            createIssue(input: $input) {
+              issue {
+                number
+                url
+              }
+            }
+          }
+        `,
+          {
+            input: {
+              repositoryId,
+              title,
+              body,
+              ...(parentNodeId && { parentIssueId: parentNodeId }),
+            },
+          }
+        );
 
         return {
           coverageId: coverage.id,
-          issueUrl: issue.html_url,
+          issueUrl: response.createIssue.issue.url,
         };
       })
     );
