@@ -8,10 +8,18 @@ import { fetchWithTiming } from "@/utils/fetch";
 import { CoverageData, SortField, SortDirection } from "./types";
 import Help from "@/components/Help";
 import SuccessPopup from "@/components/SuccessPopup";
+import { STORAGE_KEYS } from "@/lib/constants";
 
 type IssueResponse = {
   coverageId: number;
   issueUrl: string;
+};
+
+type ParentIssue = {
+  id: number;
+  number: number;
+  title: string;
+  html_url: string;
 };
 
 export default function CoveragePage() {
@@ -56,6 +64,11 @@ export default function CoveragePage() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const [startTime, setStartTime] = useState(new Date());
+
+  // State for parent issue
+  const [openIssues, setOpenIssues] = useState<ParentIssue[]>([]);
+  const [selectedParentIssue, setSelectedParentIssue] = useState<ParentIssue | null>(null);
+  const [isLoadingIssues, setIsLoadingIssues] = useState(false);
 
   const fetchCoverageData = useCallback(async () => {
     if (!currentRepoName || !currentOwnerName || !currentOwnerId || !currentRepoId) {
@@ -144,6 +157,65 @@ export default function CoveragePage() {
     }
   };
 
+  // Add function to fetch parent issues
+  const fetchOpenIssues = async () => {
+    if (!currentOwnerName || !currentRepoName || !accessToken) return;
+
+    setIsLoadingIssues(true);
+    try {
+      const response = await fetchWithTiming<{ issues: ParentIssue[] }>(
+        "/api/github/get-open-issues",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ownerName: currentOwnerName,
+            repoName: currentRepoName,
+            accessToken,
+          }),
+        }
+      );
+      setOpenIssues(response.issues);
+
+      // Get saved parent issue number
+      const savedParentIssueNumber = localStorage.getItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER);
+      if (savedParentIssueNumber) {
+        const savedIssue = response.issues.find(
+          (issue) => issue.number === Number(savedParentIssueNumber)
+        );
+        if (savedIssue) {
+          setSelectedParentIssue(savedIssue);
+        } else {
+          localStorage.removeItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching open issues:", error);
+      setError("Failed to fetch open issues");
+    } finally {
+      setIsLoadingIssues(false);
+    }
+  };
+
+  // When repository changes, update parent issue list
+  useEffect(() => {
+    fetchOpenIssues();
+  }, [currentOwnerName, currentRepoName]);
+
+  // Parent issue selection
+  const handleParentIssueChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const issue = openIssues.find((i) => i.number === Number(e.target.value));
+    setSelectedParentIssue(issue || null);
+
+    // Save selected parent issue to local storage
+    if (issue) {
+      localStorage.setItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER, String(issue.number));
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER);
+    }
+  };
+
+  // handleCreateIssuesを修正
   const handleCreateIssues = async () => {
     if (selectedRows.length === 0) return;
 
@@ -161,6 +233,7 @@ export default function CoveragePage() {
             ownerName: currentOwnerName,
             repoName: currentRepoName,
             accessToken,
+            parentNodeId: selectedParentIssue?.id,
           }),
         }
       );
@@ -457,6 +530,24 @@ export default function CoveragePage() {
             <option value="statement">Statement Coverage</option>
             <option value="function">Function Coverage</option>
             <option value="branch">Branch Coverage</option>
+          </select>
+        </div>
+
+        {/* Parent issue selection */}
+        <div className="relative">
+          <label className="block text-sm text-gray-600 mb-1">Parent Issue (Optional)</label>
+          <select
+            value={selectedParentIssue?.number || ""}
+            onChange={handleParentIssueChange}
+            className="p-2 border rounded-md w-48"
+            disabled={isLoadingIssues}
+          >
+            <option value="">No parent issue</option>
+            {openIssues.map((issue) => (
+              <option key={issue.id} value={issue.number}>
+                #{issue.number} {issue.title}
+              </option>
+            ))}
           </select>
         </div>
 
