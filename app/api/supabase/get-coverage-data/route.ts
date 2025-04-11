@@ -9,25 +9,7 @@ export async function POST(request: Request) {
 
     const { data, error } = await supabase
       .from("coverages")
-      .select(
-        `
-        id,
-        owner_id,
-        repo_id,
-        primary_language,
-        package_name,
-        level,
-        full_path,
-        statement_coverage,
-        function_coverage,
-        branch_coverage,
-        path_coverage,
-        line_coverage,
-        uncovered_lines,
-        github_issue_url,
-        updated_at
-      `
-      )
+      .select("*")
       .eq("owner_id", ownerId)
       .eq("repo_id", repoId);
 
