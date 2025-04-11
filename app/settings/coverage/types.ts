@@ -3,6 +3,7 @@ export interface CoverageData {
   package_name: string;
   level: "repository" | "directory" | "file";
   full_path: string;
+  branch_name: string;
   line_coverage: number;
   uncovered_lines: string;
   statement_coverage: number;
