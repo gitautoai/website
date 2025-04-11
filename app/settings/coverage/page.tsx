@@ -596,16 +596,19 @@ export default function CoveragePage() {
 
       <div className="mt-6">
         <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 mb-4 lg:mb-2 lg:items-center">
-          <div className="flex gap-4">
+          <div className="flex gap-4 text-sm text-gray-600">
             {Object.entries(getLevelCounts()).map(([level, count]) => (
-              <div key={level} className="text-sm text-gray-600">
-                <span className="capitalize">{level}:</span> {count}
-              </div>
+              <span key={level} className="capitalize">
+                {level}: {count}
+              </span>
             ))}
+            {getLatestUpdate() && (
+              <>
+                <span>Branch: {coverageData[0]?.branch_name}</span>
+                <span>Last updated: {getLatestUpdate()}</span>
+              </>
+            )}
           </div>
-          {getLatestUpdate() && (
-            <div className="text-sm text-gray-600">Last updated: {getLatestUpdate()}</div>
-          )}
         </div>
 
         <div className="overflow-x-auto">

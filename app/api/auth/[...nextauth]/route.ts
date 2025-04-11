@@ -39,9 +39,6 @@ const handler = NextAuth({
     // For cases 2-5, only the token parameter is available
     // https://next-auth.js.org/configuration/callbacks#jwt-callback
     async jwt({ token, account, user }) {
-      console.log("account in jwt callback", account);
-      console.log("user in jwt callback", user);
-      console.log("token in jwt callback", token);
 
       if (account && user) {
         // First time sign in
@@ -55,8 +52,6 @@ const handler = NextAuth({
     // Always runs AFTER jwt callback
     // https://next-auth.js.org/configuration/callbacks#session-callback
     async session({ session, token }) {
-      console.log("session in session callback", session);
-      console.log("token in session callback", token);
       try {
         session.jwtToken = token.jwtToken as string;
         session.accessToken = token.accessToken as string;

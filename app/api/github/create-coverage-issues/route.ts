@@ -68,7 +68,7 @@ export async function POST(request: Request) {
 
 Last Updated: ${new Date(coverage.updated_at).toLocaleString()}
 
-Write comprehensive test cases to achieve 100% coverage across all metrics (line, statement, function, and branch), including both happy paths, error cases, edge cases, and corner cases. Add to existing test file if available, or create a new one.
+Aim to achieve 100% coverage with minimal code changes. Focus on covering the uncovered areas, including both happy paths, error cases, edge cases, and corner cases. Add to existing test file if available, or create a new one.
 
 ## Coverage Dashboard
 
