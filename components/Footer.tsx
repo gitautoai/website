@@ -16,8 +16,8 @@ export default function Footer() {
   const posthog = usePostHog();
   const { installationsSubscribed, selectedIndex } = useAccountContext();
   const pathname = usePathname();
-  const isSettingsPage = pathname?.startsWith("/settings");
-  if (isSettingsPage) return null;
+  const hideFooter = pathname?.startsWith("/settings") || pathname?.startsWith("/dashboard");
+  if (hideFooter) return null;
 
   const groupedLinks = INTERNAL_LINKS.reduce((acc, link) => {
     if (!acc[link.category]) acc[link.category] = [] as (typeof INTERNAL_LINKS)[number][];

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { getGraphQL } from "@/lib/github";
 import { ABSOLUTE_URLS } from "@/config";
-import { CoverageData } from "@/app/settings/coverage/types";
+import { CoverageData } from "@/app/dashboard/coverage/types";
 
 type CreateIssueResponse = {
   createIssue: {

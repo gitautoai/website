@@ -75,7 +75,7 @@ export const RELATIVE_URLS = {
   // PROBLEM: "/#problem",
   REDIRECT_TO_INSTALL: "/redirect-to-install",
   SETTINGS: "/settings",
-  COVERAGES: "/settings/coverage",
+  COVERAGES: "/dashboard/coverage",
   TERMS_OF_SERVICE: "/terms-of-service",
   USE_CASES: "/#use-cases",
 } as const;
