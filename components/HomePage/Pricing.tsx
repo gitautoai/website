@@ -1,28 +1,22 @@
 "use client";
-// Next imports
-import Link from "next/link";
+// Third-party imports
+import * as Sentry from "@sentry/nextjs";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { usePostHog } from "posthog-js/react";
 import { useState, useCallback, useEffect } from "react";
 
-// Analytics
-import * as Sentry from "@sentry/nextjs";
-import { usePostHog } from "posthog-js/react";
-
-// Components
+// Local imports
 import { useAccountContext } from "@/components/Context/Account";
+import SpinnerIcon from "@/components/SpinnerIcon";
 import CheckMark from "@/components/Symbol/CheckMark";
-
-// Third Party
-import { signIn } from "next-auth/react";
-import { Spinner } from "@chakra-ui/react";
 import { ABSOLUTE_URLS, OPENAI_MODEL_O3_MINI, RELATIVE_URLS } from "@/config";
 import { ANTHROPIC_MODEL_CLAUDE_35, ANTHROPIC_MODEL_CLAUDE_37 } from "@/config/anthropic";
 import { DEEPSEEK_MODEL_R1 } from "@/config/deepseek";
 
-const pricingButtonStyles = `my-4 sm:my-2 md:my-8 rounded-lg transition-colors duration-200 
-text-md sm:text-lg xl:text-xl py-2 sm:py-1 md:py-3 w-full shadow-lg hover:shadow-lg 
-cursor-pointer font-semibold text-center mx-auto`;
+const pricingButtonStyles = `my-4 sm:my-2 md:my-8 rounded-lg transition-colors duration-200 text-md sm:text-lg xl:text-xl py-2 sm:py-1 md:py-3 w-full shadow-lg hover:shadow-lg font-semibold text-center mx-auto`;
 
 export default function Pricing() {
   // Analytics
@@ -194,25 +188,18 @@ export default function Pricing() {
               id="subscribe-or-manage-standard"
               name="subscribe-or-manage-standard"
               onClick={handleSubscribe}
-              className={`${pricingButtonStyles} bg-pink-600 hover:bg-pink-700 text-white ${
-                isSubscribeLoading && "opacity-0 pointer-events-none"
+              className={`${pricingButtonStyles} bg-pink-600 hover:bg-pink-700 text-white relative flex items-center justify-center gap-2 ${
+                isSubscribeLoading ? "cursor-not-allowed" : "cursor-pointer"
               }`}
+              disabled={isSubscribeLoading}
             >
+              {isSubscribeLoading && <SpinnerIcon white />}
               {selectedIndex != null &&
               installationsSubscribed &&
               installationsSubscribed[selectedIndex] === true
                 ? "Manage Plan"
                 : "Subscribe"}
             </button>
-            {isSubscribeLoading && (
-              <div
-                className={`absolute inset-0 flex items-center justify-center bg-pink-600 hover:bg-pink-700 opacity-50 rounded-lg ${
-                  billingPeriod === "Monthly" ? "mt-14 mb-8" : "my-8"
-                } py-3 w-full mx-auto cursor-not-allowed`}
-              >
-                <Spinner size="md" color="white" />
-              </div>
-            )}
           </div>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
             <li>
