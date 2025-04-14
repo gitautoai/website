@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { coverageDashboardHelp } from "@/app/settings/coverage/help-content";
+import { coverageDashboardHelp } from "@/app/dashboard/coverage/help-content";
 
 interface HelpProps {
   helpKey: "coverage-dashboard";

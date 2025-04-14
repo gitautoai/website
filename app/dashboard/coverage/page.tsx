@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import RepositorySelector from "../components/RepositorySelector";
-import LoadingSpinner from "../components/LoadingSpinner";
+import RepositorySelector from "../../settings/components/RepositorySelector";
+import LoadingSpinner from "../../settings/components/LoadingSpinner";
 import { useAccountContext } from "@/components/Context/Account";
 import SpinnerIcon from "@/components/SpinnerIcon";
 import { fetchWithTiming } from "@/utils/fetch";
