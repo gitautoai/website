@@ -19,7 +19,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const posthog = usePostHog();
   const hideNavbar = pathname?.startsWith("/settings") || pathname?.startsWith("/dashboard");
-  if (hideNavbar) return null;
 
   const { data: session, status } = useSession();
 
@@ -34,6 +33,7 @@ export default function Navbar() {
     }
   }, [pathname, posthog]);
 
+  if (hideNavbar) return null;
   return (
     <div className="absolute top-0 left-0 flex flex-col w-full justify-center items-center font-helvetica sm:text-md xl:text-lg bg-white px-0 md:px-24">
       <div className="flex flex-col w-full">
