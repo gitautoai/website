@@ -1,7 +1,8 @@
 name: Add Screenshot Comparison to PR
 
 on:
-  pull_request:
+  # pull_request:
+  workflow_dispatch:
 
 # Add these permissions at the top level
 permissions:
