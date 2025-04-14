@@ -1,11 +1,14 @@
 "use client";
+// Third-party imports
 import { useEffect, useState, useCallback } from "react";
-import type { ReferenceSettingsType } from "../types";
+
+// Local imports
 import RepositorySelector from "../components/RepositorySelector";
-import LoadingSpinner from "../components/LoadingSpinner";
 import { PLAN_LIMITS } from "../constants/plans";
 import SaveButton from "../components/SaveButton";
+import { ReferenceSettingsType } from "../types";
 import { useAccountContext } from "@/components/Context/Account";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function ReferencesPage() {
   const [isLoading, setIsLoading] = useState(true);

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
-import { Menu, MenuButton, MenuList, MenuItem, useDisclosure } from "@chakra-ui/react";
+import { useState, useRef, useEffect } from "react";
 
 // Local
 import OwnerSelector from "@/components/HomePage/OwnerSelector";
@@ -16,7 +16,9 @@ interface ProfileIconProps {
 }
 
 const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isOwnerSelectorOpen, setIsOwnerSelectorOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const {
     userId,
@@ -29,6 +31,16 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
   } = useAccountContext();
 
   const router = useRouter();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Skip rendering the menu if this is a mobile menu trigger
   if (mobileMenuTrigger) {
@@ -70,68 +82,59 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
 
   return (
     <>
-      <Menu isLazy>
-        <MenuButton>
+      <div className="relative" ref={menuRef}>
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="flex items-center focus:outline-none"
+        >
           <Image
             height="40"
             width="40"
             className="rounded-full"
-            // loading="lazy"
             priority={true}
             alt={session?.user?.name || "A round user profile picture"}
             src={session?.user?.image || ""}
           />
-        </MenuButton>
-        <MenuList>
-          {selectedIndex != null &&
-            installations &&
-            installations.length > 0 &&
-            installationsSubscribed &&
-            installationsSubscribed[selectedIndex] === true && (
-              <MenuItem
-                _hover={{
-                  bg: "none",
-                }}
-                _focus={{ bg: "none" }}
-                _active={{ bg: "none" }}
-              >
-                <span
-                  className={`link `}
+        </button>
+        {isMenuOpen && (
+          <div className="absolute right-0 mt-2 w-48 py-1 rounded-md shadow-lg">
+            {selectedIndex != null &&
+              installations &&
+              installations.length > 0 &&
+              installationsSubscribed &&
+              installationsSubscribed[selectedIndex] === true && (
+                <button
+                  className="w-full text-left px-4 py-2 hover:bg-transparent"
                   onClick={() =>
                     createPortalOrCheckoutURL(userId, jwtToken, installations, selectedIndex)
                   }
                 >
-                  Manage Payment
-                </span>
-              </MenuItem>
+                  <span className="link">Manage Payment</span>
+                </button>
+              )}
+
+            {installations && installations.length > 0 && (
+              <button
+                className="w-full text-left px-4 py-2 hover:bg-transparent"
+                onClick={() => {
+                  setIsOwnerSelectorOpen(true);
+                  setIsMenuOpen(false);
+                }}
+              >
+                <span className="link">Switch Account</span>
+              </button>
             )}
 
-          {installations && installations.length > 0 && (
-            <MenuItem
-              _hover={{
-                bg: "none",
-              }}
-              _focus={{ bg: "none" }}
-              _active={{ bg: "none" }}
-              onClick={onOpen}
+            <button
+              className="w-full text-left px-4 py-2 hover:bg-transparent"
+              onClick={() => signOut({ callbackUrl: "/" })}
             >
-              <span className={`link`}>Switch Account</span>
-            </MenuItem>
-          )}
-
-          <MenuItem
-            _hover={{
-              bg: "none",
-            }}
-            _focus={{ bg: "none" }}
-            _active={{ bg: "none" }}
-            onClick={() => signOut({ callbackUrl: "/" })}
-          >
-            <span className="link">Sign Out</span>
-          </MenuItem>
-        </MenuList>
-      </Menu>
-      <OwnerSelector isOpen={isOpen} onClose={onClose} />
+              <span className="link">Sign Out</span>
+            </button>
+          </div>
+        )}
+      </div>
+      <OwnerSelector isOpen={isOwnerSelectorOpen} onClose={() => setIsOwnerSelectorOpen(false)} />
     </>
   );
 };
