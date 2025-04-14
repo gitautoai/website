@@ -1,14 +1,17 @@
 "use client";
+// Third-party imports
 import { useEffect, useState, useCallback } from "react";
+
+// Local imports
 import RepositorySelector from "../../settings/components/RepositorySelector";
-import LoadingSpinner from "../../settings/components/LoadingSpinner";
-import { useAccountContext } from "@/components/Context/Account";
-import SpinnerIcon from "@/components/SpinnerIcon";
-import { fetchWithTiming } from "@/utils/fetch";
 import { CoverageData, SortField, SortDirection } from "./types";
+import { useAccountContext } from "@/components/Context/Account";
 import Help from "@/components/Help";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import SpinnerIcon from "@/components/SpinnerIcon";
 import SuccessPopup from "@/components/SuccessPopup";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { fetchWithTiming } from "@/utils/fetch";
 
 type IssueResponse = {
   coverageId: number;

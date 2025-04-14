@@ -1,9 +1,12 @@
 "use client";
+// Third-party imports
 import { useEffect, useState, useMemo } from "react";
-import { useAccountContext } from "@/components/Context/Account";
+
+// Local imports
 import FormField from "./components/FormField";
 import type { BaseSettingsType } from "./types";
-import LoadingSpinner from "./components/LoadingSpinner";
+import { useAccountContext } from "@/components/Context/Account";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function SettingsPage() {
   const { userId, userName, email } = useAccountContext();

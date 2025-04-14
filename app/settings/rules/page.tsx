@@ -1,13 +1,16 @@
 "use client";
+// Third-party imports
 import { useCallback, useEffect, useState, useRef } from "react";
-import type { RulesSettingsType } from "../types";
+
+// Local imports
 import RepositorySelector from "../components/RepositorySelector";
-import LoadingSpinner from "../components/LoadingSpinner";
-import { RULES_CONTENT } from "../constants/rulesDefaults";
-import { countTokens } from "@/utils/tokens";
-import { PLAN_LIMITS } from "../constants/plans";
 import SaveButton from "../components/SaveButton";
+import { PLAN_LIMITS } from "../constants/plans";
+import { RULES_CONTENT } from "../constants/rulesDefaults";
+import { RulesSettingsType } from "../types";
 import { useAccountContext } from "@/components/Context/Account";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { countTokens } from "@/utils/tokens";
 
 export default function RulesPage() {
   const [isLoading, setIsLoading] = useState(false);
