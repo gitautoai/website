@@ -15,9 +15,6 @@ import { AccountContextWrapper } from "@/components/Context/Account";
 import Footer from "@/components/Footer";
 import IntercomMessenger from "@/components/Intercom";
 
-// 3rd Party Styles
-import { Providers } from "./providers";
-
 // Analytics
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
@@ -44,18 +41,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Suspense>
             <SessionProvider>
               <AccountContextWrapper>
-                  <Providers>
-                    <Navbar />
-                    <main className="px-4 sm:px-8 md:px-16">{children}</main>
-                    <Footer />
-                    <IntercomMessenger />
-                    {isPrd && (
-                      <>
-                        <SpeedInsights />
-                        <Analytics mode={"production"} />
-                      </>
-                    )}
-                  </Providers>
+                <Navbar />
+                <main className="px-4 sm:px-8 md:px-16">{children}</main>
+                <Footer />
+                <IntercomMessenger />
+                {isPrd && (
+                  <>
+                    <SpeedInsights />
+                    <Analytics mode={"production"} />
+                  </>
+                )}
               </AccountContextWrapper>
             </SessionProvider>
           </Suspense>

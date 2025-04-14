@@ -1,8 +1,6 @@
 "use client";
 
-// Local
 import { useAccountContext } from "../Context/Account";
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalOverlay } from "@chakra-ui/react";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { Installation } from "@/types/github";
 
@@ -47,13 +45,20 @@ export default function OwnerSelector({
     onClose();
   }
 
+  if (!isOpen) return null;
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
-      <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(1px)" />
-      <ModalCloseButton />
-      <ModalContent>
-        <ModalBody>
-          <div className="text-xl my-16">
+    <>
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-[1px] z-40" onClick={onClose} />
+      <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+        <div className="relative bg-white rounded-xl w-full max-w-xl pointer-events-auto">
+          <button
+            onClick={onClose}
+            className="absolute right-3 top-3 w-8 h-8 flex items-center justify-center rounded-md hover:bg-gray-100"
+          >
+            ×
+          </button>
+          <div className="text-xl my-16 px-6">
             {installations ? (
               <>
                 {installations.length > 0 && (
@@ -103,8 +108,8 @@ export default function OwnerSelector({
               <>loading...</>
             )}
           </div>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+        </div>
+      </div>
+    </>
   );
 }

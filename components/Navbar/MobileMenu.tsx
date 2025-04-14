@@ -1,19 +1,17 @@
+"use client";
 // Third Party
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useState } from "react";
 
 // Components
-import { useDisclosure } from "@chakra-ui/react";
 import { useAccountContext } from "@/components/Context/Account";
 import { ABSOLUTE_URLS } from "@/config/index";
 import { INTERNAL_LINKS } from "@/config/internal-links";
 import { Installation } from "@/types/github";
 import OwnerSelector from "../HomePage/OwnerSelector";
-
-// Styling
-import { Drawer, DrawerContent, DrawerBody } from "@chakra-ui/react";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -27,8 +25,7 @@ cursor-pointer hover:bg-pink-700 font-semibold text-center md:w-auto `;
 
 export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: MobileDrawerProps) {
   const { status } = useSession();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [isOwnerSelectorOpen, setIsOwnerSelectorOpen] = useState(false);
   const {
     userId,
     jwtToken,
@@ -66,10 +63,17 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
   };
 
   return (
-    <Drawer isOpen={isNavOpen} size="full" onClose={() => setIsNavOpen(!isNavOpen)}>
-      <DrawerContent className="text-xl">
-        <DrawerBody p={0}>
-          <ol className={`h-screen flex flex-col items-center justify-center gap-3.5`}>
+    <>
+      {isNavOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setIsNavOpen(false)} />
+      )}
+      <div
+        className={`fixed inset-y-0 right-0 w-full bg-white z-50 transform transition-transform duration-300 text-xl ${
+          isNavOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        <div className="h-full p-0">
+          <ol className="h-screen flex flex-col items-center justify-center gap-3.5">
             {INTERNAL_LINKS.map((link) => (
               <li key={link.href}>
                 <Link
@@ -128,20 +132,22 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
                   )}
 
                 {installations && installations.length > 0 && (
-                  <li onClick={onOpen}>
-                    <span className={`link`}>Switch Account</span>
+                  <li>
+                    <span className={`link`} onClick={() => setIsOwnerSelectorOpen(true)}>
+                      Switch Account
+                    </span>
                   </li>
                 )}
 
                 <li onClick={() => signOut({ callbackUrl: "/" })}>
                   <span className="link">Sign Out</span>
                 </li>
-                <OwnerSelector isOpen={isOpen} onClose={onClose} />
               </>
             )}
           </ol>
-        </DrawerBody>
-      </DrawerContent>
-    </Drawer>
+        </div>
+      </div>
+      <OwnerSelector isOpen={isOwnerSelectorOpen} onClose={() => setIsOwnerSelectorOpen(false)} />
+    </>
   );
 }
