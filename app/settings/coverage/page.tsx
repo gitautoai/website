@@ -70,6 +70,15 @@ export default function CoveragePage() {
   const [selectedParentIssue, setSelectedParentIssue] = useState<ParentIssue | null>(null);
   const [isLoadingIssues, setIsLoadingIssues] = useState(false);
 
+  // Load sort settings from localStorage
+  useEffect(() => {
+    const savedSortField = localStorage.getItem(STORAGE_KEYS.SORT_FIELD) as SortField;
+    const savedSortDirection = localStorage.getItem(STORAGE_KEYS.SORT_DIRECTION) as SortDirection;
+
+    if (savedSortField) setSortField(savedSortField);
+    if (savedSortDirection) setSortDirection(savedSortDirection);
+  }, []);
+
   const fetchCoverageData = useCallback(async () => {
     if (!currentRepoName || !currentOwnerName || !currentOwnerId || !currentRepoId) {
       setIsLoading(false);
@@ -119,9 +128,12 @@ export default function CoveragePage() {
   }, []);
 
   const handleSort = (field: SortField) => {
+    let newDirection: SortDirection;
     if (sortField === field) {
       // Toggle direction if same field
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+      newDirection = sortDirection === "asc" ? "desc" : "asc";
+      setSortDirection(newDirection);
+      localStorage.setItem(STORAGE_KEYS.SORT_DIRECTION, newDirection);
     } else {
       // Set new field and default to descending for coverage metrics, ascending for text
       const isNumeric = [
@@ -130,8 +142,11 @@ export default function CoveragePage() {
         "branch_coverage",
         "line_coverage",
       ].includes(field);
+      newDirection = isNumeric ? "desc" : "asc";
       setSortField(field);
-      setSortDirection(isNumeric ? "desc" : "asc");
+      setSortDirection(newDirection);
+      localStorage.setItem(STORAGE_KEYS.SORT_FIELD, field);
+      localStorage.setItem(STORAGE_KEYS.SORT_DIRECTION, newDirection);
     }
   };
 
