@@ -44,6 +44,13 @@ export const INTERNAL_LINKS = [
     showInNav: true,
   },
   {
+    text: "Usage",
+    href: "/dashboard/usage",
+    eventType: "usage_click",
+    category: "product",
+    showInNav: false,
+  },
+  {
     href: RELATIVE_URLS.SETTINGS,
     eventType: "settings",
     text: "Settings",
