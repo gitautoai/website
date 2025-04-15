@@ -28,15 +28,8 @@ type ParentIssue = {
 export default function CoveragePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const {
-    currentOwnerId,
-    currentOwnerName,
-    currentRepoId,
-    currentRepoName,
-    currentInstallationId,
-    userName,
-    accessToken,
-  } = useAccountContext();
+  const { currentOwnerId, currentOwnerName, currentRepoId, currentRepoName, accessToken } =
+    useAccountContext();
   const [coverageData, setCoverageData] = useState<CoverageData[]>([]);
   const [packageNames, setPackageNames] = useState<string[]>([]);
   const [levels] = useState<CoverageData["level"][]>(["repository", "directory", "file"]);
@@ -53,9 +46,6 @@ export default function CoveragePage() {
   // Selected rows for Issue creation
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [isCreatingIssues, setIsCreatingIssues] = useState(false);
-
-  const [isRefreshing, setIsRefreshing] = useState(false);
-
   const [isActionsOpen, setIsActionsOpen] = useState(false);
 
   // New state for mobile metric selection
@@ -65,8 +55,6 @@ export default function CoveragePage() {
 
   // Add state for success popup
   const [showSuccess, setShowSuccess] = useState(false);
-
-  const [startTime, setStartTime] = useState(new Date());
 
   // State for parent issue
   const [openIssues, setOpenIssues] = useState<ParentIssue[]>([]);
@@ -110,7 +98,6 @@ export default function CoveragePage() {
       });
 
       setPackageNames(Array.from(packagesSet));
-      setStartTime(new Date());
 
       return data;
     } catch (error) {
@@ -356,59 +343,6 @@ export default function CoveragePage() {
   // Check if we have any package names to show the filter
   const hasPackages = packageNames.length > 0;
 
-  const refreshCoverage = async () => {
-    if (!currentRepoName || !currentOwnerName || !currentOwnerId || !currentRepoId) return;
-
-    try {
-      setIsRefreshing(true);
-      setError(null);
-
-      console.log("Requesting to refresh coverage");
-      await fetchWithTiming(`/api/proxy`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          endpoint: "/coverage",
-          data: {
-            owner_id: currentOwnerId,
-            owner_name: currentOwnerName,
-            repo_id: currentRepoId,
-            repo_name: currentRepoName,
-            installation_id: currentInstallationId,
-            user_name: userName,
-          },
-        }),
-      });
-      console.log("Requested to refresh coverage");
-
-      // Poll for coverage data every 1 minute
-      const interval = setInterval(async () => {
-        console.log("Polling for coverage data");
-        const data = await fetchCoverageData();
-        if (data.some((item) => new Date(item.updated_at).getTime() > startTime.getTime())) {
-          clearInterval(interval);
-          setIsRefreshing(false);
-          console.log("Found new coverage data, stopping polling");
-        }
-      }, 1 * 60 * 1000);
-
-      // Timeout after 10 minutes
-      setTimeout(() => {
-        clearInterval(interval);
-        setIsRefreshing(false);
-        console.log("Polling timeout reached");
-      }, 10 * 60 * 1000);
-    } catch (error) {
-      console.error("Error refreshing coverage:", error);
-      setError(
-        typeof error === "object" && error !== null && "message" in error
-          ? String(error.message)
-          : "Failed to refresh coverage data"
-      );
-      setIsRefreshing(false);
-    }
-  };
-
   const handleLevelChange = (value: string) => {
     setSelectedLevel(value);
     localStorage.setItem("selectedCoverageLevel", value);
@@ -575,7 +509,7 @@ export default function CoveragePage() {
             onClick={() => setIsActionsOpen(!isActionsOpen)}
             className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors flex items-center gap-2"
           >
-            {isRefreshing || isCreatingIssues ? (
+            {isCreatingIssues ? (
               <>
                 <SpinnerIcon white />
                 <span>Actions</span>
@@ -804,7 +738,7 @@ export default function CoveragePage() {
         </div>
       </div>
 
-      {isLoading && !isRefreshing && <LoadingSpinner />}
+      {isLoading && <LoadingSpinner />}
 
       {showSuccess && (
         <SuccessPopup
