@@ -26,7 +26,7 @@ export default function SettingsMenu({ onItemClick }: { onItemClick?: () => void
               <Link
                 href={item.href}
                 onClick={onItemClick}
-                className={`block w-full text-left p-3 rounded-lg transition-colors ${
+                className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${
                   pathname === item.href ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"
                 }`}
               >

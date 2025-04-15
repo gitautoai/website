@@ -1,6 +1,7 @@
 export const menuItems = [
   { id: "dashboard-header", label: "Dashboard", href: "#", isHeader: true },
   { id: "coverage", label: "Coverage", href: "/dashboard/coverage", isHeader: false },
+  { id: "usage", label: "Usage", href: "/dashboard/usage", isHeader: false },
   { id: "settings-header", label: "Settings", href: "#", isHeader: true },
   { id: "general", label: "General", href: "/settings", isHeader: false },
   { id: "rules", label: "Rules", href: "/settings/rules", isHeader: false },
