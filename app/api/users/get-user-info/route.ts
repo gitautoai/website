@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { userId, accessToken } = body;
+    console.log({ userId, accessToken });
 
     if (!userId || !accessToken) {
       return new NextResponse("Missing required parameters: userId or accessToken", {
@@ -29,9 +30,11 @@ export async function POST(req: NextRequest) {
 
     // Get user's organizations
     const { data: orgs } = await octokit.orgs.listForAuthenticatedUser();
+    console.log("orgs: ", orgs);
 
     // Combine user's own ID with organization IDs
     const ownerIds = [userId, ...orgs.map((org) => org.id)];
+    console.log("ownerIds: ", ownerIds);
 
     // Get installations for these owners
     const { data: installationsData, error: installationsError } = await supabase
@@ -50,6 +53,8 @@ export async function POST(req: NextRequest) {
       .in("owner_id", ownerIds)
       .is("uninstalled_at", null);
 
+    console.log("installationsData: ", installationsData);
+
     if (installationsError) throw installationsError;
 
     // Transform the data to match the expected format
@@ -64,6 +69,8 @@ export async function POST(req: NextRequest) {
       // Other properties
       stripe_customer_id: installation.owners?.stripe_customer_id || null,
     }));
+
+    console.log("installations: ", installations);
 
     return new NextResponse(stringify(installations), { status: 200, headers });
   } catch (err: any) {
