@@ -86,31 +86,16 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
               </li>
             ))}
             {status === "unauthenticated" && (
-              <>
-                <li>
-                  <Link
-                    href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
-                    target="_blank"
-                    onClick={() => {
-                      posthog.capture("$click", { $event_type: "github_app_install_nav" });
-                      setIsNavOpen(false);
-                    }}
-                    className={`${buttonStyles}`}
-                  >
-                    Get Started
-                  </Link>
-                </li>
-                <li>
-                  <motion.button
-                    whileHover={{ scale: 1.04, transition: { duration: 0.1 } }}
-                    whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
-                    onClick={() => signIn("github", { callbackUrl: `/` })}
-                    className="border border-pink-600 text-black rounded-lg transition-colors duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer"
-                  >
-                    Sign In
-                  </motion.button>
-                </li>
-              </>
+              <li>
+                <motion.button
+                  whileHover={{ scale: 1.04, transition: { duration: 0.1 } }}
+                  whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
+                  onClick={() => signIn("github", { callbackUrl: `/` })}
+                  className="border border-pink-600 text-black rounded-lg transition-colors duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer"
+                >
+                  Sign In
+                </motion.button>
+              </li>
             )}
             {status === "authenticated" && (
               <>
