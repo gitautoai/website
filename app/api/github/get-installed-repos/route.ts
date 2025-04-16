@@ -22,6 +22,7 @@ export async function POST(request: Request) {
 
   try {
     const { installationIds } = await request.json();
+    console.log("installationIds: ", installationIds);
 
     if (!installationIds || !Array.isArray(installationIds) || installationIds.length === 0) {
       return NextResponse.json({ error: "Valid installation IDs are required" }, { status: 400 });
@@ -29,8 +30,8 @@ export async function POST(request: Request) {
 
     // Check if we have a cached response for these exact installation IDs
     const cacheKey = `github-repos-${installationIds.sort().join("-")}`;
-
     const cachedItem = memoryCache.get(cacheKey);
+    console.log({ cacheKey, cachedItem });
     const now = Date.now();
 
     if (cachedItem && now - cachedItem.timestamp < CACHE_TTL) {
@@ -40,6 +41,7 @@ export async function POST(request: Request) {
 
     const appId = process.env.GITHUB_APP_ID;
     const privateKey = process.env.GITHUB_PRIVATE_KEY;
+    console.log({ appId, privateKey });
 
     if (!appId || !privateKey) {
       console.error("GitHub app credentials are not set");
@@ -55,9 +57,7 @@ export async function POST(request: Request) {
           octokit = new Octokit({
             authStrategy: createAppAuth,
             auth: { appId, privateKey, installationId },
-            request: {
-              cache: "force-cache", // Force use of cache
-            },
+            request: { cache: "no-store" },
           });
           octokitCache.set(cacheKey, octokit);
         }
@@ -67,6 +67,7 @@ export async function POST(request: Request) {
             installation_id: parseInt(installationId),
             per_page: 100,
           });
+          console.log("data: ", data);
 
           if (!data.repositories.length) return null;
 
@@ -87,6 +88,7 @@ export async function POST(request: Request) {
 
     // Filter out null results
     const validOrganizations = organizations.filter((org) => org !== null);
+    console.log("validOrganizations: ", validOrganizations);
 
     // Cache the response
     if (validOrganizations.length > 0) {
