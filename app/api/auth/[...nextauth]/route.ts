@@ -3,16 +3,6 @@ import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
 import { config, isPrd } from "@/config";
-import { fetchWithTiming } from "@/utils/fetch";
-
-type TokenResponse = {
-  access_token: string;
-  expires_in: number;
-  refresh_token: string;
-  refresh_token_expires_in: number;
-  scope: string;
-  token_type: string; // "Bearer"
-};
 
 const handler = NextAuth({
   // https://next-auth.js.org/providers/github
