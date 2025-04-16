@@ -31,6 +31,7 @@ const AccountContext = createContext<AccountContextType>({
   currentRepoId: null,
   currentRepoName: null,
   currentInstallationId: null,
+  currentStripeCustomerId: null,
   isLoading: true,
   setCurrentOwnerName: () => {},
   setCurrentRepoName: () => {},
@@ -54,6 +55,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const [currentRepoId, setCurrentRepoId] = useState<number | null>(null);
   const [currentRepoName, setCurrentRepoName] = useState<string | null>(null);
   const [currentInstallationId, setCurrentInstallationId] = useState<number | null>(null);
+  const [currentStripeCustomerId, setCurrentStripeCustomerId] = useState<string | null>(null);
   const router = useRouter();
 
   // Process session information
@@ -194,14 +196,17 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   useEffect(() => {
     if (!installations || !currentOwnerName) {
       setCurrentInstallationId(null);
+      setCurrentStripeCustomerId(null);
       return;
     }
 
     const currentInstallation = installations.find(
       (installation) => installation.owner_name === currentOwnerName
     );
+
     if (currentInstallation) {
       setCurrentInstallationId(Number(currentInstallation.installation_id));
+      setCurrentStripeCustomerId(currentInstallation.stripe_customer_id || null);
     }
   }, [installations, currentOwnerName]);
 
@@ -344,6 +349,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         currentRepoId,
         currentRepoName,
         currentInstallationId,
+        currentStripeCustomerId,
         isLoading: !organizations,
         setCurrentOwnerName: handleOwnerSelection,
         setCurrentRepoName: handleRepoSelection,

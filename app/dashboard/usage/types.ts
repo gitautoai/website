@@ -10,6 +10,7 @@ export interface PullRequestStats {
 export interface BillingPeriod {
   current_period_start: string;
   current_period_end: string;
+  request_limit: number;
 }
 
 export interface UsageStats {

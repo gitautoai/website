@@ -19,6 +19,7 @@ export interface AccountContextType {
   currentRepoId: number | null;
   currentRepoName: string | null;
   currentInstallationId: number | null;
+  currentStripeCustomerId: string | null;
   isLoading: boolean;
   setCurrentOwnerName: (ownerName: string | null) => void;
   setCurrentRepoName: (repoName: string | null) => void;

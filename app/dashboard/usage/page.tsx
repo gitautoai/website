@@ -7,18 +7,20 @@ import { UsageStats, BillingPeriod } from "./types";
 import RepositorySelector from "../../settings/components/RepositorySelector";
 import { useAccountContext } from "@/components/Context/Account";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import SpinnerIcon from "@/components/SpinnerIcon";
 import { fetchWithTiming } from "@/utils/fetch";
 
 export default function UsagePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { currentOwnerId, currentOwnerName, userId, currentInstallationId } = useAccountContext();
+  const { userId, jwtToken, currentOwnerName, currentStripeCustomerId } = useAccountContext();
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
   const [billingPeriod, setBillingPeriod] = useState<BillingPeriod | null>(null);
+  const [isPortalLoading, setIsPortalLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!currentOwnerId || !currentInstallationId) {
+      if (!currentStripeCustomerId) {
         setIsLoading(false);
         return;
       }
@@ -27,11 +29,11 @@ export default function UsagePage() {
         setError(null);
         setIsLoading(true);
 
-        // Fetch billing period first
+        // Fetch billing period
         const billingData = await fetchWithTiming<BillingPeriod>(`/api/stripe/get-billing-period`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ownerId: currentOwnerId }),
+          body: JSON.stringify({ stripe_customer_id: currentStripeCustomerId }),
         });
         setBillingPeriod(billingData);
 
@@ -57,9 +59,10 @@ export default function UsagePage() {
     };
 
     fetchData();
-  }, [currentOwnerId, userId, currentInstallationId]);
+  }, [currentStripeCustomerId]);
 
-  const formatNumber = (value: number) => {
+  const formatNumber = (value?: number) => {
+    if (!value) return "-";
     return value.toLocaleString();
   };
 
@@ -71,14 +74,41 @@ export default function UsagePage() {
     });
   };
 
+  const handleManageCredits = async () => {
+    if (!currentStripeCustomerId) return;
+
+    setIsPortalLoading(true);
+    try {
+      const portalUrl = await fetchWithTiming<string>("/api/stripe/create-portal-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          jwtToken,
+          customerId: currentStripeCustomerId,
+        }),
+      });
+
+      window.location.href = portalUrl;
+    } catch (error) {
+      console.error("Error opening portal:", error);
+    } finally {
+      setIsPortalLoading(false);
+    }
+  };
+
   const StatBlock = ({
     title,
     allTime,
     currentCycle,
+    limit,
+    showManageCredits,
   }: {
     title: string;
     allTime: number;
     currentCycle: number;
+    limit?: number;
+    showManageCredits?: boolean;
   }) => (
     <div className="bg-white p-6 rounded-lg shadow-sm border">
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
@@ -89,7 +119,26 @@ export default function UsagePage() {
         </div>
         <div>
           <p className="text-sm text-gray-600">Current Billing Cycle</p>
-          <p className="text-2xl font-bold">{formatNumber(currentCycle)}</p>
+          <p className="text-2xl font-bold">
+            {formatNumber(currentCycle)}
+            {limit !== undefined && ` / ${formatNumber(limit)}`}
+          </p>
+          {showManageCredits && (
+            <button
+              onClick={handleManageCredits}
+              disabled={isPortalLoading}
+              className="text-sm text-pink-600 hover:text-pink-700 mt-2 flex items-center gap-1 hover:underline"
+            >
+              {isPortalLoading ? (
+                <>
+                  <SpinnerIcon />
+                  Opening portal...
+                </>
+              ) : (
+                "Add Credits"
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -106,47 +155,45 @@ export default function UsagePage() {
         </div>
       )}
 
-      {usageStats && (
-        <>
-          <p className="text-gray-600">
-            Current billing cycle: {formatDate(billingPeriod?.current_period_start || "")} -{" "}
-            {formatDate(billingPeriod?.current_period_end || "")}
-          </p>
+      <p className="text-gray-600">
+        Current billing cycle: {formatDate(billingPeriod?.current_period_start || "")} -{" "}
+        {formatDate(billingPeriod?.current_period_end || "")}
+      </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <StatBlock
-              title="Total Pull Requests"
-              allTime={usageStats.all_time.total_prs}
-              currentCycle={usageStats.current_cycle.total_prs}
-            />
-            <StatBlock
-              title="Total Issues"
-              allTime={usageStats.all_time.total_issues}
-              currentCycle={usageStats.current_cycle.total_issues}
-            />
-            <StatBlock
-              title="Total Merged PRs"
-              allTime={usageStats.all_time.total_merges}
-              currentCycle={usageStats.current_cycle.total_merges}
-            />
-            <StatBlock
-              title="Your Pull Requests"
-              allTime={usageStats.all_time.user_prs}
-              currentCycle={usageStats.current_cycle.user_prs}
-            />
-            <StatBlock
-              title="Your Issues"
-              allTime={usageStats.all_time.user_issues}
-              currentCycle={usageStats.current_cycle.user_issues}
-            />
-            <StatBlock
-              title="Your Merged PRs"
-              allTime={usageStats.all_time.user_merges}
-              currentCycle={usageStats.current_cycle.user_merges}
-            />
-          </div>
-        </>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <StatBlock
+          title="Total Pull Requests"
+          allTime={usageStats?.all_time.total_prs || 0}
+          currentCycle={usageStats?.current_cycle.total_prs || 0}
+        />
+        <StatBlock
+          title="Total Issues"
+          allTime={usageStats?.all_time.total_issues || 0}
+          currentCycle={usageStats?.current_cycle.total_issues || 0}
+          limit={billingPeriod?.request_limit}
+          showManageCredits={true}
+        />
+        <StatBlock
+          title="Total Merged PRs"
+          allTime={usageStats?.all_time.total_merges || 0}
+          currentCycle={usageStats?.current_cycle.total_merges || 0}
+        />
+        <StatBlock
+          title="Your Pull Requests"
+          allTime={usageStats?.all_time.user_prs || 0}
+          currentCycle={usageStats?.current_cycle.user_prs || 0}
+        />
+        <StatBlock
+          title="Your Issues"
+          allTime={usageStats?.all_time.user_issues || 0}
+          currentCycle={usageStats?.current_cycle.user_issues || 0}
+        />
+        <StatBlock
+          title="Your Merged PRs"
+          allTime={usageStats?.all_time.user_merges || 0}
+          currentCycle={usageStats?.current_cycle.user_merges || 0}
+        />
+      </div>
 
       {isLoading && <LoadingSpinner />}
     </div>
