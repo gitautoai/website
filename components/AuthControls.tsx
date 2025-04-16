@@ -25,39 +25,24 @@ export default function AuthControls({
   return (
     <>
       {status === "unauthenticated" && (
-        <>
-          <Link
-            href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
-            target="_blank"
-            onClick={() => {
-              posthog.capture("$click", {
-                $event_type: "github_app_install_nav",
-                $current_url: window.location.href,
-              });
-            }}
-            className={`${buttonStyles}`}
-          >
-            Get Started
-          </Link>
-          <motion.button
-            whileHover={{
-              scale: 1.04,
-              transition: { duration: 0.1 },
-            }}
-            whileTap={{
-              scale: 0.98,
-              transition: { duration: 0.1 },
-            }}
-            onClick={() => {
-              signIn("github", {
-                callbackUrl,
-              });
-            }}
-            className="border border-pink-600 text-black rounded-lg transition-colors duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer"
-          >
-            Sign In
-          </motion.button>
-        </>
+        <motion.button
+          whileHover={{
+            scale: 1.04,
+            transition: { duration: 0.1 },
+          }}
+          whileTap={{
+            scale: 0.98,
+            transition: { duration: 0.1 },
+          }}
+          onClick={() => {
+            signIn("github", {
+              callbackUrl,
+            });
+          }}
+          className="border border-pink-600 text-black rounded-lg transition-colors duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer"
+        >
+          Sign In
+        </motion.button>
       )}
       {status === "authenticated" && (
         <ProfileIcon session={session} mobileMenuTrigger={mobileMenuTrigger} />
