@@ -4,14 +4,14 @@ import { useEffect, useState, useMemo } from "react";
 
 // Local imports
 import FormField from "./components/FormField";
-import type { BaseSettingsType } from "./types";
+import type { BaseSettings } from "./types";
 import { useAccountContext } from "@/components/Context/Account";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function SettingsPage() {
   const { userId, userName, email } = useAccountContext();
 
-  const baseSettings = useMemo((): BaseSettingsType => {
+  const baseSettings = useMemo((): BaseSettings => {
     // Handle names with parentheses: "Hiroshi (Wes) Nishio" -> ["Hiroshi", "Nishio"]
     const nameParts =
       userName
@@ -32,7 +32,7 @@ export default function SettingsPage() {
     };
   }, [userId, userName, email]);
 
-  const [settings, setSettings] = useState<BaseSettingsType>(baseSettings);
+  const [settings, setSettings] = useState<BaseSettings>(baseSettings);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
