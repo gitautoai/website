@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import RepositorySelector from "../components/RepositorySelector";
 import SaveButton from "../components/SaveButton";
 import { PLAN_LIMITS } from "../constants/plans";
-import { ScreenshotSettingsType } from "../types";
+import { ScreenshotSettings } from "../types";
 import { useAccountContext } from "@/components/Context/Account";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -14,11 +14,11 @@ export default function ScreenshotsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { currentRepoName, currentOwnerName, loadSettings, saveSettings } = useAccountContext();
-  const [settings, setSettings] = useState<ScreenshotSettingsType>({
+  const [settings, setSettings] = useState<ScreenshotSettings>({
     useScreenshots: false,
     productionUrl: "",
-    localPort: "8080",
-    startupCommands: "",
+    localPort: 8080,
+    startupCommands: [],
   });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -39,7 +39,7 @@ export default function ScreenshotsPage() {
           setSettings({
             useScreenshots: data.use_screenshots || false,
             productionUrl: data.production_url || "",
-            localPort: data.local_port || "8080",
+            localPort: data.local_port || 8080,
             startupCommands: Array.isArray(data.startup_commands)
               ? data.startup_commands.join("\n")
               : "",
@@ -48,8 +48,8 @@ export default function ScreenshotsPage() {
           setSettings({
             useScreenshots: false,
             productionUrl: "",
-            localPort: "8080",
-            startupCommands: "",
+            localPort: 8080,
+            startupCommands: [],
           });
         }
       } catch (error) {
@@ -64,10 +64,12 @@ export default function ScreenshotsPage() {
     handleLoadSettings();
   }, [currentRepoName, currentOwnerName]);
 
-  const handleChange = useCallback((field: keyof ScreenshotSettingsType, value: any) => {
-    // Update state immediately without saving
-    setSettings((prev) => ({ ...prev, [field]: value }));
-  }, []);
+  const handleChange = useCallback(
+    <T extends keyof ScreenshotSettings>(field: T, value: ScreenshotSettings[T]) => {
+      setSettings((prev: ScreenshotSettings) => ({ ...prev, [field]: value }));
+    },
+    []
+  );
 
   const handleSave = useCallback(async () => {
     if (!currentOwnerName || !currentRepoName) return;
@@ -77,7 +79,7 @@ export default function ScreenshotsPage() {
     const startTime = performance.now();
 
     try {
-      const result = await saveSettings(currentOwnerName, currentRepoName, settings, "screenshot");
+      const result = await saveSettings(settings);
 
       if (!result) throw new Error("Failed to save settings");
     } catch (error) {
@@ -163,7 +165,7 @@ export default function ScreenshotsPage() {
                   type="number"
                   value={settings.localPort}
                   onChange={(e) => {
-                    const value = e.target.value;
+                    const value = parseInt(e.target.value);
                     handleChange("localPort", value);
                   }}
                   className="w-24 p-2 border rounded"
@@ -178,9 +180,13 @@ export default function ScreenshotsPage() {
             <div>
               <label className="block text-sm font-medium mb-2">Startup Commands</label>
               <textarea
-                value={settings.startupCommands}
+                value={
+                  Array.isArray(settings.startupCommands)
+                    ? settings.startupCommands.join("\n")
+                    : settings.startupCommands
+                }
                 onChange={(e) => {
-                  handleChange("startupCommands", e.target.value);
+                  handleChange("startupCommands", e.target.value.split("\n"));
                 }}
                 placeholder="npm install\nnpm run dev"
                 className="w-full p-2 border rounded min-h-[100px]"

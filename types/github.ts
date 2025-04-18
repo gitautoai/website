@@ -20,5 +20,3 @@ export interface Organization {
   ownerType: "User" | "Organization";
   repositories: Repository[];
 }
-
-export type SettingsType = "rules" | "screenshot" | "reference";

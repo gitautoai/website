@@ -1,4 +1,4 @@
-export type BaseSettingsType = {
+export type BaseSettings = {
   firstName: string;
   lastName: string;
   email: string;
@@ -10,25 +10,21 @@ export type BaseSettingsType = {
   jiraUserEmail: string;
 };
 
-export type RulesSettingsType = {
-  orgRules: string;
+export type RulesSettings = {
   repoRules: string;
-  userRules: string;
+  targetBranch: string;
 };
 
-export type ReferenceSettingsType = {
+export type ReferenceSettings = {
   webUrls: string[];
   filePaths: string[];
 };
 
-export type ScreenshotSettingsType = {
+export type ScreenshotSettings = {
   useScreenshots: boolean;
   productionUrl: string;
-  localPort: string;
-  startupCommands: string;
+  localPort: number;
+  startupCommands: string[];
 };
 
-export type AllSettingsType = BaseSettingsType &
-  RulesSettingsType &
-  ReferenceSettingsType &
-  ScreenshotSettingsType;
+export type Settings = RulesSettings | ReferenceSettings | ScreenshotSettings;

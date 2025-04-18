@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
-import { getGraphQL } from "@/lib/github";
-import { ABSOLUTE_URLS } from "@/config";
+import { getGraphQL } from "@/app/api/github";
 import { CoverageData } from "@/app/dashboard/coverage/types";
+import { ABSOLUTE_URLS } from "@/config";
+import { supabase } from "@/lib/supabase";
 
 type CreateIssueResponse = {
   createIssue: {

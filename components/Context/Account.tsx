@@ -6,10 +6,11 @@ import { createContext, useContext, useState, useEffect } from "react";
 import useSWR from "swr";
 
 // Local imports
+import { Settings } from "@/app/settings/types";
 import { swrOptions, extendedSwrOptions } from "@/config/swr";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { AccountContextType } from "@/types/account";
-import { Installation, Organization, SettingsType } from "@/types/github";
+import { Installation, Organization } from "@/types/github";
 import { fetchWithTiming } from "@/utils/fetch";
 
 const AccountContext = createContext<AccountContextType>({
@@ -37,7 +38,7 @@ const AccountContext = createContext<AccountContextType>({
   setCurrentRepoName: () => {},
   refreshData: async () => {},
   loadSettings: async () => {},
-  saveSettings: async () => {},
+  saveSettings: async () => false,
 });
 
 export function AccountContextWrapper({ children }: { children: React.ReactNode }) {
@@ -229,32 +230,26 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   };
 
   // Save settings
-  const saveSettings = async (
-    ownerName: string,
-    repoName: string,
-    settingsData: any,
-    settingsType: SettingsType
-  ) => {
-    const org = organizations?.find((o) => o.ownerName === ownerName);
-    const repo = org?.repositories.find((r) => r.repoName === repoName);
+  const saveSettings = async (settingsData: Settings) => {
+    if (!currentOwnerId || !currentRepoId || !currentRepoName || !userId || !userName) return false;
 
-    if (!org || !repo) {
-      console.error("Organization or repository not found");
-      return null;
-    }
+    const result = await fetchWithTiming<{ success: boolean }>(
+      "/api/supabase/save-repository-settings",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwtToken}` },
+        body: JSON.stringify({
+          ownerId: currentOwnerId,
+          repoId: currentRepoId,
+          repoName: currentRepoName,
+          userId,
+          userName,
+          ...settingsData,
+        }),
+      }
+    );
 
-    return fetchWithTiming("/api/supabase/save-repository-settings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwtToken}` },
-      body: JSON.stringify({
-        ownerId: org.ownerId,
-        repoId: repo.repoId,
-        repoName: repoName,
-        userId,
-        settingsType,
-        ...settingsData,
-      }),
-    });
+    return result.success;
   };
 
   // Handle owner selection
