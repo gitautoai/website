@@ -1,46 +1,29 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
-type SettingsType = "screenshot" | "rules" | "reference";
-
-interface BaseSettings {
-  ownerId: string;
-  repoId: string;
-  repoName: string;
-  userId: string;
-  settingsType: SettingsType;
-}
-
-interface ScreenshotSettings extends BaseSettings {
-  settingsType: "screenshot";
-  useScreenshots?: boolean;
-  productionUrl?: string;
-  localPort?: string;
-  startupCommands?: string;
-}
-
-interface RulesSettings extends BaseSettings {
-  settingsType: "rules";
-  orgRules?: string;
-  repoRules?: string;
-  userRules?: string;
-}
-
-interface ReferenceSettings extends BaseSettings {
-  settingsType: "reference";
-  webUrls?: string[];
-  filePaths?: string[];
-}
-
-type RepositorySettings = ScreenshotSettings | RulesSettings | ReferenceSettings;
+// Define the database column types
+type RepositoryRecord = {
+  owner_id: number;
+  repo_id: number;
+  repo_name: string;
+  created_by: string;
+  updated_by: string;
+  repo_rules: string;
+  target_branch: string;
+  use_screenshots: boolean;
+  production_url: string;
+  local_port: number;
+  startup_commands: string[];
+  web_urls: string[];
+  file_paths: string[];
+};
 
 export async function POST(request: Request) {
   const startTime = performance.now();
   try {
-    const settings: RepositorySettings = await request.json();
-    const { ownerId, repoId, repoName, userId, settingsType } = settings;
+    const { ownerId, repoId, repoName, userId, userName, ...settings } = await request.json();
 
-    if (!ownerId || !repoId || !repoName || !settingsType || !userId)
+    if (!ownerId || !repoId || !repoName || !userId)
       return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
 
     // Check if the repository record exists
@@ -50,37 +33,31 @@ export async function POST(request: Request) {
       .match({ owner_id: ownerId, repo_id: repoId })
       .maybeSingle();
 
-    // Prepare update data based on settings type
-    const updateData: Record<string, any> = {
-      updated_by: userId.toString(),
+    // Update data
+    const updateData: Partial<RepositoryRecord> = {
+      updated_by: userId.toString() + ":" + userName,
+
+      // Convert to snake_case and update if provided
+      repo_rules: settings.repoRules ?? undefined,
+      target_branch: settings.targetBranch ?? undefined,
+      use_screenshots: settings.useScreenshots ?? undefined,
+      production_url: settings.productionUrl ?? undefined,
+      local_port: settings.localPort ?? undefined,
+      startup_commands: Array.isArray(settings.startupCommands)
+        ? settings.startupCommands.filter((cmd: string) => cmd.trim() !== "")
+        : typeof settings.startupCommands === "string"
+        ? settings.startupCommands.split("\n").filter((cmd: string) => cmd.trim() !== "")
+        : undefined,
+      web_urls: settings.webUrls ?? undefined,
+      file_paths: settings.filePaths ?? undefined,
     };
 
-    switch (settingsType) {
-      case "screenshot":
-        const screenshotSettings = settings as ScreenshotSettings;
-        updateData.use_screenshots = screenshotSettings.useScreenshots ?? false;
-        updateData.production_url = screenshotSettings.productionUrl ?? "";
-        updateData.local_port = screenshotSettings.localPort ?? "8080";
-        updateData.startup_commands = screenshotSettings.startupCommands
-          ? screenshotSettings.startupCommands.split("\n").filter((cmd) => cmd.trim() !== "")
-          : [];
-        break;
-      case "rules":
-        const rulesSettings = settings as RulesSettings;
-        updateData.org_rules = rulesSettings.orgRules ?? "";
-        updateData.repo_rules = rulesSettings.repoRules ?? "";
-        updateData.user_rules = rulesSettings.userRules ?? "";
-        break;
-      case "reference":
-        const referenceSettings = settings as ReferenceSettings;
-        updateData.web_urls = referenceSettings.webUrls || [];
-        updateData.file_paths = referenceSettings.filePaths || [];
-        break;
-      default:
-        return NextResponse.json({ error: "Invalid settings type" }, { status: 400 });
-    }
-
-    let result;
+    // Delete undefined properties
+    Object.keys(updateData).forEach(
+      (key) =>
+        updateData[key as keyof typeof updateData] === undefined &&
+        delete updateData[key as keyof typeof updateData]
+    );
 
     if (existingRepo) {
       // Update only if record exists
@@ -93,26 +70,29 @@ export async function POST(request: Request) {
         .single();
 
       if (error) throw error;
-      result = data;
     } else {
-      // Insert new record if it doesn't exist
-      const insertData = {
+      // Insert new data
+      const insertData: RepositoryRecord = {
         owner_id: ownerId,
         repo_id: repoId,
         repo_name: repoName,
-        created_by: userId.toString(),
-        // Default values for all fields
-        org_rules: "",
+        created_by: userId.toString() + ":" + userName,
+        updated_by: userId.toString() + ":" + userName,
+
+        // Default values
         repo_rules: "",
-        user_rules: "",
+        target_branch: "",
         use_screenshots: false,
         production_url: "",
-        local_port: "8080",
+        local_port: 8080,
         startup_commands: [],
+
         // Explicitly set empty arrays for array fields
         web_urls: [],
         file_paths: [],
-        ...updateData, // Override defaults with provided values
+
+        // Override defaults with provided values
+        ...updateData,
       };
 
       const { data, error } = await supabase
@@ -122,13 +102,12 @@ export async function POST(request: Request) {
         .single();
 
       if (error) throw error;
-      result = data;
     }
 
-    return NextResponse.json(result);
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error(`Error saving repository settings:`, error);
-    return NextResponse.json({ error: "Failed to save repository settings" }, { status: 500 });
+    return NextResponse.json({ success: false }, { status: 500 });
   } finally {
     const endTime = performance.now();
     console.log(`save-repository-settings execution time: ${endTime - startTime}ms`);

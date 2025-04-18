@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import RepositorySelector from "../components/RepositorySelector";
 import { PLAN_LIMITS } from "../constants/plans";
 import SaveButton from "../components/SaveButton";
-import { ReferenceSettingsType } from "../types";
+import { ReferenceSettings } from "../types";
 import { useAccountContext } from "@/components/Context/Account";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -20,7 +20,7 @@ export default function ReferencesPage() {
     loadSettings,
     saveSettings,
   } = useAccountContext();
-  const [settings, setSettings] = useState<ReferenceSettingsType>({
+  const [settings, setSettings] = useState<ReferenceSettings>({
     webUrls: [""],
     filePaths: [""],
   });
@@ -73,8 +73,8 @@ export default function ReferencesPage() {
   }, [currentRepoName, currentOwnerName]);
 
   // Remove debounced save and replace with explicit save
-  const handleChange = useCallback((newSettings: Partial<ReferenceSettingsType>) => {
-    setSettings((prev) => ({ ...prev, ...newSettings }));
+  const handleChange = useCallback((newSettings: Partial<ReferenceSettings>) => {
+    setSettings((prev: ReferenceSettings) => ({ ...prev, ...newSettings }));
   }, []);
 
   // Add URL validation function
@@ -193,12 +193,7 @@ export default function ReferencesPage() {
       const webUrls = settings.webUrls?.filter((url) => url !== "") || [];
       const filePaths = settings.filePaths?.filter((path) => path !== "") || [];
 
-      const result = await saveSettings(
-        currentOwnerName,
-        currentRepoName,
-        { webUrls, filePaths },
-        "reference"
-      );
+      const result = await saveSettings({ webUrls, filePaths });
 
       if (!result) throw new Error("Failed to save settings");
     } catch (error) {

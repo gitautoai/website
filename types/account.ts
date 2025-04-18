@@ -1,4 +1,5 @@
-import { Installation, Organization, SettingsType } from "./github";
+import { Installation, Organization } from "./github";
+import { Settings } from "@/app/settings/types";
 
 export interface AccountContextType {
   installations: Installation[] | undefined;
@@ -25,10 +26,5 @@ export interface AccountContextType {
   setCurrentRepoName: (repoName: string | null) => void;
   refreshData: () => Promise<void>;
   loadSettings: (ownerName: string, repoName: string) => Promise<any>;
-  saveSettings: (
-    ownerName: string,
-    repoName: string,
-    settings: any,
-    settingsType: SettingsType
-  ) => Promise<any>;
+  saveSettings: (settings: Settings) => Promise<boolean>;
 }

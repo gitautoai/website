@@ -31,7 +31,6 @@ export async function POST(request: Request) {
     // Check if we have a cached response for these exact installation IDs
     const cacheKey = `github-repos-${installationIds.sort().join("-")}`;
     const cachedItem = memoryCache.get(cacheKey);
-    console.log({ cacheKey, cachedItem });
     const now = Date.now();
 
     if (cachedItem && now - cachedItem.timestamp < CACHE_TTL) {
@@ -41,7 +40,6 @@ export async function POST(request: Request) {
 
     const appId = process.env.GITHUB_APP_ID;
     const privateKey = process.env.GITHUB_PRIVATE_KEY;
-    console.log({ appId, privateKey });
 
     if (!appId || !privateKey) {
       console.error("GitHub app credentials are not set");
@@ -67,7 +65,6 @@ export async function POST(request: Request) {
             installation_id: parseInt(installationId),
             per_page: 100,
           });
-          console.log("data: ", data);
 
           if (!data.repositories.length) return null;
 
@@ -88,7 +85,7 @@ export async function POST(request: Request) {
 
     // Filter out null results
     const validOrganizations = organizations.filter((org) => org !== null);
-    console.log("validOrganizations: ", validOrganizations);
+    console.log("validOrganizations.length: ", validOrganizations.length);
 
     // Cache the response
     if (validOrganizations.length > 0) {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getGraphQL } from "@/lib/github";
+import { getGraphQL } from "@/app/api/github";
 
 type Issue = {
   id: string;
