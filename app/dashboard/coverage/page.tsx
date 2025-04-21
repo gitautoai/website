@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback } from "react";
 import RepositorySelector from "../../settings/components/RepositorySelector";
 import { CoverageData, SortField, SortDirection } from "./types";
 import { useAccountContext } from "@/components/Context/Account";
-import Help from "@/components/Help";
+import DocsLink from "@/components/DocsLink";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import SpinnerIcon from "@/components/SpinnerIcon";
 import SuccessPopup from "@/components/SuccessPopup";
@@ -402,7 +402,7 @@ export default function CoveragePage() {
     <div className="relative min-h-screen">
       <div className="w-7/12 lg:w-auto flex items-center gap-2 mb-6">
         <h1 className="text-3xl font-bold">Coverage Dashboard</h1>
-        <Help helpKey="coverage-dashboard" />
+        <DocsLink />
       </div>
 
       {error && (
