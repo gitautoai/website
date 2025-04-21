@@ -16,6 +16,7 @@ export function CodeBlock({ code, language, filename }: CodeBlockProps) {
     setMounted(true);
     const initPrism = async () => {
       const Prism = (await import("prismjs")).default;
+      await import("prismjs/components/prism-bash");
       await import("prismjs/components/prism-javascript");
       await import("prismjs/components/prism-json");
       await import("prismjs/components/prism-typescript");

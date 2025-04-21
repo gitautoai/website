@@ -8,6 +8,7 @@ const sidebarItems = [
     items: [
       { href: "/docs/coverage", label: "Overview" },
       { href: "/docs/coverage/javascript", label: "JavaScript Testing" },
+      { href: "/docs/coverage/python", label: "Python Testing" },
       { href: "/docs/coverage/flutter", label: "Flutter Testing" },
     ],
   },

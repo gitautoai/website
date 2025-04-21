@@ -59,6 +59,14 @@ export default function DocsPage() {
             </Link>
 
             <Link
+              href="/docs/coverage/python"
+              className="block p-6 border rounded-lg hover:border-pink-600"
+            >
+              <h3 className="text-xl font-semibold mb-2">Python Testing</h3>
+              <p className="text-gray-600">pytest and other Python test frameworks</p>
+            </Link>
+
+            <Link
               href="/docs/coverage/flutter"
               className="block p-6 border rounded-lg hover:border-pink-600"
             >

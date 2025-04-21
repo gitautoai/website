@@ -1,5 +1,5 @@
 import { CodeBlock } from "../CodeBlock";
-import { CommonSections } from "../CommonConfiguration";
+import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
 import { packageJson as jestPackageJson, jestConfig } from "./code/jest";
 import { packageJson as vitestPackageJson, vitestConfig } from "./code/vitest";
@@ -35,7 +35,7 @@ export default function JavaScriptConfigurationPage() {
           </div>
         </section>
 
-        <CommonSections
+        <CommonConfiguration
           framework="JavaScript/TypeScript"
           workflowCode={workflow}
           workflowFilename="coverage.yml"
