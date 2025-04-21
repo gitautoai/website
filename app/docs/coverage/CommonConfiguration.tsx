@@ -76,8 +76,8 @@ export function CommonSections({
       <div className="bg-gray-50 p-4 rounded-lg mt-4">
         <p className="text-gray-700">
           <strong>About LCOV:</strong> LCOV (Linux Code Coverage) is a standard format for code
-          coverage data. It's pronounced "el-cov" and is widely supported by various tools and
-          services.
+          coverage data. It&apos;s pronounced &quot;el-cov&quot; and is widely supported by various
+          tools and services.
         </p>
       </div>
     </div>

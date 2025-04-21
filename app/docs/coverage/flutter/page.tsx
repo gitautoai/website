@@ -14,7 +14,7 @@ export default function FlutterConfigurationPage() {
           <h2 className="text-2xl font-semibold mb-4 text-left">Framework Configuration</h2>
           <KeyRequirements />
           <p className="text-gray-600 mb-4">
-            Flutter's built-in test framework can generate LCOV coverage reports.
+            Flutter&apos;s built-in test framework can generate LCOV coverage reports.
           </p>
 
           <CodeBlock code={pubspecYaml} language="yaml" filename="pubspec.yaml" />

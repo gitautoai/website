@@ -8,14 +8,14 @@ export default function DocsPage() {
       <div className="space-y-8">
         <section>
           <p className="text-gray-600 mb-6">
-            Learn how to use GitAuto's Coverage Dashboard to identify and improve low test coverage
-            in your codebase.
+            Learn how to use GitAuto&apos;s Coverage Dashboard to identify and improve low test
+            coverage in your codebase.
           </p>
         </section>
 
         <section>
           <h2 className="text-2xl font-semibold mb-4 text-left">Requirements</h2>
-          <p className="text-gray-600 mb-4">To use GitAuto's coverage analysis:</p>
+          <p className="text-gray-600 mb-4">To use GitAuto&apos;s coverage analysis:</p>
           <ul className="list-disc list-outside space-y-2 text-gray-600 mb-6 ml-5">
             <li>Coverage report must be in LCOV format</li>
             <li>
@@ -63,7 +63,7 @@ export default function DocsPage() {
               className="block p-6 border rounded-lg hover:border-pink-600"
             >
               <h3 className="text-xl font-semibold mb-2">Flutter Testing</h3>
-              <p className="text-gray-600">Flutter's built-in test framework</p>
+              <p className="text-gray-600">Flutter&apos;s built-in test framework</p>
             </Link>
           </div>
         </section>
