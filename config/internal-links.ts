@@ -58,6 +58,13 @@ export const INTERNAL_LINKS = [
     showInNav: true,
   },
   {
+    href: RELATIVE_URLS.DOCS,
+    eventType: "documentation",
+    text: "Docs",
+    category: "resources",
+    showInNav: true,
+  },
+  {
     href: RELATIVE_URLS.FAQ,
     eventType: "faq",
     text: "FAQ",
