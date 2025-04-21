@@ -2,7 +2,7 @@
 
 import { CodeBlock } from "./CodeBlock";
 
-interface CommonSectionsProps {
+interface CommonConfiguration {
   framework: string;
   workflowCode: string;
   workflowFilename: string;
@@ -14,13 +14,13 @@ interface CommonSectionsProps {
   }[];
 }
 
-export function CommonSections({
+export function CommonConfiguration({
   framework,
   workflowCode,
   workflowFilename,
   configPoints,
   setupCode,
-}: CommonSectionsProps) {
+}: CommonConfiguration) {
   return (
     <div className="space-y-12">
       {setupCode && (

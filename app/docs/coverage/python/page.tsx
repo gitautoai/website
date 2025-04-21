@@ -1,31 +1,35 @@
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
-import { pubspecYaml } from "./code/config";
 import { workflow } from "./code/workflow";
 
-export default function FlutterConfigurationPage() {
+export default function PythonConfigurationPage() {
   return (
     <>
-      <h1 className="text-4xl font-bold mb-8">Flutter Testing</h1>
+      <h1 className="text-4xl font-bold mb-8">Python Testing</h1>
 
       <div className="space-y-12">
         <section>
           <h2 className="text-2xl font-semibold mb-4 text-left">Framework Configuration</h2>
           <KeyRequirements />
           <p className="text-gray-600 mb-4">
-            Flutter&apos;s built-in test framework can generate LCOV coverage reports.
+            The most common approach for Python test coverage is using pytest with pytest-cov. These
+            tools can generate coverage reports in LCOV format, which is compatible with
+            GitAuto&apos;s coverage analysis.
           </p>
 
-          <CodeBlock code={pubspecYaml} language="yaml" filename="pubspec.yaml" />
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold mt-6 mb-3">Installation</h3>
+            <CodeBlock code={`pip install pytest pytest-cov`} language="bash" filename="terminal" />
+          </div>
         </section>
 
         <CommonConfiguration
-          framework="Flutter"
+          framework="Python"
           workflowCode={workflow}
-          workflowFilename="flutter-coverage.yml"
+          workflowFilename="python-coverage.yml"
           configPoints={[
-            "Run tests with <code>--coverage</code> flag",
+            "Run tests with <code>--cov</code> and <code>--cov-report=lcov</code> flags",
             "Upload the report as an artifact named <code>coverage-report</code>",
             "Ensure the report is saved as <code>coverage/lcov.info</code>",
           ]}
