@@ -8,7 +8,7 @@ import { workflow } from "./code/workflow";
 export default function JavaScriptConfigurationPage() {
   return (
     <>
-      <h1 className="text-4xl font-bold mb-8">JavaScript/TypeScript Testing</h1>
+      <h1 className="text-4xl font-bold mb-8">JavaScript / TypeScript Testing</h1>
 
       <div className="space-y-12">
         <section>

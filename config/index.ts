@@ -78,6 +78,7 @@ export const RELATIVE_URLS = {
   COVERAGES: "/dashboard/coverage",
   TERMS_OF_SERVICE: "/terms-of-service",
   USE_CASES: "/#use-cases",
+  DOCS: "/docs/coverage",
 } as const;
 export const ABSOLUTE_URLS = {
   CALENDLY: "https://calendly.com/gitauto/30min",
