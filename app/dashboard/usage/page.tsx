@@ -59,7 +59,7 @@ export default function UsagePage() {
     };
 
     fetchData();
-  }, [currentStripeCustomerId]);
+  }, [currentStripeCustomerId, currentOwnerName, userId]);
 
   const formatNumber = (value?: number) => {
     if (!value) return "-";
