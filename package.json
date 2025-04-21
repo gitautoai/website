@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --coverage --coverageReporters=text --coverageReporters=lcov",
+    "test": "jest",
     "test:watch": "jest --watch"
   },
   "dependencies": {
