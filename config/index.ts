@@ -2,6 +2,7 @@ export const isPrd = process.env.NODE_ENV === "production";
 
 // GitAuto Constants
 export const EMAIL = "info@gitauto.ai";
+export const PRODUCT_ID = process.env.NEXT_PUBLIC_PRODUCT_ID
 export const PRODUCT_NAME = "GitAuto";
 export const DESCRIPTION =
   "GitAuto, an AI Coding Agent, helps engineering teams facing resource constraints and hiring challenges to fix more bugs and ship more features by automatically writing code and creating GitHub pull requests from your GitHub and Jira issues every day.";
@@ -85,6 +86,7 @@ export const ABSOLUTE_URLS = {
   GITAUTO: {
     INDEX: "https://gitauto.ai",
     COVERAGES: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.COVERAGES}`,
+    PRICING: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRICING}`,
     THUMBNAIL: "https://gitauto.ai/homepage/thumbnail.jpg",
   },
   GITHUB: {

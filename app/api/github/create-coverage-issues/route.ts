@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getGraphQL } from "@/app/api/github";
 import { CoverageData } from "@/app/dashboard/coverage/types";
-import { ABSOLUTE_URLS } from "@/config";
+import { ABSOLUTE_URLS, PRODUCT_ID } from "@/config";
 import { supabase } from "@/lib/supabase";
 
 type CreateIssueResponse = {
@@ -13,9 +13,17 @@ type CreateIssueResponse = {
   };
 };
 
+type CreateLabelResponse = {
+  createLabel: {
+    label: {
+      id: string;
+    };
+  };
+};
+
 export async function POST(request: Request) {
   try {
-    const { selectedCoverages, ownerName, repoName, accessToken, parentNodeId } =
+    const { selectedCoverages, ownerName, repoName, accessToken, parentNodeId, hasLabel } =
       await request.json();
 
     if (!selectedCoverages?.length || !ownerName || !repoName || !accessToken || !parentNodeId) {
@@ -31,19 +39,68 @@ export async function POST(request: Request) {
 
     const graphqlClient = getGraphQL(accessToken);
 
-    // Get repository Node ID
-    const getRepoId = await graphqlClient<{ repository: { id: string } }>(
+    // Get repository Node ID and label ID if needed
+    const getRepoAndLabel = await graphqlClient<{
+      repository: {
+        id: string;
+        labels?: {
+          nodes: Array<{
+            id: string;
+            name: string;
+          }>;
+        };
+      };
+    }>(
       `
-      query getRepoId($owner: String!, $name: String!) {
+      query getRepoAndLabel($owner: String!, $name: String!, $labelName: String!) {
         repository(owner: $owner, name: $name) {
           id
+          labels(first: 1, query: $labelName) {
+            nodes {
+              id
+              name
+            }
+          }
         }
       }
       `,
-      { owner: ownerName, name: repoName }
+      { owner: ownerName, name: repoName, labelName: PRODUCT_ID || "" }
     );
 
-    const repositoryId = getRepoId.repository.id;
+    const repositoryId = getRepoAndLabel.repository.id;
+    const labels = getRepoAndLabel.repository.labels?.nodes;
+    console.log("labels: ", labels);
+    let labelId =
+      hasLabel && PRODUCT_ID ? labels?.find((label) => label.name === PRODUCT_ID)?.id : null;
+
+    // If label doesn't exist but is needed, create it
+    if (hasLabel && PRODUCT_ID && !labelId) {
+      try {
+        const createLabelResponse = await graphqlClient<CreateLabelResponse>(
+          `
+          mutation createLabel($input: CreateLabelInput!) {
+            createLabel(input: $input) {
+              label {
+                id
+              }
+            }
+          }
+          `,
+          {
+            input: {
+              repositoryId,
+              name: PRODUCT_ID,
+              color: "EC4899", // GitAuto brand color (pink)
+              description: "Issues to be handled by GitAuto",
+            },
+          }
+        );
+        labelId = createLabelResponse.createLabel.label.id;
+      } catch (error) {
+        console.error("Failed to create label:", error);
+        // If label creation fails, continue with issue creation
+      }
+    }
 
     const createdIssues = await Promise.all(
       selectedCoverages.map(async (coverage: CoverageData) => {
@@ -91,6 +148,7 @@ View full coverage details in the [Coverage Dashboard](${ABSOLUTE_URLS.GITAUTO.C
               title,
               body,
               ...(parentNodeId && { parentIssueId: parentNodeId }),
+              ...(labelId && { labelIds: [labelId] }),
             },
           }
         );
