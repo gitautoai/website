@@ -111,7 +111,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
                           createPortalOrCheckoutURL(userId, jwtToken, installations, selectedIndex)
                         }
                       >
-                        Manage Payment
+                        Manage Subscriptions
                       </span>
                     </li>
                   )}

@@ -28,9 +28,7 @@ export async function POST(req: NextRequest) {
     if (!customerIds || customerIds.length === 0)
       return NextResponse.json([], { status: 200, headers });
 
-    const subscriptionPromises = customerIds.map((customerId) =>
-      hasActiveSubscription(customerId)
-    );
+    const subscriptionPromises = customerIds.map((customerId) => hasActiveSubscription(customerId));
 
     const booleanMapping = await Promise.all(subscriptionPromises);
 
