@@ -197,7 +197,7 @@ export default function Pricing() {
               {selectedIndex != null &&
               installationsSubscribed &&
               installationsSubscribed[selectedIndex] === true
-                ? "Manage Plan"
+                ? "Manage Subscriptions"
                 : "Subscribe"}
             </button>
           </div>

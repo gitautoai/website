@@ -109,7 +109,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
                     createPortalOrCheckoutURL(userId, jwtToken, installations, selectedIndex)
                   }
                 >
-                  <span className="link">Manage Payment</span>
+                  <span className="link">Manage Subscriptions</span>
                 </button>
               )}
 

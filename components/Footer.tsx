@@ -40,7 +40,7 @@ export default function Footer() {
       <div className="flex w-full flex-col justify-center items-center">
         <div className="flex flex-col gap-10 sm:gap-8 py-10 mt-auto w-full justify-center">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-5xl mx-auto px-6">
-            {/* Product Links with conditional Manage Payment */}
+            {/* Product Links with conditional Manage Subscriptions */}
             <div className="flex flex-col gap-4 text-center sm:text-left">
               <h3 className="font-bold text-gray-900">{categoryTitles.product}</h3>
               <ul className="flex flex-col gap-3">
@@ -74,7 +74,7 @@ export default function Footer() {
                         }}
                         className="text-gray-600 hover:text-gray-900 hover:underline"
                       >
-                        Manage Payment
+                        Manage Subscriptions
                       </Link>
                     </li>
                   )}
