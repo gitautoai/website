@@ -8,7 +8,7 @@ import { useState, useRef, useEffect } from "react";
 // Local
 import OwnerSelector from "@/components/HomePage/OwnerSelector";
 import { useAccountContext } from "@/components/Context/Account";
-import { Installation } from "@/types/github";
+import { createPortalOrCheckoutURL } from "@/lib/stripe/createPortalOrCheckoutUrl";
 
 interface ProfileIconProps {
   session: Session | null;
@@ -25,8 +25,10 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
     jwtToken,
     email,
     installations,
-    selectedIndex,
-    installationsSubscribed,
+    currentOwnerId,
+    currentOwnerType,
+    currentOwnerName,
+    currentStripeCustomerId,
     userName,
   } = useAccountContext();
 
@@ -56,30 +58,6 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
     );
   }
 
-  const createPortalOrCheckoutURL = async (
-    userId: number | null,
-    jwtToken: string | null,
-    installations: Installation[],
-    currentIndex: number
-  ) => {
-    const response = await fetch("/api/stripe/create-portal-or-checkout-url", {
-      method: "POST",
-      body: JSON.stringify({
-        userId: userId,
-        jwtToken: jwtToken,
-        customerId: installations[currentIndex].stripe_customer_id,
-        email: email,
-        ownerType: installations[currentIndex].owner_type,
-        ownerId: Number(installations[currentIndex].owner_id),
-        ownerName: installations[currentIndex].owner_name,
-        userName: userName || "Unknown User",
-      }),
-    });
-
-    const res = await response.json();
-    router.push(res);
-  };
-
   return (
     <>
       <div className="relative" ref={menuRef}>
@@ -98,15 +76,50 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
         </button>
         {isMenuOpen && (
           <div className="absolute right-0 mt-2 w-48 py-1 rounded-md shadow-lg">
-            {selectedIndex != null &&
-              installations &&
-              installations.length > 0 &&
-              installationsSubscribed &&
-              installationsSubscribed[selectedIndex] === true && (
+            {(() => {
+              if (
+                !userId ||
+                !jwtToken ||
+                !email ||
+                !currentOwnerId ||
+                !currentOwnerType ||
+                !currentOwnerName ||
+                !currentStripeCustomerId
+              ) {
+                console.log("ProfileIcon: falsy values", {
+                  userId,
+                  jwtToken,
+                  email,
+                  currentOwnerId,
+                  currentOwnerType,
+                  currentOwnerName,
+                  currentStripeCustomerId,
+                });
+              }
+              return null;
+            })()}
+
+            {userId &&
+              jwtToken &&
+              email &&
+              currentOwnerId &&
+              currentOwnerType &&
+              currentOwnerName &&
+              currentStripeCustomerId && (
                 <button
                   className="w-full text-left px-4 py-2 hover:bg-transparent"
                   onClick={() =>
-                    createPortalOrCheckoutURL(userId, jwtToken, installations, selectedIndex)
+                    createPortalOrCheckoutURL({
+                      userId,
+                      jwtToken,
+                      customerId: currentStripeCustomerId,
+                      email,
+                      ownerId: currentOwnerId,
+                      ownerType: currentOwnerType,
+                      ownerName: currentOwnerName,
+                      userName,
+                      router,
+                    })
                   }
                 >
                   <span className="link">Manage Subscriptions</span>
