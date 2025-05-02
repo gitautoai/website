@@ -26,13 +26,12 @@ export async function POST(request: Request) {
     const { selectedCoverages, ownerName, repoName, accessToken, parentNodeId, hasLabel } =
       await request.json();
 
-    if (!selectedCoverages?.length || !ownerName || !repoName || !accessToken || !parentNodeId) {
+    if (!selectedCoverages?.length || !ownerName || !repoName || !accessToken) {
       console.error("Missing parameters:", {
         hasCoverages: !!selectedCoverages?.length,
         hasOwner: !!ownerName,
         hasRepo: !!repoName,
         hasToken: !!accessToken,
-        hasParentNodeId: !!parentNodeId,
       });
       return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
     }
