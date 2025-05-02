@@ -6,15 +6,16 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { usePostHog } from "posthog-js/react";
-import { useState, useCallback, useEffect } from "react";
+import { useState } from "react";
 
 // Local imports
 import { useAccountContext } from "@/components/Context/Account";
 import SpinnerIcon from "@/components/SpinnerIcon";
 import CheckMark from "@/components/Symbol/CheckMark";
-import { ABSOLUTE_URLS, OPENAI_MODEL_O3_MINI, RELATIVE_URLS } from "@/config";
+import { ABSOLUTE_URLS, OPENAI_MODEL_O3_MINI } from "@/config";
 import { ANTHROPIC_MODEL_CLAUDE_37 } from "@/config/anthropic";
 import { DEEPSEEK_MODEL_R1 } from "@/config/deepseek";
+import { createPortalOrCheckoutURL } from "@/lib/stripe/createPortalOrCheckoutUrl";
 
 const pricingButtonStyles = `my-4 sm:my-2 md:my-8 rounded-lg transition-colors duration-200 text-md sm:text-lg xl:text-xl py-2 sm:py-1 md:py-3 w-full shadow-lg hover:shadow-lg font-semibold text-center mx-auto`;
 
@@ -27,9 +28,12 @@ export default function Pricing() {
     jwtToken,
     email,
     selectedIndex,
-    installations,
     installationsSubscribed,
     userName,
+    currentOwnerId,
+    currentOwnerType,
+    currentOwnerName,
+    currentStripeCustomerId,
   } = useAccountContext();
 
   const router = useRouter();
@@ -38,35 +42,6 @@ export default function Pricing() {
   const searchParams = useSearchParams();
   const [billingPeriod, setBillingPeriod] = useState<string>("Yearly");
 
-  const createPortalOrCheckoutURL = useCallback(async () => {
-    let currentIndex = 0;
-    if (selectedIndex) currentIndex = selectedIndex;
-
-    // If user has an installation, create portal or checkout session
-    if (installations && installations.length > 0) {
-      const response = await fetch("/api/stripe/create-portal-or-checkout-url", {
-        method: "POST",
-        body: JSON.stringify({
-          userId: userId,
-          jwtToken: jwtToken,
-          customerId: installations[currentIndex].stripe_customer_id,
-          email: email,
-          ownerType: installations[currentIndex].owner_type,
-          ownerId: Number(installations[currentIndex].owner_id),
-          ownerName: installations[currentIndex].owner_name,
-          userName,
-          billingPeriod: billingPeriod,
-        }),
-      });
-
-      const res = await response.json();
-      router.push(res);
-    } else {
-      // If not, redirect to installation page
-      router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
-    }
-  }, [email, jwtToken, router, selectedIndex, userId, installations, billingPeriod, userName]);
-
   // Flow: https://docs.google.com/spreadsheets/d/1AK7VPo_68mL2s3lvsKLy3Rox-QvsT5cngiWf2k0r3Cc/edit#gid=0
   async function handleSubscribe() {
     setIsSubscribeLoading(true);
@@ -74,18 +49,26 @@ export default function Pricing() {
 
     try {
       if (!userId || !jwtToken) {
-        await signIn("github", { callbackUrl: `/?subscribe` });
+        await signIn("github", { callbackUrl: "/" });
         return;
       }
 
-      // Signed in but no installation
-      if (!installations || installations.length === 0) {
-        router.push(RELATIVE_URLS.REDIRECT_TO_INSTALL);
-        return;
-      }
+      if (!currentOwnerId || !currentOwnerType || !currentOwnerName) return;
+      if (!currentStripeCustomerId) return;
+      if (!email) return;
 
-      // Has at least one installation
-      await createPortalOrCheckoutURL();
+      await createPortalOrCheckoutURL({
+        userId,
+        jwtToken,
+        customerId: currentStripeCustomerId,
+        email,
+        ownerId: currentOwnerId,
+        ownerType: currentOwnerType,
+        ownerName: currentOwnerName,
+        userName,
+        billingPeriod,
+        router,
+      });
     } catch (error) {
       Sentry.captureException(error);
       console.error("Error subscribing", error);
@@ -93,21 +76,6 @@ export default function Pricing() {
       setIsSubscribeLoading(false);
     }
   }
-
-  // If "subscribe" in query parameter create checkout session or portal
-  useEffect(() => {
-    if (searchParams.has("subscribe") && installations) {
-      createPortalOrCheckoutURL();
-    }
-  }, [
-    searchParams,
-    installations,
-    selectedIndex,
-    userId,
-    jwtToken,
-    router,
-    createPortalOrCheckoutURL,
-  ]);
 
   return (
     <div

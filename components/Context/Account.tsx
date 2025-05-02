@@ -111,7 +111,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   };
 
   const { data: installationsSubscribed = null } = useSWR(
-    userId ? `fetchSubscriptionStatus-${userId}` : null,
+    userId && installations ? [`fetchSubscriptionStatus-${userId}`, installations] : null,
     fetchSubscriptionStatus,
     swrOptions
   );

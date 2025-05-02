@@ -71,6 +71,7 @@ export async function POST(request: Request) {
           return {
             ownerId: data.repositories[0].owner.id,
             ownerName: data.repositories[0].owner.login,
+            ownerType: data.repositories[0].owner.type,
             repositories: data.repositories.map((repo: any) => ({
               repoId: repo.id,
               repoName: repo.name,

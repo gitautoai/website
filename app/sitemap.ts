@@ -16,9 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .replace(/\/+/g, "/");
 
       const isLessImportant =
-        route === RELATIVE_URLS.PRIVACY_POLICY ||
-        route === RELATIVE_URLS.TERMS_OF_SERVICE ||
-        route === RELATIVE_URLS.REDIRECT_TO_INSTALL;
+        route === RELATIVE_URLS.PRIVACY_POLICY || route === RELATIVE_URLS.TERMS_OF_SERVICE;
       const priority = route === "" ? 1.0 : isLessImportant ? 0.3 : 0.8;
       const changeFrequency = isLessImportant ? ("yearly" as const) : ("weekly" as const);
 

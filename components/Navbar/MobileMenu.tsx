@@ -9,9 +9,8 @@ import { useState } from "react";
 
 // Local Imports
 import { useAccountContext } from "@/components/Context/Account";
-import { ABSOLUTE_URLS } from "@/config/index";
 import { INTERNAL_LINKS } from "@/config/internal-links";
-import { Installation } from "@/types/github";
+import { createPortalOrCheckoutURL } from "@/lib/stripe/createPortalOrCheckoutUrl";
 import OwnerSelector from "../HomePage/OwnerSelector";
 
 interface MobileDrawerProps {
@@ -19,10 +18,6 @@ interface MobileDrawerProps {
   isNavOpen: boolean;
   posthog: any;
 }
-
-const buttonStyles = `bg-pink-600 text-white rounded-lg transition-colors 
-duration-200 sm:text-md xl:text-lg py-2 px-3 shadow-lg hover:shadow-lg 
-cursor-pointer hover:bg-pink-700 font-semibold text-center md:w-auto `;
 
 export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: MobileDrawerProps) {
   const { status } = useSession();
@@ -32,36 +27,14 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
     jwtToken,
     email,
     installations,
-    selectedIndex,
-    installationsSubscribed,
     userName,
+    currentOwnerId,
+    currentOwnerType,
+    currentOwnerName,
+    currentStripeCustomerId,
   } = useAccountContext();
 
   const router = useRouter();
-
-  const createPortalOrCheckoutURL = async (
-    userId: number | null,
-    jwtToken: string | null,
-    installations: Installation[],
-    currentIndex: number
-  ) => {
-    const response = await fetch("/api/stripe/create-portal-or-checkout-url", {
-      method: "POST",
-      body: JSON.stringify({
-        userId: userId,
-        jwtToken: jwtToken,
-        customerId: installations[currentIndex].stripe_customer_id,
-        email: email,
-        ownerType: installations[currentIndex].owner_type,
-        ownerId: Number(installations[currentIndex].owner_id),
-        ownerName: installations[currentIndex].owner_name,
-        userName: userName || "Unknown User",
-      }),
-    });
-
-    const res = await response.json();
-    router.push(res);
-  };
 
   return (
     <>
@@ -100,16 +73,28 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
             )}
             {status === "authenticated" && (
               <>
-                {selectedIndex != null &&
-                  installations &&
-                  installations.length > 0 &&
-                  installationsSubscribed &&
-                  installationsSubscribed[selectedIndex] === true && (
+                {userId &&
+                  jwtToken &&
+                  email &&
+                  currentOwnerId &&
+                  currentOwnerType &&
+                  currentOwnerName &&
+                  currentStripeCustomerId && (
                     <li>
                       <span
                         className={`link `}
                         onClick={() =>
-                          createPortalOrCheckoutURL(userId, jwtToken, installations, selectedIndex)
+                          createPortalOrCheckoutURL({
+                            userId,
+                            jwtToken,
+                            customerId: currentStripeCustomerId,
+                            email,
+                            ownerId: currentOwnerId,
+                            ownerType: currentOwnerType,
+                            ownerName: currentOwnerName,
+                            userName,
+                            router,
+                          })
                         }
                       >
                         Manage Subscriptions
