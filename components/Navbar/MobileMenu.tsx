@@ -1,12 +1,13 @@
 "use client";
-// Third Party
+
+// Third Party Imports
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
-// Components
+// Local Imports
 import { useAccountContext } from "@/components/Context/Account";
 import { ABSOLUTE_URLS } from "@/config/index";
 import { INTERNAL_LINKS } from "@/config/internal-links";

@@ -13,7 +13,7 @@ import { useAccountContext } from "@/components/Context/Account";
 import SpinnerIcon from "@/components/SpinnerIcon";
 import CheckMark from "@/components/Symbol/CheckMark";
 import { ABSOLUTE_URLS, OPENAI_MODEL_O3_MINI, RELATIVE_URLS } from "@/config";
-import { ANTHROPIC_MODEL_CLAUDE_35, ANTHROPIC_MODEL_CLAUDE_37 } from "@/config/anthropic";
+import { ANTHROPIC_MODEL_CLAUDE_37 } from "@/config/anthropic";
 import { DEEPSEEK_MODEL_R1 } from "@/config/deepseek";
 
 const pricingButtonStyles = `my-4 sm:my-2 md:my-8 rounded-lg transition-colors duration-200 text-md sm:text-lg xl:text-xl py-2 sm:py-1 md:py-3 w-full shadow-lg hover:shadow-lg font-semibold text-center mx-auto`;
@@ -161,7 +161,7 @@ export default function Pricing() {
           </Link>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
             <li>
-              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_35}
+              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_37}
             </li>
             <li>
               <CheckMark /> Up to 3 tickets per month
@@ -206,7 +206,7 @@ export default function Pricing() {
               <CheckMark /> Everything in Free plan
             </li>
             <li>
-              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_35}
+              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_37}
             </li>
             <li>
               <CheckMark /> per 10 tickets per month
@@ -258,8 +258,8 @@ export default function Pricing() {
               <CheckMark /> Everything in Standard plan
             </li>
             <li>
-              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_35}, {ANTHROPIC_MODEL_CLAUDE_37},{" "}
-              {OPENAI_MODEL_O3_MINI}, and {DEEPSEEK_MODEL_R1} etc.
+              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_37}, {OPENAI_MODEL_O3_MINI}, and{" "}
+              {DEEPSEEK_MODEL_R1} etc.
             </li>
             <li>
               <CheckMark /> Unlimited tickets
