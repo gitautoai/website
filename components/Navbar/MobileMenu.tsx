@@ -74,7 +74,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
         }`}
       >
         <div className="h-full p-0">
-          <ol className="h-screen flex flex-col items-center justify-center gap-3.5">
+          <ol className="h-screen flex flex-col items-center justify-center gap-2.5">
             {INTERNAL_LINKS.map((link) => (
               <li key={link.href}>
                 <Link

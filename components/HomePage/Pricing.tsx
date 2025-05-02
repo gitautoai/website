@@ -73,7 +73,6 @@ export default function Pricing() {
     posthog.capture("$click", { $event_type: "subscribe", $current_url: window.location.href });
 
     try {
-      // Not signed in, prompt sign in
       if (!userId || !jwtToken) {
         await signIn("github", { callbackUrl: `/?subscribe` });
         return;
