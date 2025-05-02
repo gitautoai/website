@@ -3,8 +3,8 @@ export const swrOptions = {
   revalidateOnFocus: false,
   dedupingInterval: 300000,
   suspense: false,
-  keepPreviousData: true,
-};
+  keepPreviousData: false,
+} as const;
 
 // Extended options for specific use cases
 export const extendedSwrOptions = {
@@ -12,4 +12,4 @@ export const extendedSwrOptions = {
   revalidateIfStale: false,
   revalidateOnMount: true,
   dedupingInterval: 600000,
-};
+} as const;
