@@ -1,10 +1,13 @@
+// Third-party imports
 import { NextResponse, NextRequest } from "next/server";
 import { z, ZodError } from "zod";
 import * as Sentry from "@sentry/nextjs";
-import { isValidToken } from "@/utils/auth";
-import { createCheckoutSession, hasActiveSubscription } from "@/utils/stripe";
+
+// Local imports
 import { config } from "@/config";
-import { createCustomerPortalSession } from "@/utils/stripe";
+import { hasActiveSubscription } from "@/lib/stripe/hasActiveSubscription";
+import { isValidToken } from "@/utils/auth";
+import { createCheckoutSession, createCustomerPortalSession } from "@/utils/stripe";
 
 const schema = z.object({
   userId: z.number(),

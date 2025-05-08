@@ -1,8 +1,12 @@
 "use server";
+
+// Third-party imports
 import { NextResponse, NextRequest } from "next/server";
 import { z, ZodError } from "zod";
+
+// Local imports
+import { hasActiveSubscription } from "@/lib/stripe/hasActiveSubscription";
 import { isValidToken } from "@/utils/auth";
-import { hasActiveSubscription } from "@/utils/stripe";
 
 const schema = z.object({
   userId: z.number(),
