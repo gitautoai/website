@@ -72,25 +72,6 @@ export const createCheckoutSession = async ({
   }
 };
 
-export const hasActiveSubscription = async (customerId: string) => {
-  const subscription = await stripe.subscriptions.list({ customer: customerId });
-
-  if (!subscription) return false;
-  if (!("data" in subscription)) return false;
-  if (!Array.isArray(subscription["data"])) return false;
-  if (subscription["data"].length === 0) return false;
-
-  for (const sub of subscription["data"]) {
-    if (sub.status !== "active") continue;
-    for (const item of sub.items.data) {
-      if (item.price.active === true && item.price.id !== config.STRIPE_FREE_TIER_PRICE_ID)
-        return true;
-    }
-  }
-
-  return false;
-};
-
 // Create a configuration for a customer portal.
 // @see https://stripe.com/docs/api/customer_portal/configurations/create
 const createCustomerPortalConfiguration = async () => {
