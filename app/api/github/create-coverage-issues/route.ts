@@ -21,6 +21,22 @@ type CreateLabelResponse = {
   };
 };
 
+type RepoAndLabelResponse = {
+  repository: {
+    id: string;
+    labels?: {
+      nodes: Array<{
+        id: string;
+        name: string;
+      }>;
+      pageInfo: {
+        hasNextPage: boolean;
+        endCursor: string;
+      };
+    };
+  };
+};
+
 export async function POST(request: Request) {
   try {
     const { selectedCoverages, ownerName, repoName, accessToken, parentNodeId, hasLabel } =
@@ -39,38 +55,45 @@ export async function POST(request: Request) {
     const graphqlClient = getGraphQL(accessToken);
 
     // Get repository Node ID and label ID if needed
-    const getRepoAndLabel = await graphqlClient<{
-      repository: {
-        id: string;
-        labels?: {
-          nodes: Array<{
-            id: string;
-            name: string;
-          }>;
-        };
-      };
-    }>(
-      `
-      query getRepoAndLabel($owner: String!, $name: String!, $labelName: String!) {
+    let allLabels: Array<{ id: string; name: string }> = [];
+    let hasNextPage = true;
+    let endCursor: string | null = null;
+    let repositoryId: string | null = null;
+
+    while (hasNextPage) {
+      const getRepoAndLabel: RepoAndLabelResponse = await graphqlClient<RepoAndLabelResponse>(
+        `
+      query getRepoAndLabel($owner: String!, $name: String!, $labelName: String!, $after: String) {
         repository(owner: $owner, name: $name) {
           id
-          labels(first: 1, query: $labelName) {
+          labels(first: 100, query: $labelName, after: $after) {
             nodes {
               id
               name
+            }
+            pageInfo {
+              hasNextPage
+              endCursor
             }
           }
         }
       }
       `,
-      { owner: ownerName, name: repoName, labelName: PRODUCT_ID || "" }
-    );
+        { owner: ownerName, name: repoName, labelName: PRODUCT_ID || "", after: endCursor }
+      );
 
-    const repositoryId = getRepoAndLabel.repository.id;
-    const labels = getRepoAndLabel.repository.labels?.nodes;
-    console.log("labels: ", labels);
+      if (!repositoryId) repositoryId = getRepoAndLabel.repository.id;
+
+      const labels = getRepoAndLabel.repository.labels?.nodes || [];
+      allLabels.push(...labels);
+      hasNextPage = getRepoAndLabel.repository.labels?.pageInfo.hasNextPage || false;
+      endCursor = getRepoAndLabel.repository.labels?.pageInfo.endCursor || null;
+    }
+
+    // Define label ID
+    console.log("allLabels: ", allLabels);
     let labelId =
-      hasLabel && PRODUCT_ID ? labels?.find((label) => label.name === PRODUCT_ID)?.id : null;
+      hasLabel && PRODUCT_ID ? allLabels?.find((label) => label.name === PRODUCT_ID)?.id : null;
 
     // If label doesn't exist but is needed, create it
     if (hasLabel && PRODUCT_ID && !labelId) {
