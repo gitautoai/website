@@ -103,32 +103,43 @@ export async function POST(request: Request) {
 
     const createdIssues = await Promise.all(
       selectedCoverages.map(async (coverage: CoverageData) => {
-        const title = `Low Test Coverage: ${coverage.full_path}`;
+        const {
+          full_path,
+          line_coverage,
+          statement_coverage,
+          function_coverage,
+          branch_coverage,
+          uncovered_lines,
+          uncovered_functions,
+          uncovered_branches,
+          updated_at,
+        } = coverage;
+        const title = `Low Test Coverage: ${full_path}`;
 
-        const uncoveredLines = coverage.uncovered_lines
-          ? `(Uncovered Lines: ${coverage.uncovered_lines})`
+        const uncoveredLines = uncovered_lines ? `(Uncovered Lines: ${uncovered_lines})` : "";
+        const uncoveredFunctions = uncovered_functions
+          ? `(Uncovered Functions: ${uncovered_functions})`
           : "";
-        const uncoveredFunctions = coverage.uncovered_functions
-          ? `(Uncovered Functions: ${coverage.uncovered_functions})`
-          : "";
-        const uncoveredBranches = coverage.uncovered_branches
-          ? `(Uncovered Branches: ${coverage.uncovered_branches})`
+        const uncoveredBranches = uncovered_branches
+          ? `(Uncovered Branches: ${uncovered_branches})`
           : "";
 
-        const body = `## File: ${coverage.full_path}
+        const body = `## File: [${full_path}](https://github.com/${ownerName}/${repoName}/blob/HEAD/${full_path})
 
-- Line Coverage: ${Math.floor(coverage.line_coverage)}% ${uncoveredLines}
-- Statement Coverage: ${Math.floor(coverage.statement_coverage)}%
-- Function Coverage: ${Math.floor(coverage.function_coverage)}% ${uncoveredFunctions}
-- Branch Coverage: ${Math.floor(coverage.branch_coverage)}% ${uncoveredBranches}
+- Line Coverage: ${Math.floor(line_coverage)}% ${uncoveredLines}
+- Statement Coverage: ${Math.floor(statement_coverage)}%
+- Function Coverage: ${Math.floor(function_coverage)}% ${uncoveredFunctions}
+- Branch Coverage: ${Math.floor(branch_coverage)}% ${uncoveredBranches}
 
-Last Updated: ${new Date(coverage.updated_at).toLocaleString()}
+Last Updated: ${new Date(updated_at).toLocaleString()}
 
 Aim to achieve 100% coverage with minimal code changes. Focus on covering the uncovered areas, including both happy paths, error cases, edge cases, and corner cases. Add to existing test file if available, or create a new one.
 
 ## Coverage Dashboard
 
-View full coverage details in the [Coverage Dashboard](${ABSOLUTE_URLS.GITAUTO.COVERAGES})`;
+View full coverage details in the [Coverage Dashboard](${
+          ABSOLUTE_URLS.GITAUTO.COVERAGES
+        }?utm_source=github&utm_medium=referral)`;
 
         const response = await graphqlClient<CreateIssueResponse>(
           `
