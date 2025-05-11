@@ -1,4 +1,5 @@
 "use client";
+
 // Third-party imports
 import * as Sentry from "@sentry/nextjs";
 import Image from "next/image";
@@ -9,9 +10,9 @@ import { usePostHog } from "posthog-js/react";
 import { useState } from "react";
 
 // Local imports
-import { useAccountContext } from "@/components/Context/Account";
-import SpinnerIcon from "@/components/SpinnerIcon";
-import CheckMark from "@/components/Symbol/CheckMark";
+import { useAccountContext } from "@/app/components/Context/Account";
+import SpinnerIcon from "@/app/components/SpinnerIcon";
+import CheckMark from "@/app/components/Symbol/CheckMark";
 import { ABSOLUTE_URLS, OPENAI_MODEL_O3_MINI } from "@/config";
 import { ANTHROPIC_MODEL_CLAUDE_37 } from "@/config/anthropic";
 import { DEEPSEEK_MODEL_R1 } from "@/config/deepseek";

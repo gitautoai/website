@@ -2,13 +2,12 @@
 import React, { useEffect } from "react";
 
 // Components
-import FAQ from "@/components/HomePage/FAQ";
-import HowItWorks from "@/components/HomePage/HowItWorks";
-import HowToGetStarted from "@/components/HomePage/HowToGetStarted";
-import Pricing from "@/components/HomePage/Pricing";
-// import Problem from "@/components/HomePage/Problem";
-import UseCases from "@/components/HomePage/UseCases";
-import ValueProp from "@/components/HomePage/ValueProp";
+import FAQ from "@/app/components/HomePage/FAQ";
+import HowItWorks from "@/app/components/HomePage/HowItWorks";
+import HowToGetStarted from "@/app/components/HomePage/HowToGetStarted";
+import Pricing from "@/app/components/HomePage/Pricing";
+import UseCases from "@/app/components/HomePage/UseCases";
+import ValueProp from "@/app/components/HomePage/ValueProp";
 
 // Analytics
 import { usePathname } from "next/navigation";

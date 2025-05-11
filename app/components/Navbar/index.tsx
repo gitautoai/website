@@ -8,9 +8,9 @@ import { usePostHog } from "posthog-js/react";
 import { useEffect, useState } from "react";
 
 // Local imports
-import HamburgerMenu from "./hamburgerMenu";
-import MobileDrawer from "./MobileMenu";
-import AuthControls from "@/components/AuthControls";
+import AuthControls from "@/app/components/AuthControls";
+import HamburgerMenu from "@/app/components/Navbar/hamburgerMenu";
+import MobileDrawer from "@/app/components/Navbar/MobileMenu";
 import { RELATIVE_URLS } from "@/config/index";
 import { INTERNAL_LINKS } from "@/config/internal-links";
 

@@ -1,14 +1,10 @@
-import { useSession, signIn } from "next-auth/react";
+// Third party imports
 import { motion } from "framer-motion";
-import ProfileIcon from "@/components/Navbar/ProfileIcon";
-import Link from "next/link";
-import { ABSOLUTE_URLS } from "@/config/index";
+import { useSession, signIn } from "next-auth/react";
 import { usePostHog } from "posthog-js/react";
 
-// Reusing the same button styles from Navbar
-const buttonStyles = `bg-pink-600 text-white rounded-lg transition-colors 
-duration-200 py-2 px-3 shadow-lg hover:shadow-lg 
-cursor-pointer hover:bg-pink-700 text-center md:w-auto`;
+// Local imports
+import ProfileIcon from "@/app/components/Navbar/ProfileIcon";
 
 interface AuthControlsProps {
   callbackUrl?: string;

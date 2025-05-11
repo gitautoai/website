@@ -5,11 +5,11 @@ import { useEffect, useState, useCallback } from "react";
 // Local imports
 import RepositorySelector from "../../settings/components/RepositorySelector";
 import { CoverageData, SortField, SortDirection } from "./types";
-import { useAccountContext } from "@/components/Context/Account";
-import DocsLink from "@/components/DocsLink";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import SpinnerIcon from "@/components/SpinnerIcon";
-import SuccessPopup from "@/components/SuccessPopup";
+import { useAccountContext } from "@/app/components/Context/Account";
+import DocsLink from "@/app/components/DocsLink";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
+import SpinnerIcon from "@/app/components/SpinnerIcon";
+import SuccessPopup from "@/app/components/SuccessPopup";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { fetchWithTiming } from "@/utils/fetch";
 

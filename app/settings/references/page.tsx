@@ -7,8 +7,8 @@ import RepositorySelector from "../components/RepositorySelector";
 import { PLAN_LIMITS } from "../constants/plans";
 import SaveButton from "../components/SaveButton";
 import { ReferenceSettings } from "../types";
-import { useAccountContext } from "@/components/Context/Account";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import { useAccountContext } from "@/app/components/Context/Account";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 export default function ReferencesPage() {
   const [isLoading, setIsLoading] = useState(true);

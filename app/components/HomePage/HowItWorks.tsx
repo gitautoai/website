@@ -1,5 +1,6 @@
+import { RELATIVE_URLS } from "@/config";
 import DemoVideo from "../Video/Demo";
-import { RELATIVE_URLS } from "../../config";
+
 import Link from "next/link";
 
 const HowItWorks = () => {

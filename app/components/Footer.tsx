@@ -2,14 +2,14 @@
 
 // Third party imports
 import Link from "next/link";
-import { usePostHog } from "posthog-js/react";
 import { usePathname } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
 
 // Local imports
-import { useAccountContext } from "@/components/Context/Account";
+import SNS from "@/app/components/Button/SNS";
+import { useAccountContext } from "@/app/components/Context/Account";
 import { SNS_LINKS } from "@/config";
 import { INTERNAL_LINKS } from "@/config/internal-links";
-import SNS from "./Button/SNS";
 
 export default function Footer() {
   // Analytics

@@ -8,12 +8,12 @@ import "@/styles/globals.css";
 import "@/styles/styles.css";
 
 // Components
-import Navbar from "@/components/Navbar";
-import { PHProvider } from "@/components/PostHog";
-import SessionProvider from "@/components/SessionProvider";
-import { AccountContextWrapper } from "@/components/Context/Account";
-import Footer from "@/components/Footer";
-import IntercomMessenger from "@/components/Intercom";
+import { AccountContextWrapper } from "@/app/components/Context/Account";
+import Footer from "@/app/components/Footer";
+import IntercomMessenger from "@/app/components/Intercom";
+import Navbar from "@/app/components/Navbar";
+import { PHProvider } from "@/app/components/PostHog";
+import SessionProvider from "@/app/components/SessionProvider";
 
 // Analytics
 import { SpeedInsights } from "@vercel/speed-insights/next";

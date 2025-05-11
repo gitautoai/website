@@ -1,4 +1,6 @@
 "use client";
+
+// Third party imports
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Session } from "next-auth";
@@ -6,8 +8,8 @@ import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 
 // Local
-import OwnerSelector from "@/components/HomePage/OwnerSelector";
-import { useAccountContext } from "@/components/Context/Account";
+import { useAccountContext } from "@/app/components/Context/Account";
+import OwnerSelector from "@/app/components/HomePage/OwnerSelector";
 import { createPortalOrCheckoutURL } from "@/lib/stripe/createPortalOrCheckoutUrl";
 
 interface ProfileIconProps {
