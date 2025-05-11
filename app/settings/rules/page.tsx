@@ -9,8 +9,8 @@ import { PLAN_LIMITS } from "../constants/plans";
 import { RULES_CONTENT } from "../constants/rulesDefaults";
 import { RulesSettings } from "../types";
 import { Branch } from "@/app/api/github/get-branches/route";
-import { useAccountContext } from "@/components/Context/Account";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import { useAccountContext } from "@/app/components/Context/Account";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 import { countTokens } from "@/utils/tokens";
 
 export default function RulesPage() {

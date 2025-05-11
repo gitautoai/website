@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+// Third party imports
 import { useSession } from "next-auth/react";
-import { JiraSiteWithProjects } from "@/lib/jira";
+import { useState, useEffect } from "react";
+
+// Local imports
 import { GitHubOwnerWithRepos } from "@/app/api/github/get-installed-repos/route";
-import { useAccountContext } from "@/components/Context/Account";
+import { useAccountContext } from "@/app/components/Context/Account";
+import { JiraSiteWithProjects } from "@/lib/jira";
 
 export function useIntegrations() {
   const { data: session } = useSession();

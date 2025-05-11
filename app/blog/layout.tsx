@@ -1,4 +1,4 @@
-import InstallButton from "@/components/Button/Install";
+import InstallButton from "@/app/components/Button/Install";
 
 /**
  * @see https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts

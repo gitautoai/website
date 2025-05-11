@@ -1,8 +1,12 @@
 "use client";
+
+// Third party imports
 import { useState } from "react";
-import SettingsMenu from "./components/SettingsMenu";
-import MobileSettingsMenu from "./components/MobileSettingsMenu";
-import AuthControls from "@/components/AuthControls";
+
+// Local imports
+import AuthControls from "@/app/components/AuthControls";
+import MobileSettingsMenu from "@/app/settings/components/MobileSettingsMenu";
+import SettingsMenu from "@/app/settings/components/SettingsMenu";
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

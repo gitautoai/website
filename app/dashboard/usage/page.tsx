@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 // Local imports
 import { UsageStats, BillingPeriod } from "./types";
 import RepositorySelector from "../../settings/components/RepositorySelector";
-import { useAccountContext } from "@/components/Context/Account";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import SpinnerIcon from "@/components/SpinnerIcon";
+import { useAccountContext } from "@/app/components/Context/Account";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
+import SpinnerIcon from "@/app/components/SpinnerIcon";
 import { fetchWithTiming } from "@/utils/fetch";
 
 export default function UsagePage() {

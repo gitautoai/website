@@ -7,8 +7,8 @@ import RepositorySelector from "../components/RepositorySelector";
 import SaveButton from "../components/SaveButton";
 import { PLAN_LIMITS } from "../constants/plans";
 import { ScreenshotSettings } from "../types";
-import { useAccountContext } from "@/components/Context/Account";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import { useAccountContext } from "@/app/components/Context/Account";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 export default function ScreenshotsPage() {
   const [isLoading, setIsLoading] = useState(true);
