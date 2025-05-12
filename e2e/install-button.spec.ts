@@ -20,6 +20,6 @@ test.describe("Install Button", () => {
 
     // Verify the button is visible and has the GitHub icon
     await expect(installButton).toBeVisible();
-    await expect(page.getByAltText("Github Logo")).toBeVisible();
+    await expect(installButton.locator('img[alt="Github Logo"]')).toBeVisible();
   });
 });
