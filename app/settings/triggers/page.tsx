@@ -6,9 +6,11 @@ import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import TriggerToggle from "@/app/settings/components/TriggerToggle";
 import type { TriggerSettings } from "@/app/settings/types";
+import { slackUs } from "@/lib/slack/slackUs";
 
 export default function TriggersPage() {
-  const { currentOwnerId, currentRepoId, currentRepoName, userId, userName } = useAccountContext();
+  const { currentOwnerId, currentOwnerName, currentRepoId, currentRepoName, userId, userName } =
+    useAccountContext();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -119,25 +121,51 @@ export default function TriggersPage() {
     }
   };
 
+  const notifyChange = async (key: string, oldValue: any, newValue: any) => {
+    // Convert setting name to a readable format
+    const settingLabels: Record<string, string> = {
+      triggerOnReviewComment: "Review Comment trigger",
+      triggerOnTestFailure: "Test Failure trigger",
+      triggerOnCommit: "Commit trigger",
+      triggerOnMerged: "Merged trigger",
+      triggerOnSchedule: "Schedule trigger",
+      scheduleTime: "Schedule time",
+      scheduleIncludeWeekends: "Include weekends",
+    };
+
+    const readableSetting = settingLabels[key] || key;
+
+    // Build the message
+    const message = `${userName} (${userId}) updated ${readableSetting} from ${oldValue} to ${newValue} for ${currentOwnerName}/${currentRepoName}`;
+
+    // Call the server action
+    await slackUs(message);
+  };
+
   const handleToggle = (key: keyof TriggerSettings) => {
+    const oldValue = triggerSettings[key];
+    const newValue = !oldValue;
     const updatedSettings = {
       ...triggerSettings,
-      [key]: !triggerSettings[key],
+      [key]: newValue,
     };
     setTriggerSettings(updatedSettings);
     saveSettings(updatedSettings);
+    notifyChange(key, oldValue, newValue);
   };
 
   const handleScheduleChange = (
     field: "scheduleTime" | "scheduleIncludeWeekends",
     value: string | boolean
   ) => {
+    const oldValue = triggerSettings[field];
     const updatedSettings = {
       ...triggerSettings,
       [field]: value,
     };
     setTriggerSettings(updatedSettings);
     saveSettings(updatedSettings);
+    notifyChange(field, oldValue, value);
   };
 
   const handleRepoChange = () => {
