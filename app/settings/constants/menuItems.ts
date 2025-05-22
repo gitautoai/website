@@ -4,6 +4,7 @@ export const menuItems = [
   { id: "usage", label: "Usage", href: "/dashboard/usage", isHeader: false },
   { id: "settings-header", label: "Settings", href: "#", isHeader: true },
   { id: "general", label: "General", href: "/settings", isHeader: false },
+  { id: "triggers", label: "Triggers", href: "/settings/triggers", isHeader: false },
   { id: "rules", label: "Rules", href: "/settings/rules", isHeader: false },
   { id: "references", label: "References", href: "/settings/references", isHeader: false },
   { id: "screenshots", label: "Screenshots", href: "/settings/screenshots", isHeader: false },

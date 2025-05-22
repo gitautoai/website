@@ -27,4 +27,14 @@ export type ScreenshotSettings = {
   startupCommands: string[];
 };
 
-export type Settings = RulesSettings | ReferenceSettings | ScreenshotSettings;
+export type TriggerSettings = {
+  triggerOnReviewComment: boolean;
+  triggerOnTestFailure: boolean;
+  triggerOnCommit: boolean;
+  triggerOnMerged: boolean;
+  triggerOnSchedule: boolean;
+  scheduleTime?: string; // Format: "HH:MM" (24-hour format)
+  scheduleIncludeWeekends?: boolean;
+};
+
+export type Settings = RulesSettings | ReferenceSettings | ScreenshotSettings | TriggerSettings;
