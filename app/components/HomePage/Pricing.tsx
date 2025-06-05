@@ -14,7 +14,7 @@ import { useAccountContext } from "@/app/components/Context/Account";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
 import CheckMark from "@/app/components/Symbol/CheckMark";
 import { ABSOLUTE_URLS, OPENAI_MODEL_O3_MINI } from "@/config";
-import { ANTHROPIC_MODEL_CLAUDE_37 } from "@/config/anthropic";
+import { ANTHROPIC_MODEL_CLAUDE_40 } from "@/config/anthropic";
 import { DEEPSEEK_MODEL_R1 } from "@/config/deepseek";
 import { createPortalOrCheckoutURL } from "@/lib/stripe/createPortalOrCheckoutUrl";
 
@@ -129,7 +129,7 @@ export default function Pricing() {
           </Link>
           <ul className="flex flex-col text-base sm:text-sm md:text-xl space-y-1 list-none list-outside">
             <li>
-              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_37}
+              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_40}
             </li>
             <li>
               <CheckMark /> Up to 3 tickets per month
@@ -174,7 +174,7 @@ export default function Pricing() {
               <CheckMark /> Everything in Free plan
             </li>
             <li>
-              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_37}
+              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_40}
             </li>
             <li>
               <CheckMark /> per 10 tickets per month
@@ -226,7 +226,7 @@ export default function Pricing() {
               <CheckMark /> Everything in Standard plan
             </li>
             <li>
-              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_37}, {OPENAI_MODEL_O3_MINI}, and{" "}
+              <CheckMark /> {ANTHROPIC_MODEL_CLAUDE_40}, {OPENAI_MODEL_O3_MINI}, and{" "}
               {DEEPSEEK_MODEL_R1} etc.
             </li>
             <li>
