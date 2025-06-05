@@ -16,7 +16,7 @@ const ValueProp = () => {
         <br className="hidden sm:block" /> so you can keep shipping confidently.
       </p>
       <InstallButton text="Start Free – Add to GitHub" />
-      <p className="text-sm sm:text-xs md:text-sm lg:text-base text-gray-500">
+      <p className="text-sm sm:text-xs md:text-sm lg:text-base text-gray-500 mt-2">
         No credit card required. Get started in seconds.
       </p>
     </div>
