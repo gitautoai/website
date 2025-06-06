@@ -25,8 +25,8 @@ const WhyGitAuto = () => {
             <br /> No Problem
           </h3>
           <p className="text-lg text-gray-700">
-            Many teams have little or no automated testing for their GitHub repositories. There's no
-            time, no clear standard, and not enough resources to start from scratch.
+            Many teams have little or no automated testing for their GitHub repositories.
+            There&apos;s no time, no clear standard, and not enough resources to start from scratch.
           </p>
         </div>
 
@@ -37,8 +37,8 @@ const WhyGitAuto = () => {
             Let GitAuto Handle the Tedious Parts
           </h3>
           <p className="text-lg text-gray-700">
-            Writing and maintaining tests isn't the most exciting work. GitAuto automates the boring
-            parts, so you can focus on building features and shipping faster.
+            Writing and maintaining tests isn&apos;t the most exciting work. GitAuto automates the
+            boring parts, so you can focus on building features and shipping faster.
           </p>
         </div>
       </div>
