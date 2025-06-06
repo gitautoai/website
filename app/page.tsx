@@ -3,11 +3,12 @@ import React, { useEffect } from "react";
 
 // Components
 import FAQ from "@/app/components/HomePage/FAQ";
+import Hero from "@/app/components/HomePage/Hero";
 import HowItWorks from "@/app/components/HomePage/HowItWorks";
 import HowToGetStarted from "@/app/components/HomePage/HowToGetStarted";
 import Pricing from "@/app/components/HomePage/Pricing";
 import UseCases from "@/app/components/HomePage/UseCases";
-import ValueProp from "@/app/components/HomePage/ValueProp";
+import WhyGitAuto from "@/app/components/HomePage/WhyGitAuto";
 
 // Analytics
 import { usePathname } from "next/navigation";
@@ -28,8 +29,8 @@ export default function Home() {
 
   return (
     <div className="flex flex-col justify-center items-center px-0 md:px-24">
-      <ValueProp />
-      {/* <Problem /> */}
+      <Hero />
+      <WhyGitAuto />
       <HowItWorks />
       <UseCases />
       <HowToGetStarted />
