@@ -38,12 +38,12 @@ const WhyGitAuto = () => {
             className="flex-1 bg-white/90 rounded-xl shadow-md p-8 flex flex-col items-center transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
+            whileHover={{ scale: 1.05 }}
             viewport={{ once: true, amount: 0.5 }}
             transition={{
-              duration: 0.7,
-              delay: idx * 0.15,
-              type: "tween",
-              ease: "easeOut",
+              opacity: { duration: 0.7, delay: idx * 0.15, ease: "easeOut" },
+              y: { duration: 0.7, delay: idx * 0.15, ease: "easeOut" },
+              scale: { duration: 0, ease: "easeOut" },
             }}
           >
             {item.icon}
