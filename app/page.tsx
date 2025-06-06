@@ -1,18 +1,19 @@
 "use client";
-import React, { useEffect } from "react";
+// Third party imports
+import { usePathname } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
+import { useEffect } from "react";
 
-// Components
+// Local components
 import FAQ from "@/app/components/HomePage/FAQ";
 import Hero from "@/app/components/HomePage/Hero";
 import HowItWorks from "@/app/components/HomePage/HowItWorks";
 import HowToGetStarted from "@/app/components/HomePage/HowToGetStarted";
 import Pricing from "@/app/components/HomePage/Pricing";
 import UseCases from "@/app/components/HomePage/UseCases";
+import WhatGitAutoDoes from "@/app/components/HomePage/WhatGitAutoDoes";
 import WhyGitAuto from "@/app/components/HomePage/WhyGitAuto";
 
-// Analytics
-import { usePathname } from "next/navigation";
-import { usePostHog } from "posthog-js/react";
 export default function Home() {
   // Analytics
   const pathname = usePathname();
@@ -31,6 +32,7 @@ export default function Home() {
     <div className="flex flex-col justify-center items-center px-0 md:px-24">
       <Hero />
       <WhyGitAuto />
+      <WhatGitAutoDoes />
       <HowItWorks />
       <UseCases />
       <HowToGetStarted />
