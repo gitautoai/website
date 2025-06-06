@@ -11,7 +11,6 @@ const InstallButton = ({ text }: InstallButtonProps) => {
   const posthog = usePostHog();
   return (
     <div className="relative group w-fit mx-auto mt-3 sm:mt-2 md:mt-6">
-      <span className="absolute -inset-1 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-red-500 opacity-70 blur-sm group-hover:opacity-100 transition" />
       <a
         href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
         target="_blank"
@@ -22,8 +21,8 @@ const InstallButton = ({ text }: InstallButtonProps) => {
           });
         }}
         className="relative bg-pink-600 text-white rounded-xl transition-all duration-200
-          text-md sm:text-lg xl:text-xl py-3 sm:py-2 md:py-4 px-8 shadow-xl font-semibold md:w-auto flex items-center gap-2
-          hover:scale-105 focus:scale-105"
+          text-md sm:text-lg xl:text-xl py-3 sm:py-2 md:py-4 px-8 shadow-md font-semibold md:w-auto flex items-center gap-2
+          hover:scale-105 focus:scale-105 hover:shadow-lg hover:shadow-pink-500/50"
       >
         <Image
           src="/icons/github.svg"
