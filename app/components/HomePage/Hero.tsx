@@ -1,6 +1,6 @@
 import InstallButton from "../Button/Install";
 
-const ValueProp = () => {
+const Hero = () => {
   return (
     <div
       id="top"
@@ -9,7 +9,7 @@ const ValueProp = () => {
       <h1 className="text-4xl sm:text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent pb-0 mt-0 mb-0 sm:mt-14 md:mt-10 sm:w-12/12 md:w-11/12 h-32 sm:h-20 md:h-32">
         Go from 0% to 90%
         <br className="hidden sm:block" />
-        Test Coverage Quickly
+        Test Coverage on GitHub
       </h1>
       <p className="text-lg sm:text-lg md:text-2xl lg:text-3xl font-medium">
         GitAuto automatically writes, runs, and fixes your unit tests,
@@ -23,4 +23,4 @@ const ValueProp = () => {
   );
 };
 
-export default ValueProp;
+export default Hero;
