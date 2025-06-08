@@ -17,7 +17,14 @@ const cases = [
       "With GitAuto, the team can automatically generate and update tests on every commit and merge, maintaining coverage as the codebase evolves.",
     ],
   },
-  // ...add more stories as needed
+  {
+    title: "Meeting Deadline for Flutter Mobile App",
+    persona: "Project Manager, IT Service Company",
+    story: [
+      "A consulting team needed to increase test coverage from 0% to 90% within a month for their Flutter app. The client contract specified quality reports including test cases and results as part of delivery.",
+      "They used GitAuto to generate test cases while having code authors review any failures, helping them meet the tight deadline with required quality metrics.",
+    ],
+  },
 ];
 
 const UseCases = () => {
@@ -94,9 +101,9 @@ const UseCases = () => {
   const getTransitionClass = (idx: number) => {
     if (!isClient) return "opacity-0";
     if (idx === activeIndex) return "opacity-100 translate-x-0";
-
-    // Always move in a consistent direction
-    return idx < activeIndex ? "opacity-0 translate-x-full" : "opacity-0 -translate-x-full";
+    if (idx === 0 && activeIndex === cases.length - 1) return "opacity-0 translate-x-full";
+    if (idx === cases.length - 1 && activeIndex === 0) return "opacity-0 -translate-x-full";
+    return idx < activeIndex ? "opacity-0 -translate-x-full" : "opacity-0 translate-x-full";
   };
 
   return (
