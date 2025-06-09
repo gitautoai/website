@@ -1,80 +1,95 @@
-import { PRODUCT_NAME, RELATIVE_URLS, ABSOLUTE_URLS } from "@/config";
+// Third-party imports
 import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
 
+// Local imports
+import { useAccountContext } from "@/app/components/Context/Account";
+import { ABSOLUTE_URLS, PRODUCT_NAME } from "@/config";
+
 export default function HowToGetStarted() {
   const posthog = usePostHog();
+  const { currentOwnerType, currentOwnerName, currentInstallationId } = useAccountContext();
+
+  // If installed, generate URL based on current Org/User
+  const getManageReposUrl = () => {
+    if (currentOwnerType === "Organization" && currentOwnerName)
+      return `https://github.com/organizations/${currentOwnerName}/settings/installations/${currentInstallationId}`;
+    return ABSOLUTE_URLS.GITHUB.INSTALLED_APPS + "/" + currentInstallationId;
+  };
+
+  const steps = [
+    {
+      title: `Install ${PRODUCT_NAME}`,
+      description: "Simple one-click installation process that takes less than 2 minutes",
+      ctaText: "Install Now",
+      ctaLink: ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO,
+      ctaAction: () => {
+        posthog.capture("$click", {
+          $event_type: "github_app_install",
+          $current_url: window.location.href,
+        });
+      },
+    },
+    {
+      title: "Select repositories",
+      description: "Choose which repositories to test - you can change this anytime",
+      ctaText: "Manage Repositories",
+      ctaLink: getManageReposUrl(),
+    },
+    {
+      title: "Free to start",
+      description: "No payment method required to get started with the free plan",
+      // ctaText: "Learn More",
+      // ctaLink: RELATIVE_URLS.DOCS.GETTING_STARTED,
+    },
+    {
+      title: "You're all set!",
+      description: "GitAuto will automatically create pull requests with tests",
+      // ctaText: "Learn More",
+      // ctaLink: RELATIVE_URLS.DOCS.HOW_IT_WORKS,
+    },
+  ];
+
   return (
-    <div id="how-to-get-started" className="min-h-screen h-screen flex flex-col items-center justify-center">
-      <div className="flex flex-col items-center space-y-12 sm:space-y-6 md:space-y-20">
-        <h2 className="text-center text-3xl md:text-4xl">How to get started</h2>
-        <ul className="list-decimal list-outside space-y-1 md:space-y-4 ml-5 text-base sm:text-sm md:text-xl">
-          <li className="font-semibold">
-            Install {PRODUCT_NAME} from{" "}
-            <a
-              href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
-              target="_blank"
-              onClick={() => {
-                posthog.capture("$click", {
-                  $event_type: "github_app_install",
-                  $current_url: window.location.href,
-                });
-              }}
-              className="text-pink-500 visited:text-pink-700 underline"
-            >
-              Github Marketplace
-            </a>
-            .
-          </li>
-          <ul className="list-disc list-outside pl-4 md:pl-11 space-y-0 md:space-y-1">
-            <li>
-              If you see “Settings” tab in your repository, you are likely your organization owner
-              or the repository admin, and you can install {PRODUCT_NAME}.
-            </li>
-            <li className="hidden md:list-item">
-              If you don&apos;t, you can still request the installation.
-            </li>
-            <li className="hidden md:list-item">
-              Manage roles in the repository under “Settings” &gt; “Collaborators and teams”.
-            </li>
-          </ul>
-          <li className="font-semibold">
-            Select the repositories you would like to use. You can change this anytime later{" "}
-            <a
-              href={ABSOLUTE_URLS.GITHUB.INSTALLED_APPS}
-              target="_blank"
-              className="text-pink-500 visited:text-pink-700 underline"
-            >
-              here
-            </a>
-            .
-          </li>
-          <ul className="list-disc list-outside pl-4 md:pl-11 space-y-0 md:space-y-1">
-            <li>
-              A pull request with our issue templates will be created in the installed repositories.
-            </li>
-            <li className="hidden md:list-item">
-              It is recommended to install {PRODUCT_NAME} only on active repositories. While{" "}
-              {PRODUCT_NAME} works autonomously in the installed repositories, there is a limit to
-              the number of activities.
-            </li>
-          </ul>
-          <li className="font-semibold">
-            The default plan is free, no payment method is required. Subscribe to a paid plan to
-            increase usage limits.
-          </li>
-          <li className="font-semibold">
-            Now you&apos;re all set! Go to{" "}
-            <Link
-              href={RELATIVE_URLS.HOW_IT_WORKS}
-              className="text-pink-500 visited:text-pink-700 underline"
-            >
-              “How it works”
-            </Link>{" "}
-            section for further instructions.
-          </li>
-        </ul>
+    <section id="how-to-get-started" className="w-full max-w-5xl mx-auto py-20 px-4">
+      <h2 className="text-2xl md:text-4xl font-bold mb-12 text-center">How to Get Started</h2>
+
+      <div className="grid md:grid-cols-2 gap-8">
+        {steps.map((step, index) => (
+          <div
+            key={step.title}
+            className="rounded-lg shadow-md p-6 flex flex-col items-start border border-gray-100 hover:shadow-lg transition-shadow h-full"
+          >
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 rounded-full bg-pink-600 text-white flex items-center justify-center font-bold mr-3">
+                {index + 1}
+              </div>
+              <h3 className="text-xl font-semibold">{step.title}</h3>
+            </div>
+
+            <p className="text-gray-600 mb-4">{step.description}</p>
+
+            {step.ctaText && step.ctaLink && (
+              <Link
+                href={step.ctaLink}
+                target={step.ctaLink.startsWith("http") ? "_blank" : "_self"}
+                onClick={step.ctaAction}
+                className="mt-auto inline-flex items-center text-pink-600 font-medium hover:text-pink-800"
+              >
+                {step.ctaText}
+                <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 5l7 7-7 7"
+                  ></path>
+                </svg>
+              </Link>
+            )}
+          </div>
+        ))}
       </div>
-    </div>
+    </section>
   );
 }
