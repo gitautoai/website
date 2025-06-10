@@ -43,11 +43,11 @@ export function JiraHeader({ isConnected, isConnecting, onAuth }: JiraHeaderProp
       <div className="text-center flex flex-col items-center space-y-8 md:col-span-2">
         <div className="flex items-center justify-center mt-4">
           <Image
-            src="/integrations/jira.png"
+            src="/icons/jira.png"
             alt="Jira Logo"
             width={160}
             height={160}
-            className="border border-gray-200 rounded-lg object-contain w-[120px] md:w-[160px]"
+            className="rounded-lg object-contain w-[120px] md:w-[160px]"
           />
         </div>
         <button
