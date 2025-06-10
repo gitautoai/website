@@ -79,7 +79,7 @@ export const ABSOLUTE_URLS = {
   GITHUB: {
     EMAIL_SETTING: "https://github.com/settings/emails",
     MARKETPLACE: "https://github.com/marketplace/gitauto-ai",
-    INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai",
+    INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai/installations/new",
     INSTALLED_APPS: "https://github.com/settings/installations",
   },
   LINKEDIN: "https://www.linkedin.com/company/gitauto",
