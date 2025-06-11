@@ -48,7 +48,7 @@ export const INTERNAL_LINKS = [
     eventType: "pricing",
     text: "Pricing",
     category: "product",
-    showInNav: false,
+    showInNav: true,
   },
   {
     href: RELATIVE_URLS.PRICING_DETAILS,
