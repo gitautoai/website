@@ -13,6 +13,7 @@ import Pricing from "@/app/components/HomePage/Pricing";
 import UseCases from "@/app/components/HomePage/UseCases";
 import WhatGitAutoDoes from "@/app/components/HomePage/WhatGitAutoDoes";
 import WhyGitAuto from "@/app/components/HomePage/WhyGitAuto";
+import ScrollNav from "@/app/components/Navigation/ScrollNav";
 
 export default function Home() {
   // Analytics
@@ -30,6 +31,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col justify-center items-center px-0 md:px-24">
+      <ScrollNav />
       <Hero />
       <WhyGitAuto />
       <WhatGitAutoDoes />
