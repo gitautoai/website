@@ -3,7 +3,7 @@ import InstallButton from "../Button/Install";
 const Hero = () => {
   return (
     <div
-      id="top"
+      id="hero"
       className="min-h-screen h-screen flex flex-col items-center justify-center gap-2 sm:gap-2 md:gap-4 text-center"
     >
       <h1 className="text-4xl sm:text-4xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 bg-clip-text text-transparent pb-0 mt-0 mb-0 sm:mt-14 md:mt-10 sm:w-12/12 md:w-11/12 h-32 sm:h-20 md:h-32">

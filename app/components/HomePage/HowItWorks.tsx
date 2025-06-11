@@ -39,7 +39,7 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section className="w-full max-w-6xl mx-auto my-20 px-4">
+    <section id="how-it-works" className="w-full max-w-6xl mx-auto my-20 px-4">
       <h2 className="text-2xl md:text-4xl font-bold mb-14 text-center">How It Works</h2>
       <div className="flex flex-col md:flex-row items-center gap-12">
         {/* Timeline */}
