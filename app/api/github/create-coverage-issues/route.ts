@@ -161,7 +161,7 @@ Aim to achieve 100% coverage with minimal code changes. Focus on covering the un
 ## Coverage Dashboard
 
 View full coverage details in the [Coverage Dashboard](${
-          ABSOLUTE_URLS.GITAUTO.COVERAGES
+          ABSOLUTE_URLS.GITAUTO.COVERAGE
         }?utm_source=github&utm_medium=referral)`;
 
         const response = await graphqlClient<CreateIssueResponse>(

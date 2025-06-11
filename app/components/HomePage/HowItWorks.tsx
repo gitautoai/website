@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FaTachometerAlt, FaListAlt, FaFileAlt, FaCheckCircle } from "react-icons/fa";
 
 // Local imports
-import DemoVideo from "../Video/Demo";
+import DemoVideo from "@/app/components/Video/Demo";
 import { RELATIVE_URLS } from "@/config";
 
 const steps = [
@@ -13,7 +13,7 @@ const steps = [
     desc: (
       <>
         Visit your{" "}
-        <Link href={RELATIVE_URLS.COVERAGES} className="text-pink-500 underline">
+        <Link href={RELATIVE_URLS.DASHBOARD.COVERAGE} className="text-pink-500 underline">
           coverage dashboard
         </Link>{" "}
         to see which files need more tests.
