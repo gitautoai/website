@@ -54,7 +54,7 @@ export default function PricingPage() {
     <div className="flex flex-col items-center py-16">
       <h1 className="text-4xl md:text-5xl font-bold mt-16 mb-6">Simple, Transparent Pricing</h1>
       <p className="text-xl text-gray-600 max-w-3xl mx-auto text-center mb-12">
-        Choose the plan that fits your team's needs. All plans include our core test generation
+        Choose the plan that fits your team&apos;s needs. All plans include our core test generation
         capabilities.
       </p>
 
