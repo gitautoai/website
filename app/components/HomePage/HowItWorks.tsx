@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FaTachometerAlt, FaListAlt, FaFileAlt, FaCheckCircle } from "react-icons/fa";
 
 // Local imports
-import DemoVideo from "../Video/Demo";
+import DemoVideo from "@/app/components/Video/Demo";
 import { RELATIVE_URLS } from "@/config";
 
 const steps = [
@@ -13,7 +13,7 @@ const steps = [
     desc: (
       <>
         Visit your{" "}
-        <Link href={RELATIVE_URLS.COVERAGES} className="text-pink-500 underline">
+        <Link href={RELATIVE_URLS.DASHBOARD.COVERAGE} className="text-pink-500 underline">
           coverage dashboard
         </Link>{" "}
         to see which files need more tests.
@@ -39,7 +39,7 @@ const steps = [
 
 const HowItWorks = () => {
   return (
-    <section className="w-full max-w-6xl mx-auto my-20 px-4">
+    <section id="how-it-works" className="w-full max-w-6xl mx-auto my-20 px-4">
       <h2 className="text-2xl md:text-4xl font-bold mb-14 text-center">How It Works</h2>
       <div className="flex flex-col md:flex-row items-center gap-12">
         {/* Timeline */}

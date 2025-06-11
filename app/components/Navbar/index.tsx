@@ -35,11 +35,11 @@ export default function Navbar() {
 
   if (hideNavbar) return null;
   return (
-    <div className="absolute top-0 left-0 flex flex-col w-full justify-center items-center font-helvetica sm:text-md xl:text-lg bg-white px-0 md:px-24">
+    <div className="absolute top-4 left-0 flex flex-col w-full justify-center items-center font-helvetica sm:text-md xl:text-lg bg-white px-0 md:px-24">
       <div className="flex flex-col w-full">
         <nav className="flex text-lg justify-center items-center">
           <Link href={RELATIVE_URLS.INDEX} className="mr-auto ml-5">
-            <Image src="/og-logo.png" width={150} height={78} loading="lazy" alt="GitAuto Logo" />
+            <Image src="/logo.png" width={150} height={78} loading="lazy" alt="GitAuto Logo" />
           </Link>
           <ol className="hidden md:flex items-center justify-center gap-5">
             {INTERNAL_LINKS.filter((link) => link.showInNav).map((link) => (

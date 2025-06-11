@@ -32,20 +32,6 @@ export const ATLASSIAN_REDIRECT_URI = process.env.ATLASSIAN_REDIRECT_URI || "";
 export const ATLASSIAN_SCOPE = "read:jira-work";
 export const ATLASSIAN_TOKEN_URL = "https://auth.atlassian.com/oauth/token";
 
-// OpenAI Credentials
-export const OPENAI_FREE_TOKENS = "13K";
-export const OPENAI_FREE_LINES = "2K";
-export const OPENAI_FREE_FILES = 9;
-export const OPENAI_MAX_TOKENS = "128K";
-export const OPENAI_MAX_LINES = "18K";
-export const OPENAI_MAX_FILES = 90;
-export const OPENAI_MODEL_NAME = "GPT-4o";
-export const OPENAI_MODEL_GPT_4O_MINI = "GPT-4o-mini";
-export const OPENAI_MODEL_GPT_4O = "GPT-4o";
-export const OPENAI_MODEL_O1_MINI = "o1-mini";
-export const OPENAI_MODEL_O1 = "o1";
-export const OPENAI_MODEL_O3_MINI = "o3-mini";
-
 // Stripe Credentials
 export const STRIPE_STANDARD_PLAN_PRODUCT_ID = process.env.STRIPE_STANDARD_PLAN_PRODUCT_ID || "";
 
@@ -55,26 +41,42 @@ export const INTERCOM_SECRET_KEY = process.env.NEXT_PUBLIC_INTERCOM_SECRET_KEY |
 // URLs
 export const NEXT_PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
 export const RELATIVE_URLS = {
-  BLOG: "/blog",
-  FAQ: "/#faqs",
-  HOW_IT_WORKS: "/#how-it-works",
-  HOW_TO_GET_STARTED: "/#how-to-get-started",
+  // Top Page
   INDEX: "/",
-  PRICING: "/#pricing",
-  PRIVACY_POLICY: "/privacy-policy",
-  SETTINGS: "/settings",
-  COVERAGES: "/dashboard/coverage",
-  TERMS_OF_SERVICE: "/terms-of-service",
+  HERO: "/#hero",
+  WHY_GITAUTO: "/#why-gitauto",
+  WHAT_GITAUTO_DOES: "/#what-gitauto-does",
+  HOW_IT_WORKS: "/#how-it-works",
   USE_CASES: "/#use-cases",
-  DOCS: "/docs/coverage",
+  HOW_TO_GET_STARTED: "/#how-to-get-started",
+  PRICING: "/#pricing",
+  FAQ: "/#faqs",
+
+  // Other Pages
+  PRICING_DETAILS: "/pricing",
+  SETTINGS: "/settings",
+  DASHBOARD: {
+    COVERAGE: "/dashboard/coverage",
+    USAGE: "/dashboard/usage",
+  },
+  BLOG: "/blog",
+  DOCS: {
+    COVERAGE: "/docs/coverage",
+    GETTING_STARTED: "/docs/getting-started",
+    HOW_IT_WORKS: "/docs/how-it-works",
+  },
+  PRIVACY_POLICY: "/privacy-policy",
+  TERMS_OF_SERVICE: "/terms-of-service",
 } as const;
 export const ABSOLUTE_URLS = {
   CALENDLY: "https://calendly.com/gitauto/30min",
   GITAUTO: {
     INDEX: "https://gitauto.ai",
-    COVERAGES: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.COVERAGES}`,
+    COVERAGE: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE}`,
     PRICING: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRICING}`,
+    PRICING_DETAILS: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRICING_DETAILS}`,
     THUMBNAIL: "https://gitauto.ai/homepage/thumbnail.jpg",
+    USAGE: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.DASHBOARD.USAGE}`,
   },
   GITHUB: {
     EMAIL_SETTING: "https://github.com/settings/emails",
