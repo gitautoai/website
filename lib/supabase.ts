@@ -1,5 +1,8 @@
+// Third-party imports
 import { createClient } from "@supabase/supabase-js";
-import { NEXT_PUBLIC_SITE_URL } from "@/config";
+
+// Local imports
+import { NEXT_PUBLIC_SITE_URL } from "@/config/urls";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

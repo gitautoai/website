@@ -1,4 +1,4 @@
-import { RELATIVE_URLS } from "./index";
+import { RELATIVE_URLS } from "@/config/urls";
 
 export const INTERNAL_LINKS = [
   {

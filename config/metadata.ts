@@ -1,5 +1,6 @@
 import { Metadata } from "next";
-import { ABSOLUTE_URLS, DESCRIPTION, EMAIL, KEYWORDS, PRODUCT_NAME } from ".";
+import { DESCRIPTION, EMAIL, KEYWORDS, PRODUCT_NAME } from "@/config";
+import { ABSOLUTE_URLS } from "@/config/urls";
 
 const IMAGES = {
   url: ABSOLUTE_URLS.GITAUTO.THUMBNAIL, // Must be an absolute URL

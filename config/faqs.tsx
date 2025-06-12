@@ -1,5 +1,6 @@
-import { ABSOLUTE_URLS, EMAIL, RELATIVE_URLS } from "@/config";
+import { EMAIL } from "@/config";
 import { PRS } from "@/config/pricing";
+import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config/urls";
 
 export type FAQItem = {
   category: string;

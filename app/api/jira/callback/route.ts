@@ -5,8 +5,8 @@ import {
   ATLASSIAN_CLIENT_SECRET,
   ATLASSIAN_REDIRECT_URI,
   ATLASSIAN_TOKEN_URL,
-  NEXT_PUBLIC_SITE_URL,
 } from "@/config";
+import { NEXT_PUBLIC_SITE_URL } from "@/config/urls";
 import { upsertOAuthToken } from "@/lib/supabase";
 
 export async function GET(request: Request) {

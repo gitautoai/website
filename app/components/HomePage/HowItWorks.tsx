@@ -4,7 +4,7 @@ import { FaTachometerAlt, FaListAlt, FaFileAlt, FaCheckCircle } from "react-icon
 
 // Local imports
 import DemoVideo from "@/app/components/Video/Demo";
-import { RELATIVE_URLS } from "@/config";
+import { RELATIVE_URLS } from "@/config/urls";
 
 const steps = [
   {
