@@ -4,7 +4,8 @@ import { usePostHog } from "posthog-js/react";
 
 // Local imports
 import { useAccountContext } from "@/app/components/Context/Account";
-import { ABSOLUTE_URLS, PRODUCT_NAME } from "@/config";
+import { PRODUCT_NAME } from "@/config";
+import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config/urls";
 
 export default function HowToGetStarted() {
   const posthog = usePostHog();

@@ -11,7 +11,7 @@ import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
 
 // Local imports
-import { ABSOLUTE_URLS } from "@/config";
+import { ABSOLUTE_URLS } from "@/config/urls";
 
 const SNS = () => {
   const posthog = usePostHog();

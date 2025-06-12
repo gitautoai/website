@@ -8,8 +8,8 @@ import { usePostHog } from "posthog-js/react";
 
 // Local imports
 import SNS from "@/app/components/Button/SNS";
-import { ABSOLUTE_URLS, SNS_LINKS } from "@/config";
 import { INTERNAL_LINKS } from "@/config/internal-links";
+import { ABSOLUTE_URLS, SNS_LINKS } from "@/config/urls";
 
 export default function Footer() {
   // Analytics

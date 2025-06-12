@@ -1,0 +1,71 @@
+// URLs
+export const NEXT_PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
+
+export const RELATIVE_URLS = {
+  // Top Page
+  INDEX: "/",
+  HERO: "/#hero",
+  WHY_GITAUTO: "/#why-gitauto",
+  WHAT_GITAUTO_DOES: "/#what-gitauto-does",
+  HOW_IT_WORKS: "/#how-it-works",
+  USE_CASES: "/#use-cases",
+  HOW_TO_GET_STARTED: "/#how-to-get-started",
+  PRICING: "/#pricing",
+  FAQ: "/#faqs",
+
+  // Other Pages
+  PRICING_DETAILS: "/pricing",
+  SETTINGS: "/settings",
+  DASHBOARD: {
+    COVERAGE: "/dashboard/coverage",
+    USAGE: "/dashboard/usage",
+  },
+  BLOG: "/blog",
+  DOCS: {
+    COVERAGE: "/docs/coverage",
+    GETTING_STARTED: "/docs/getting-started",
+    HOW_IT_WORKS: "/docs/how-it-works",
+  },
+  PRIVACY_POLICY: "/privacy-policy",
+  TERMS_OF_SERVICE: "/terms-of-service",
+} as const;
+
+export const ABSOLUTE_URLS = {
+  CALENDLY: "https://calendly.com/gitauto/30min",
+  GITAUTO: {
+    INDEX: "https://gitauto.ai",
+    COVERAGE: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE}`,
+    PRICING: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRICING}`,
+    PRICING_DETAILS: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRICING_DETAILS}`,
+    THUMBNAIL: "https://gitauto.ai/homepage/thumbnail.jpg",
+    USAGE: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.DASHBOARD.USAGE}`,
+  },
+  GITHUB: {
+    EMAIL_SETTING: "https://github.com/settings/emails",
+    MARKETPLACE: "https://github.com/marketplace/gitauto-ai",
+    INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai/installations/new",
+    INSTALLED_APPS: "https://github.com/settings/installations",
+  },
+  LINKEDIN: "https://www.linkedin.com/company/gitauto",
+  OPENAI: {
+    PRIVACY: "https://openai.com/enterprise-privacy/",
+  },
+  TWITTER: "https://twitter.com/gitautoai",
+  YOUTUBE: {
+    HOME: "https://www.youtube.com/@gitauto",
+    DEMO: "https://www.youtube.com/watch?v=gulhHrKCPxQ",
+    INTRO_1MIN: "https://www.youtube.com/watch?v=oOzhH1rnVIk",
+    INTRO_3MIN: "https://www.youtube.com/watch?v=QvzEzJ9GJzU&t=6s",
+  },
+  ATLASSIAN: {
+    MARKETPLACE: "https://marketplace.atlassian.com/apps/1236220/gitauto",
+  },
+} as const;
+
+export const SNS_LINKS = {
+  GitHub: ABSOLUTE_URLS.GITHUB.MARKETPLACE,
+  Atlassian: ABSOLUTE_URLS.ATLASSIAN.MARKETPLACE,
+  LinkedIn: ABSOLUTE_URLS.LINKEDIN,
+  Twitter: ABSOLUTE_URLS.TWITTER,
+  YouTube: ABSOLUTE_URLS.YOUTUBE.HOME,
+} as const;

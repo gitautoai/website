@@ -11,8 +11,8 @@ import { useEffect, useState } from "react";
 import AuthControls from "@/app/components/AuthControls";
 import HamburgerMenu from "@/app/components/Navbar/hamburgerMenu";
 import MobileDrawer from "@/app/components/Navbar/MobileMenu";
-import { RELATIVE_URLS } from "@/config/index";
 import { INTERNAL_LINKS } from "@/config/internal-links";
+import { RELATIVE_URLS } from "@/config/urls";
 
 export default function Navbar() {
   // Analytics
