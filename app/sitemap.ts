@@ -1,7 +1,10 @@
-import type { MetadataRoute } from "next";
-import { NEXT_PUBLIC_SITE_URL, RELATIVE_URLS } from "@/config";
-import { glob } from "glob";
+// Third-party imports
 import fs from "fs/promises";
+import { glob } from "glob";
+import type { MetadataRoute } from "next";
+
+// Local imports
+import { NEXT_PUBLIC_SITE_URL, RELATIVE_URLS } from "@/config/urls";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = await glob("app/**/page.{ts,tsx,js,jsx,md,mdx}", {

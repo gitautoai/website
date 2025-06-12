@@ -8,8 +8,8 @@ import { Fragment, useState } from "react";
 // Local imports
 import SubscribeButton from "@/app/components/Button/SubscribeButton";
 import FAQ from "@/app/components/HomePage/FAQ";
-import { ABSOLUTE_URLS } from "@/config";
 import { PRICE_FEATURES, TABLE_FEATURES } from "@/config/pricing";
+import { ABSOLUTE_URLS } from "@/config/urls";
 
 const metadata: Metadata = {
   title: "GitAuto Pricing - Test Coverage Automation Plans",

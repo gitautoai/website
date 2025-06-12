@@ -1,7 +1,11 @@
 "use client";
-import { ABSOLUTE_URLS } from "@/config";
+
+// Third Party
 import Image from "next/image";
 import { usePostHog } from "posthog-js/react";
+
+// Local imports
+import { ABSOLUTE_URLS } from "@/config/urls";
 
 interface InstallButtonProps {
   text: string;

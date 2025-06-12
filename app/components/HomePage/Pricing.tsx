@@ -6,8 +6,8 @@ import { useState } from "react";
 
 // Local imports
 import { PricingPlan } from "@/app/components/HomePage/PricingPlan";
-import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config";
 import { FREE_FEATURES, STANDARD_FEATURES, ENTERPRISE_FEATURES } from "@/config/pricing";
+import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config/urls";
 
 export default function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<string>("Monthly");
