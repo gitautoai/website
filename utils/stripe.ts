@@ -1,4 +1,5 @@
-import { config, NEXT_PUBLIC_SITE_URL, RELATIVE_URLS } from "@/config/index";
+import { config } from "@/config/index";
+import { NEXT_PUBLIC_SITE_URL, RELATIVE_URLS } from "@/config/urls";
 import stripe from "@/lib/stripe";
 
 /**
