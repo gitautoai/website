@@ -45,6 +45,7 @@ export const ABSOLUTE_URLS = {
   GITAUTO: {
     INDEX: "https://gitauto.ai",
     COVERAGE: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE}`,
+    LOGO: "https://gitauto.ai/logo.png",
     PRICING: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRICING}`,
     PRICING_DETAILS: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRICING_DETAILS}`,
     THUMBNAIL: "https://gitauto.ai/homepage/thumbnail.jpg",
@@ -55,6 +56,7 @@ export const ABSOLUTE_URLS = {
     MARKETPLACE: "https://github.com/marketplace/gitauto-ai",
     INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai/installations/new",
     INSTALLED_APPS: "https://github.com/settings/installations",
+    ORGANIZATION: "https://github.com/gitautoai",
   },
   LINKEDIN: "https://www.linkedin.com/company/gitauto",
   OPENAI: {
