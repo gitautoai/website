@@ -78,7 +78,7 @@ export default function ParentIssueRulesPage() {
           <div>
             <h2 className="text-xl font-semibold mb-4">Example Parent Issue Rules</h2>
             <p className="mb-4">
-              Here's a comprehensive example of what to include in your parent issue:
+              Here&apos;s a comprehensive example of what to include in your parent issue:
             </p>
 
             <div className="bg-gray-50 p-6 rounded-lg border">
@@ -183,7 +183,7 @@ export default function ParentIssueRulesPage() {
                 </li>
                 <li>
                   <strong>Repository Scope:</strong> Parent issues must be in the same repository as
-                  the files you're testing.
+                  the files you&apos;re testing.
                 </li>
               </ul>
             </div>

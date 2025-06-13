@@ -45,8 +45,8 @@ export default function DashboardTriggerPage() {
               />
             </div>
             <p>
-              First, on the top right corner of any page, click on the "Sign in" button. Then, sign
-              in with your GitHub account.
+              First, on the top right corner of any page, click on the &quot;Sign in&quot; button.
+              Then, sign in with your GitHub account.
             </p>
           </div>
 
@@ -105,7 +105,7 @@ export default function DashboardTriggerPage() {
             </p>
             <div className="mt-4 bg-gray-50 p-4 rounded-md">
               <p className="text-sm text-gray-600">
-                <strong>Note:</strong> If you don't see your repository, verify that GitAuto is
+                <strong>Note:</strong> If you don&apos;t see your repository, verify that GitAuto is
                 installed for that organization and that you have appropriate permissions.
               </p>
             </div>
@@ -216,7 +216,8 @@ export default function DashboardTriggerPage() {
             </div>
             <p>
               Select files you want to test by checking the boxes next to them. We recommend
-              starting with smaller files. Then click the pink "Actions" button and choose either:
+              starting with smaller files. Then click the pink &quot;Actions&quot; button and choose
+              either:
             </p>
             <ul className="list-disc pl-6 space-y-2 mt-2">
               <li>

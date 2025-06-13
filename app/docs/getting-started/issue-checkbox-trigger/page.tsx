@@ -71,8 +71,8 @@ export default function IssueCheckboxTriggerPage() {
             <div className="mt-4 bg-gray-50 p-4 rounded-md">
               <p className="text-sm text-gray-600">
                 <strong>Note:</strong> For existing issues without the GitAuto checkbox, you can add
-                the "gitauto" label to trigger the same functionality. No worries, I&apos;ll get
-                into the details next.
+                the &quot;gitauto&quot; label to trigger the same functionality. No worries,
+                I&apos;ll get into the details next.
               </p>
             </div>
           </div>

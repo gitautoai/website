@@ -65,15 +65,16 @@ export default function IssueLabelTriggerPage() {
               />
             </div>
             <p>
-              In the right sidebar of the issue, click on the gear icon next to "Labels" and type
-              "gitauto" in the search field. If the label doesn't exist yet, GitHub will let you
-              create it on the fly by clicking on "Create new label" or pressing Enter.
+              In the right sidebar of the issue, click on the gear icon next to &quot;Labels&quot;
+              and type &quot;gitauto&quot; in the search field. If the label doesn&apos;t exist yet,
+              GitHub will let you create it on the fly by clicking on &quot;Create new label&quot;
+              or pressing Enter.
             </p>
             <div className="mt-4 bg-gray-50 p-4 rounded-md">
               <p className="text-sm text-gray-600">
-                <strong>Note:</strong> If you're creating the label for the first time, you'll need
-                to set a color for it. Any color works - GitAuto only cares about the label name
-                "gitauto" (case insensitive).
+                <strong>Note:</strong> If you&apos;re creating the label for the first time,
+                you&apos;ll need to set a color for it. Any color works - GitAuto only cares about
+                the label name &quot;gitauto&quot; (case insensitive).
               </p>
             </div>
           </div>
@@ -97,8 +98,8 @@ export default function IssueLabelTriggerPage() {
             </div>
             <p>
               Once the label is added, GitAuto will automatically analyze the issue and add a
-              comment acknowledging that it's working on generating tests. This typically happens
-              within a minute of adding the label.
+              comment acknowledging that it&apos;s working on generating tests. This typically
+              happens within a minute of adding the label.
             </p>
           </div>
 
@@ -134,17 +135,17 @@ export default function IssueLabelTriggerPage() {
               <li>
                 <strong>Integration with external tools:</strong> Tools like Sentry, Jira, or other
                 issue trackers can be configured to automatically create GitHub issues with the
-                "gitauto" label when certain events occur.
+                &quot;gitauto&quot; label when certain events occur.
               </li>
               <li>
                 <strong>Automated testing workflows:</strong> You can set up GitHub Actions or other
-                CI/CD workflows to add the "gitauto" label to issues based on specific criteria,
-                triggering test generation automatically.
+                CI/CD workflows to add the &quot;gitauto&quot; label to issues based on specific
+                criteria, triggering test generation automatically.
               </li>
               <li>
                 <strong>Legacy issues:</strong> For repositories with many existing issues created
-                before GitAuto was installed, you can batch-add the "gitauto" label to generate
-                tests for multiple issues at once.
+                before GitAuto was installed, you can batch-add the &quot;gitauto&quot; label to
+                generate tests for multiple issues at once.
               </li>
             </ul>
           </div>
