@@ -22,9 +22,19 @@ export const RELATIVE_URLS = {
   },
   BLOG: "/blog",
   DOCS: {
-    COVERAGE: "/docs/coverage",
-    GETTING_STARTED: "/docs/getting-started",
-    HOW_IT_WORKS: "/docs/how-it-works",
+    GETTING_STARTED: {
+      INSTALLATION: "/docs/getting-started/installation",
+      ISSUE_CHECKBOX_TRIGGER: "/docs/getting-started/issue-checkbox-trigger",
+      ISSUE_LABEL_TRIGGER: "/docs/getting-started/issue-label-trigger",
+      DASHBOARD_TRIGGER: "/docs/getting-started/dashboard-trigger",
+      PARENT_ISSUE_RULES: "/docs/getting-started/parent-issue-rules",
+    },
+    COVERAGE: {
+      OVERVIEW: "/docs/coverage",
+      JAVASCRIPT: "/docs/coverage/javascript",
+      PYTHON: "/docs/coverage/python",
+      FLUTTER: "/docs/coverage/flutter",
+    },
   },
   PRIVACY_POLICY: "/privacy-policy",
   TERMS_OF_SERVICE: "/terms-of-service",

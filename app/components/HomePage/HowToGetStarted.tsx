@@ -40,14 +40,14 @@ export default function HowToGetStarted() {
     {
       title: "Free to start",
       description: "No payment method required to get started with the free plan",
-      // ctaText: "Learn More",
-      // ctaLink: RELATIVE_URLS.DOCS.GETTING_STARTED,
+      ctaText: "Learn More",
+      ctaLink: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION,
     },
     {
       title: "You're all set!",
       description: "GitAuto will automatically create pull requests with tests",
-      // ctaText: "Learn More",
-      // ctaLink: RELATIVE_URLS.DOCS.HOW_IT_WORKS,
+      ctaText: "Learn More",
+      ctaLink: RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_CHECKBOX_TRIGGER,
     },
   ];
 
