@@ -39,7 +39,7 @@ const FAQ = ({ initialCategory = "features" }) => {
   };
 
   return (
-    <section id="faqs" className="w-full max-w-5xl mx-auto py-20 px-4">
+    <section id="faqs" className="w-full max-w-5xl mx-auto py-20 px-4" aria-label="FAQ section">
       <h2 className="text-2xl md:text-4xl font-bold mb-6 text-center">
         Frequently Asked Questions
       </h2>

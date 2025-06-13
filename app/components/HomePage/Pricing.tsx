@@ -13,7 +13,11 @@ export default function Pricing() {
   const [billingPeriod, setBillingPeriod] = useState<string>("Monthly");
 
   return (
-    <div id="pricing" className="w-full max-w-6xl mx-auto py-20 px-4">
+    <section
+      id="pricing"
+      className="w-full max-w-6xl mx-auto py-20 px-4"
+      aria-label="Pricing section"
+    >
       <h2 className="text-2xl md:text-4xl font-bold mb-4 text-center">Pricing</h2>
       <p className="text-center text-gray-600 max-w-4xl mx-auto mb-8">
         Start for free, scale as your testing needs grow. No credit card required to get started.
@@ -127,6 +131,6 @@ export default function Pricing() {
           </svg>
         </Link>
       </div>
-    </div>
+    </section>
   );
 }
