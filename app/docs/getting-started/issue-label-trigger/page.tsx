@@ -19,8 +19,8 @@ export default function IssueLabelTriggerPage() {
 
       <div className="prose prose-lg max-w-none space-y-6">
         <p className="text-lg text-gray-700">
-          GitAuto can be triggered by adding a "gitauto" label to any GitHub issue. This is
-          especially useful for existing issues or when creating issues programmatically.
+          GitAuto can be triggered by adding a &quot;gitauto&quot; label to any GitHub issue. This
+          is especially useful for existing issues or when creating issues programmatically.
         </p>
 
         <div className="space-y-8">
@@ -53,7 +53,7 @@ export default function IssueLabelTriggerPage() {
               <div className="bg-pink-600 text-white rounded-full w-7 h-7 flex items-center justify-center font-medium mr-3">
                 2
               </div>
-              <h2 className="text-xl font-semibold my-4">Add the "gitauto" label</h2>
+              <h2 className="text-xl font-semibold my-4">Add the &quot;gitauto&quot; label</h2>
             </div>
             <div className="mb-5">
               <Image

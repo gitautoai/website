@@ -136,8 +136,8 @@ export default function DashboardTriggerPage() {
               >
                 dashboard
               </Link>{" "}
-              will display a list of files in your repository. If you've integrated with coverage
-              reports, you'll also see coverage percentages for each file.
+              will display a list of files in your repository. If you&apos;ve integrated with
+              coverage reports, you&apos;ll also see coverage percentages for each file.
             </p>
           </div>
 
