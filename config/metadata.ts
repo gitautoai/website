@@ -1,5 +1,6 @@
 import { Metadata } from "next";
-import { DESCRIPTION, EMAIL, KEYWORDS, PRODUCT_NAME } from "@/config";
+import { DESCRIPTION, EMAIL, PRODUCT_NAME } from "@/config";
+import { KEYWORDS } from "@/config/keywords";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 const IMAGES = {

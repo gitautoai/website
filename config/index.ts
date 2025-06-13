@@ -5,23 +5,7 @@ export const EMAIL = "info@gitauto.ai";
 export const PRODUCT_ID = process.env.NEXT_PUBLIC_PRODUCT_ID;
 export const PRODUCT_NAME = "GitAuto";
 export const DESCRIPTION =
-  "GitAuto, an AI Coding Agent, helps engineering teams facing resource constraints and hiring challenges to fix more bugs and ship more features by automatically writing code and creating GitHub pull requests from your GitHub and Jira issues every day.";
-export const KEYWORDS = [
-  "AI",
-  "artificial intelligence",
-  "coding",
-  "pull requests",
-  "github",
-  "git",
-  "gitauto",
-  "git auto",
-  "git-auto",
-  "automatic pull requests",
-  "automatic prs",
-  "automatic pr",
-  "automatic pr for bugs",
-  "automatic pr for issues",
-];
+  "GitAuto automatically writes unit tests for your GitHub repositories. Go from 0% to 90% test coverage without manual effort. Start free today.";
 
 // Atlassian Credentials
 export const ATLASSIAN_CLIENT_ID = process.env.ATLASSIAN_CLIENT_ID || "";
