@@ -1,25 +1,23 @@
+// Third party imports
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import Script from "next/script";
-
-// Styles
 import { Inter } from "next/font/google";
-import "@/styles/globals.css";
-import "@/styles/styles.css";
+import Script from "next/script";
+import { Suspense } from "react";
 
-// Components
+// Local imports
 import { AccountContextWrapper } from "@/app/components/Context/Account";
 import Footer from "@/app/components/Footer";
 import IntercomMessenger from "@/app/components/Intercom";
 import Navbar from "@/app/components/Navbar";
 import { PHProvider } from "@/app/components/PostHog";
 import SessionProvider from "@/app/components/SessionProvider";
-
-// Analytics
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react";
 import { isPrd } from "@/config";
 import { defaultMetadata } from "@/config/metadata";
+import { baseStructuredData } from "@/config/structured-data";
+import "@/styles/globals.css";
+import "@/styles/styles.css";
 
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = defaultMetadata;
@@ -36,6 +34,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {`function initApollo(){var n=Math.random().toString(36).substring(7),o=document.createElement("script");o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n,o.async=!0,o.defer=!0,o.onload=function(){window.trackingFunctions.onLoad({appId:"6631c123b9befb01c76f5219"})},document.head.appendChild(o)}initApollo();`}
         </Script>
       )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(baseStructuredData) }}
+      />
       <PHProvider>
         <body className={`${inter.className} w-full min-h-screen text-base sm:text-sm md:text-xl`}>
           <Suspense>

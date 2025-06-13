@@ -57,9 +57,9 @@ export const PRICE_FEATURES = [
     description: "Choose the plan that fits your team's needs.",
     free: "$0",
     standard: "$100/month",
-    enterprise: "From $500/month",
+    enterprise: "$500+/month",
     standardYearly: "$1,000/year",
-    enterpriseYearly: "From $5,000/year",
+    enterpriseYearly: "$5,000+/year",
   },
 ];
 
