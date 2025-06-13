@@ -93,7 +93,7 @@ export const INTERNAL_LINKS = [
     showInNav: true,
   },
   {
-    href: RELATIVE_URLS.DOCS.COVERAGE,
+    href: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION,
     eventType: "documentation",
     text: "Docs",
     category: "resources",

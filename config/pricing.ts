@@ -108,13 +108,6 @@ export const TABLE_FEATURES = [
         enterprise: true,
       },
       {
-        name: "Dashboard Trigger",
-        description: "Create test issues/PRs directly from the coverage dashboard",
-        free: true,
-        standard: true,
-        enterprise: true,
-      },
-      {
         name: "Repository Rules",
         description: "Configure repository specific rules for GitAuto",
         free: true,

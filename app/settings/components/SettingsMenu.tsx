@@ -12,7 +12,7 @@ export default function SettingsMenu({ onItemClick }: { onItemClick?: () => void
       {/* GitAuto Logo */}
       <div className="mt-4 mb-4 md:mb-8 ml-4 flex justify-start">
         <Link href="/">
-          <Image src="/full.png" alt="GitAuto Logo" width={140} height={32} priority />
+          <Image src="/logo.png" alt="GitAuto Logo" width={140} height={32} priority />
         </Link>
       </div>
 
