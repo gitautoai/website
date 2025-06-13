@@ -30,7 +30,11 @@ const whatItems = [
 
 const WhatGitAutoDoes = () => {
   return (
-    <section id="what-gitauto-does" className="w-full max-w-5xl mx-auto my-16 px-4 text-center">
+    <section
+      id="what-gitauto-does"
+      className="w-full max-w-5xl mx-auto my-16 px-4 text-center"
+      aria-label="What GitAuto Does section"
+    >
       <h2 className="text-2xl md:text-4xl font-bold mb-10">What GitAuto Does</h2>
       <div className="flex flex-col md:flex-row gap-8 justify-center items-stretch">
         {whatItems.map((item, idx) => (

@@ -52,7 +52,11 @@ export default function HowToGetStarted() {
   ];
 
   return (
-    <section id="how-to-get-started" className="w-full max-w-5xl mx-auto py-20 px-4">
+    <section
+      id="how-to-get-started"
+      className="w-full max-w-5xl mx-auto py-20 px-4"
+      aria-label="How to Get Started section"
+    >
       <h2 className="text-2xl md:text-4xl font-bold mb-12 text-center">How to Get Started</h2>
 
       <div className="grid md:grid-cols-2 gap-8">

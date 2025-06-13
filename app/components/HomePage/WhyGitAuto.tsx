@@ -29,7 +29,11 @@ const whyItems = [
 
 const WhyGitAuto = () => {
   return (
-    <section id="why-gitauto" className="w-full max-w-5xl mx-auto my-16 px-4 text-center">
+    <section
+      id="why-gitauto"
+      className="w-full max-w-5xl mx-auto my-16 px-4 text-center"
+      aria-label="Why GitAuto section"
+    >
       <h2 className="text-2xl md:text-4xl font-bold mb-10">Why GitAuto?</h2>
       <div className="flex flex-col md:flex-row gap-8 justify-center items-stretch">
         {whyItems.map((item, idx) => (

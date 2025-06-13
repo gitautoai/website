@@ -107,7 +107,11 @@ const UseCases = () => {
   };
 
   return (
-    <section id="use-cases" className="w-full max-w-5xl mx-auto my-20 px-4">
+    <section
+      id="use-cases"
+      className="w-full max-w-5xl mx-auto my-20 px-4"
+      aria-label="Use Cases section"
+    >
       <h2 className="text-2xl md:text-4xl font-bold mb-10 text-center">Use Cases</h2>
 
       <div className="relative w-full">
