@@ -4,7 +4,7 @@ import path from "path";
 import { chromium } from "playwright";
 
 async function findAllPages() {
-  const pageFiles = await glob("app/**/page.tsx", {
+  const pageFiles = await glob("app/**/page.{tsx,mdx}", {
     ignore: ["app/api/**", "app/components/**"],
   });
 
@@ -12,7 +12,10 @@ async function findAllPages() {
 
   for (const file of pageFiles) {
     // Generate the route path: app/pricing/page.tsx → /pricing
-    const routePath = file.replace("app", "").replace("/page.tsx", "").replace(/^$/, "/"); // Empty string is '/'
+    const routePath = file
+      .replace("app", "")
+      .replace(/\/page\.(tsx|mdx)$/, "")
+      .replace(/^$/, "/"); // Empty string is '/'
 
     // Generate the file name: /pricing → pricing, / → home
     const fileName = routePath === "/" ? "home" : routePath.slice(1).replace(/\//g, "-");
@@ -24,6 +27,8 @@ async function findAllPages() {
 
     pages.push({ name: fileName, path: routePath, title: title, file: file });
   }
+
+  pages.sort((a, b) => a.path.localeCompare(b.path));
 
   return pages;
 }
@@ -56,6 +61,13 @@ async function generateOGImages() {
 
       // Wait for the main content to load
       await page.waitForSelector("main", { timeout: 10000 });
+
+      try {
+        await page.waitForLoadState("networkidle", { timeout: 10000 });
+        console.log(`✓ Network idle achieved for ${pageConfig.name}`);
+      } catch (e) {
+        console.log(`Network not idle for ${pageConfig.name}, but proceeding...`);
+      }
 
       const screenshot = await page.screenshot({
         type: "png",
