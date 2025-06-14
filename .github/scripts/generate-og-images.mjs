@@ -1,10 +1,10 @@
 import fs from "fs";
-import glob from "glob";
+import { glob } from "glob";
 import path from "path";
 import { chromium } from "playwright";
 
 async function findAllPages() {
-  const pageFiles = glob.sync("app/**/page.tsx", {
+  const pageFiles = await glob("app/**/page.tsx", {
     ignore: ["app/api/**", "app/components/**"],
   });
 
