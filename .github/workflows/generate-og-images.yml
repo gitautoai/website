@@ -40,7 +40,7 @@ jobs:
           npx wait-on http://localhost:3000 --timeout 60000
 
       - name: Generate OG images for all pages
-        run: node .github/scripts/generate-og-images.js
+        run: node .github/scripts/generate-og-images.mjs
 
       - name: Commit and push if changes
         run: |
