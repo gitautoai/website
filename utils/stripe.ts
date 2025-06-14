@@ -1,5 +1,5 @@
 import { config } from "@/config/index";
-import { NEXT_PUBLIC_SITE_URL, RELATIVE_URLS } from "@/config/urls";
+import { BASE_URL, RELATIVE_URLS } from "@/config/urls";
 import stripe from "@/lib/stripe";
 
 /**
@@ -32,8 +32,8 @@ export const createCheckoutSession = async ({
     const checkoutSession = await stripe.checkout.sessions.create({
       line_items,
       mode: "subscription", // "subscription" or "payment" or "setup"
-      success_url: `${NEXT_PUBLIC_SITE_URL}?success=true`,
-      cancel_url: `${NEXT_PUBLIC_SITE_URL}?success=false`,
+      success_url: `${BASE_URL}?success=true`,
+      cancel_url: `${BASE_URL}?success=false`,
       client_reference_id: customerId,
       currency: "usd",
       metadata: metadata,
@@ -78,8 +78,8 @@ export const createCheckoutSession = async ({
 const createCustomerPortalConfiguration = async () => {
   const configuration = await stripe.billingPortal.configurations.create({
     business_profile: {
-      privacy_policy_url: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRIVACY_POLICY}`,
-      terms_of_service_url: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.TERMS_OF_SERVICE}`,
+      privacy_policy_url: `${BASE_URL}${RELATIVE_URLS.PRIVACY_POLICY}`,
+      terms_of_service_url: `${BASE_URL}${RELATIVE_URLS.TERMS_OF_SERVICE}`,
     },
     features: {
       customer_update: {
@@ -139,7 +139,7 @@ export const createCustomerPortalSession = async ({
     customer: stripe_customer_id,
     configuration: configurationId,
     locale: "auto", // or "en", "ja", etc.
-    return_url: NEXT_PUBLIC_SITE_URL,
+    return_url: BASE_URL,
   });
   return session;
 };

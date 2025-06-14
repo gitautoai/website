@@ -4,7 +4,7 @@ import { glob } from "glob";
 import type { MetadataRoute } from "next";
 
 // Local imports
-import { NEXT_PUBLIC_SITE_URL, RELATIVE_URLS } from "@/config/urls";
+import { BASE_URL, RELATIVE_URLS } from "@/config/urls";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pages = await glob("app/**/page.{ts,tsx,js,jsx,md,mdx}", {
@@ -31,7 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }
 
       return {
-        url: `${NEXT_PUBLIC_SITE_URL}${route}`,
+        url: `${BASE_URL}${route}`,
         lastModified,
         changeFrequency,
         priority,

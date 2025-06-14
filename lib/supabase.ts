@@ -2,7 +2,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 // Local imports
-import { NEXT_PUBLIC_SITE_URL } from "@/config/urls";
+import { BASE_URL } from "@/config/urls";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -42,7 +42,7 @@ export const getOAuthToken = async (userId: string, serviceName: string) => {
     // If expired, refresh the token (and update the database in the API)
     console.log("Refreshing token");
     const refreshToken = data[0]?.refresh_token;
-    const response = await fetch(`${NEXT_PUBLIC_SITE_URL}/api/jira/refresh`, {
+    const response = await fetch(`${BASE_URL}/api/jira/refresh`, {
       method: "POST",
       body: JSON.stringify({ refreshToken, userId }),
     });

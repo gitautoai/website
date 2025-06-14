@@ -1,5 +1,7 @@
+import { isPrd } from "@/config";
+
 // URLs
-export const NEXT_PUBLIC_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "";
+export const BASE_URL = isPrd ? "https://gitauto.ai" : "http://localhost:4000";
 
 export const RELATIVE_URLS = {
   // Top Page
@@ -41,15 +43,16 @@ export const RELATIVE_URLS = {
 } as const;
 
 export const ABSOLUTE_URLS = {
-  CALENDLY: "https://calendly.com/gitauto/30min",
+  CALENDLY: "https://calendly.com/gitauto/wes",
   GITAUTO: {
-    INDEX: "https://gitauto.ai",
-    COVERAGE: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE}`,
-    LOGO: "https://gitauto.ai/logo.png",
-    PRICING: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRICING}`,
-    PRICING_DETAILS: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.PRICING_DETAILS}`,
-    THUMBNAIL: "https://gitauto.ai/homepage/thumbnail.jpg",
-    USAGE: `${NEXT_PUBLIC_SITE_URL}${RELATIVE_URLS.DASHBOARD.USAGE}`,
+    INDEX: BASE_URL,
+    BLOG: `${BASE_URL}${RELATIVE_URLS.BLOG}`,
+    COVERAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE}`,
+    LOGO: `${BASE_URL}/logo.png`,
+    PRICING: `${BASE_URL}${RELATIVE_URLS.PRICING}`,
+    PRICING_DETAILS: `${BASE_URL}${RELATIVE_URLS.PRICING_DETAILS}`,
+    THUMBNAIL: `${BASE_URL}/og/home.png`,
+    USAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.USAGE}`,
   },
   GITHUB: {
     EMAIL_SETTING: "https://github.com/settings/emails",
