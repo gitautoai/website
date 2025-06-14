@@ -30,11 +30,7 @@ export const defaultMetadata: Metadata = {
   // appLinks: {},
   // archives: [],
   // assets: [],
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
+  formatDetection: { email: false, address: false, telephone: false },
   metadataBase: new URL(ABSOLUTE_URLS.GITAUTO.INDEX),
 
   // alternates: {
