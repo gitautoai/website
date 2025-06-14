@@ -12,10 +12,7 @@ export const baseStructuredData = {
   alternateName: "GitAuto, Inc.",
   legalName: "GitAuto, Inc.",
   url: ABSOLUTE_URLS.GITAUTO.INDEX,
-  logo: {
-    "@type": "ImageObject",
-    url: ABSOLUTE_URLS.GITAUTO.LOGO,
-  },
+  logo: { "@type": "ImageObject", url: ABSOLUTE_URLS.GITAUTO.LOGO },
   founder: {
     "@type": "Person",
     name: "Wes Nishio",
@@ -55,6 +52,63 @@ export const baseStructuredData = {
   ],
 };
 
+export const CREATOR = {
+  "@type": "Organization",
+  "@id": ABSOLUTE_URLS.GITAUTO.INDEX + "#organization",
+  name: PRODUCT_NAME,
+  url: ABSOLUTE_URLS.GITAUTO.INDEX,
+} as const;
+
+export const OFFERS = [
+  {
+    "@type": "Offer",
+    name: "Free Plan",
+    price: "0",
+    priceCurrency: "USD",
+    description: "3 PRs per month per GitHub organization",
+    url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
+  },
+  {
+    "@type": "Offer",
+    name: "Standard Plan - Monthly",
+    price: "100",
+    priceCurrency: "USD",
+    description: "20 PRs per month per GitHub organization",
+    url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
+  },
+  {
+    "@type": "Offer",
+    name: "Standard Plan - Yearly",
+    price: "1000",
+    priceCurrency: "USD",
+    description: "240 PRs per year per GitHub organization (Save $200/year)",
+    url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
+  },
+  {
+    "@type": "Offer",
+    name: "Enterprise Plan - Monthly",
+    price: "500+",
+    priceCurrency: "USD",
+    description: "200+ PRs per month per GitHub organization with custom features",
+    url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
+  },
+  {
+    "@type": "Offer",
+    name: "Enterprise Plan - Yearly",
+    price: "5000+",
+    priceCurrency: "USD",
+    description:
+      "2400+ PRs per year per GitHub organization with custom features (Save $1,000/year)",
+    url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
+  },
+] as const;
+
+export const AUDIENCE = {
+  "@type": "Audience",
+  audienceType: "Software Developers and QA Engineers",
+  geographicArea: "Worldwide",
+} as const;
+
 /**
  * @see https://schema.org/SoftwareApplication
  */
@@ -68,55 +122,8 @@ export const softwareApplicationData = {
   applicationSubCategory: "Unit Test Generator",
   description: DESCRIPTION,
   url: ABSOLUTE_URLS.GITAUTO.INDEX,
-  offers: [
-    {
-      "@type": "Offer",
-      name: "Free Plan",
-      price: "0",
-      priceCurrency: "USD",
-      description: "3 PRs per month per GitHub organization",
-      url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
-    },
-    {
-      "@type": "Offer",
-      name: "Standard Plan - Monthly",
-      price: "100",
-      priceCurrency: "USD",
-      description: "20 PRs per month per GitHub organization",
-      url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
-    },
-    {
-      "@type": "Offer",
-      name: "Standard Plan - Yearly",
-      price: "1000",
-      priceCurrency: "USD",
-      description: "240 PRs per year per GitHub organization (Save $200/year)",
-      url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
-    },
-    {
-      "@type": "Offer",
-      name: "Enterprise Plan - Monthly",
-      price: "500+",
-      priceCurrency: "USD",
-      description: "200+ PRs per month per GitHub organization with custom features",
-      url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
-    },
-    {
-      "@type": "Offer",
-      name: "Enterprise Plan - Yearly",
-      price: "5000+",
-      priceCurrency: "USD",
-      description:
-        "2400+ PRs per year per GitHub organization with custom features (Save $1,000/year)",
-      url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
-    },
-  ],
-  creator: {
-    "@type": "Organization",
-    "@id": ABSOLUTE_URLS.GITAUTO.INDEX + "#organization",
-    name: PRODUCT_NAME,
-    url: ABSOLUTE_URLS.GITAUTO.INDEX,
-  },
+  offers: OFFERS,
+  creator: CREATOR,
   featureList:
     "Generates unit test pull requests, Runs tests and fixes failures, Triggered by issue, PR comment, commit, merge, or schedule, No manual test writing needed",
   inLanguage: "en",

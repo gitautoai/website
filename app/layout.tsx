@@ -15,7 +15,7 @@ import { PHProvider } from "@/app/components/PostHog";
 import SessionProvider from "@/app/components/SessionProvider";
 import { isPrd } from "@/config";
 import { defaultMetadata } from "@/config/metadata";
-import { baseStructuredData } from "@/config/structured-data";
+import { baseStructuredData } from "@/app/structured-data";
 import "@/styles/globals.css";
 import "@/styles/styles.css";
 

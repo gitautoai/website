@@ -1,15 +1,17 @@
 "use client";
+
 // Third-party imports
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // Local imports
-import RepositorySelector from "../../settings/components/RepositorySelector";
-import { CoverageData, SortField, SortDirection } from "./types";
 import { useAccountContext } from "@/app/components/Context/Account";
 import DocsLink from "@/app/components/DocsLink";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
 import SuccessPopup from "@/app/components/SuccessPopup";
+import { coverageDashboardStructuredData } from "@/app/dashboard/coverage/structured-data";
+import { CoverageData, SortField, SortDirection } from "@/app/dashboard/coverage/types";
+import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { fetchWithTiming } from "@/utils/fetch";
 
@@ -399,370 +401,376 @@ export default function CoveragePage() {
   };
 
   return (
-    <div className="relative min-h-screen">
-      <div className="w-7/12 lg:w-auto flex items-center gap-2 mb-6">
-        <h1 className="text-3xl font-bold">Coverage Dashboard</h1>
-        <DocsLink />
-      </div>
-
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-          {error}
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(coverageDashboardStructuredData) }}
+      />
+      <div className="relative min-h-screen">
+        <div className="w-7/12 lg:w-auto flex items-center gap-2 mb-6">
+          <h1 className="text-3xl font-bold">Coverage Dashboard</h1>
+          <DocsLink />
         </div>
-      )}
 
-      <RepositorySelector />
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            {error}
+          </div>
+        )}
 
-      {/* Package Name Selector */}
-      <div className="mt-6 flex flex-wrap gap-4 items-end">
-        {hasPackages && (
+        <RepositorySelector />
+
+        {/* Package Name Selector */}
+        <div className="mt-6 flex flex-wrap gap-4 items-end">
+          {hasPackages && (
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">Package Name</label>
+              <select
+                value={selectedPackage}
+                onChange={(e) => setSelectedPackage(e.target.value)}
+                className="p-2 border rounded-md w-48"
+                disabled={isLoading}
+              >
+                <option value="">All Packages</option>
+                {packageNames.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Level Selector */}
           <div>
-            <label className="block text-sm text-gray-600 mb-1">Package Name</label>
+            <label className="block text-sm text-gray-600 mb-1">Level</label>
             <select
-              value={selectedPackage}
-              onChange={(e) => setSelectedPackage(e.target.value)}
+              value={selectedLevel}
+              onChange={(e) => handleLevelChange(e.target.value)}
               className="p-2 border rounded-md w-48"
               disabled={isLoading}
             >
-              <option value="">All Packages</option>
-              {packageNames.map((name) => (
-                <option key={name} value={name}>
-                  {name}
+              <option value="">All Levels</option>
+              {levels.map((level) => (
+                <option key={level} value={level}>
+                  {level.charAt(0).toUpperCase() + level.slice(1)}
                 </option>
               ))}
             </select>
           </div>
-        )}
 
-        {/* Level Selector */}
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Level</label>
-          <select
-            value={selectedLevel}
-            onChange={(e) => handleLevelChange(e.target.value)}
-            className="p-2 border rounded-md w-48"
-            disabled={isLoading}
-          >
-            <option value="">All Levels</option>
-            {levels.map((level) => (
-              <option key={level} value={level}>
-                {level.charAt(0).toUpperCase() + level.slice(1)}
-              </option>
-            ))}
-          </select>
-        </div>
+          {/* Coverage Filter */}
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Coverage Filter</label>
+            <select
+              value={hideFullCoverage}
+              onChange={(e) => setHideFullCoverage(e.target.value as "all" | "hide")}
+              className="p-2 border rounded-md w-48"
+              disabled={isLoading}
+            >
+              <option value="all">Show All</option>
+              <option value="hide">Hide All 100%</option>
+            </select>
+          </div>
 
-        {/* Coverage Filter */}
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Coverage Filter</label>
-          <select
-            value={hideFullCoverage}
-            onChange={(e) => setHideFullCoverage(e.target.value as "all" | "hide")}
-            className="p-2 border rounded-md w-48"
-            disabled={isLoading}
-          >
-            <option value="all">Show All</option>
-            <option value="hide">Hide All 100%</option>
-          </select>
-        </div>
+          {/* Mobile Coverage Metric Selector */}
+          <div className="lg:hidden">
+            <label className="block text-sm text-gray-600 mb-1">Coverage Metric</label>
+            <select
+              value={selectedMobileMetric}
+              onChange={(e) => {
+                const newMetric = e.target.value as "statement" | "function" | "branch";
+                setSelectedMobileMetric(newMetric);
+                setSortField(getMobileSortField(newMetric));
+                setSortDirection("desc");
+              }}
+              className="p-2 border rounded-md w-48"
+            >
+              <option value="statement">Statement Coverage</option>
+              <option value="function">Function Coverage</option>
+              <option value="branch">Branch Coverage</option>
+            </select>
+          </div>
 
-        {/* Mobile Coverage Metric Selector */}
-        <div className="lg:hidden">
-          <label className="block text-sm text-gray-600 mb-1">Coverage Metric</label>
-          <select
-            value={selectedMobileMetric}
-            onChange={(e) => {
-              const newMetric = e.target.value as "statement" | "function" | "branch";
-              setSelectedMobileMetric(newMetric);
-              setSortField(getMobileSortField(newMetric));
-              setSortDirection("desc");
-            }}
-            className="p-2 border rounded-md w-48"
-          >
-            <option value="statement">Statement Coverage</option>
-            <option value="function">Function Coverage</option>
-            <option value="branch">Branch Coverage</option>
-          </select>
-        </div>
+          {/* Parent issue selection */}
+          <div className="relative">
+            <label className="block text-sm text-gray-600 mb-1">Parent Issue (Optional)</label>
+            <select
+              value={selectedParentIssue?.number || ""}
+              onChange={handleParentIssueChange}
+              className="p-2 border rounded-md w-48"
+              disabled={isLoadingIssues}
+            >
+              <option value="">No parent issue</option>
+              {openIssues.map((issue) => (
+                <option key={issue.id} value={issue.number}>
+                  #{issue.number} {issue.title}
+                </option>
+              ))}
+            </select>
+          </div>
 
-        {/* Parent issue selection */}
-        <div className="relative">
-          <label className="block text-sm text-gray-600 mb-1">Parent Issue (Optional)</label>
-          <select
-            value={selectedParentIssue?.number || ""}
-            onChange={handleParentIssueChange}
-            className="p-2 border rounded-md w-48"
-            disabled={isLoadingIssues}
-          >
-            <option value="">No parent issue</option>
-            {openIssues.map((issue) => (
-              <option key={issue.id} value={issue.number}>
-                #{issue.number} {issue.title}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Actions */}
-        <div className="relative">
-          <button
-            onClick={() => setIsActionsOpen(!isActionsOpen)}
-            className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors flex items-center gap-2"
-          >
-            {isCreatingIssues ? (
+          {/* Actions */}
+          <div className="relative">
+            <button
+              onClick={() => setIsActionsOpen(!isActionsOpen)}
+              className="px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors flex items-center gap-2"
+            >
+              {isCreatingIssues ? (
+                <>
+                  <SpinnerIcon white />
+                  <span>Actions</span>
+                </>
+              ) : (
+                "Actions"
+              )}
+              <span className="text-sm border-l border-pink-400 pl-2">▼</span>
+            </button>
+            {isActionsOpen && (
               <>
-                <SpinnerIcon white />
-                <span>Actions</span>
-              </>
-            ) : (
-              "Actions"
-            )}
-            <span className="text-sm border-l border-pink-400 pl-2">▼</span>
-          </button>
-          {isActionsOpen && (
-            <>
-              <div className="fixed inset-0 z-10" onClick={() => setIsActionsOpen(false)} />
-              <div className="absolute right-0 mt-1 bg-white border rounded-md shadow-lg py-1 min-w-[200px] z-20">
-                <button
-                  onClick={() => {
-                    handleCreateIssues();
-                    setIsActionsOpen(false);
-                  }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap min-w-[200px]"
-                  disabled={isCreatingIssues || selectedRows.length === 0}
-                >
-                  {isCreatingIssues ? (
-                    <>
-                      <SpinnerIcon />
-                      <span>Creating Issues...</span>
-                    </>
-                  ) : (
-                    `Create Issues (${selectedRows.length})`
-                  )}
-                </button>
-                <button
-                  onClick={() => {
-                    handleCreateIssues({ hasLabel: true });
-                    setIsActionsOpen(false);
-                  }}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap min-w-[200px]"
-                  disabled={isCreatingIssues || selectedRows.length === 0}
-                >
-                  {isCreatingIssues ? (
-                    <>
-                      <SpinnerIcon />
-                      <span>Creating Issues & PRs...</span>
-                    </>
-                  ) : (
-                    `Create Issues & PRs (${selectedRows.length})`
-                  )}
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-6">
-        <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 mb-4 lg:mb-2 lg:items-center">
-          <div className="flex gap-4 text-sm text-gray-600">
-            {Object.entries(getLevelCounts()).map(([level, count]) => (
-              <span key={level} className="capitalize">
-                {level}: {count}
-              </span>
-            ))}
-            {getLatestUpdate() && (
-              <>
-                <span>Branch: {coverageData[0]?.branch_name}</span>
-                <span>Last updated: {getLatestUpdate()}</span>
+                <div className="fixed inset-0 z-10" onClick={() => setIsActionsOpen(false)} />
+                <div className="absolute right-0 mt-1 bg-white border rounded-md shadow-lg py-1 min-w-[200px] z-20">
+                  <button
+                    onClick={() => {
+                      handleCreateIssues();
+                      setIsActionsOpen(false);
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap min-w-[200px]"
+                    disabled={isCreatingIssues || selectedRows.length === 0}
+                  >
+                    {isCreatingIssues ? (
+                      <>
+                        <SpinnerIcon />
+                        <span>Creating Issues...</span>
+                      </>
+                    ) : (
+                      `Create Issues (${selectedRows.length})`
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleCreateIssues({ hasLabel: true });
+                      setIsActionsOpen(false);
+                    }}
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap min-w-[200px]"
+                    disabled={isCreatingIssues || selectedRows.length === 0}
+                  >
+                    {isCreatingIssues ? (
+                      <>
+                        <SpinnerIcon />
+                        <span>Creating Issues & PRs...</span>
+                      </>
+                    ) : (
+                      `Create Issues & PRs (${selectedRows.length})`
+                    )}
+                  </button>
+                </div>
               </>
             )}
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <div className="max-h-[90vh] overflow-y-auto">
-            <table className="w-full bg-white border table-fixed">
-              <thead className="sticky top-0 z-10 border-t">
-                <tr className="bg-gray-50 border-b">
-                  <th
-                    className="py-3 px-2 w-10 border-r font-normal cursor-pointer"
-                    onClick={handleSelectAll}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={
-                        selectedRows.length > 0 &&
-                        selectedRows.length ===
-                          filteredData.filter((item) => item.level === "file").length &&
-                        filteredData
-                          .filter((item) => item.level === "file")
-                          .every((item) => selectedRows.includes(item.id))
-                      }
-                      readOnly
-                      className="rounded"
-                    />
-                  </th>
-                  <th
-                    className="py-3 px-2 text-left text-gray-600 border-r w-full lg:w-8/12 cursor-pointer group font-normal"
-                    onClick={() => handleSort("full_path")}
-                  >
-                    <div className="flex items-center">
-                      <span>Path</span>
-                      {sortField === "full_path" && (
-                        <span className="ml-1 text-gray-400">
-                          {sortDirection === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                  <th
-                    className="hidden lg:table-cell py-3 px-2 text-center text-gray-600 border-r w-1/8 cursor-pointer group font-normal"
-                    onClick={() => handleSort("statement_coverage")}
-                  >
-                    <div className="flex items-center justify-center">
-                      <span>Stmt</span>
-                      {sortField === "statement_coverage" && (
-                        <span className="ml-1 text-gray-400">
-                          {sortDirection === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                  <th
-                    className="hidden lg:table-cell py-3 px-2 text-center text-gray-600 border-r w-1/8 cursor-pointer group font-normal"
-                    onClick={() => handleSort("function_coverage")}
-                  >
-                    <div className="flex items-center justify-center">
-                      <span>Func</span>
-                      {sortField === "function_coverage" && (
-                        <span className="ml-1 text-gray-400">
-                          {sortDirection === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                  <th
-                    className="hidden lg:table-cell py-3 px-2 text-center text-gray-600 border-r w-1/8 cursor-pointer group font-normal"
-                    onClick={() => handleSort("branch_coverage")}
-                  >
-                    <div className="flex items-center justify-center">
-                      <span>Brch</span>
-                      {sortField === "branch_coverage" && (
-                        <span className="ml-1 text-gray-400">
-                          {sortDirection === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </div>
-                  </th>
+        <div className="mt-6">
+          <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 mb-4 lg:mb-2 lg:items-center">
+            <div className="flex gap-4 text-sm text-gray-600">
+              {Object.entries(getLevelCounts()).map(([level, count]) => (
+                <span key={level} className="capitalize">
+                  {level}: {count}
+                </span>
+              ))}
+              {getLatestUpdate() && (
+                <>
+                  <span>Branch: {coverageData[0]?.branch_name}</span>
+                  <span>Last updated: {getLatestUpdate()}</span>
+                </>
+              )}
+            </div>
+          </div>
 
-                  {/* Mobile Coverage Metric Header */}
-                  <th
-                    className="lg:hidden py-3 px-2 text-center text-gray-600 border-r w-3/12 cursor-pointer group font-normal"
-                    onClick={() => handleSort(getMobileSortField(selectedMobileMetric))}
-                  >
-                    <div className="flex items-center justify-center">
-                      <span>{getMobileHeaderText(selectedMobileMetric)}</span>
-                      {sortField === getMobileSortField(selectedMobileMetric) && (
-                        <span className="ml-1 text-gray-400">
-                          {sortDirection === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredData.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="py-4 px-4 text-center border">
-                      No coverage data available
-                    </td>
-                  </tr>
-                ) : (
-                  filteredData.map((item) => (
-                    <tr
-                      key={item.id}
-                      className={`hover:bg-pink-50 border-b ${getLevelStyle(item.level)}`}
+          <div className="overflow-x-auto">
+            <div className="max-h-[90vh] overflow-y-auto">
+              <table className="w-full bg-white border table-fixed">
+                <thead className="sticky top-0 z-10 border-t">
+                  <tr className="bg-gray-50 border-b">
+                    <th
+                      className="py-3 px-2 w-10 border-r font-normal cursor-pointer"
+                      onClick={handleSelectAll}
                     >
-                      <td
-                        className={`py-2 px-2 border-r text-center align-middle ${
-                          item.level === "file" ? "cursor-pointer" : ""
-                        }`}
-                        onClick={() => item.level === "file" && handleSelectRow(item.id)}
-                      >
-                        {item.level === "file" && (
-                          <input
-                            type="checkbox"
-                            checked={selectedRows.includes(item.id)}
-                            readOnly
-                            className="rounded"
-                          />
+                      <input
+                        type="checkbox"
+                        checked={
+                          selectedRows.length > 0 &&
+                          selectedRows.length ===
+                            filteredData.filter((item) => item.level === "file").length &&
+                          filteredData
+                            .filter((item) => item.level === "file")
+                            .every((item) => selectedRows.includes(item.id))
+                        }
+                        readOnly
+                        className="rounded"
+                      />
+                    </th>
+                    <th
+                      className="py-3 px-2 text-left text-gray-600 border-r w-full lg:w-8/12 cursor-pointer group font-normal"
+                      onClick={() => handleSort("full_path")}
+                    >
+                      <div className="flex items-center">
+                        <span>Path</span>
+                        {sortField === "full_path" && (
+                          <span className="ml-1 text-gray-400">
+                            {sortDirection === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
-                      </td>
-                      <td
-                        className="py-2 px-2 border-r break-words whitespace-normal lg:truncate"
-                        title={item.full_path}
-                      >
-                        {item.github_issue_url ? (
-                          <div className="flex items-center gap-2 text-pink-600 hover:text-pink-700 visited:text-pink-700">
-                            <a
-                              href={item.github_issue_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block break-words whitespace-normal lg:truncate"
-                            >
-                              {item.full_path}
-                            </a>
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                              />
-                            </svg>
-                          </div>
-                        ) : (
-                          item.full_path
+                      </div>
+                    </th>
+                    <th
+                      className="hidden lg:table-cell py-3 px-2 text-center text-gray-600 border-r w-1/8 cursor-pointer group font-normal"
+                      onClick={() => handleSort("statement_coverage")}
+                    >
+                      <div className="flex items-center justify-center">
+                        <span>Stmt</span>
+                        {sortField === "statement_coverage" && (
+                          <span className="ml-1 text-gray-400">
+                            {sortDirection === "asc" ? "↑" : "↓"}
+                          </span>
                         )}
-                      </td>
-                      {/* Desktop cells */}
-                      <td className="hidden lg:table-cell py-2 px-2 border-r text-center">
-                        {formatPercentage(item.statement_coverage)}
-                      </td>
-                      <td className="hidden lg:table-cell py-2 px-2 border-r text-center">
-                        {formatPercentage(item.function_coverage)}
-                      </td>
-                      <td className="hidden lg:table-cell py-2 px-2 border-r text-center">
-                        {formatPercentage(item.branch_coverage)}
-                      </td>
-                      {/* Mobile cell */}
-                      <td className="lg:hidden py-2 px-2 border-r text-center">
-                        {formatPercentage(getCoverageValue(item, selectedMobileMetric))}
+                      </div>
+                    </th>
+                    <th
+                      className="hidden lg:table-cell py-3 px-2 text-center text-gray-600 border-r w-1/8 cursor-pointer group font-normal"
+                      onClick={() => handleSort("function_coverage")}
+                    >
+                      <div className="flex items-center justify-center">
+                        <span>Func</span>
+                        {sortField === "function_coverage" && (
+                          <span className="ml-1 text-gray-400">
+                            {sortDirection === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </div>
+                    </th>
+                    <th
+                      className="hidden lg:table-cell py-3 px-2 text-center text-gray-600 border-r w-1/8 cursor-pointer group font-normal"
+                      onClick={() => handleSort("branch_coverage")}
+                    >
+                      <div className="flex items-center justify-center">
+                        <span>Brch</span>
+                        {sortField === "branch_coverage" && (
+                          <span className="ml-1 text-gray-400">
+                            {sortDirection === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </div>
+                    </th>
+
+                    {/* Mobile Coverage Metric Header */}
+                    <th
+                      className="lg:hidden py-3 px-2 text-center text-gray-600 border-r w-3/12 cursor-pointer group font-normal"
+                      onClick={() => handleSort(getMobileSortField(selectedMobileMetric))}
+                    >
+                      <div className="flex items-center justify-center">
+                        <span>{getMobileHeaderText(selectedMobileMetric)}</span>
+                        {sortField === getMobileSortField(selectedMobileMetric) && (
+                          <span className="ml-1 text-gray-400">
+                            {sortDirection === "asc" ? "↑" : "↓"}
+                          </span>
+                        )}
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredData.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="py-4 px-4 text-center border">
+                        No coverage data available
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    filteredData.map((item) => (
+                      <tr
+                        key={item.id}
+                        className={`hover:bg-pink-50 border-b ${getLevelStyle(item.level)}`}
+                      >
+                        <td
+                          className={`py-2 px-2 border-r text-center align-middle ${
+                            item.level === "file" ? "cursor-pointer" : ""
+                          }`}
+                          onClick={() => item.level === "file" && handleSelectRow(item.id)}
+                        >
+                          {item.level === "file" && (
+                            <input
+                              type="checkbox"
+                              checked={selectedRows.includes(item.id)}
+                              readOnly
+                              className="rounded"
+                            />
+                          )}
+                        </td>
+                        <td
+                          className="py-2 px-2 border-r break-words whitespace-normal lg:truncate"
+                          title={item.full_path}
+                        >
+                          {item.github_issue_url ? (
+                            <div className="flex items-center gap-2 text-pink-600 hover:text-pink-700 visited:text-pink-700">
+                              <a
+                                href={item.github_issue_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block break-words whitespace-normal lg:truncate"
+                              >
+                                {item.full_path}
+                              </a>
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                />
+                              </svg>
+                            </div>
+                          ) : (
+                            item.full_path
+                          )}
+                        </td>
+                        {/* Desktop cells */}
+                        <td className="hidden lg:table-cell py-2 px-2 border-r text-center">
+                          {formatPercentage(item.statement_coverage)}
+                        </td>
+                        <td className="hidden lg:table-cell py-2 px-2 border-r text-center">
+                          {formatPercentage(item.function_coverage)}
+                        </td>
+                        <td className="hidden lg:table-cell py-2 px-2 border-r text-center">
+                          {formatPercentage(item.branch_coverage)}
+                        </td>
+                        {/* Mobile cell */}
+                        <td className="lg:hidden py-2 px-2 border-r text-center">
+                          {formatPercentage(getCoverageValue(item, selectedMobileMetric))}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+
+        {isLoading && <LoadingSpinner />}
+
+        {showSuccess && (
+          <SuccessPopup
+            message="Issues created successfully!"
+            onClose={() => setShowSuccess(false)}
+          />
+        )}
       </div>
-
-      {isLoading && <LoadingSpinner />}
-
-      {showSuccess && (
-        <SuccessPopup
-          message="Issues created successfully!"
-          onClose={() => setShowSuccess(false)}
-        />
-      )}
-    </div>
+    </>
   );
 }
