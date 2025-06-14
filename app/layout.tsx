@@ -15,7 +15,7 @@ import { PHProvider } from "@/app/components/PostHog";
 import SessionProvider from "@/app/components/SessionProvider";
 import { isPrd } from "@/config";
 import { defaultMetadata } from "@/config/metadata";
-import { baseStructuredData } from "@/app/structured-data";
+import { organizationJsonLd } from "@/app/jsonld";
 import "@/styles/globals.css";
 import "@/styles/styles.css";
 
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       )}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(baseStructuredData) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
       <PHProvider>
         <body className={`${inter.className} w-full min-h-screen text-base sm:text-sm md:text-xl`}>

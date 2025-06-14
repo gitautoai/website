@@ -4,8 +4,12 @@ export const isPrd = process.env.NODE_ENV === "production";
 export const EMAIL = "info@gitauto.ai";
 export const PRODUCT_ID = process.env.NEXT_PUBLIC_PRODUCT_ID;
 export const PRODUCT_NAME = "GitAuto";
+export const LEGAL_NAME = "GitAuto, Inc.";
+export const TEAM_NAME = "GitAuto Team";
+export const TITLE = `${PRODUCT_NAME} - Automated Unit Testing for GitHub`;
 export const DESCRIPTION =
-  "GitAuto automatically writes unit tests for your GitHub repositories. Go from 0% to 90% test coverage without manual effort. Start free today.";
+  "Go from 0% to 90% test coverage effortlessly. GitAuto automatically writes unit tests for your GitHub repositories. Start free today.";
+export const SHORT_DESCRIPTION = "Go from 0% to 90% test coverage effortlessly. Start free today.";
 
 // Atlassian Credentials
 export const ATLASSIAN_CLIENT_ID = process.env.ATLASSIAN_CLIENT_ID || "";

@@ -1,4 +1,4 @@
-import { AUDIENCE, softwareApplicationData } from "@/app/structured-data";
+import { AUDIENCE, softwareApplicationData } from "@/app/jsonld";
 import { PRODUCT_NAME } from "@/config";
 import { ABSOLUTE_URLS } from "@/config/urls";
 

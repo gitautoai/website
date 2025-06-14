@@ -8,7 +8,7 @@ import { Fragment, useState } from "react";
 // Local imports
 import SubscribeButton from "@/app/components/Button/SubscribeButton";
 import FAQ from "@/app/components/HomePage/FAQ";
-import { pricingStructuredData } from "@/app/pricing/structured-data";
+import { pricingStructuredData } from "@/app/pricing/jsonld";
 import { PRICE_FEATURES, TABLE_FEATURES } from "@/config/pricing";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
