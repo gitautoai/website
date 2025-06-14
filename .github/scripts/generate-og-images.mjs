@@ -50,7 +50,7 @@ async function generateOGImages() {
       await page.setViewportSize({ width: 1200, height: 630 });
 
       await page.goto(`${baseUrl}${pageConfig.path}`, {
-        waitUntil: "networkidle",
+        waitUntil: "domcontentloaded",
         timeout: 30000,
       });
 
