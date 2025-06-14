@@ -2,11 +2,16 @@ import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
 import { workflow } from "./code/workflow";
+import { pythonCoverageJsonLd } from "./jsonld";
 
 export default function PythonConfigurationPage() {
   return (
     <>
-      <h1 className="text-4xl font-bold mb-8">Python Testing</h1>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pythonCoverageJsonLd) }}
+      />
+      <h1 className="text-4xl font-bold mb-8">Python Coverage</h1>
 
       <div className="space-y-12">
         <section>

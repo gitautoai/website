@@ -4,22 +4,18 @@ import { useEffect, useState, useCallback } from "react";
 
 // Local imports
 import RepositorySelector from "../components/RepositorySelector";
-import { PLAN_LIMITS } from "../constants/plans";
 import SaveButton from "../components/SaveButton";
+import { PLAN_LIMITS } from "../constants/plans";
 import { ReferenceSettings } from "../types";
+import { referencesJsonLd } from "./jsonld";
 import { useAccountContext } from "@/app/components/Context/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 export default function ReferencesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const {
-    currentOwnerId,
-    currentOwnerName,
-    currentRepoName,
-    loadSettings,
-    saveSettings,
-  } = useAccountContext();
+  const { currentOwnerId, currentOwnerName, currentRepoName, loadSettings, saveSettings } =
+    useAccountContext();
   const [settings, setSettings] = useState<ReferenceSettings>({
     webUrls: [""],
     filePaths: [""],
@@ -207,304 +203,310 @@ export default function ReferencesPage() {
   }, [currentOwnerName, currentRepoName, saveSettings, settings, canSave]);
 
   return (
-    <div className="relative min-h-screen">
-      <h1 className="text-3xl font-bold mb-6">Reference Settings</h1>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(referencesJsonLd) }}
+      />
+      <div className="relative min-h-screen">
+        <h1 className="text-3xl font-bold mb-6">Reference Settings</h1>
 
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-          {error}
-        </div>
-      )}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            {error}
+          </div>
+        )}
 
-      <RepositorySelector />
+        <RepositorySelector />
 
-      <div className="space-y-8">
-        <div>
-          <h2 className="text-xl font-semibold mb-2">Reference URLs</h2>
-          <p className="text-gray-600 text-sm mb-4">
-            Add public documentation URLs (HTTPS only). Pages requiring authentication are not
-            supported.
-          </p>
+        <div className="space-y-8">
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Reference URLs</h2>
+            <p className="text-gray-600 text-sm mb-4">
+              Add public documentation URLs (HTTPS only). Pages requiring authentication are not
+              supported.
+            </p>
 
-          <div className="space-y-3">
-            {settings.webUrls.map((url, index) => (
-              <div key={index} className="flex gap-2">
-                <div className="flex-1 relative">
-                  <input
-                    type="url"
-                    value={url}
-                    onChange={(e) => {
-                      const newUrls = [...settings.webUrls];
-                      newUrls[index] = e.target.value;
-                      handleChange({ webUrls: newUrls });
-                      // Reset validation status when URL changes
-                      setUrlValidationStatus((prev) => ({ ...prev, [index]: null }));
-                    }}
-                    onBlur={(e) => {
-                      const newUrls = [...settings.webUrls];
-                      // Remove query parameters but keep the path
-                      const trimmedUrl = e.target.value.trim().split("?")[0];
-                      newUrls[index] = trimmedUrl;
-                      handleChange({ webUrls: newUrls });
+            <div className="space-y-3">
+              {settings.webUrls.map((url, index) => (
+                <div key={index} className="flex gap-2">
+                  <div className="flex-1 relative">
+                    <input
+                      type="url"
+                      value={url}
+                      onChange={(e) => {
+                        const newUrls = [...settings.webUrls];
+                        newUrls[index] = e.target.value;
+                        handleChange({ webUrls: newUrls });
+                        // Reset validation status when URL changes
+                        setUrlValidationStatus((prev) => ({ ...prev, [index]: null }));
+                      }}
+                      onBlur={(e) => {
+                        const newUrls = [...settings.webUrls];
+                        // Remove query parameters but keep the path
+                        const trimmedUrl = e.target.value.trim().split("?")[0];
+                        newUrls[index] = trimmedUrl;
+                        handleChange({ webUrls: newUrls });
 
-                      // Validate URL on blur if it's not empty
-                      if (trimmedUrl) {
-                        validateUrl(trimmedUrl, index);
-                      }
-                    }}
-                    placeholder="https://docs.example.com"
-                    className="w-full p-2 border rounded"
-                    pattern="https://.*"
-                    disabled={isSaving || isLoading}
-                  />
-                  {urlValidationStatus[index] && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      {urlValidationStatus[index] === "checking" && (
-                        <div className="animate-spin h-4 w-4 border-2 border-gray-500 rounded-full border-t-transparent"></div>
-                      )}
-                      {urlValidationStatus[index] === "valid" && (
-                        <svg
-                          className="h-5 w-5 text-green-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                      {urlValidationStatus[index] === "invalid" && (
-                        <svg
-                          className="h-5 w-5 text-red-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      )}
-                    </div>
-                  )}
-                </div>
-                {settings.webUrls.length > 1 && (
-                  <button
-                    onClick={() => {
-                      if (settings.webUrls.length <= 1) {
-                        handleChange({ webUrls: [""] });
-                        return;
-                      }
-                      const newUrls = settings.webUrls.filter((_, i) => i !== index);
-                      // Also remove validation status for this index
-                      setUrlValidationStatus((prev) => {
-                        const newStatus = { ...prev };
-                        delete newStatus[index];
-                        // Reindex the remaining statuses
-                        const reindexed: typeof newStatus = {};
-                        Object.keys(newStatus).forEach((key) => {
-                          const keyNum = parseInt(key);
-                          if (keyNum > index) {
-                            reindexed[keyNum - 1] = newStatus[keyNum];
-                          } else {
-                            reindexed[keyNum] = newStatus[keyNum];
-                          }
+                        // Validate URL on blur if it's not empty
+                        if (trimmedUrl) {
+                          validateUrl(trimmedUrl, index);
+                        }
+                      }}
+                      placeholder="https://docs.example.com"
+                      className="w-full p-2 border rounded"
+                      pattern="https://.*"
+                      disabled={isSaving || isLoading}
+                    />
+                    {urlValidationStatus[index] && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        {urlValidationStatus[index] === "checking" && (
+                          <div className="animate-spin h-4 w-4 border-2 border-gray-500 rounded-full border-t-transparent"></div>
+                        )}
+                        {urlValidationStatus[index] === "valid" && (
+                          <svg
+                            className="h-5 w-5 text-green-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                        {urlValidationStatus[index] === "invalid" && (
+                          <svg
+                            className="h-5 w-5 text-red-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {settings.webUrls.length > 1 && (
+                    <button
+                      onClick={() => {
+                        if (settings.webUrls.length <= 1) {
+                          handleChange({ webUrls: [""] });
+                          return;
+                        }
+                        const newUrls = settings.webUrls.filter((_, i) => i !== index);
+                        // Also remove validation status for this index
+                        setUrlValidationStatus((prev) => {
+                          const newStatus = { ...prev };
+                          delete newStatus[index];
+                          // Reindex the remaining statuses
+                          const reindexed: typeof newStatus = {};
+                          Object.keys(newStatus).forEach((key) => {
+                            const keyNum = parseInt(key);
+                            if (keyNum > index) {
+                              reindexed[keyNum - 1] = newStatus[keyNum];
+                            } else {
+                              reindexed[keyNum] = newStatus[keyNum];
+                            }
+                          });
+                          return reindexed;
                         });
-                        return reindexed;
-                      });
-                      handleChange({ webUrls: newUrls });
-                    }}
-                    className="px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100"
-                    disabled={isSaving || isLoading}
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <button
-            onClick={() => {
-              if (!settings.webUrls?.length) return;
-              if (settings.webUrls.length >= PLAN_LIMITS.STANDARD.maxUrls) return;
-              const lastUrl = settings.webUrls[settings.webUrls.length - 1];
-              if (!lastUrl?.trim()) return;
-              handleChange({ webUrls: [...settings.webUrls, ""] });
-            }}
-            disabled={
-              !settings.webUrls?.length ||
-              settings.webUrls.length >= PLAN_LIMITS.STANDARD.maxUrls ||
-              !settings.webUrls[settings.webUrls.length - 1]?.trim() ||
-              isSaving ||
-              isLoading
-            }
-            className="mt-3 px-4 py-2 bg-pink-50 text-pink-600 rounded hover:bg-pink-100 disabled:opacity-50"
-          >
-            Add URL
-          </button>
-
-          <div className="mt-2 text-sm text-gray-500">
-            {settings.webUrls.length} / {PLAN_LIMITS.STANDARD.maxUrls} URLs
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-xl font-semibold mb-2">Reference File Paths</h2>
-          <p className="text-gray-600 text-sm mb-4">
-            Add relative file paths to important files (e.g., docs/api.md, src/config.js,
-            CONTRIBUTING.md)
-          </p>
-
-          <div className="space-y-3">
-            {settings.filePaths.map((path, index) => (
-              <div key={index} className="flex gap-2">
-                <div className="flex-1 relative">
-                  <input
-                    type="text"
-                    value={path}
-                    onChange={(e) => {
-                      const newPaths = [...settings.filePaths];
-                      newPaths[index] = e.target.value;
-                      handleChange({ filePaths: newPaths });
-                      // Reset validation status when path changes
-                      setFilePathValidationStatus((prev) => ({ ...prev, [index]: null }));
-                    }}
-                    onBlur={(e) => {
-                      const newPaths = [...settings.filePaths];
-                      const trimmedPath = e.target.value.trim();
-                      newPaths[index] = trimmedPath;
-                      handleChange({ filePaths: newPaths });
-
-                      // Validate path on blur if it's not empty
-                      if (trimmedPath) {
-                        validateFilePath(trimmedPath, index);
-                      }
-                    }}
-                    placeholder="path/to/file.ext"
-                    className="w-full p-2 border rounded"
-                    disabled={isSaving || isLoading}
-                  />
-                  {filePathValidationStatus[index] && (
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                      {filePathValidationStatus[index] === "checking" && (
-                        <div className="animate-spin h-4 w-4 border-2 border-gray-500 rounded-full border-t-transparent"></div>
-                      )}
-                      {filePathValidationStatus[index] === "valid" && (
-                        <svg
-                          className="h-5 w-5 text-green-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                      )}
-                      {filePathValidationStatus[index] === "invalid" && (
-                        <svg
-                          className="h-5 w-5 text-red-500"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M6 18L18 6M6 6l12 12"
-                          />
-                        </svg>
-                      )}
-                    </div>
+                        handleChange({ webUrls: newUrls });
+                      }}
+                      className="px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100"
+                      disabled={isSaving || isLoading}
+                    >
+                      Remove
+                    </button>
                   )}
                 </div>
-                {settings.filePaths.length > 1 && (
-                  <button
-                    onClick={() => {
-                      if (settings.filePaths.length <= 1) {
-                        handleChange({ filePaths: [""] });
-                        return;
-                      }
-                      const newPaths = settings.filePaths.filter((_, i) => i !== index);
-                      handleChange({ filePaths: newPaths });
-                    }}
-                    className="px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100"
-                    disabled={isSaving || isLoading}
-                  >
-                    Remove
-                  </button>
-                )}
+              ))}
+            </div>
+
+            <button
+              onClick={() => {
+                if (!settings.webUrls?.length) return;
+                if (settings.webUrls.length >= PLAN_LIMITS.STANDARD.maxUrls) return;
+                const lastUrl = settings.webUrls[settings.webUrls.length - 1];
+                if (!lastUrl?.trim()) return;
+                handleChange({ webUrls: [...settings.webUrls, ""] });
+              }}
+              disabled={
+                !settings.webUrls?.length ||
+                settings.webUrls.length >= PLAN_LIMITS.STANDARD.maxUrls ||
+                !settings.webUrls[settings.webUrls.length - 1]?.trim() ||
+                isSaving ||
+                isLoading
+              }
+              className="mt-3 px-4 py-2 bg-pink-50 text-pink-600 rounded hover:bg-pink-100 disabled:opacity-50"
+            >
+              Add URL
+            </button>
+
+            <div className="mt-2 text-sm text-gray-500">
+              {settings.webUrls.length} / {PLAN_LIMITS.STANDARD.maxUrls} URLs
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Reference File Paths</h2>
+            <p className="text-gray-600 text-sm mb-4">
+              Add relative file paths to important files (e.g., docs/api.md, src/config.js,
+              CONTRIBUTING.md)
+            </p>
+
+            <div className="space-y-3">
+              {settings.filePaths.map((path, index) => (
+                <div key={index} className="flex gap-2">
+                  <div className="flex-1 relative">
+                    <input
+                      type="text"
+                      value={path}
+                      onChange={(e) => {
+                        const newPaths = [...settings.filePaths];
+                        newPaths[index] = e.target.value;
+                        handleChange({ filePaths: newPaths });
+                        // Reset validation status when path changes
+                        setFilePathValidationStatus((prev) => ({ ...prev, [index]: null }));
+                      }}
+                      onBlur={(e) => {
+                        const newPaths = [...settings.filePaths];
+                        const trimmedPath = e.target.value.trim();
+                        newPaths[index] = trimmedPath;
+                        handleChange({ filePaths: newPaths });
+
+                        // Validate path on blur if it's not empty
+                        if (trimmedPath) {
+                          validateFilePath(trimmedPath, index);
+                        }
+                      }}
+                      placeholder="path/to/file.ext"
+                      className="w-full p-2 border rounded"
+                      disabled={isSaving || isLoading}
+                    />
+                    {filePathValidationStatus[index] && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        {filePathValidationStatus[index] === "checking" && (
+                          <div className="animate-spin h-4 w-4 border-2 border-gray-500 rounded-full border-t-transparent"></div>
+                        )}
+                        {filePathValidationStatus[index] === "valid" && (
+                          <svg
+                            className="h-5 w-5 text-green-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                        {filePathValidationStatus[index] === "invalid" && (
+                          <svg
+                            className="h-5 w-5 text-red-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {settings.filePaths.length > 1 && (
+                    <button
+                      onClick={() => {
+                        if (settings.filePaths.length <= 1) {
+                          handleChange({ filePaths: [""] });
+                          return;
+                        }
+                        const newPaths = settings.filePaths.filter((_, i) => i !== index);
+                        handleChange({ filePaths: newPaths });
+                      }}
+                      className="px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100"
+                      disabled={isSaving || isLoading}
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={() => {
+                if (!settings.filePaths?.length) return;
+                if (settings.filePaths.length >= PLAN_LIMITS.STANDARD.maxPaths) return;
+                const lastPath = settings.filePaths[settings.filePaths.length - 1];
+                if (!lastPath?.trim()) return;
+                handleChange({ filePaths: [...settings.filePaths, ""] });
+              }}
+              disabled={
+                !settings.filePaths?.length ||
+                settings.filePaths.length >= PLAN_LIMITS.STANDARD.maxPaths ||
+                !settings.filePaths[settings.filePaths.length - 1]?.trim() ||
+                isSaving ||
+                isLoading
+              }
+              className="mt-3 px-4 py-2 bg-pink-50 text-pink-600 rounded hover:bg-pink-100 disabled:opacity-50"
+            >
+              Add Path
+            </button>
+
+            <div className="mt-2 text-sm text-gray-500">
+              <div>
+                {settings.filePaths.length} / {PLAN_LIMITS.STANDARD.maxPaths} paths
               </div>
-            ))}
+              <div className="text-xs mt-1">
+                System paths (always included): .gitignore, package.json, README.md
+              </div>
+            </div>
           </div>
 
-          <button
-            onClick={() => {
-              if (!settings.filePaths?.length) return;
-              if (settings.filePaths.length >= PLAN_LIMITS.STANDARD.maxPaths) return;
-              const lastPath = settings.filePaths[settings.filePaths.length - 1];
-              if (!lastPath?.trim()) return;
-              handleChange({ filePaths: [...settings.filePaths, ""] });
-            }}
-            disabled={
-              !settings.filePaths?.length ||
-              settings.filePaths.length >= PLAN_LIMITS.STANDARD.maxPaths ||
-              !settings.filePaths[settings.filePaths.length - 1]?.trim() ||
-              isSaving ||
-              isLoading
-            }
-            className="mt-3 px-4 py-2 bg-pink-50 text-pink-600 rounded hover:bg-pink-100 disabled:opacity-50"
-          >
-            Add Path
-          </button>
-
-          <div className="mt-2 text-sm text-gray-500">
-            <div>
-              {settings.filePaths.length} / {PLAN_LIMITS.STANDARD.maxPaths} paths
-            </div>
-            <div className="text-xs mt-1">
-              System paths (always included): .gitignore, package.json, README.md
-            </div>
+          <div className="mt-6">
+            <SaveButton
+              onClick={handleSave}
+              isSaving={isSaving}
+              disabled={!canSave() || isLoading || isSaving}
+            />
+            {settings.webUrls.some(
+              (url, index) => url.trim() !== "" && urlValidationStatus[index] === "invalid"
+            ) && (
+              <div className="mt-2 text-sm text-red-500">
+                Some URLs are not accessible. Please check and fix them before saving.
+              </div>
+            )}
+            {settings.filePaths.some(
+              (path, index) => path.trim() !== "" && filePathValidationStatus[index] === "invalid"
+            ) && (
+              <div className="mt-2 text-sm text-red-500">
+                Some file paths don&apos;t exist in the repository. Please check and fix them before
+                saving.
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="mt-6">
-          <SaveButton
-            onClick={handleSave}
-            isSaving={isSaving}
-            disabled={!canSave() || isLoading || isSaving}
-          />
-          {settings.webUrls.some(
-            (url, index) => url.trim() !== "" && urlValidationStatus[index] === "invalid"
-          ) && (
-            <div className="mt-2 text-sm text-red-500">
-              Some URLs are not accessible. Please check and fix them before saving.
-            </div>
-          )}
-          {settings.filePaths.some(
-            (path, index) => path.trim() !== "" && filePathValidationStatus[index] === "invalid"
-          ) && (
-            <div className="mt-2 text-sm text-red-500">
-              Some file paths don&apos;t exist in the repository. Please check and fix them before
-              saving.
-            </div>
-          )}
-        </div>
+        {isLoading && <LoadingSpinner />}
       </div>
-
-      {isLoading && <LoadingSpinner />}
-    </div>
+    </>
   );
 }

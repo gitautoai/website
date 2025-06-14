@@ -86,7 +86,7 @@ export const INTERNAL_LINKS = [
     showInNav: false,
   },
   {
-    href: RELATIVE_URLS.SETTINGS,
+    href: RELATIVE_URLS.SETTINGS.INDEX,
     eventType: "settings",
     text: "Settings",
     category: "resources",
