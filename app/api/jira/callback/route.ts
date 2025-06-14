@@ -6,7 +6,7 @@ import {
   ATLASSIAN_REDIRECT_URI,
   ATLASSIAN_TOKEN_URL,
 } from "@/config";
-import { NEXT_PUBLIC_SITE_URL } from "@/config/urls";
+import { BASE_URL } from "@/config/urls";
 import { upsertOAuthToken } from "@/lib/supabase";
 
 export async function GET(request: Request) {
@@ -42,11 +42,9 @@ export async function GET(request: Request) {
       ...tokenData,
     });
 
-    return NextResponse.redirect(`${NEXT_PUBLIC_SITE_URL}/settings/integrations/jira?success=true`);
+    return NextResponse.redirect(`${BASE_URL}/settings/integrations/jira?success=true`);
   } catch (error) {
     console.error("Error in Jira callback:", error);
-    return NextResponse.redirect(
-      `${NEXT_PUBLIC_SITE_URL}/settings/integrations/jira?success=false`
-    );
+    return NextResponse.redirect(`${BASE_URL}/settings/integrations/jira?success=false`);
   }
 }
