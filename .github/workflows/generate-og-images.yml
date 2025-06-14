@@ -3,10 +3,11 @@ name: Generate OG Images
 on:
   push:
     branches: [main]
-    paths:
-      - "app/**/page.tsx"
-      - "app/components/**"
-      - "styles/**"
+    # paths:
+    #   - "app/**/page.tsx"
+    #   - "app/**/layout.tsx"
+    #   - "app/components/**"
+    #   - "styles/**"
   workflow_dispatch:
 
 jobs:
