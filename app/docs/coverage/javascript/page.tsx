@@ -4,11 +4,16 @@ import { KeyRequirements } from "../KeyRequirements";
 import { packageJson as jestPackageJson, jestConfig } from "./code/jest";
 import { packageJson as vitestPackageJson, vitestConfig } from "./code/vitest";
 import { workflow } from "./code/workflow";
+import { javascriptCoverageJsonLd } from "./jsonld";
 
 export default function JavaScriptConfigurationPage() {
   return (
     <>
-      <h1 className="text-4xl font-bold mb-8">JavaScript / TypeScript Testing</h1>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(javascriptCoverageJsonLd) }}
+      />
+      <h1 className="text-4xl font-bold mb-8">JavaScript / TypeScript Coverage</h1>
 
       <div className="space-y-12">
         <section>

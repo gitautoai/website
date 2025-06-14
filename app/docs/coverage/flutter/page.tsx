@@ -3,11 +3,16 @@ import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
 import { pubspecYaml } from "./code/config";
 import { workflow } from "./code/workflow";
+import { flutterCoverageJsonLd } from "./jsonld";
 
 export default function FlutterConfigurationPage() {
   return (
     <>
-      <h1 className="text-4xl font-bold mb-8">Flutter Testing</h1>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(flutterCoverageJsonLd) }}
+      />
+      <h1 className="text-4xl font-bold mb-8">Flutter Coverage</h1>
 
       <div className="space-y-12">
         <section>

@@ -1,9 +1,10 @@
 "use client";
 
+import { JiraForm } from "./JiraForm";
+import { JiraHeader } from "./JiraHeader";
+import { jiraIntegrationJsonLd } from "./jsonld";
 import { useIntegrations } from "./useIntegrations";
 import { useRows } from "./useRows";
-import { JiraHeader } from "./JiraHeader";
-import { JiraForm } from "./JiraForm";
 
 export default function JiraIntegrationPage() {
   const { jiraSites, githubOwners, isConnected, isConnecting, handleJiraAuth } = useIntegrations();
@@ -11,6 +12,10 @@ export default function JiraIntegrationPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jiraIntegrationJsonLd) }}
+      />
       <h1 className="text-3xl font-bold">Jira Integration</h1>
 
       <div className="space-y-8">

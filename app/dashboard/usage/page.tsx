@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 
 // Local imports
-import { UsageStats, BillingPeriod } from "./types";
 import RepositorySelector from "../../settings/components/RepositorySelector";
+import { usageJsonLd } from "./jsonld";
+import { UsageStats, BillingPeriod } from "./types";
 import { useAccountContext } from "@/app/components/Context/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
@@ -145,57 +146,63 @@ export default function UsagePage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col gap-6">
-      <h1 className="text-3xl font-bold">Usage Statistics</h1>
-      <RepositorySelector />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(usageJsonLd) }}
+      />
+      <div className="min-h-screen flex flex-col gap-6">
+        <h1 className="text-3xl font-bold">Usage Statistics</h1>
+        <RepositorySelector />
 
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          {error}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            {error}
+          </div>
+        )}
+
+        <p className="text-gray-600">
+          Current billing cycle: {formatDate(billingPeriod?.current_period_start || "")} -{" "}
+          {formatDate(billingPeriod?.current_period_end || "")}
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <StatBlock
+            title="Total Pull Requests"
+            allTime={usageStats?.all_time.total_prs || 0}
+            currentCycle={usageStats?.current_cycle.total_prs || 0}
+          />
+          <StatBlock
+            title="Total Issues"
+            allTime={usageStats?.all_time.total_issues || 0}
+            currentCycle={usageStats?.current_cycle.total_issues || 0}
+            limit={billingPeriod?.request_limit}
+            showManageCredits={true}
+          />
+          <StatBlock
+            title="Total Merged PRs"
+            allTime={usageStats?.all_time.total_merges || 0}
+            currentCycle={usageStats?.current_cycle.total_merges || 0}
+          />
+          <StatBlock
+            title="Your Pull Requests"
+            allTime={usageStats?.all_time.user_prs || 0}
+            currentCycle={usageStats?.current_cycle.user_prs || 0}
+          />
+          <StatBlock
+            title="Your Issues"
+            allTime={usageStats?.all_time.user_issues || 0}
+            currentCycle={usageStats?.current_cycle.user_issues || 0}
+          />
+          <StatBlock
+            title="Your Merged PRs"
+            allTime={usageStats?.all_time.user_merges || 0}
+            currentCycle={usageStats?.current_cycle.user_merges || 0}
+          />
         </div>
-      )}
 
-      <p className="text-gray-600">
-        Current billing cycle: {formatDate(billingPeriod?.current_period_start || "")} -{" "}
-        {formatDate(billingPeriod?.current_period_end || "")}
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatBlock
-          title="Total Pull Requests"
-          allTime={usageStats?.all_time.total_prs || 0}
-          currentCycle={usageStats?.current_cycle.total_prs || 0}
-        />
-        <StatBlock
-          title="Total Issues"
-          allTime={usageStats?.all_time.total_issues || 0}
-          currentCycle={usageStats?.current_cycle.total_issues || 0}
-          limit={billingPeriod?.request_limit}
-          showManageCredits={true}
-        />
-        <StatBlock
-          title="Total Merged PRs"
-          allTime={usageStats?.all_time.total_merges || 0}
-          currentCycle={usageStats?.current_cycle.total_merges || 0}
-        />
-        <StatBlock
-          title="Your Pull Requests"
-          allTime={usageStats?.all_time.user_prs || 0}
-          currentCycle={usageStats?.current_cycle.user_prs || 0}
-        />
-        <StatBlock
-          title="Your Issues"
-          allTime={usageStats?.all_time.user_issues || 0}
-          currentCycle={usageStats?.current_cycle.user_issues || 0}
-        />
-        <StatBlock
-          title="Your Merged PRs"
-          allTime={usageStats?.all_time.user_merges || 0}
-          currentCycle={usageStats?.current_cycle.user_merges || 0}
-        />
+        {isLoading && <LoadingSpinner />}
       </div>
-
-      {isLoading && <LoadingSpinner />}
-    </div>
+    </>
   );
 }
