@@ -1,4 +1,4 @@
-import { AUDIENCE, CREATOR } from "@/app/structured-data";
+import { AUDIENCE, CREATOR } from "@/app/jsonld";
 import { PRODUCT_NAME } from "@/config";
 import { KEYWORDS } from "@/config/keywords";
 import { ABSOLUTE_URLS } from "@/config/urls";

@@ -9,7 +9,7 @@ import DocsLink from "@/app/components/DocsLink";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
 import SuccessPopup from "@/app/components/SuccessPopup";
-import { coverageDashboardStructuredData } from "@/app/dashboard/coverage/structured-data";
+import { coverageDashboardStructuredData } from "@/app/dashboard/coverage/jsonld";
 import { CoverageData, SortField, SortDirection } from "@/app/dashboard/coverage/types";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import { STORAGE_KEYS } from "@/lib/constants";

@@ -14,7 +14,7 @@ import UseCases from "@/app/components/HomePage/UseCases";
 import WhatGitAutoDoes from "@/app/components/HomePage/WhatGitAutoDoes";
 import WhyGitAuto from "@/app/components/HomePage/WhyGitAuto";
 import ScrollNav from "@/app/components/Navigation/ScrollNav";
-import { softwareApplicationData } from "@/app/structured-data";
+import { softwareApplicationData } from "@/app/jsonld";
 
 export default function Home() {
   // Analytics

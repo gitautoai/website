@@ -1,16 +1,16 @@
-import { PRODUCT_NAME, EMAIL, DESCRIPTION } from "@/config";
+import { PRODUCT_NAME, EMAIL, DESCRIPTION, LEGAL_NAME } from "@/config";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 /**
  * @see https://schema.org/Organization
  */
-export const baseStructuredData = {
+export const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "@id": ABSOLUTE_URLS.GITAUTO.INDEX + "#organization",
   name: PRODUCT_NAME,
-  alternateName: "GitAuto, Inc.",
-  legalName: "GitAuto, Inc.",
+  alternateName: LEGAL_NAME,
+  legalName: LEGAL_NAME,
   url: ABSOLUTE_URLS.GITAUTO.INDEX,
   logo: { "@type": "ImageObject", url: ABSOLUTE_URLS.GITAUTO.LOGO },
   founder: {
