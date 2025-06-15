@@ -1,5 +1,5 @@
 // Third party imports
-import { motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import { usePostHog } from "posthog-js/react";
 
@@ -7,38 +7,23 @@ import { usePostHog } from "posthog-js/react";
 import ProfileIcon from "@/app/components/Navbar/ProfileIcon";
 
 interface AuthControlsProps {
-  callbackUrl?: string;
   mobileMenuTrigger?: boolean;
 }
 
-export default function AuthControls({
-  callbackUrl = "/",
-  mobileMenuTrigger = false,
-}: AuthControlsProps) {
+export default function AuthControls({ mobileMenuTrigger = false }: AuthControlsProps) {
   const { data: session, status } = useSession();
   const posthog = usePostHog();
+  const pathname = usePathname();
 
   return (
     <>
       {status === "unauthenticated" && (
-        <motion.button
-          whileHover={{
-            scale: 1.04,
-            transition: { duration: 0.1 },
-          }}
-          whileTap={{
-            scale: 0.98,
-            transition: { duration: 0.1 },
-          }}
-          onClick={() => {
-            signIn("github", {
-              callbackUrl,
-            });
-          }}
-          className="border border-pink-600 text-black rounded-lg transition-colors duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer"
+        <button
+          onClick={() => signIn("github", { callbackUrl: pathname })}
+          className="border border-pink-600 text-black rounded-lg transition-all duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:scale-105 active:scale-95"
         >
           Sign In
-        </motion.button>
+        </button>
       )}
       {status === "authenticated" && (
         <ProfileIcon session={session} mobileMenuTrigger={mobileMenuTrigger} />

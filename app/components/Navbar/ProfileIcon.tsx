@@ -2,7 +2,7 @@
 
 // Third party imports
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
@@ -21,6 +21,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isOwnerSelectorOpen, setIsOwnerSelectorOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   const {
     userId,
@@ -142,7 +143,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
 
             <button
               className="w-full text-left px-4 py-2 hover:bg-transparent"
-              onClick={() => signOut({ callbackUrl: "/" })}
+              onClick={() => signOut({ callbackUrl: pathname })}
             >
               <span className="link">Sign Out</span>
             </button>

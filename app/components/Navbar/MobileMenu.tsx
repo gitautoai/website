@@ -1,9 +1,8 @@
 "use client";
 
 // Third Party Imports
-import { motion } from "framer-motion";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
@@ -21,6 +20,7 @@ interface MobileDrawerProps {
 
 export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: MobileDrawerProps) {
   const { status } = useSession();
+  const pathname = usePathname();
   const [isOwnerSelectorOpen, setIsOwnerSelectorOpen] = useState(false);
   const {
     userId,
@@ -61,14 +61,12 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
             ))}
             {status === "unauthenticated" && (
               <li>
-                <motion.button
-                  whileHover={{ scale: 1.04, transition: { duration: 0.1 } }}
-                  whileTap={{ scale: 0.98, transition: { duration: 0.1 } }}
-                  onClick={() => signIn("github", { callbackUrl: `/` })}
-                  className="border border-pink-600 text-black rounded-lg transition-colors duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer"
+                <button
+                  onClick={() => signIn("github", { callbackUrl: pathname })}
+                  className="border border-pink-600 text-black rounded-lg transition-all duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:scale-105 active:scale-95"
                 >
                   Sign In
-                </motion.button>
+                </button>
               </li>
             )}
             {status === "authenticated" && (
@@ -110,7 +108,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
                   </li>
                 )}
 
-                <li onClick={() => signOut({ callbackUrl: "/" })}>
+                <li onClick={() => signOut({ callbackUrl: pathname })}>
                   <span className="link">Sign Out</span>
                 </li>
               </>

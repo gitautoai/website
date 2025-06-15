@@ -21,10 +21,12 @@ export interface AccountContextType {
   currentRepoName: string | null;
   currentInstallationId: number | null;
   currentStripeCustomerId: string | null;
+  billingPeriod: "Monthly" | "Yearly";
   isLoading: boolean;
+  loadSettings: (ownerName: string, repoName: string) => Promise<any>;
+  refreshData: () => Promise<void>;
+  saveSettings: (settings: Settings) => Promise<boolean>;
+  setBillingPeriod: (period: "Monthly" | "Yearly") => void;
   setCurrentOwnerName: (ownerName: string | null) => void;
   setCurrentRepoName: (repoName: string | null) => void;
-  refreshData: () => Promise<void>;
-  loadSettings: (ownerName: string, repoName: string) => Promise<any>;
-  saveSettings: (settings: Settings) => Promise<boolean>;
 }
