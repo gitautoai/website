@@ -38,4 +38,4 @@ export const THUMBNAIL = {
       FLUTTER: `${BASE_URL}/og/docs-coverage-flutter.png`,
     },
   },
-};
+} as const;

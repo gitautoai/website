@@ -1,5 +1,6 @@
 import { AUDIENCE, CREATOR, OFFERS } from "@/app/jsonld";
 import { PRODUCT_NAME } from "@/config";
+import { THUMBNAIL } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 /**
@@ -31,7 +32,7 @@ export const coverageDashboardStructuredData = {
   permissions: "GitHub repository access",
   screenshot: {
     "@type": "ImageObject",
-    url: ABSOLUTE_URLS.GITAUTO.THUMBNAIL,
+    url: THUMBNAIL.DASHBOARD.COVERAGE,
     description: "GitAuto Coverage Dashboard interface showing test coverage metrics",
   },
   offers: OFFERS,
