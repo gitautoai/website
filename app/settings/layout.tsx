@@ -21,11 +21,11 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
       {/* Auth Controls - Top Right */}
       <div className="fixed top-6 right-6 z-40 flex items-center gap-2">
         <div className="hidden lg:block">
-          <AuthControls callbackUrl="/settings" />
+          <AuthControls />
         </div>
         <div className="lg:hidden">
           <div onClick={() => setIsMobileMenuOpen(true)}>
-            <AuthControls callbackUrl="/settings" mobileMenuTrigger={true} />
+            <AuthControls mobileMenuTrigger={true} />
           </div>
         </div>
       </div>
