@@ -9,6 +9,7 @@ import { Suspense } from "react";
 // Local imports
 import { AccountContextWrapper } from "@/app/components/Context/Account";
 import Footer from "@/app/components/Footer";
+import { InstallationSuccessPopup } from "@/app/components/InstallationSuccessPopup";
 import IntercomMessenger from "@/app/components/Intercom";
 import Navbar from "@/app/components/Navbar";
 import { PHProvider } from "@/app/components/PostHog";
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Suspense>
             <SessionProvider>
               <AccountContextWrapper>
+                <InstallationSuccessPopup />
                 <Navbar />
                 <main className="px-4 sm:px-8 md:px-16">{children}</main>
                 <Footer />

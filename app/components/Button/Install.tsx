@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePostHog } from "posthog-js/react";
 
 // Local imports
+import { isPrd } from "@/config";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 interface InstallButtonProps {
@@ -13,10 +14,13 @@ interface InstallButtonProps {
 
 const InstallButton = ({ text }: InstallButtonProps) => {
   const posthog = usePostHog();
+  const href = isPrd
+    ? ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO
+    : ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO_DEV;
   return (
     <div className="relative group w-fit mx-auto mt-3 sm:mt-2 md:mt-6">
       <a
-        href={ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO}
+        href={href}
         target="_blank"
         onClick={() => {
           posthog.capture("$click", {

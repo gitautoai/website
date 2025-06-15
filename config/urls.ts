@@ -91,6 +91,7 @@ export const ABSOLUTE_URLS = {
     EMAIL_SETTING: "https://github.com/settings/emails",
     MARKETPLACE: "https://github.com/marketplace/gitauto-ai",
     INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai/installations/new",
+    INSTALL_GITAUTO_DEV: "https://github.com/apps/gitauto-for-dev/installations/new",
     INSTALLED_APPS: "https://github.com/settings/installations",
     ORGANIZATION: "https://github.com/gitautoai",
   },
