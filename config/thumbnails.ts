@@ -1,6 +1,6 @@
 import { BASE_URL } from "@/config/urls";
 
-export const THUMBNAIL = {
+export const THUMBNAILS = {
   HOME: `${BASE_URL}/og/home.png`,
   PRICING: `${BASE_URL}/og/pricing.png`,
 
