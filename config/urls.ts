@@ -85,7 +85,6 @@ export const ABSOLUTE_URLS = {
         JIRA: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.JIRA}`,
       },
     },
-    THUMBNAIL: `${BASE_URL}/og/home.png`,
     USAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.USAGE}`,
   },
   GITHUB: {

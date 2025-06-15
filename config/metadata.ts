@@ -1,14 +1,10 @@
 import { Metadata } from "next";
 import { DESCRIPTION, EMAIL, LEGAL_NAME, PRODUCT_NAME, TEAM_NAME, TITLE } from "@/config";
 import { KEYWORDS } from "@/config/keywords";
+import { THUMBNAIL } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
-const IMAGES = {
-  url: ABSOLUTE_URLS.GITAUTO.THUMBNAIL,
-  width: 1200,
-  height: 630,
-  alt: TITLE,
-} as const;
+const IMAGES = { url: THUMBNAIL.HOME, width: 1200, height: 630, alt: TITLE } as const;
 
 /**
  * Metadata for the entire application
