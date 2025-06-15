@@ -1,0 +1,20 @@
+name: Slack PR Merge Notification
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  notify-slack:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      # https://github.com/gitautoai/website/settings/secrets/actions
+      - name: Send Slack notification
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{
+              "text": "Website PR Merged: <${{ github.event.pull_request.html_url }}|${{ github.event.pull_request.title }}>"
+            }' \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
