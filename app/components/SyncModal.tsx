@@ -1,6 +1,6 @@
-import CheckIcon from "./icon/CheckIcon";
-import SpinnerIcon from "./icon/SpinnerIcon";
-import XIcon from "./icon/XIcon";
+import CheckIcon from "@/app/components/icon/CheckIcon";
+import SpinnerIcon from "@/app/components/icon/SpinnerIcon";
+import XIcon from "@/app/components/icon/XIcon";
 
 interface SyncModalProps {
   message: string;
