@@ -92,7 +92,6 @@ export async function POST(request: Request) {
     }
 
     // Define label ID
-    console.log("allLabels: ", allLabels);
     let labelId =
       hasLabel && PRODUCT_ID ? allLabels?.find((label) => label.name === PRODUCT_ID)?.id : null;
 

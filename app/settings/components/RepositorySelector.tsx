@@ -49,9 +49,9 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
   );
 
   return (
-    <div className="flex flex-col md:flex-row md:gap-4 space-y-4 md:space-y-0">
+    <div className="grid grid-cols-2 gap-4">
       {/* Organization Selector */}
-      <div className="flex-1">
+      <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Organization</label>
         <select
           value={currentOwnerName || ""}
@@ -69,7 +69,7 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
       </div>
 
       {/* Repository Selector */}
-      <div className="flex-1">
+      <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Repository</label>
         <select
           value={currentRepoName || ""}
