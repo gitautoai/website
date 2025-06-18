@@ -33,8 +33,8 @@ export type TriggerSettings = {
   triggerOnCommit: boolean;
   triggerOnMerged: boolean;
   triggerOnSchedule: boolean;
-  scheduleTime?: string; // Format: "HH:MM" (24-hour format)
-  scheduleIncludeWeekends?: boolean;
+  scheduleTime: string; // Format: "HH:MM" (24-hour format)
+  scheduleIncludeWeekends: boolean;
 };
 
 export type Settings = RulesSettings | ReferenceSettings | ScreenshotSettings | TriggerSettings;
