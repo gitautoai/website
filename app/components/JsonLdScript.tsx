@@ -1,4 +1,5 @@
 // Third-party imports
+import Script from "next/script";
 import { FC } from "react";
 
 interface JsonLdScriptProps {
@@ -10,7 +11,12 @@ interface JsonLdScriptProps {
  */
 const JsonLdScript: FC<JsonLdScriptProps> = ({ data }) => {
   return (
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
+    <Script
+      id="jsonld"
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+      strategy="beforeInteractive"
+    />
   );
 };
 
