@@ -1,5 +1,6 @@
-import { AUDIENCE, softwareApplicationData } from "@/app/jsonld";
+import { AUDIENCE, CREATOR, OFFERS } from "@/app/jsonld";
 import { PRODUCT_NAME } from "@/config";
+import { THUMBNAILS } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 /**
@@ -7,32 +8,18 @@ import { ABSOLUTE_URLS } from "@/config/urls";
  */
 export const pricingJsonLd = {
   "@context": "https://schema.org",
-  "@type": "Product",
-  "@id": ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS + "#product",
-  name: `${PRODUCT_NAME} Pricing Plans`,
-  description: "Choose the GitAuto plan that fits your team's needs.",
-  brand: { "@type": "Brand", name: PRODUCT_NAME },
-  manufacturer: {
-    "@type": "Organization",
-    name: PRODUCT_NAME,
-    url: ABSOLUTE_URLS.GITAUTO.INDEX,
-  },
-  offers: softwareApplicationData.offers.map((offer) => ({
-    ...offer,
-    availability: "https://schema.org/InStock",
-    validFrom: "2024-05-10",
-    itemOffered: {
-      "@type": "Service",
-      name: `GitAuto ${offer.name}`,
-      description: offer.description,
-    },
-    priceSpecification: {
-      "@type": "PriceSpecification",
-      price: offer.price,
-      priceCurrency: offer.priceCurrency,
-      billingIncrement: offer.name.includes("Yearly") ? "P1Y" : "P1M",
-    },
-  })),
-  category: "Developer Tools",
+  "@type": "WebPage",
+  "@id": ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS + "#webpage",
+  name: `${PRODUCT_NAME} Pricing`,
+  description: "Affordable pricing plans for automated unit test generation and GitHub integration",
+  url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
+  creator: CREATOR,
   audience: AUDIENCE,
+  image: THUMBNAILS.PRICING,
+  mainEntity: {
+    "@type": "Product",
+    name: PRODUCT_NAME,
+    description: "Automated unit test generation for GitHub repositories",
+    offers: OFFERS,
+  },
 };

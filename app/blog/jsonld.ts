@@ -12,44 +12,9 @@ export const blogJsonLd = {
   "@id": ABSOLUTE_URLS.GITAUTO.BLOG + "#blog",
   name: `${PRODUCT_NAME} Blog`,
   description:
-    "Learn about automated testing, test coverage, and software quality best practices. Tips and tutorials for developers and QA engineers.",
+    "Insights on automated testing, unit test generation, and software development best practices",
   url: ABSOLUTE_URLS.GITAUTO.BLOG,
-  publisher: CREATOR,
-  inLanguage: "en",
+  creator: CREATOR,
   audience: AUDIENCE,
   keywords: KEYWORDS,
 };
-
-/**
- * Generate structured data for each blog post.
- */
-export function createBlogPostStructuredData(
-  title: string,
-  description: string,
-  slug: string,
-  publishedDate: string,
-  modifiedDate?: string
-) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "@id": `${ABSOLUTE_URLS.GITAUTO.BLOG}/${slug}#blogpost`,
-    headline: title,
-    description: description,
-    url: `${ABSOLUTE_URLS.GITAUTO.BLOG}/${slug}`,
-    datePublished: publishedDate,
-    dateModified: modifiedDate || publishedDate,
-    author: CREATOR,
-    publisher: CREATOR,
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${ABSOLUTE_URLS.GITAUTO.BLOG}/${slug}`,
-    },
-    isPartOf: {
-      "@type": "Blog",
-      "@id": ABSOLUTE_URLS.GITAUTO.BLOG + "#blog",
-    },
-    inLanguage: "en",
-    audience: AUDIENCE,
-  };
-}
