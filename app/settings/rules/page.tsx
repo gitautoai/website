@@ -71,7 +71,10 @@ export default function RulesPage() {
       } finally {
         setIsLoading(false);
         const endTime = performance.now();
-        console.log(`Rules page loadSettings time: ${endTime - startTime}ms`);
+        const executionTime = endTime - startTime;
+        if (executionTime > 1000) {
+          console.log(`Rules page loadSettings time: ${executionTime}ms`);
+        }
       }
     };
 
@@ -114,14 +117,17 @@ export default function RulesPage() {
     if (branches.length === 0 || isBranchLoading) return;
 
     // Only set branch if none is selected or current selection is invalid
-    if (formData.targetBranch && branches.some((b) => b.name === formData.targetBranch)) return;
+    const currentBranch = formData.targetBranch;
+    const isCurrentBranchValid = currentBranch && branches.some((b) => b.name === currentBranch);
+
+    if (isCurrentBranchValid) return;
 
     // Fallback to default branch
     const defaultBranch = branches.find((b) => b.isDefault);
     if (defaultBranch) {
-      handleFieldChange("targetBranch", defaultBranch.name);
+      setFormData((prev) => ({ ...prev, targetBranch: defaultBranch.name }));
     }
-  }, [branches, isBranchLoading]);
+  }, [branches, isBranchLoading, formData.targetBranch]);
 
   // Field change handler
   const handleFieldChange = useCallback((field: keyof RulesSettings, value: string) => {
