@@ -10,7 +10,7 @@ import { Suspense } from "react";
 import { AccountContextWrapper } from "@/app/components/Context/Account";
 import Footer from "@/app/components/Footer";
 import { InstallationSuccessPopup } from "@/app/components/InstallationSuccessPopup";
-import IntercomMessenger from "@/app/components/Intercom";
+// import IntercomMessenger from "@/app/components/Intercom";
 import Navbar from "@/app/components/Navbar";
 import { PHProvider } from "@/app/components/PostHog";
 import SessionProvider from "@/app/components/SessionProvider";
@@ -50,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Navbar />
                 <main className="px-4 sm:px-8 md:px-16">{children}</main>
                 <Footer />
-                <IntercomMessenger />
+                {/* <IntercomMessenger /> */}
                 {isPrd && (
                   <>
                     <SpeedInsights />

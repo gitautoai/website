@@ -7,7 +7,7 @@ export const javascriptCoverageJsonLd = {
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "@id": ABSOLUTE_URLS.GITAUTO.DOCS.COVERAGE.JAVASCRIPT + "#techarticle",
-  name: `${PRODUCT_NAME} JavaScript/TypeScript Coverage Setup`,
+  name: `${PRODUCT_NAME} JavaScript / TypeScript Coverage Setup`,
   description:
     "Configure Jest, Vitest, and other JavaScript testing frameworks for GitAuto automation",
   url: ABSOLUTE_URLS.GITAUTO.DOCS.COVERAGE.JAVASCRIPT,

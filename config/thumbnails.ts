@@ -38,4 +38,9 @@ export const THUMBNAILS = {
       FLUTTER: `${BASE_URL}/og/docs-coverage-flutter.png`,
     },
   },
+
+  // Blog
+  BLOG: {
+    INDEX: `${BASE_URL}/og/blog.png`,
+  },
 } as const;
