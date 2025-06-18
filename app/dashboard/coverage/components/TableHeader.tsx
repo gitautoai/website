@@ -1,7 +1,7 @@
 import { SortField, SortDirection, Metric } from "../types";
 import { getSortFieldForMetric } from "../utils/get-sort-field-for-metric";
 import { getMetricHeader } from "../utils/get-metric-header";
-import SortIcon from "@/app/components/icon/SortIcon";
+import SortIcon from "@/app/components/icons/SortIcon";
 
 interface TableHeaderProps {
   sortField: SortField;

@@ -4,7 +4,7 @@
 import { useState } from "react";
 
 // Local imports
-import ChevronIcon from "@/app/components/icon/Chevron";
+import ChevronIcon from "@/app/components/icons/Chevron";
 import { FAQItem, FAQS } from "@/config/faqs";
 import convertToLinks from "@/utils/convert-to-links";
 

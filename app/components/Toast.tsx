@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import CheckIcon from "./icon/CheckIcon";
-import SpinnerIcon from "./icon/SpinnerIcon";
-import XIcon from "./icon/XIcon";
+import CheckIcon from "./icons/CheckIcon";
+import SpinnerIcon from "./icons/SpinnerIcon";
+import XIcon from "./icons/XIcon";
 
 interface ToastProps {
   message: string;

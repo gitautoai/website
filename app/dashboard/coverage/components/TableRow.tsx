@@ -3,7 +3,7 @@ import { formatFileSize } from "@/utils/format-file-size";
 import { formatPercentage } from "@/utils/format-percentage";
 import { getLevelStyle } from "../utils/get-level-style";
 import { getMetricValue } from "../utils/get-metric-value";
-import ExternalLinkIcon from "@/app/components/icon/ExternalLinkIcon";
+import ExternalLinkIcon from "@/app/components/icons/ExternalLinkIcon";
 
 interface TableRowProps {
   item: CoverageData;
