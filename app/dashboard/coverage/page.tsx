@@ -34,7 +34,6 @@ import { handleCreateIssues } from "./handlers/handle-create-issues";
 import { handleSelectAll } from "./handlers/handle-select-all";
 import { handleSelectRow } from "./handlers/handle-select-row";
 import { handleSort } from "./handlers/handle-sort";
-import { coverageDashboardStructuredData } from "./jsonld";
 import { CoverageData, Metric, ParentIssue, SortDirection, SortField } from "./types";
 import { filterAndSortData } from "./utils/filter-and-sort-data";
 import { getSortFieldForMetric } from "./utils/get-sort-field-for-metric";

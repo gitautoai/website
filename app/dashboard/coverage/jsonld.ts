@@ -6,7 +6,7 @@ import { ABSOLUTE_URLS } from "@/config/urls";
 /**
  * @see https://schema.org/WebApplication
  */
-export const coverageDashboardStructuredData = {
+export const coverageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "@id": ABSOLUTE_URLS.GITAUTO.COVERAGE + "#webapplication",
