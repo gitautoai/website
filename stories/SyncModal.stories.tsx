@@ -30,21 +30,21 @@ type Story = StoryObj<typeof meta>;
 
 export const Loading: Story = {
   args: {
-    message: SYNC_MESSAGES.LOADING,
+    message: SYNC_MESSAGES.loading,
     type: "loading",
   },
 };
 
 export const Success: Story = {
   args: {
-    message: SYNC_MESSAGES.SUCCESS(15, 3, 0),
+    message: SYNC_MESSAGES.success,
     type: "success",
   },
 };
 
 export const Error: Story = {
   args: {
-    message: SYNC_MESSAGES.ERROR,
+    message: SYNC_MESSAGES.error,
     type: "error",
   },
 };
