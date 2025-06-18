@@ -4,6 +4,8 @@
 import { useEffect, useState } from "react";
 
 // Local imports
+import { getTriggerSettings } from "@/app/actions/supabase/get-trigger-settings";
+import { saveTriggerSettings } from "@/app/actions/supabase/save-trigger-settings";
 import { useAccountContext } from "@/app/components/Context/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
@@ -35,36 +37,8 @@ export default function TriggersPage() {
 
     try {
       setIsLoading(true);
-      const response = await fetch(
-        `/api/supabase/get-trigger-settings?ownerId=${currentOwnerId}&repoId=${currentRepoId}`
-      );
-      if (response.ok) {
-        const data = await response.json();
-
-        // Extract time with direct value
-        let scheduleTime = "09:00";
-
-        if (data.schedule_time) {
-          // If schedule time is in "HH:MM:SS+00" format
-          if (typeof data.schedule_time === "string" && data.schedule_time.includes(":")) {
-            // Use only the first two parts to get "HH:MM" format
-            const parts = data.schedule_time.split(":");
-            if (parts.length >= 2) {
-              scheduleTime = `${parts[0].padStart(2, "0")}:${parts[1].padStart(2, "0")}`;
-            }
-          }
-        }
-
-        setTriggerSettings({
-          triggerOnReviewComment: data.trigger_on_review_comment || false,
-          triggerOnTestFailure: data.trigger_on_test_failure || false,
-          triggerOnCommit: data.trigger_on_commit || false,
-          triggerOnMerged: data.trigger_on_merged || false,
-          triggerOnSchedule: data.trigger_on_schedule || false,
-          scheduleTime: scheduleTime || "09:00", // 常に値が存在することを保証
-          scheduleIncludeWeekends: data.schedule_include_weekends || false,
-        });
-      }
+      const settings = await getTriggerSettings(currentOwnerId, currentRepoId);
+      setTriggerSettings(settings);
     } catch (error) {
       console.error("Failed to fetch trigger settings:", error);
     } finally {
@@ -77,46 +51,18 @@ export default function TriggersPage() {
   }, [currentOwnerId, currentRepoId]);
 
   const saveSettings = async (updatedSettings: TriggerSettings) => {
-    if (!currentOwnerId || !currentRepoId || !userId) return;
+    if (!currentOwnerId || !currentRepoId || !currentRepoName || !userId) return;
 
     try {
       setIsSaving(true);
-
-      // Parse the time string to get hours and minutes
-      let scheduleHours = 12;
-      let scheduleMinutes = 0;
-
-      if (updatedSettings.scheduleTime) {
-        const [hours, minutes] = updatedSettings.scheduleTime.split(":").map(Number);
-        scheduleHours = hours;
-        scheduleMinutes = minutes;
-      }
-
-      const response = await fetch("/api/supabase/save-trigger-settings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ownerId: currentOwnerId,
-          repoId: currentRepoId,
-          repoName: currentRepoName,
-          userId,
-          userName,
-          triggerOnReviewComment: updatedSettings.triggerOnReviewComment,
-          triggerOnTestFailure: updatedSettings.triggerOnTestFailure,
-          triggerOnCommit: updatedSettings.triggerOnCommit,
-          triggerOnMerged: updatedSettings.triggerOnMerged,
-          triggerOnSchedule: updatedSettings.triggerOnSchedule,
-          scheduleFrequency: "daily",
-          scheduleTime: updatedSettings.scheduleTime,
-          scheduleIncludeWeekends: updatedSettings.scheduleIncludeWeekends,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to save trigger settings");
-      }
+      await saveTriggerSettings(
+        currentOwnerId,
+        currentRepoId,
+        currentRepoName,
+        userId,
+        userName,
+        updatedSettings
+      );
     } catch (error) {
       console.error("Error saving trigger settings:", error);
     } finally {
