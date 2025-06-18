@@ -1,8 +1,10 @@
 "use client";
 // Third-party imports
-import { useCallback, useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useTransition } from "react";
 
 // Local imports
+import { getRepositorySettings } from "@/app/actions/supabase/get-repository-settings";
+import { saveRepositorySettings } from "@/app/actions/supabase/save-repository-settings";
 import { Branch } from "@/app/api/github/get-branches/route";
 import { useAccountContext } from "@/app/components/Context/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
@@ -16,13 +18,20 @@ import { countTokens } from "@/utils/tokens";
 
 export default function RulesPage() {
   // Account context
-  const { currentRepoName, currentOwnerName, loadSettings, saveSettings, accessToken } =
-    useAccountContext();
+  const {
+    currentOwnerId,
+    currentOwnerName,
+    currentRepoId,
+    currentRepoName,
+    userId,
+    userName,
+    accessToken,
+  } = useAccountContext();
 
   // UI states
   const [isLoading, setIsLoading] = useState(false);
   const [isBranchLoading, setIsBranchLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   // Form data
@@ -38,7 +47,7 @@ export default function RulesPage() {
 
   // Load initial settings
   useEffect(() => {
-    if (!currentRepoName || !currentOwnerName) {
+    if (!currentOwnerId || !currentRepoId) {
       setIsLoading(false);
       return;
     }
@@ -48,7 +57,7 @@ export default function RulesPage() {
       try {
         setError(null);
         setIsLoading(true);
-        const data = await loadSettings(currentOwnerName, currentRepoName);
+        const data = await getRepositorySettings(currentOwnerId, currentRepoId);
         if (data) {
           const newSettings: RulesSettings = {
             repoRules: data.repo_rules || "",
@@ -68,7 +77,7 @@ export default function RulesPage() {
     };
 
     loadFormData();
-  }, [currentRepoName, currentOwnerName, loadSettings]);
+  }, [currentOwnerId, currentRepoId]);
 
   // Load branches when repository changes
   useEffect(() => {
@@ -135,25 +144,27 @@ export default function RulesPage() {
   }, []);
 
   // Save handler
-  const handleSave = useCallback(async () => {
-    if (!currentOwnerName || !currentRepoName) return;
+  const handleSave = () => {
+    if (!currentOwnerId || !currentRepoId || !currentRepoName || !userId) return;
 
-    setIsSaving(true);
     setError(null);
-    const startTime = performance.now();
 
-    try {
-      const result = await saveSettings(formData);
-      if (!result) throw new Error("Failed to save settings");
-    } catch (error) {
-      setError("Failed to save settings. Please try again later.");
-      console.error("Error saving settings:", error);
-    } finally {
-      setIsSaving(false);
-      const endTime = performance.now();
-      console.log(`Rules page saveSettings time: ${endTime - startTime}ms`);
-    }
-  }, [currentOwnerName, currentRepoName, saveSettings, formData]);
+    startTransition(async () => {
+      try {
+        await saveRepositorySettings(
+          currentOwnerId,
+          currentRepoId,
+          currentRepoName,
+          userId,
+          userName,
+          formData
+        );
+      } catch (error) {
+        setError("Failed to save settings. Please try again later.");
+        console.error("Error saving settings:", error);
+      }
+    });
+  };
 
   // Memoized rule section renderer
   const renderRuleSection = useCallback(
@@ -168,10 +179,10 @@ export default function RulesPage() {
             placeholder={RULES_CONTENT.repoRules.placeholder}
             maxLength={PLAN_LIMITS.STANDARD.maxChars}
             rows={10}
-            disabled={isSaving || isLoading}
+            disabled={isPending || isLoading}
             className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-pink-600"
           />
-          {isSaving && (
+          {isPending && (
             <div className="absolute right-2 top-2">
               <div className="w-4 h-4 border-2 border-pink-500 border-t-transparent rounded-full animate-spin" />
             </div>
@@ -191,7 +202,7 @@ export default function RulesPage() {
         </div>
       </div>
     ),
-    [formData, handleFieldChange, isSaving, isLoading, tokenCounts]
+    [formData, handleFieldChange, isPending, isLoading, tokenCounts]
   );
 
   return (
@@ -232,7 +243,7 @@ export default function RulesPage() {
         <div className="space-y-6">
           {renderRuleSection("repoRules")}
           <div className="mt-6">
-            <SaveButton onClick={handleSave} isSaving={isSaving} />
+            <SaveButton onClick={handleSave} isSaving={isPending} />
           </div>
         </div>
 

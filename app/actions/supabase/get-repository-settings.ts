@@ -1,14 +1,9 @@
+"use server";
+
 import { supabase } from "@/lib/supabase";
-import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+export async function getRepositorySettings(ownerId: number, repoId: number) {
   try {
-    const { searchParams } = new URL(request.url);
-    const ownerId = searchParams.get("ownerId");
-    const repoId = searchParams.get("repoId");
-    if (!ownerId || !repoId)
-      return NextResponse.json({ error: "Missing parameters" }, { status: 400 });
-
     const { data: settings, error: settingsError } = await supabase
       .from("repositories")
       .select("*")
@@ -18,7 +13,7 @@ export async function GET(request: Request) {
 
     if (!settings) {
       console.log("No settings found, returning default values");
-      return NextResponse.json({
+      return {
         use_screenshots: false,
         production_url: "",
         local_port: 8080,
@@ -28,12 +23,14 @@ export async function GET(request: Request) {
         org_rules: "",
         repo_rules: "",
         user_rules: "",
-      });
+        target_branch: "",
+      };
     }
 
     if (settingsError) throw settingsError;
-    return NextResponse.json(settings);
+    return settings;
   } catch (error) {
-    return NextResponse.json({ error: "Failed to load settings" }, { status: 500 });
+    console.error("Failed to load settings:", error);
+    throw new Error("Failed to load settings");
   }
 }

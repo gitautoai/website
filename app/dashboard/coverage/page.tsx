@@ -144,7 +144,15 @@ export default function CoveragePage() {
     };
 
     loadDataAndSync();
-  }, [currentOwnerId, currentRepoId, currentOwnerName, currentRepoName, accessToken, userId]);
+  }, [
+    currentOwnerId,
+    currentRepoId,
+    currentOwnerName,
+    currentRepoName,
+    accessToken,
+    userId,
+    userName,
+  ]);
 
   // Load selected level from localStorage if it exists
   useEffect(() => {

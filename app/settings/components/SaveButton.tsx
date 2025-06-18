@@ -1,7 +1,7 @@
 import React from "react";
 
 interface SaveButtonProps {
-  onClick: () => Promise<void>;
+  onClick: () => void;
   isSaving: boolean;
   disabled?: boolean;
   className?: string;
