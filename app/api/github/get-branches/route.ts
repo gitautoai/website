@@ -49,8 +49,6 @@ export async function POST(request: Request) {
       isDefault: branch.name === repo.default_branch,
     }));
 
-    console.log({ formattedBranches });
-
     return NextResponse.json(formattedBranches);
   } catch (error) {
     console.error("Error fetching branches:", error);

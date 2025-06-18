@@ -1,18 +1,24 @@
-import { AUDIENCE, CREATOR } from "@/app/jsonld";
+import { AUDIENCE, CREATOR, OFFERS } from "@/app/jsonld";
 import { PRODUCT_NAME } from "@/config";
+import { THUMBNAILS } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
-
-const DESCRIPTION =
-  "Configure GitAuto automation rules, file patterns, and testing preferences for your repositories.";
 
 export const rulesJsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "@id": ABSOLUTE_URLS.GITAUTO.SETTINGS.RULES + "#webpage",
+  "@type": "WebApplication",
+  "@id": ABSOLUTE_URLS.GITAUTO.SETTINGS.RULES + "#webapplication",
   name: `${PRODUCT_NAME} Rules Settings`,
-  description: DESCRIPTION,
+  description: "Configure custom rules and coding standards for automated test generation",
   url: ABSOLUTE_URLS.GITAUTO.SETTINGS.RULES,
   creator: CREATOR,
   audience: AUDIENCE,
-  about: { "@type": "Thing", name: "Automation Rules", description: DESCRIPTION },
+  applicationCategory: "DeveloperApplication",
+  featureList: [
+    "Define repository-specific rules",
+    "Set coding standards",
+    "Configure target branch",
+    "Customize test patterns",
+  ],
+  screenshot: THUMBNAILS.SETTINGS.RULES,
+  offers: OFFERS,
 };

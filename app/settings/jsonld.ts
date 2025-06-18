@@ -1,5 +1,6 @@
-import { AUDIENCE, CREATOR } from "@/app/jsonld";
+import { AUDIENCE, CREATOR, OFFERS } from "@/app/jsonld";
 import { PRODUCT_NAME } from "@/config";
+import { THUMBNAILS } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 /**
@@ -10,14 +11,18 @@ export const settingsJsonLd = {
   "@type": "WebApplication",
   "@id": ABSOLUTE_URLS.GITAUTO.SETTINGS.INDEX + "#webapplication",
   name: `${PRODUCT_NAME} Settings`,
-  description:
-    "Configure GitAuto settings for your repositories. Set up triggers, rules, integrations, and customize automated testing behavior.",
+  description: "Configure GitAuto account settings, integrations, and automation preferences",
   url: ABSOLUTE_URLS.GITAUTO.SETTINGS.INDEX,
-  applicationCategory: "DeveloperApplication",
-  applicationSubCategory: "Configuration Dashboard",
-  operatingSystem: "All",
-  browserRequirements: "Modern web browser with JavaScript enabled",
   creator: CREATOR,
-  applicationSuite: "GitAuto QA Automation Platform",
   audience: AUDIENCE,
+  applicationCategory: "DeveloperApplication",
+  featureList: [
+    "Account management",
+    "GitHub integration",
+    "Jira integration",
+    "Automation preferences",
+    "Repository settings",
+  ],
+  screenshot: THUMBNAILS.SETTINGS.INDEX,
+  offers: OFFERS,
 };

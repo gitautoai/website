@@ -12,7 +12,6 @@ import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import SaveButton from "@/app/settings/components/SaveButton";
 import { PLAN_LIMITS } from "@/app/settings/constants/plans";
 import { RULES_CONTENT } from "@/app/settings/constants/rulesDefaults";
-import { rulesJsonLd } from "@/app/settings/rules/jsonld";
 import { RulesSettings } from "@/app/settings/types";
 import { countTokens } from "@/utils/tokens";
 
@@ -206,49 +205,41 @@ export default function RulesPage() {
   );
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(rulesJsonLd) }}
-      />
-      <div className="relative min-h-screen">
-        <h1 className="text-3xl font-bold mb-6">Rules Settings</h1>
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
-            {error}
-          </div>
-        )}
-        <RepositorySelector />
-
-        {/* Branch selector */}
-        <div className="mt-4 mb-6 w-48">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Target Branch</label>
-          <select
-            value={formData.targetBranch}
-            onChange={(e) => handleFieldChange("targetBranch", e.target.value)}
-            className={`w-full p-2 border rounded-lg ${
-              isBranchLoading ? "bg-gray-100" : "bg-white"
-            }`}
-            disabled={isBranchLoading || !currentRepoName || !currentOwnerName}
-          >
-            <option value="">Select Branch</option>
-            {branches.map((branch) => (
-              <option key={branch.name} value={branch.name}>
-                {branch.name} {branch.isDefault ? "(default)" : ""}
-              </option>
-            ))}
-          </select>
+    <div className="relative min-h-screen">
+      <h1 className="text-3xl font-bold mb-6">Rules Settings</h1>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          {error}
         </div>
+      )}
+      <RepositorySelector />
 
-        <div className="space-y-6">
-          {renderRuleSection("repoRules")}
-          <div className="mt-6">
-            <SaveButton onClick={handleSave} isSaving={isPending} />
-          </div>
-        </div>
-
-        {isLoading && <LoadingSpinner />}
+      {/* Branch selector */}
+      <div className="mt-4 mb-6 w-48">
+        <label className="block text-sm font-medium text-gray-700 mb-2">Target Branch</label>
+        <select
+          value={formData.targetBranch}
+          onChange={(e) => handleFieldChange("targetBranch", e.target.value)}
+          className={`w-full p-2 border rounded-lg ${isBranchLoading ? "bg-gray-100" : "bg-white"}`}
+          disabled={isBranchLoading || !currentRepoName || !currentOwnerName}
+        >
+          <option value="">Select Branch</option>
+          {branches.map((branch) => (
+            <option key={branch.name} value={branch.name}>
+              {branch.name} {branch.isDefault ? "(default)" : ""}
+            </option>
+          ))}
+        </select>
       </div>
-    </>
+
+      <div className="space-y-6">
+        {renderRuleSection("repoRules")}
+        <div className="mt-6">
+          <SaveButton onClick={handleSave} isSaving={isPending} />
+        </div>
+      </div>
+
+      {isLoading && <LoadingSpinner />}
+    </div>
   );
 }
