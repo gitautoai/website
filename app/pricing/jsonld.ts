@@ -5,7 +5,7 @@ import { ABSOLUTE_URLS } from "@/config/urls";
 /**
  * @see https://schema.org/Product
  */
-export const pricingStructuredData = {
+export const pricingJsonLd = {
   "@context": "https://schema.org",
   "@type": "Product",
   "@id": ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS + "#product",

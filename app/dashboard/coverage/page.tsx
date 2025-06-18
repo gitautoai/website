@@ -186,162 +186,156 @@ export default function CoveragePage() {
   };
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(coverageDashboardStructuredData) }}
-      />
-      <div className="relative min-h-screen">
-        <div className="w-7/12 md:w-auto flex items-center gap-2 mb-6">
-          <h1 className="text-3xl font-bold">Coverage Dashboard</h1>
-          <DocsLink />
-        </div>
-
-        <ErrorBanner error={error} />
-        <RepositorySelector />
-
-        {/* Filters */}
-        <div className="mt-4 md:mt-6 grid grid-cols-2 gap-4 md:flex md:flex-wrap md:gap-4 md:items-end">
-          {hasPackages && (
-            <div className="col-span-2 md:col-span-1">
-              <FilterSelect
-                label="Package Name"
-                value={selectedPackage}
-                onChange={setSelectedPackage}
-                options={createPackageOptions(packageNames)}
-                disabled={isLoadingDB}
-              />
-            </div>
-          )}
-
-          <FilterSelect
-            label="Level"
-            value={selectedLevel}
-            onChange={handleLevelChange}
-            options={createLevelOptions(levels)}
-            disabled={isLoadingDB}
-          />
-
-          <FilterSelect
-            label="Coverage Filter"
-            value={hideFullCoverage}
-            onChange={(value) => setHideFullCoverage(value as "all" | "hide")}
-            options={COVERAGE_FILTER_OPTIONS}
-            disabled={isLoadingDB}
-          />
-
-          <div className="md:hidden">
-            <FilterSelect
-              label="Coverage Metric"
-              value={selectedMobileMetric}
-              onChange={(value) => {
-                const newMetric = value as Metric;
-                setSelectedMobileMetric(newMetric);
-                setSortField(getSortFieldForMetric(newMetric));
-                setSortDirection("desc");
-              }}
-              options={MOBILE_METRIC_OPTIONS}
-            />
-          </div>
-
-          <div className="relative">
-            <FilterSelect
-              label="Parent Issue (Optional)"
-              value={selectedParentIssue?.number.toString() || ""}
-              onChange={(value) => {
-                const issue = openIssues.find((i) => i.number.toString() === value);
-                setSelectedParentIssue(issue || null);
-              }}
-              options={createParentIssueOptions(openIssues)}
-              disabled={isLoadingIssues}
-            />
-          </div>
-
-          <ActionsDropdown
-            isOpen={isActionsOpen}
-            onToggle={() => setIsActionsOpen(!isActionsOpen)}
-            selectedRows={selectedRows}
-            isCreatingIssues={isCreatingIssues}
-            onCreateIssues={(hasLabel) => {
-              if (!currentOwnerName || !currentRepoName || !accessToken) {
-                setError("Missing required repository information");
-                return;
-              }
-
-              handleCreateIssues({
-                selectedRows,
-                coverageData,
-                currentOwnerName,
-                currentRepoName,
-                accessToken,
-                selectedParentIssue,
-                hasLabel,
-                setCoverageData,
-                setSelectedRows,
-                setActionSuccess,
-                setError,
-                setIsCreatingIssues,
-              });
-            }}
-          />
-        </div>
-
-        <div className="mt-4 md:mt-6">
-          <CoverageStats filteredData={filteredData} coverageData={coverageData} />
-
-          <div className="overflow-x-auto">
-            <div className="max-h-[90vh] overflow-y-auto">
-              <table className="w-full bg-white border table-fixed">
-                <TableHeader
-                  sortField={sortField}
-                  sortDirection={sortDirection}
-                  onSort={(field) =>
-                    handleSort(field, sortField, sortDirection, setSortField, setSortDirection)
-                  }
-                  selectedMobileMetric={selectedMobileMetric}
-                  selectedRows={selectedRows}
-                  filteredData={filteredData}
-                  onSelectAll={() => handleSelectAll(filteredData, selectedRows, setSelectedRows)}
-                />
-                <tbody>
-                  {filteredData.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="py-4 px-4 text-center border">
-                        No coverage data available
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredData.map((item) => (
-                      <TableRow
-                        key={item.id}
-                        item={item}
-                        selectedRows={selectedRows}
-                        onSelectRow={(id) => handleSelectRow(selectedRows, setSelectedRows, id)}
-                        selectedMobileMetric={selectedMobileMetric}
-                      />
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        {isLoadingDB && <LoadingSpinner />}
-
-        {actionSuccess && (
-          <Toast
-            message="Action completed successfully!"
-            type="success"
-            onClose={() => setActionSuccess(false)}
-          />
-        )}
-
-        {/* If no data exists: show modal in the center of the screen */}
-        {!isLoadingDB && coverageData.length === 0 && gitHubSyncStatus && (
-          <SyncModal message={SYNC_MESSAGES[gitHubSyncStatus]} type={gitHubSyncStatus} />
-        )}
+    <div className="relative min-h-screen">
+      <div className="w-7/12 md:w-auto flex items-center gap-2 mb-6">
+        <h1 className="text-3xl font-bold">Coverage Dashboard</h1>
+        <DocsLink />
       </div>
-    </>
+
+      <ErrorBanner error={error} />
+      <RepositorySelector />
+
+      {/* Filters */}
+      <div className="mt-4 md:mt-6 grid grid-cols-2 gap-4 md:flex md:flex-wrap md:gap-4 md:items-end">
+        {hasPackages && (
+          <div className="col-span-2 md:col-span-1">
+            <FilterSelect
+              label="Package Name"
+              value={selectedPackage}
+              onChange={setSelectedPackage}
+              options={createPackageOptions(packageNames)}
+              disabled={isLoadingDB}
+            />
+          </div>
+        )}
+
+        <FilterSelect
+          label="Level"
+          value={selectedLevel}
+          onChange={handleLevelChange}
+          options={createLevelOptions(levels)}
+          disabled={isLoadingDB}
+        />
+
+        <FilterSelect
+          label="Coverage Filter"
+          value={hideFullCoverage}
+          onChange={(value) => setHideFullCoverage(value as "all" | "hide")}
+          options={COVERAGE_FILTER_OPTIONS}
+          disabled={isLoadingDB}
+        />
+
+        <div className="md:hidden">
+          <FilterSelect
+            label="Coverage Metric"
+            value={selectedMobileMetric}
+            onChange={(value) => {
+              const newMetric = value as Metric;
+              setSelectedMobileMetric(newMetric);
+              setSortField(getSortFieldForMetric(newMetric));
+              setSortDirection("desc");
+            }}
+            options={MOBILE_METRIC_OPTIONS}
+          />
+        </div>
+
+        <div className="relative">
+          <FilterSelect
+            label="Parent Issue (Optional)"
+            value={selectedParentIssue?.number.toString() || ""}
+            onChange={(value) => {
+              const issue = openIssues.find((i) => i.number.toString() === value);
+              setSelectedParentIssue(issue || null);
+            }}
+            options={createParentIssueOptions(openIssues)}
+            disabled={isLoadingIssues}
+          />
+        </div>
+
+        <ActionsDropdown
+          isOpen={isActionsOpen}
+          onToggle={() => setIsActionsOpen(!isActionsOpen)}
+          selectedRows={selectedRows}
+          isCreatingIssues={isCreatingIssues}
+          onCreateIssues={(hasLabel) => {
+            if (!currentOwnerName || !currentRepoName || !accessToken) {
+              setError("Missing required repository information");
+              return;
+            }
+
+            handleCreateIssues({
+              selectedRows,
+              coverageData,
+              currentOwnerName,
+              currentRepoName,
+              accessToken,
+              selectedParentIssue,
+              hasLabel,
+              setCoverageData,
+              setSelectedRows,
+              setActionSuccess,
+              setError,
+              setIsCreatingIssues,
+            });
+          }}
+        />
+      </div>
+
+      <div className="mt-4 md:mt-6">
+        <CoverageStats filteredData={filteredData} coverageData={coverageData} />
+
+        <div className="overflow-x-auto">
+          <div className="max-h-[90vh] overflow-y-auto">
+            <table className="w-full bg-white border table-fixed">
+              <TableHeader
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={(field) =>
+                  handleSort(field, sortField, sortDirection, setSortField, setSortDirection)
+                }
+                selectedMobileMetric={selectedMobileMetric}
+                selectedRows={selectedRows}
+                filteredData={filteredData}
+                onSelectAll={() => handleSelectAll(filteredData, selectedRows, setSelectedRows)}
+              />
+              <tbody>
+                {filteredData.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-4 px-4 text-center border">
+                      No coverage data available
+                    </td>
+                  </tr>
+                ) : (
+                  filteredData.map((item) => (
+                    <TableRow
+                      key={item.id}
+                      item={item}
+                      selectedRows={selectedRows}
+                      onSelectRow={(id) => handleSelectRow(selectedRows, setSelectedRows, id)}
+                      selectedMobileMetric={selectedMobileMetric}
+                    />
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {isLoadingDB && <LoadingSpinner />}
+
+      {actionSuccess && (
+        <Toast
+          message="Action completed successfully!"
+          type="success"
+          onClose={() => setActionSuccess(false)}
+        />
+      )}
+
+      {/* If no data exists: show modal in the center of the screen */}
+      {!isLoadingDB && coverageData.length === 0 && gitHubSyncStatus && (
+        <SyncModal message={SYNC_MESSAGES[gitHubSyncStatus]} type={gitHubSyncStatus} />
+      )}
+    </div>
   );
 }
