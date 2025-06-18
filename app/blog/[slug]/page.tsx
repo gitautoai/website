@@ -1,14 +1,15 @@
 import { notFound } from "next/navigation";
 import { getBlogPostFromPosts } from "../utils/get-blog-post-from-posts";
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
-  const post = await getBlogPostFromPosts(params.slug);
+export default async function BlogPost({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getBlogPostFromPosts(slug);
 
   if (!post) notFound();
 
   // Avoid React errors by dynamically importing the MDX file
   try {
-    const MDXContent = await import(`../posts/${params.slug}.mdx`).then((mod) => mod.default);
+    const MDXContent = await import(`../posts/${slug}.mdx`).then((mod) => mod.default);
 
     return (
       <article>
@@ -16,7 +17,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
       </article>
     );
   } catch (error) {
-    console.error(`Error loading MDX for ${params.slug}:`, error);
+    console.error(`Error loading MDX for ${slug}:`, error);
     notFound();
   }
 }
