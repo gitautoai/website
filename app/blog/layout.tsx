@@ -29,7 +29,7 @@ export default function BlogLayout({
   return (
     <>
       <JsonLdScript data={blogJsonLd} id="jsonld-blog" />
-      <div className="px-5 md:px-52 pt-28 md:pt-36 pb-20 md:pb-36">{children}</div>
+      <div className="px-2 md:px-52 pt-28 md:pt-36 pb-20 md:pb-36">{children}</div>
     </>
   );
 }

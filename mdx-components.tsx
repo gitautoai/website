@@ -79,13 +79,13 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ol: ({ children }) => (
       <ol
         type="1"
-        className="list-decimal list-outside space-y-1 md:space-y-1 py-3 pl-5 text-base md:text-lg"
+        className="list-decimal list-outside space-y-1 md:space-y-1 py-3 ml-5 text-base md:text-lg"
       >
         {children}
       </ol>
     ),
     ul: ({ children }) => (
-      <ul className="list-disc list-outside space-y-1 md:space-y-1 py-2 pl-4 text-base md:text-lg">
+      <ul className="list-disc list-outside space-y-1 md:space-y-1 py-2 ml-4 text-base md:text-lg">
         {children}
       </ul>
     ),
