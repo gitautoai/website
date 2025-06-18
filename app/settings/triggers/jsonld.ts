@@ -1,5 +1,6 @@
-import { AUDIENCE, CREATOR } from "@/app/jsonld";
+import { AUDIENCE, CREATOR, OFFERS } from "@/app/jsonld";
 import { PRODUCT_NAME } from "@/config";
+import { THUMBNAILS } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 const DESCRIPTION =
@@ -7,12 +8,20 @@ const DESCRIPTION =
 
 export const triggersJsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "@id": ABSOLUTE_URLS.GITAUTO.SETTINGS.TRIGGERS + "#webpage",
+  "@type": "WebApplication",
+  "@id": ABSOLUTE_URLS.GITAUTO.SETTINGS.TRIGGERS + "#webapplication",
   name: `${PRODUCT_NAME} Trigger Settings`,
   description: DESCRIPTION,
   url: ABSOLUTE_URLS.GITAUTO.SETTINGS.TRIGGERS,
   creator: CREATOR,
   audience: AUDIENCE,
-  about: { "@type": "Thing", name: "Automated Testing Triggers", description: DESCRIPTION },
+  applicationCategory: "DeveloperApplication",
+  featureList: [
+    "Review comment triggers",
+    "Test failure handling",
+    "Commit-based automation",
+    "Scheduled test generation",
+  ],
+  screenshot: THUMBNAILS.SETTINGS.TRIGGERS,
+  offers: OFFERS,
 };

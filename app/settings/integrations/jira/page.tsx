@@ -2,7 +2,6 @@
 
 import { JiraForm } from "./JiraForm";
 import { JiraHeader } from "./JiraHeader";
-import { jiraIntegrationJsonLd } from "./jsonld";
 import { useIntegrations } from "./useIntegrations";
 import { useRows } from "./useRows";
 
@@ -12,10 +11,6 @@ export default function JiraIntegrationPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jiraIntegrationJsonLd) }}
-      />
       <h1 className="text-3xl font-bold">Jira Integration</h1>
 
       <div className="space-y-8">

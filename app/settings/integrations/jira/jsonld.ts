@@ -1,5 +1,6 @@
-import { AUDIENCE, CREATOR } from "@/app/jsonld";
+import { AUDIENCE, CREATOR, OFFERS } from "@/app/jsonld";
 import { PRODUCT_NAME } from "@/config";
+import { THUMBNAILS } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 const DESCRIPTION =
@@ -7,12 +8,20 @@ const DESCRIPTION =
 
 export const jiraIntegrationJsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "@id": ABSOLUTE_URLS.GITAUTO.SETTINGS.INTEGRATIONS.JIRA + "#webpage",
+  "@type": "WebApplication",
+  "@id": ABSOLUTE_URLS.GITAUTO.SETTINGS.INTEGRATIONS.JIRA + "#webapplication",
   name: `${PRODUCT_NAME} Jira Integration`,
   description: DESCRIPTION,
   url: ABSOLUTE_URLS.GITAUTO.SETTINGS.INTEGRATIONS.JIRA,
   creator: CREATOR,
   audience: AUDIENCE,
-  about: { "@type": "Thing", name: "Jira Integration", description: DESCRIPTION },
+  applicationCategory: "DeveloperApplication",
+  featureList: [
+    "Connect Jira sites",
+    "Link GitHub repositories",
+    "Automated issue tracking",
+    "Workflow integration",
+  ],
+  screenshot: THUMBNAILS.SETTINGS.INTEGRATIONS.JIRA,
+  offers: OFFERS,
 };
