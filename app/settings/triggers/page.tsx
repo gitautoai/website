@@ -29,25 +29,20 @@ export default function TriggersPage() {
     scheduleIncludeWeekends: false,
   });
 
-  const fetchSettings = async () => {
-    if (!currentOwnerId || !currentRepoId) {
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      const settings = await getTriggerSettings(currentOwnerId, currentRepoId);
-      setTriggerSettings(settings);
-    } catch (error) {
-      console.error("Failed to fetch trigger settings:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchSettings();
+    if (!currentOwnerId || !currentRepoId) return;
+
+    (async () => {
+      try {
+        setIsLoading(true);
+        const settings = await getTriggerSettings(currentOwnerId, currentRepoId);
+        setTriggerSettings(settings);
+      } catch (error) {
+        console.error("Failed to fetch trigger settings:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   }, [currentOwnerId, currentRepoId]);
 
   const saveSettings = async (updatedSettings: TriggerSettings) => {
@@ -118,7 +113,19 @@ export default function TriggersPage() {
   };
 
   const handleRepoChange = () => {
-    fetchSettings();
+    if (!currentOwnerId || !currentRepoId) return;
+
+    (async () => {
+      try {
+        setIsLoading(true);
+        const settings = await getTriggerSettings(currentOwnerId, currentRepoId);
+        setTriggerSettings(settings);
+      } catch (error) {
+        console.error("Failed to fetch trigger settings:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   };
 
   // Function to get timezone information
