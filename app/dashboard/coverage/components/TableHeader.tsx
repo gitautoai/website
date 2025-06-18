@@ -70,7 +70,7 @@ export default function TableHeader({
           Path
         </HeaderCell>
 
-        <HeaderCell field="file_size" className="hidden md:table-cell w-20 text-center">
+        <HeaderCell field="file_size" className="hidden md:table-cell w-24 text-center">
           Size
         </HeaderCell>
 
