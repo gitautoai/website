@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getBlogPosts } from "@/lib/blog";
+import { getBlogPosts } from "@/app/blog/utils/get-blog-posts";
 
 export default async function BlogIndex() {
   const posts = await getBlogPosts();

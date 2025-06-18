@@ -1,4 +1,3 @@
-import InstallButton from "@/app/components/Button/Install";
 import JsonLdScript from "@/app/components/JsonLdScript";
 import { PRODUCT_NAME } from "@/config";
 import { THUMBNAILS } from "@/config/thumbnails";
@@ -30,20 +29,7 @@ export default function BlogLayout({
   return (
     <>
       <JsonLdScript data={blogJsonLd} id="jsonld-blog" />
-      <div className="px-5 md:px-52 pt-28 md:pt-36 pb-20 md:pb-36">
-        {children}
-        <div className="flex flex-col items-center justify-center gap-4 text-center mt-20 md:mt-36 border-t pt-20 md:pt-36">
-          <h2 className="text-2xl font-bold">Want to ship 500x faster?</h2>
-          <p className="max-w-2xl">
-            GitAuto is your AI coding agent that turns backlog tickets into pull requests in just 3
-            minutes for $10 - making it 500x faster and 99.5% cheaper.
-          </p>
-          <div className="w-fit">
-            <InstallButton text="Install GitAuto" />
-          </div>
-          <p>It requires GitHub sign-in.</p>
-        </div>
-      </div>
+      <div className="px-5 md:px-52 pt-28 md:pt-36 pb-20 md:pb-36">{children}</div>
     </>
   );
 }
