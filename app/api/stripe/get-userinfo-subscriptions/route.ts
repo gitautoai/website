@@ -37,7 +37,10 @@ export async function POST(req: NextRequest) {
     const booleanMapping = await Promise.all(subscriptionPromises);
 
     const endTime = performance.now();
-    console.log(`Subscription check execution time: ${endTime - startTime}ms`);
+    const executionTime = endTime - startTime;
+    if (executionTime > 1000) {
+      console.log(`Subscription check execution time: ${executionTime}ms`);
+    }
 
     return NextResponse.json(booleanMapping, { status: 200, headers });
   } catch (err: any) {

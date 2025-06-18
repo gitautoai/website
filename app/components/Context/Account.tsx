@@ -1,6 +1,6 @@
 "use client";
+
 // Third party imports
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { createContext, useContext, useState, useEffect } from "react";
 import useSWR from "swr";

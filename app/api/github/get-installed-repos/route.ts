@@ -22,7 +22,6 @@ export async function POST(request: Request) {
 
   try {
     const { installationIds } = await request.json();
-    console.log("installationIds: ", installationIds);
 
     if (!installationIds || !Array.isArray(installationIds) || installationIds.length === 0) {
       return NextResponse.json({ error: "Valid installation IDs are required" }, { status: 400 });
@@ -34,7 +33,6 @@ export async function POST(request: Request) {
     const now = Date.now();
 
     if (cachedItem && now - cachedItem.timestamp < CACHE_TTL) {
-      console.log("Returning cached GitHub repositories data");
       return NextResponse.json(cachedItem.data, { headers });
     }
 
@@ -86,7 +84,6 @@ export async function POST(request: Request) {
 
     // Filter out null results
     const validOrganizations = organizations.filter((org) => org !== null);
-    console.log("validOrganizations.length: ", validOrganizations.length);
 
     // Cache the response
     if (validOrganizations.length > 0) {
@@ -102,6 +99,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to fetch repositories" }, { status: 500 });
   } finally {
     const endTime = performance.now();
-    console.log(`get-installed-repos execution time: ${endTime - startTime}ms`);
+    const executionTime = endTime - startTime;
+    if (executionTime > 1000) {
+      console.log(`get-installed-repos execution time: ${executionTime}ms`);
+    }
   }
 }

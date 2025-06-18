@@ -39,3 +39,7 @@ next-env.d.ts
 prisma/.env
 
 /utils/nikita*
+
+# storybook
+*storybook.log
+storybook-static

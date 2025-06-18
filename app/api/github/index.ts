@@ -3,7 +3,7 @@ import { createAppAuth } from "@octokit/auth-app";
 import { graphql } from "@octokit/graphql";
 
 // Cache Octokit instances
-const octokitCache = new Map();
+const octokitCache = new Map<string, Octokit>();
 
 export const getOctokitForInstallation = async (installationId: number) => {
   const cacheKey = `octokit-${installationId}`;
