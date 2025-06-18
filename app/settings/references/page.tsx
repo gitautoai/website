@@ -1,26 +1,30 @@
 "use client";
 // Third-party imports
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useTransition } from "react";
 
-// Local imports
+// Local imports (Absolute imports)
+import { getRepositorySettings } from "@/app/actions/supabase/get-repository-settings";
+import { saveRepositorySettings } from "@/app/actions/supabase/save-repository-settings";
+import { useAccountContext } from "@/app/components/Context/Account";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
+
+// Local imports (Relative imports)
 import RepositorySelector from "../components/RepositorySelector";
 import SaveButton from "../components/SaveButton";
 import { PLAN_LIMITS } from "../constants/plans";
 import { ReferenceSettings } from "../types";
 import { referencesJsonLd } from "./jsonld";
-import { useAccountContext } from "@/app/components/Context/Account";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
 
 export default function ReferencesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { currentOwnerId, currentOwnerName, currentRepoName, loadSettings, saveSettings } =
+  const { currentOwnerId, currentOwnerName, currentRepoId, currentRepoName, userId, userName } =
     useAccountContext();
   const [settings, setSettings] = useState<ReferenceSettings>({
     webUrls: [""],
     filePaths: [""],
   });
-  const [isSaving, setIsSaving] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [urlValidationStatus, setUrlValidationStatus] = useState<
     Record<number, "checking" | "valid" | "invalid" | null>
   >({});
@@ -31,8 +35,7 @@ export default function ReferencesPage() {
   // Load initial settings
   useEffect(() => {
     const handleLoadSettings = async () => {
-      const startTime = performance.now();
-      if (!currentRepoName || !currentOwnerName) {
+      if (!currentOwnerId || !currentRepoId) {
         setIsLoading(false);
         return;
       }
@@ -40,8 +43,7 @@ export default function ReferencesPage() {
       try {
         setError(null);
         setIsLoading(true);
-        const data = await loadSettings(currentOwnerName, currentRepoName);
-        console.log("Loaded data: ", data);
+        const data = await getRepositorySettings(currentOwnerId, currentRepoId);
         if (data) {
           setSettings({
             webUrls:
@@ -50,7 +52,6 @@ export default function ReferencesPage() {
               Array.isArray(data.file_paths) && data.file_paths.length > 0 ? data.file_paths : [""],
           });
         } else {
-          // Handle 404 or no data case
           setSettings({
             webUrls: [""],
             filePaths: [""],
@@ -60,13 +61,11 @@ export default function ReferencesPage() {
         setError("Failed to load settings. Using default values.");
       } finally {
         setIsLoading(false);
-        const endTime = performance.now();
-        console.log(`References page loadSettings time: ${endTime - startTime}ms`);
       }
     };
 
     handleLoadSettings();
-  }, [currentRepoName, currentOwnerName]);
+  }, [currentOwnerId, currentRepoId]);
 
   // Remove debounced save and replace with explicit save
   const handleChange = useCallback((newSettings: Partial<ReferenceSettings>) => {
@@ -171,8 +170,8 @@ export default function ReferencesPage() {
   }, [settings.webUrls, settings.filePaths, urlValidationStatus, filePathValidationStatus]);
 
   // Handle save with URL validation
-  const handleSave = useCallback(async () => {
-    if (!currentOwnerName || !currentRepoName) return;
+  const handleSave = async () => {
+    if (!currentOwnerId || !currentRepoId || !currentRepoName || !userId) return;
 
     // Check if all URLs are valid before saving
     if (!canSave()) {
@@ -180,27 +179,28 @@ export default function ReferencesPage() {
       return;
     }
 
-    setIsSaving(true);
     setError(null);
-    const startTime = performance.now();
 
-    try {
-      // Ensure arrays are never empty strings
-      const webUrls = settings.webUrls?.filter((url) => url !== "") || [];
-      const filePaths = settings.filePaths?.filter((path) => path !== "") || [];
+    // Ensure arrays are never empty strings
+    const webUrls = settings.webUrls?.filter((url) => url !== "") || [];
+    const filePaths = settings.filePaths?.filter((path) => path !== "") || [];
 
-      const result = await saveSettings({ webUrls, filePaths });
-
-      if (!result) throw new Error("Failed to save settings");
-    } catch (error) {
-      setError("Failed to save settings. Please try again later.");
-      console.error("Error saving settings:", error);
-    } finally {
-      setIsSaving(false);
-      const endTime = performance.now();
-      console.log(`References page saveSettings time: ${endTime - startTime}ms`);
-    }
-  }, [currentOwnerName, currentRepoName, saveSettings, settings, canSave]);
+    startTransition(async () => {
+      try {
+        await saveRepositorySettings(
+          currentOwnerId,
+          currentRepoId,
+          currentRepoName,
+          userId,
+          userName,
+          { webUrls, filePaths }
+        );
+      } catch (error) {
+        setError("Failed to save settings. Please try again later.");
+        console.error("Error saving settings:", error);
+      }
+    });
+  };
 
   return (
     <>
@@ -256,7 +256,7 @@ export default function ReferencesPage() {
                       placeholder="https://docs.example.com"
                       className="w-full p-2 border rounded"
                       pattern="https://.*"
-                      disabled={isSaving || isLoading}
+                      disabled={isPending || isLoading}
                     />
                     {urlValidationStatus[index] && (
                       <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -323,7 +323,7 @@ export default function ReferencesPage() {
                         handleChange({ webUrls: newUrls });
                       }}
                       className="px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100"
-                      disabled={isSaving || isLoading}
+                      disabled={isPending || isLoading}
                     >
                       Remove
                     </button>
@@ -344,7 +344,7 @@ export default function ReferencesPage() {
                 !settings.webUrls?.length ||
                 settings.webUrls.length >= PLAN_LIMITS.STANDARD.maxUrls ||
                 !settings.webUrls[settings.webUrls.length - 1]?.trim() ||
-                isSaving ||
+                isPending ||
                 isLoading
               }
               className="mt-3 px-4 py-2 bg-pink-50 text-pink-600 rounded hover:bg-pink-100 disabled:opacity-50"
@@ -391,7 +391,7 @@ export default function ReferencesPage() {
                       }}
                       placeholder="path/to/file.ext"
                       className="w-full p-2 border rounded"
-                      disabled={isSaving || isLoading}
+                      disabled={isPending || isLoading}
                     />
                     {filePathValidationStatus[index] && (
                       <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -442,7 +442,7 @@ export default function ReferencesPage() {
                         handleChange({ filePaths: newPaths });
                       }}
                       className="px-3 py-2 bg-red-50 text-red-600 rounded hover:bg-red-100"
-                      disabled={isSaving || isLoading}
+                      disabled={isPending || isLoading}
                     >
                       Remove
                     </button>
@@ -463,7 +463,7 @@ export default function ReferencesPage() {
                 !settings.filePaths?.length ||
                 settings.filePaths.length >= PLAN_LIMITS.STANDARD.maxPaths ||
                 !settings.filePaths[settings.filePaths.length - 1]?.trim() ||
-                isSaving ||
+                isPending ||
                 isLoading
               }
               className="mt-3 px-4 py-2 bg-pink-50 text-pink-600 rounded hover:bg-pink-100 disabled:opacity-50"
@@ -484,8 +484,8 @@ export default function ReferencesPage() {
           <div className="mt-6">
             <SaveButton
               onClick={handleSave}
-              isSaving={isSaving}
-              disabled={!canSave() || isLoading || isSaving}
+              isSaving={isPending}
+              disabled={!canSave() || isLoading || isPending}
             />
             {settings.webUrls.some(
               (url, index) => url.trim() !== "" && urlValidationStatus[index] === "invalid"

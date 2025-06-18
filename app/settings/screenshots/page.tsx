@@ -1,8 +1,10 @@
 "use client";
 // Third-party imports
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useTransition } from "react";
 
 // Local imports
+import { getRepositorySettings } from "@/app/actions/supabase/get-repository-settings";
+import { saveRepositorySettings } from "@/app/actions/supabase/save-repository-settings";
 import { useAccountContext } from "@/app/components/Context/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
@@ -14,20 +16,20 @@ import { ScreenshotSettings } from "@/app/settings/types";
 export default function ScreenshotsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { currentRepoName, currentOwnerName, loadSettings, saveSettings } = useAccountContext();
+  const { currentRepoName, currentRepoId, currentOwnerId, userId, userName } = useAccountContext();
   const [settings, setSettings] = useState<ScreenshotSettings>({
     useScreenshots: false,
     productionUrl: "",
     localPort: 8080,
     startupCommands: [],
   });
-  const [isSaving, setIsSaving] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   // Load initial settings
   useEffect(() => {
     const handleLoadSettings = async () => {
       const startTime = performance.now();
-      if (!currentRepoName || !currentOwnerName) {
+      if (!currentOwnerId || !currentRepoId) {
         setIsLoading(false);
         return;
       }
@@ -35,7 +37,7 @@ export default function ScreenshotsPage() {
       try {
         setError(null);
         setIsLoading(true);
-        const data = await loadSettings(currentOwnerName, currentRepoName);
+        const data = await getRepositorySettings(currentOwnerId, currentRepoId);
         if (data) {
           setSettings({
             useScreenshots: data.use_screenshots || false,
@@ -63,7 +65,7 @@ export default function ScreenshotsPage() {
     };
 
     handleLoadSettings();
-  }, [currentRepoName, currentOwnerName]);
+  }, [currentOwnerId, currentRepoId]);
 
   const handleChange = useCallback(
     <T extends keyof ScreenshotSettings>(field: T, value: ScreenshotSettings[T]) => {
@@ -72,26 +74,27 @@ export default function ScreenshotsPage() {
     []
   );
 
-  const handleSave = useCallback(async () => {
-    if (!currentOwnerName || !currentRepoName) return;
+  const handleSave = () => {
+    if (!currentOwnerId || !currentRepoId || !currentRepoName || !userId) return;
 
-    setIsSaving(true);
     setError(null);
-    const startTime = performance.now();
 
-    try {
-      const result = await saveSettings(settings);
-
-      if (!result) throw new Error("Failed to save settings");
-    } catch (error) {
-      setError("Failed to save settings. Please try again later.");
-      console.error("Error saving settings:", error);
-    } finally {
-      setIsSaving(false);
-      const endTime = performance.now();
-      console.log(`Screenshots page saveSettings time: ${endTime - startTime}ms`);
-    }
-  }, [currentOwnerName, currentRepoName, saveSettings, settings]);
+    startTransition(async () => {
+      try {
+        await saveRepositorySettings(
+          currentOwnerId!,
+          currentRepoId!,
+          currentRepoName!,
+          userId!,
+          userName,
+          settings
+        );
+      } catch (error) {
+        setError("Failed to save settings. Please try again later.");
+        console.error("Error saving settings:", error);
+      }
+    });
+  };
 
   const isValidPort = (port: string) => {
     // 0~1023 are system ports. 2^16 - 1 = 65535
@@ -128,7 +131,7 @@ export default function ScreenshotsPage() {
                 type="checkbox"
                 checked={settings.useScreenshots}
                 onChange={(e) => handleChange("useScreenshots", e.target.checked)}
-                disabled={!PLAN_LIMITS.PREMIUM.canUseScreenshots || isSaving || isLoading}
+                disabled={!PLAN_LIMITS.PREMIUM.canUseScreenshots || isPending || isLoading}
                 className="h-4 w-4"
               />
               <span>
@@ -156,7 +159,7 @@ export default function ScreenshotsPage() {
                   }}
                   className="w-full p-2 border rounded"
                   pattern="https://.*"
-                  disabled={isSaving || isLoading}
+                  disabled={isPending || isLoading}
                 />
                 <p className="text-sm text-gray-500 mt-1">
                   Domain only, trailing slash and query parameters will be removed
@@ -177,7 +180,7 @@ export default function ScreenshotsPage() {
                     className="w-24 p-2 border rounded"
                     min="1024"
                     max="65535"
-                    disabled={isSaving || isLoading}
+                    disabled={isPending || isLoading}
                   />
                 </div>
                 <p className="text-sm text-gray-500 mt-1">Port must be between 1024 and 65535</p>
@@ -197,7 +200,7 @@ export default function ScreenshotsPage() {
                   placeholder="npm install\nnpm run dev"
                   className="w-full p-2 border rounded min-h-[100px]"
                   rows={5}
-                  disabled={isSaving || isLoading}
+                  disabled={isPending || isLoading}
                 />
                 <p className="text-sm text-gray-500 mt-1">
                   Commands to start your local development server
@@ -205,7 +208,7 @@ export default function ScreenshotsPage() {
               </div>
 
               <div className="mt-6">
-                <SaveButton onClick={handleSave} isSaving={isSaving} />
+                <SaveButton onClick={handleSave} isSaving={isPending} />
               </div>
             </div>
           </div>

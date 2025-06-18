@@ -6,7 +6,6 @@ import { createContext, useContext, useState, useEffect } from "react";
 import useSWR from "swr";
 
 // Local imports
-import { Settings } from "@/app/settings/types";
 import { swrOptions, extendedSwrOptions } from "@/config/swr";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { AccountContextType } from "@/types/account";
@@ -35,9 +34,7 @@ const AccountContext = createContext<AccountContextType>({
   currentStripeCustomerId: null,
   billingPeriod: "Monthly",
   isLoading: true,
-  loadSettings: async () => {},
   refreshData: async () => {},
-  saveSettings: async () => false,
   setBillingPeriod: () => {},
   setCurrentOwnerName: () => {},
   setCurrentRepoName: () => {},
@@ -70,13 +67,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     setEmail(session.user.email || "Unknown Email");
     setJwtToken(session.jwtToken);
     setAccessToken(session.accessToken);
-  }, [
-    session?.jwtToken,
-    session?.user.email,
-    session?.user.name,
-    session?.user.userId,
-    session?.accessToken,
-  ]);
+  }, [session]);
 
   // Fetch installation information
   const fetchInstallations = async () => {
@@ -148,8 +139,10 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       Number(installation.installation_id)
     );
 
-    if (JSON.stringify(newInstallationIds) !== JSON.stringify(installationIds))
-      setInstallationIds(newInstallationIds);
+    setInstallationIds((prevIds) => {
+      if (JSON.stringify(newInstallationIds) !== JSON.stringify(prevIds)) return newInstallationIds;
+      return prevIds;
+    });
   }, [installations]);
 
   // Fetch organizations
@@ -212,47 +205,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       setCurrentStripeCustomerId(currentInstallation.stripe_customer_id || null);
     }
   }, [installations, currentOwnerName]);
-
-  // Load settings
-  const loadSettings = async (ownerName: string, repoName: string) => {
-    const org = organizations?.find((o) => o.ownerName === ownerName);
-    const repo = org?.repositories.find((r) => r.repoName === repoName);
-
-    if (!org || !repo) {
-      console.error("Organization or repository not found");
-      return null;
-    }
-
-    const url = `/api/supabase/get-repository-settings?ownerId=${org.ownerId}&repoId=${repo.repoId}`;
-    return fetchWithTiming(url, {
-      priority: "high",
-      cache: "no-store",
-      next: { revalidate: 0 },
-    });
-  };
-
-  // Save settings
-  const saveSettings = async (settingsData: Settings) => {
-    if (!currentOwnerId || !currentRepoId || !currentRepoName || !userId || !userName) return false;
-
-    const result = await fetchWithTiming<{ success: boolean }>(
-      "/api/supabase/save-repository-settings",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${jwtToken}` },
-        body: JSON.stringify({
-          ownerId: currentOwnerId,
-          repoId: currentRepoId,
-          repoName: currentRepoName,
-          userId,
-          userName,
-          ...settingsData,
-        }),
-      }
-    );
-
-    return result.success;
-  };
 
   // Handle owner selection
   const handleOwnerSelection = (ownerName: string | null) => {
@@ -349,12 +301,10 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         currentStripeCustomerId,
         billingPeriod,
         isLoading: !organizations,
-        loadSettings,
         refreshData: async () => {
           await mutateOrganizations();
           return;
         },
-        saveSettings,
         setBillingPeriod,
         setCurrentOwnerName: handleOwnerSelection,
         setCurrentRepoName: handleRepoSelection,

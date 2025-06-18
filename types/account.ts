@@ -23,9 +23,7 @@ export interface AccountContextType {
   currentStripeCustomerId: string | null;
   billingPeriod: "Monthly" | "Yearly";
   isLoading: boolean;
-  loadSettings: (ownerName: string, repoName: string) => Promise<any>;
   refreshData: () => Promise<void>;
-  saveSettings: (settings: Settings) => Promise<boolean>;
   setBillingPeriod: (period: "Monthly" | "Yearly") => void;
   setCurrentOwnerName: (ownerName: string | null) => void;
   setCurrentRepoName: (repoName: string | null) => void;
