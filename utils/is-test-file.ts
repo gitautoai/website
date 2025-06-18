@@ -15,6 +15,7 @@ const TEST_FILE_PATTERNS = [
   // Test directories
   /\/__tests__\//, // src/__tests__/Button.tsx
   /\/tests?\//, // src/tests/Button.tsx, src/test/Button.java
+  /^tests?\//, // tests/constants.py, test/utils.py (root level test directories)
   /\/e2e\//, // e2e/login.spec.ts
   /\/cypress\//, // cypress/integration/login.js
   /\/playwright\//, // playwright/tests/login.spec.ts
@@ -30,6 +31,9 @@ const TEST_FILE_PATTERNS = [
   // Common test file names
   /^test\./, // test.js, test.py (root level test files)
   /^spec\./, // spec.rb, spec.js (root level spec files)
+
+  // CI/CD and infrastructure scripts
+  /^\.github\//, // .github/scripts/*, .github/workflows/*
 ];
 
 /**
@@ -38,4 +42,3 @@ const TEST_FILE_PATTERNS = [
 export function isTestFile(filePath: string): boolean {
   return TEST_FILE_PATTERNS.some((pattern) => pattern.test(filePath));
 }
- 
