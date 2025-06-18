@@ -4,7 +4,7 @@ import { PRODUCT_NAME } from "@/config";
 import { THUMBNAILS } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
 import { createPageMetadata } from "@/utils/metadata";
-import { coverageDashboardStructuredData } from "./jsonld";
+import { coverageJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Coverage Dashboard - Test Coverage Analytics & Management`,
@@ -23,7 +23,7 @@ export const metadata = createPageMetadata({
 export default function CoverageDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <JsonLdScript data={coverageDashboardStructuredData} />
+      <JsonLdScript data={coverageJsonLd} />
       {children}
     </>
   );
