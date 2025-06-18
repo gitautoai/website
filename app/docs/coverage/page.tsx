@@ -1,13 +1,8 @@
 import Link from "next/link";
-import { coverageDocsJsonLd } from "./jsonld";
 
 export default function DocsPage() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(coverageDocsJsonLd) }}
-      />
       <h1 className="text-4xl font-bold mb-8">Coverage Dashboard</h1>
 
       <div className="space-y-8">
