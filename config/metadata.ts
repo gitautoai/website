@@ -13,7 +13,7 @@ const IMAGES = { url: THUMBNAILS.HOME, width: 1200, height: 630, alt: TITLE } as
  */
 export const defaultMetadata: Metadata = {
   title: {
-    template: `%s | ${PRODUCT_NAME} - Automated Unit Testing`,
+    template: `%s`,
     default: `${PRODUCT_NAME} - Automated Unit Testing for GitHub | 0% to 90% Test Coverage`,
   },
   description: DESCRIPTION,
