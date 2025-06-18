@@ -7,39 +7,41 @@ import { createBlogPostJsonLd } from "./jsonld";
 
 interface BlogPostLayoutProps {
   children: React.ReactNode;
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const post = await getBlogPostFromPosts(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getBlogPostFromPosts(slug);
 
   if (!post) {
     return createPageMetadata({
       title: "Blog Post Not Found",
       description: "The requested blog post could not be found.",
-      url: `${ABSOLUTE_URLS.GITAUTO.BLOG}/${params.slug}`,
+      url: `${ABSOLUTE_URLS.GITAUTO.BLOG}/${slug}`,
     });
   }
 
   return createPageMetadata({
     title: `${post.title} - ${PRODUCT_NAME} Blog`,
     description: post.description,
-    url: `${ABSOLUTE_URLS.GITAUTO.BLOG}/${params.slug}`,
+    url: `${ABSOLUTE_URLS.GITAUTO.BLOG}/${slug}`,
     keywords: post.tags || [],
-    images: [{ url: ABSOLUTE_URLS.GITAUTO.INDEX + "/og/blog-" + params.slug + ".png", alt: post.title }],
+    images: [{ url: ABSOLUTE_URLS.GITAUTO.INDEX + "/og/blog-" + slug + ".png", alt: post.title }],
     type: "article",
   });
 }
 
 export default async function BlogPostLayout({ children, params }: BlogPostLayoutProps) {
-  const post = await getBlogPostFromPosts(params.slug);
+  const { slug } = await params;
+  const post = await getBlogPostFromPosts(slug);
 
   if (!post) {
-    console.error(`Blog post not found: ${params.slug}`);
+    console.error(`Blog post not found: ${slug}`);
     return <div>{children}</div>;
   }
 
-  const jsonLd = createBlogPostJsonLd(post, params.slug);
+  const jsonLd = createBlogPostJsonLd(post, slug);
 
   return (
     <>
