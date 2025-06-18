@@ -61,7 +61,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   // Process session information
   useEffect(() => {
     if (!session) return;
-    console.log("Session: ", session);
     setUserId(session.user.userId);
     setUserName(session.user.name || "Unknown User");
     setEmail(session.user.email || "Unknown Email");
@@ -184,8 +183,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
     const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
     const currentRepo = currentOrg?.repositories.find((repo) => repo.repoName === currentRepoName);
-    console.log("currentOrg: ", currentOrg);
-    console.log("currentRepo: ", currentRepo);
     if (currentRepo) setCurrentRepoId(currentRepo.repoId);
   }, [organizations, currentOwnerName, currentRepoName]);
 

@@ -14,7 +14,7 @@ export default function JavaScriptConfigurationPage() {
         <section>
           <h2 className="text-2xl font-semibold mb-4 text-left">Framework Configuration</h2>
           <p className="text-gray-600 mb-4">
-            Any JavaScript/TypeScript test framework that can generate LCOV reports is supported.
+            Any JavaScript / TypeScript test framework that can generate LCOV reports is supported.
             While we provide examples for Jest and Vitest below, you can use any framework of your
             choice (Mocha, AVA, Jasmine, etc.) as long as it generates coverage reports in LCOV
             format.
@@ -36,7 +36,7 @@ export default function JavaScriptConfigurationPage() {
         </section>
 
         <CommonConfiguration
-          framework="JavaScript/TypeScript"
+          framework="JavaScript / TypeScript"
           workflowCode={workflow}
           workflowFilename="coverage.yml"
           configPoints={[

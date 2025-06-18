@@ -52,9 +52,9 @@ export default function DocsPage() {
               href="/docs/coverage/javascript"
               className="block p-6 border rounded-lg hover:border-pink-600"
             >
-              <h3 className="text-xl font-semibold mb-2">JavaScript/TypeScript Testing</h3>
+              <h3 className="text-xl font-semibold mb-2">JavaScript / TypeScript Testing</h3>
               <p className="text-gray-600">
-                Jest, Vitest, and other JavaScript/TypeScript test frameworks
+                Jest, Vitest, and other JavaScript / TypeScript test frameworks
               </p>
             </Link>
 

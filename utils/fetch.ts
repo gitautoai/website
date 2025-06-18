@@ -1,6 +1,5 @@
 export const fetchWithTiming = async <T>(url: string, options: RequestInit): Promise<T> => {
   const startTime = performance.now();
-  console.log(`Starting request to ${url}...`);
 
   try {
     const response = await fetch(url, options);
@@ -12,7 +11,10 @@ export const fetchWithTiming = async <T>(url: string, options: RequestInit): Pro
 
     const data = await response.json();
     const endTime = performance.now();
-    console.log(`Request to ${url} completed in ${(endTime - startTime).toFixed(0)}ms`);
+    const executionTime = Number((endTime - startTime).toFixed(0));
+    if (executionTime > 1000) {
+      console.log(`Request to ${url} completed in ${executionTime}ms`);
+    }
     return data as T;
   } catch (error) {
     console.error(`Error fetching ${url}:`, error);

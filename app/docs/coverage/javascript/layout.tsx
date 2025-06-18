@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/utils/metadata";
 import { javascriptCoverageJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `${PRODUCT_NAME} JavaScript/TypeScript Coverage Setup - Jest & Vitest Configuration`,
+  title: `${PRODUCT_NAME} JavaScript / TypeScript Coverage Setup - Jest & Vitest Configuration`,
   description: `Configure JavaScript and TypeScript test coverage for GitAuto. Complete setup guide for Jest, Vitest, and GitHub Actions integration for automated test generation.`,
   url: ABSOLUTE_URLS.GITAUTO.DOCS.COVERAGE.JAVASCRIPT,
   images: [
