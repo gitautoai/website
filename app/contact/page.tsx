@@ -1,9 +1,18 @@
 "use client";
 
+// Third party imports
 import { useActionState, useState, useEffect } from "react";
+
+// Local imports (Absolute imports)
+import { sendEmail } from "@/app/actions/resend/send-email";
+import { generateContactConfirmationText } from "@/app/actions/resend/generate-contact-confirmation-text";
 import { saveContact } from "@/app/actions/supabase/save-contact";
 import Modal from "@/app/components/Modal";
+import { EMAIL, EMAIL_FROM, PRODUCT_NAME } from "@/config";
 import { slackUs } from "@/lib/slack/slackUs";
+import { getRandomItem } from "@/utils/get-random-item";
+
+// Local imports (Relative imports)
 import { formatContactMessage } from "./utils/format-message";
 import FormField from "./components/FormField";
 import SubmitButton from "./components/SubmitButton";
@@ -41,11 +50,34 @@ export default function ContactPage() {
 
   // Form action
   const [state, formAction] = useActionState(async (prevState: any, formData: FormData) => {
+    // Save to database
     const saveResult = await saveContact(formData, userId, userName);
 
     if (saveResult.success && saveResult.data) {
+      // Send Slack notification (existing)
       const message = formatContactMessage(saveResult.data);
       await slackUs(message);
+
+      // Send email notification (direct call)
+      const subjects = [
+        `Thanks for reaching out to ${PRODUCT_NAME}!`,
+        `Got your message!`,
+        `Thanks for contacting ${PRODUCT_NAME}`,
+        `Received your ${PRODUCT_NAME} inquiry`,
+      ];
+
+      const emailResult = await sendEmail({
+        from: EMAIL_FROM,
+        to: [saveResult.data.email],
+        cc: [EMAIL],
+        subject: getRandomItem(subjects),
+        text: generateContactConfirmationText(saveResult.data),
+      });
+
+      if (!emailResult.success) {
+        console.error("Failed to send email notification:", emailResult.error);
+      }
+
       setShowSuccessModal(true);
     } else {
       setShowErrorModal(true);
