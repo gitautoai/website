@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "npm run types:generate && next dev -p 4000",
+    "dev:test": "next dev -p 4000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
