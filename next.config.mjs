@@ -25,6 +25,13 @@ const nextConfig = {
     mdxRs: false,
     // turbo: {}, // https://nextjs.org/docs/app/api-reference/next-config-js/turbo
   },
+  // Suppress the MDX webpack warning
+  webpack: (config, { isServer }) => {
+    config.infrastructureLogging = {
+      level: "error",
+    };
+    return config;
+  },
 };
 
 const withMDX = createMDX({
