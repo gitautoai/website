@@ -2,6 +2,7 @@ export const isPrd = process.env.NODE_ENV === "production";
 
 // GitAuto Constants
 export const EMAIL = "info@gitauto.ai";
+export const EMAIL_FROM = "Wes from GitAuto <wes@mail.gitauto.ai>";
 export const PRODUCT_ID = process.env.NEXT_PUBLIC_PRODUCT_ID;
 export const PRODUCT_NAME = "GitAuto";
 export const LEGAL_NAME = "GitAuto, Inc.";

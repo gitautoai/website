@@ -37,7 +37,5 @@ export function formatContactMessage(data: Tables<"contacts">): string {
     sections.push(``, `*Additional Information:*`, `${data.additional_info}`);
   }
 
-  sections.push(``, `*Submitted at:* ${new Date().toLocaleString()}`);
-
   return sections.join("\n");
 }
