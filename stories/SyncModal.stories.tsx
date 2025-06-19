@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import SyncModal from "@/app/components/SyncModal";
+import Modal from "@/app/components/Modal";
 import { SYNC_MESSAGES } from "@/app/dashboard/coverage/constants/sync-messages";
 
-const meta: Meta<typeof SyncModal> = {
-  title: "Components/SyncModal",
-  component: SyncModal,
+const meta: Meta<typeof Modal> = {
+  title: "Components/Modal",
+  component: Modal,
   parameters: {
     layout: "fullscreen",
   },
@@ -28,23 +28,35 @@ const meta: Meta<typeof SyncModal> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Loading: Story = {
+export const SyncLoading: Story = {
   args: {
-    message: SYNC_MESSAGES.loading,
+    title: "Syncing Repository",
     type: "loading",
+    message: SYNC_MESSAGES.loading,
   },
 };
 
-export const Success: Story = {
+export const SyncSuccess: Story = {
   args: {
-    message: SYNC_MESSAGES.success,
+    title: "Sync Complete",
     type: "success",
+    message: SYNC_MESSAGES.success,
   },
 };
 
-export const Error: Story = {
+export const SyncError: Story = {
   args: {
-    message: SYNC_MESSAGES.error,
+    title: "Sync Failed",
     type: "error",
+    message: SYNC_MESSAGES.error,
+  },
+};
+
+export const ContactSuccess: Story = {
+  args: {
+    title: "Thank you!",
+    type: "success",
+    message: "Your message has been sent successfully. We'll get back to you within 24 hours.",
+    onClose: () => console.log("Modal closed"),
   },
 };

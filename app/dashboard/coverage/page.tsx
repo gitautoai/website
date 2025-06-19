@@ -10,7 +10,7 @@ import DocsLink from "@/app/components/DocsLink";
 import ErrorBanner from "@/app/components/ErrorBanner";
 import FilterSelect from "@/app/components/FilterSelect";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
-import SyncModal from "@/app/components/SyncModal";
+import Modal from "@/app/components/Modal";
 import Toast from "@/app/components/Toast";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import { STORAGE_KEYS } from "@/lib/constants";
@@ -341,7 +341,17 @@ export default function CoveragePage() {
 
       {/* If no data exists: show modal in the center of the screen */}
       {!isLoadingDB && coverageData.length === 0 && gitHubSyncStatus && (
-        <SyncModal message={SYNC_MESSAGES[gitHubSyncStatus]} type={gitHubSyncStatus} />
+        <Modal
+          title={
+            gitHubSyncStatus === "loading"
+              ? "Syncing Repository"
+              : gitHubSyncStatus === "success"
+              ? "Sync Complete"
+              : "Sync Failed"
+          }
+          type={gitHubSyncStatus}
+          message={SYNC_MESSAGES[gitHubSyncStatus]}
+        />
       )}
     </div>
   );
