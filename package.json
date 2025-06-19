@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "npm run types:generate && next dev -p 4000",
-    "build": "npm run types:generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "types:generate": "supabase gen types typescript --project-id dkrxtcbaqzrodvsagwwn > types/supabase.ts",
