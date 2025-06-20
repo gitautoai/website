@@ -2,6 +2,7 @@ import { BASE_URL } from "@/config/urls";
 
 export const THUMBNAILS = {
   HOME: `${BASE_URL}/og/home.png`,
+  CONTACT: `${BASE_URL}/og/contact.png`,
   PRICING: `${BASE_URL}/og/pricing.png`,
 
   // Dashboard

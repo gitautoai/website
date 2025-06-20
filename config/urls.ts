@@ -16,6 +16,7 @@ export const RELATIVE_URLS = {
   FAQ: "/#faqs",
 
   // Other Pages
+  CONTACT: "/contact",
   PRICING_DETAILS: "/pricing",
   SETTINGS: {
     INDEX: "/settings",
@@ -56,6 +57,7 @@ export const ABSOLUTE_URLS = {
   GITAUTO: {
     INDEX: BASE_URL,
     BLOG: `${BASE_URL}${RELATIVE_URLS.BLOG}`,
+    CONTACT: `${BASE_URL}${RELATIVE_URLS.CONTACT}`,
     COVERAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE}`,
     DOCS: {
       GETTING_STARTED: {
