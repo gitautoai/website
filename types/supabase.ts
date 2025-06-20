@@ -560,63 +560,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_installations: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          deleted_at: string | null
-          deleted_by: string | null
-          first_issue: boolean
-          id: number
-          installation_id: number
-          is_active: boolean
-          is_selected: boolean
-          is_user_assigned: boolean
-          user_id: number
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          deleted_at?: string | null
-          deleted_by?: string | null
-          first_issue?: boolean
-          id?: number
-          installation_id: number
-          is_active?: boolean
-          is_selected?: boolean
-          is_user_assigned?: boolean
-          user_id: number
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          deleted_at?: string | null
-          deleted_by?: string | null
-          first_issue?: boolean
-          id?: number
-          installation_id?: number
-          is_active?: boolean
-          is_selected?: boolean
-          is_user_assigned?: boolean
-          user_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "public_users_installation_id_fkey"
-            columns: ["installation_id"]
-            isOneToOne: false
-            referencedRelation: "installations"
-            referencedColumns: ["installation_id"]
-          },
-          {
-            foreignKeyName: "user_installations_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["user_id"]
-          },
-        ]
-      }
       users: {
         Row: {
           created_at: string
