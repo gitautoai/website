@@ -13,8 +13,11 @@ export default function HowToGetStarted() {
 
   // If installed, generate URL based on current Org/User
   const getManageReposUrl = () => {
+    if (!currentInstallationId) return ABSOLUTE_URLS.GITHUB.INSTALLED_APPS;
+
     if (currentOwnerType === "Organization" && currentOwnerName)
       return `https://github.com/organizations/${currentOwnerName}/settings/installations/${currentInstallationId}`;
+
     return ABSOLUTE_URLS.GITHUB.INSTALLED_APPS + "/" + currentInstallationId;
   };
 
