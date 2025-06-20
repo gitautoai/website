@@ -33,7 +33,7 @@ export default function IssueCheckboxTriggerPage() {
             </div>
             <div className="mb-5">
               <Image
-                src="/docs/create-issue.png"
+                src="/docs/new-issue-button-on-github.png"
                 alt="Screenshot showing the GitHub 'New Issue' page. The image displays the issue creation form with fields for title and description. Take a screenshot of your repository's issue creation page with a sample title like 'Generate tests for user authentication'."
                 width={700}
                 height={400}
