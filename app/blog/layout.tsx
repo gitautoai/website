@@ -7,7 +7,7 @@ import { blogJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Blog - Automated Testing Insights & Tutorials`,
-  description: `Read the latest insights on automated testing, unit test generation, and software quality. Learn best practices for test coverage, CI/CD, and development productivity.`,
+  description: `Latest insights on automated testing, unit test generation, and software quality. Learn best practices for test coverage and CI/CD.`,
   url: ABSOLUTE_URLS.GITAUTO.BLOG,
   images: [{ url: THUMBNAILS.BLOG.INDEX, alt: `${PRODUCT_NAME} Blog` }],
   keywords: [

@@ -8,7 +8,7 @@ import { coverageDocsJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Coverage Documentation - Setup Guide for All Testing Frameworks`,
-  description: `Learn how to configure test coverage reporting for GitAuto. Comprehensive setup guides for JavaScript / TypeScript (Jest, Vitest), Python (pytest), Flutter, and other frameworks. Enable automated test generation with LCOV coverage reports.`,
+  description: `Configure test coverage reporting for GitAuto. Setup guides for JavaScript, TypeScript, Python, Flutter frameworks and GitHub Actions.`,
   url: ABSOLUTE_URLS.GITAUTO.DOCS.COVERAGE.OVERVIEW,
   images: [{ url: THUMBNAILS.DOCS.COVERAGE.INDEX, alt: `${PRODUCT_NAME} Coverage Documentation` }],
   keywords: [
