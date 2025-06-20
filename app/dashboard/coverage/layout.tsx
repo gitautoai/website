@@ -7,7 +7,7 @@ import { createPageMetadata } from "@/utils/metadata";
 import { coverageJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `${PRODUCT_NAME} Coverage Dashboard - Test Coverage Analytics & Management`,
+  title: `${PRODUCT_NAME} Coverage Dashboard - Analytics & Management`,
   description: `Monitor and improve test coverage across GitHub repositories. View detailed metrics, identify low-coverage files, create issues.`,
   url: ABSOLUTE_URLS.GITAUTO.COVERAGE,
   images: [{ url: THUMBNAILS.DASHBOARD.COVERAGE, alt: `${PRODUCT_NAME} Coverage Dashboard` }],

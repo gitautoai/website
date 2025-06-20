@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/utils/metadata";
 import { issueLabelTriggerJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `${PRODUCT_NAME} GitHub Issues Label Trigger - Automate Test Generation with Labels`,
+  title: `${PRODUCT_NAME} Label Trigger - Automate Testing with Labels`,
   description: `Trigger GitAuto test generation using GitHub issue labels. Add "gitauto" label to any issue for automated testing workflows.`,
   url: ABSOLUTE_URLS.GITAUTO.DOCS.GETTING_STARTED.ISSUE_LABEL_TRIGGER,
   images: [

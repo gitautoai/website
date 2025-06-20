@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/utils/metadata";
 import { issueCheckboxTriggerJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `${PRODUCT_NAME} GitHub Issues Checkbox Trigger - Generate Tests with One Click`,
+  title: `${PRODUCT_NAME} Issue Checkbox Trigger - Generate Tests Quickly`,
   description: `Trigger GitAuto test generation using GitHub issue checkboxes. Simple 3-step process: create issue, check checkbox, review tests.`,
   url: ABSOLUTE_URLS.GITAUTO.DOCS.GETTING_STARTED.ISSUE_CHECKBOX_TRIGGER,
   images: [
