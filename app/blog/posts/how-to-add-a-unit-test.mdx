@@ -28,11 +28,11 @@ We all know unit testing is important. But let me guess - while you agree with i
 
 ## 1. The Challenge
 
-Let's start with a simple test case. I created an issue titled ["Add unit tests to services/github/branch_manager.py"](https://github.com/gitautoai/gitauto/issues/440). This file, `services/github/branch_manager.py`, is from [GitAuto's own repository](https://github.com/gitautoai/gitauto) and handles GitHub branch operations. I'll admit - I developed this without unit tests initially. Let's see how GitAuto handles adding them.
+Let's start with a simple test case. I created an issue titled "Add unit tests to services/github/branch_manager.py". This file, `services/github/branch_manager.py`, is from GitAuto's own repository and handles GitHub branch operations. I'll admit - I developed this without unit tests initially. Let's see how GitAuto handles adding them.
 
 ## 2. First Attempt
 
-I simply assigned the issue to GitAuto with just the title - no detailed requirements. Within a minute, it created [this pull request](https://github.com/gitautoai/gitauto/pull/441/files). The result was surprisingly good, and it even taught me something about unit testing:
+I simply assigned the issue to GitAuto with just the title - no detailed requirements. Within a minute, it created a pull request. The result was surprisingly good, and it even taught me something about unit testing:
 
 ```diff:tests/services/github/test_branch_manager.py
 + @patch('services.github.branch_manager.requests.get')
@@ -54,11 +54,11 @@ While the implementation looked good, there was one issue:
 + expected_commit_sha = "abc123"
 ```
 
-These hardcoded values would be frequently used across tests. For better maintainability, they should be in a separate constants file. I added this as a requirement to [the original issue](https://github.com/gitautoai/gitauto/issues/440) and had GitAuto try again.
+These hardcoded values would be frequently used across tests. For better maintainability, they should be in a separate constants file. I added this as a requirement to the original issue and had GitAuto try again.
 
 ## 4. Iteration 2: Class vs. Functions
 
-The [next GitAuto's attempt](https://github.com/gitautoai/gitauto/pull/443/files) introduced a class-based approach:
+GitAuto's next attempt introduced a class-based approach:
 
 ```diff:tests/services/github/test_branch_manager.py
 + class TestBranchManager(unittest.TestCase):
@@ -70,18 +70,18 @@ This highlights an interesting aspect of current AI models - their non-determini
 
 ## 5. Iteration 3: Mocking Strategy
 
-The [third GitAuto's attempt](https://github.com/gitautoai/gitauto/pull/444/files) looked promising but was missing the patch decorator:
+GitAuto's third attempt looked promising but was missing the patch decorator:
 
 ```diff:tests/services/github/test_branch_manager.py
 +
 + def test_get_default_branch_success(requests_mock):
 ```
 
-This was actually my fault - I hadn't specified that we wanted to use patch decorators for mocking. Previous attempts included it by chance. Whether to use patch decorators or other mocking approaches is often a matter of preference and can depend on the repository's size and testing philosophy. I would go with patch decorators for this case so I added it to the requirements to [the original issue](https://github.com/gitautoai/gitauto/issues/440).
+This was actually my fault - I hadn't specified that we wanted to use patch decorators for mocking. Previous attempts included it by chance. Whether to use patch decorators or other mocking approaches is often a matter of preference and can depend on the repository's size and testing philosophy. I would go with patch decorators for this case so I added it to the requirements in the original issue.
 
 ## 6. Meeting the Requirements
 
-The [latest pull request](https://github.com/gitautoai/gitauto/pull/446/files) met all our specified requirements. GitAuto even provided a clear explanation in the PR description:
+GitAuto's latest pull request met all our specified requirements. GitAuto even provided a clear explanation in the PR description:
 
 ```plaintext
 ## Where / How to code and why
@@ -94,7 +94,7 @@ The [latest pull request](https://github.com/gitautoai/gitauto/pull/446/files) m
 
 ## 7. Test Execution
 
-OK, the code looks good, so let's run the tests. Surprisingly, they failed! Wait! Looking at the [error log](https://github.com/gitautoai/gitauto/actions/runs/12570821948/job/35041040734), we see:
+OK, the code looks good, so let's run the tests. Surprisingly, they failed! Looking at the error log, we see:
 
 ```plaintext
 raise AssertionError(_error_message()) from cause
@@ -130,7 +130,7 @@ Additionally, when I opened the code in my local IDE, I noticed a Flake8 warning
 
 Indeed, we're importing pytest but not using it directly. This is something we could improve by enabling Flake8 support in GitAuto's workflow.
 
-After fixing these issues manually ([see the commit](https://github.com/gitautoai/gitauto/pull/446/commits/fb9b33edc2fc2bf2e9b6b45d8e138563298b8369)), the tests [passed successfully](https://github.com/gitautoai/gitauto/actions/runs/12571075555/job/35041570883?pr=446). Time to merge! You can see the complete journey in the [final merged pull request](https://github.com/gitautoai/gitauto/pull/446).
+After fixing these issues manually, the tests passed successfully. Time to merge! The complete journey showed how GitAuto iteratively improved the implementation based on feedback.
 
 ## 8. The Bigger Picture
 
