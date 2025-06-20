@@ -4,6 +4,9 @@ import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
 import { config, isPrd } from "@/config";
 
+// Local imports
+import { upsertUser } from "@/app/actions/supabase/upsert-user";
+
 const handler = NextAuth({
   // https://next-auth.js.org/providers/github
   // OAuth App (Dev): https://github.com/organizations/gitautoai/settings/applications/2952819
@@ -29,12 +32,19 @@ const handler = NextAuth({
     // For cases 2-5, only the token parameter is available
     // https://next-auth.js.org/configuration/callbacks#jwt-callback
     async jwt({ token, account, user }) {
-
       if (account && user) {
         // First time sign in
+        const userId = Number(account.providerAccountId);
+        token.user_id = userId;
         token.jwtToken = sign(user, config.JWT_SECRET, { algorithm: "HS256", expiresIn: "100d" });
-        token.user_id = account.providerAccountId;
         token.accessToken = account.access_token;
+
+        // Upsert user in Supabase
+        const userName = user.name || "Unknown User";
+        const userEmail = user.email || null;
+
+        const result = await upsertUser(userId, userName, userEmail);
+        if (!result.success) console.error("Failed to upsert user:", result.message);
       }
       return token;
     },
