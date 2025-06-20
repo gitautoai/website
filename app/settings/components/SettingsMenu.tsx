@@ -1,12 +1,13 @@
-"use client";
-import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { menuItems } from "../constants/menuItems";
 
-export default function SettingsMenu({ onItemClick }: { onItemClick?: () => void }) {
-  const pathname = usePathname();
+interface SettingsMenuProps {
+  onItemClick?: () => void;
+  currentPath?: string;
+}
 
+export default function SettingsMenu({ onItemClick, currentPath }: SettingsMenuProps) {
   return (
     <nav className="p-4">
       {/* GitAuto Logo */}
@@ -27,7 +28,7 @@ export default function SettingsMenu({ onItemClick }: { onItemClick?: () => void
                 href={item.href}
                 onClick={onItemClick}
                 className={`block w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                  pathname === item.href ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"
+                  currentPath === item.href ? "bg-pink-50 text-pink-700" : "hover:bg-gray-100"
                 }`}
               >
                 <div className="font-medium">{item.label}</div>

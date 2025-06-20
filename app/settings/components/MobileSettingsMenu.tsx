@@ -2,13 +2,17 @@
 import { useState, useEffect } from "react";
 import SettingsMenu from "./SettingsMenu";
 
+interface MobileSettingsMenuProps {
+  isOpen: boolean;
+  onClose: () => void;
+  currentPath?: string;
+}
+
 export default function MobileSettingsMenu({
   isOpen,
   onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
+  currentPath,
+}: MobileSettingsMenuProps) {
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
@@ -30,7 +34,7 @@ export default function MobileSettingsMenu({
           isClosing ? "-translate-x-full" : "translate-x-0"
         }`}
       >
-        <SettingsMenu onItemClick={onClose} />
+        <SettingsMenu onItemClick={onClose} currentPath={currentPath} />
       </div>
     </div>
   );
