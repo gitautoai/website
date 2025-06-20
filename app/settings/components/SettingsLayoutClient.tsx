@@ -1,6 +1,7 @@
 "use client";
 
 // Third party imports
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 // Local imports
@@ -10,12 +11,13 @@ import SettingsMenu from "@/app/settings/components/SettingsMenu";
 
 export default function SettingsLayoutClient({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <div className="min-h-screen flex">
-      {/* Desktop Menu */}
+      {/* Desktop Menu - Server Component with pathname prop */}
       <div className="hidden lg:block lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-56 lg:bg-gray-50 lg:border-r">
-        <SettingsMenu />
+        <SettingsMenu currentPath={pathname} />
       </div>
 
       {/* Auth Controls - Top Right */}
@@ -34,7 +36,11 @@ export default function SettingsLayoutClient({ children }: { children: React.Rea
       </div>
 
       {/* Mobile Menu */}
-      <MobileSettingsMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
+      <MobileSettingsMenu
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
+        currentPath={pathname}
+      />
 
       {/* Main Content */}
       <main className="flex-1 lg:ml-48">
