@@ -22,7 +22,7 @@ import {
   TEAM_SIZE_OPTIONS,
   COVERAGE_MINIMUM_OPTIONS,
 } from "./constants";
-import { useAccountContext } from "../components/Context/Account";
+import { useAccountContext } from "../components/contexts/Account";
 
 const initialState = {
   success: false,

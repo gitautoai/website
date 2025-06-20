@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { Fragment } from "react";
-import SubscribeButton from "@/app/components/Button/SubscribeButton";
-import { useAccountContext } from "@/app/components/Context/Account";
+import SubscribeButton from "@/app/components/buttons/SubscribeButton";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import { PRICE_FEATURES, TABLE_FEATURES } from "@/config/pricing";
 import { ABSOLUTE_URLS } from "@/config/urls";
 

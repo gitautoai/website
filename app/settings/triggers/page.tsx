@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { slackUs } from "@/app/actions/slack/slack-us";
 import { getTriggerSettings } from "@/app/actions/supabase/get-trigger-settings";
 import { saveTriggerSettings } from "@/app/actions/supabase/save-trigger-settings";
-import { useAccountContext } from "@/app/components/Context/Account";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import TriggerToggle from "@/app/settings/components/TriggerToggle";

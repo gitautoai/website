@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 
 // Local imports
 import AuthControls from "@/app/components/AuthControls";
-import HamburgerMenu from "@/app/components/Navbar/hamburgerMenu";
-import MobileDrawer from "@/app/components/Navbar/MobileMenu";
+import HamburgerMenu from "@/app/components/navbars/hamburgerMenu";
+import MobileDrawer from "@/app/components/navbars/MobileMenu";
 import { INTERNAL_LINKS } from "@/config/internal-links";
 import { RELATIVE_URLS } from "@/config/urls";
 

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FaTachometerAlt, FaListAlt, FaFileAlt, FaCheckCircle } from "react-icons/fa";
 
 // Local imports
-import DemoVideo from "@/app/components/Video/Demo";
+import DemoVideo from "@/app/components/videos/Demo";
 import { RELATIVE_URLS } from "@/config/urls";
 
 const steps = [

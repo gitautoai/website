@@ -4,7 +4,7 @@ import { useSession, signIn } from "next-auth/react";
 import { usePostHog } from "posthog-js/react";
 
 // Local imports
-import ProfileIcon from "@/app/components/Navbar/ProfileIcon";
+import ProfileIcon from "@/app/components/navbars/ProfileIcon";
 
 interface AuthControlsProps {
   mobileMenuTrigger?: boolean;

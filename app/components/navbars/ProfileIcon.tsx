@@ -8,8 +8,8 @@ import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 
 // Local
-import { useAccountContext } from "@/app/components/Context/Account";
-import OwnerSelector from "@/app/components/HomePage/OwnerSelector";
+import { useAccountContext } from "@/app/components/contexts/Account";
+import OwnerSelector from "@/app/components/home/OwnerSelector";
 import { createPortalOrCheckoutURL } from "@/lib/stripe/createPortalOrCheckoutUrl";
 
 interface ProfileIconProps {

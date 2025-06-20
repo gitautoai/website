@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 // Local imports (Absolute imports)
 import { syncRepositoryFiles } from "@/app/actions/sync-repository-files";
-import { useAccountContext } from "@/app/components/Context/Account";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import DocsLink from "@/app/components/DocsLink";
 import ErrorBanner from "@/app/components/ErrorBanner";
 import FilterSelect from "@/app/components/FilterSelect";
@@ -346,8 +346,8 @@ export default function CoveragePage() {
             gitHubSyncStatus === "loading"
               ? "Syncing Repository"
               : gitHubSyncStatus === "success"
-              ? "Sync Complete"
-              : "Sync Failed"
+                ? "Sync Complete"
+                : "Sync Failed"
           }
           type={gitHubSyncStatus}
           message={SYNC_MESSAGES[gitHubSyncStatus]}

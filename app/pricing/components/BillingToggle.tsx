@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccountContext } from "@/app/components/Context/Account";
+import { useAccountContext } from "@/app/components/contexts/Account";
 
 export default function BillingToggle() {
   const { billingPeriod, setBillingPeriod } = useAccountContext();

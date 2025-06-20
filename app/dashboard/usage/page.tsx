@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import RepositorySelector from "../../settings/components/RepositorySelector";
 import { usageJsonLd } from "./jsonld";
 import { UsageStats, BillingPeriod } from "./types";
-import { useAccountContext } from "@/app/components/Context/Account";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
 import { fetchWithTiming } from "@/utils/fetch";

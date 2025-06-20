@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import InstallButton from "../Button/Install";
+import InstallButton from "../buttons/Install";
 import { Particle } from "./types";
 
 const Hero = () => {
