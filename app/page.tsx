@@ -5,15 +5,15 @@ import { usePostHog } from "posthog-js/react";
 import { useEffect } from "react";
 
 // Local components
-import FAQ from "@/app/components/HomePage/FAQ";
-import Hero from "@/app/components/HomePage/Hero";
-import HowItWorks from "@/app/components/HomePage/HowItWorks";
-import HowToGetStarted from "@/app/components/HomePage/HowToGetStarted";
-import Pricing from "@/app/components/HomePage/Pricing";
-import UseCases from "@/app/components/HomePage/UseCases";
-import WhatGitAutoDoes from "@/app/components/HomePage/WhatGitAutoDoes";
-import WhyGitAuto from "@/app/components/HomePage/WhyGitAuto";
-import ScrollNav from "@/app/components/Navigation/ScrollNav";
+import FAQ from "@/app/components/home/FAQ";
+import Hero from "@/app/components/home/Hero";
+import HowItWorks from "@/app/components/home/HowItWorks";
+import HowToGetStarted from "@/app/components/home/HowToGetStarted";
+import Pricing from "@/app/components/home/Pricing";
+import UseCases from "@/app/components/home/UseCases";
+import WhatGitAutoDoes from "@/app/components/home/WhatGitAutoDoes";
+import WhyGitAuto from "@/app/components/home/WhyGitAuto";
+import ScrollNav from "@/app/components/navigations/ScrollNav";
 import { softwareApplicationData } from "@/app/jsonld";
 
 export default function Home() {

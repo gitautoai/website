@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 // Local imports
-import { PricingPlan } from "@/app/components/HomePage/PricingPlan";
+import { PricingPlan } from "@/app/components/home/PricingPlan";
 import { FREE_FEATURES, STANDARD_FEATURES, ENTERPRISE_FEATURES } from "@/config/pricing";
 import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config/urls";
 

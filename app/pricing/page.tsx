@@ -1,5 +1,5 @@
 // Local imports
-import FAQ from "@/app/components/HomePage/FAQ";
+import FAQ from "@/app/components/home/FAQ";
 import BillingToggle from "@/app/pricing/components/BillingToggle";
 import PricingTable from "@/app/pricing/components/PricingTable";
 
