@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/utils/metadata";
 import { referencesJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `${PRODUCT_NAME} Reference Settings - Configure Documentation URLs & File Paths`,
+  title: `${PRODUCT_NAME} References - Configure Doc URLs & File Paths`,
   description: `Configure reference URLs and file paths for GitAuto test generation. Add documentation URLs and important file paths to improve test quality and context.`,
   url: ABSOLUTE_URLS.GITAUTO.SETTINGS.REFERENCES,
   images: [{ url: THUMBNAILS.SETTINGS.REFERENCES, alt: `${PRODUCT_NAME} Reference Settings` }],

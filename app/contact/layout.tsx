@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/utils/metadata";
 import { contactJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `Contact ${PRODUCT_NAME} - Get in Touch for Automated Testing Solutions`,
+  title: `Contact ${PRODUCT_NAME} Sales - Automated Testing Solutions`,
   description: `Contact GitAuto to discuss testing challenges and learn how automated unit test generation can help your team achieve higher coverage.`,
   url: ABSOLUTE_URLS.GITAUTO.CONTACT,
   images: [{ url: THUMBNAILS.CONTACT, alt: `Contact ${PRODUCT_NAME}` }],

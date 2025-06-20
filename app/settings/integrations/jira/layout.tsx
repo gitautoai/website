@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/utils/metadata";
 import { jiraIntegrationJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `${PRODUCT_NAME} Jira Integration - Connect GitAuto with Atlassian Jira`,
+  title: `${PRODUCT_NAME} Jira Integration - Connect to Atlassian Jira`,
   description: `Connect Jira sites with GitHub repositories to trigger GitAuto from Jira issues. Link Jira projects to GitHub repos for automated testing.`,
   url: ABSOLUTE_URLS.GITAUTO.SETTINGS.INTEGRATIONS.JIRA,
   images: [{ url: THUMBNAILS.SETTINGS.INTEGRATIONS.JIRA, alt: `${PRODUCT_NAME} Jira Integration` }],
