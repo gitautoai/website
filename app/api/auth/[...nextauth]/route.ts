@@ -5,6 +5,8 @@ import { sign } from "jsonwebtoken";
 import { config, isPrd } from "@/config";
 
 // Local imports
+import { slackUs } from "@/app/actions/slack/slack-us";
+import { getUser } from "@/app/actions/supabase/get-user";
 import { upsertUser } from "@/app/actions/supabase/upsert-user";
 
 const handler = NextAuth({
@@ -43,8 +45,19 @@ const handler = NextAuth({
         const userName = user.name || "Unknown User";
         const userEmail = user.email || null;
 
+        // Check if user already exists using server action
+        const userResult = await getUser(userId);
+        const isNewUser = !userResult.exists;
+
+        // Upsert user in Supabase
         const result = await upsertUser(userId, userName, userEmail);
         if (!result.success) console.error("Failed to upsert user:", result.message);
+
+        // Send Slack notification with correct user status
+        const slackMessage = `${isNewUser ? "🎉 New user" : "👋 Returning user"} signed in: ${userName} ${userEmail ? `(${userEmail})` : ""}`;
+        const slackResult = await slackUs(slackMessage);
+        if (!slackResult.success)
+          console.error("Failed to send Slack notification:", slackResult.error);
       }
       return token;
     },
