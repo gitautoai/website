@@ -4,6 +4,11 @@ import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
 import { config, isPrd } from "@/config";
 
+// Local imports
+import { slackUs } from "@/app/actions/slack/slack-us";
+import { getUser } from "@/app/actions/supabase/get-user";
+import { upsertUser } from "@/app/actions/supabase/upsert-user";
+
 const handler = NextAuth({
   // https://next-auth.js.org/providers/github
   // OAuth App (Dev): https://github.com/organizations/gitautoai/settings/applications/2952819
@@ -29,12 +34,30 @@ const handler = NextAuth({
     // For cases 2-5, only the token parameter is available
     // https://next-auth.js.org/configuration/callbacks#jwt-callback
     async jwt({ token, account, user }) {
-
       if (account && user) {
         // First time sign in
+        const userId = Number(account.providerAccountId);
+        token.user_id = userId;
         token.jwtToken = sign(user, config.JWT_SECRET, { algorithm: "HS256", expiresIn: "100d" });
-        token.user_id = account.providerAccountId;
         token.accessToken = account.access_token;
+
+        // Upsert user in Supabase
+        const userName = user.name || "Unknown User";
+        const userEmail = user.email || null;
+
+        // Check if user already exists using server action
+        const userResult = await getUser(userId);
+        const isNewUser = !userResult.exists;
+
+        // Upsert user in Supabase
+        const result = await upsertUser(userId, userName, userEmail);
+        if (!result.success) console.error("Failed to upsert user:", result.message);
+
+        // Send Slack notification with correct user status
+        const slackMessage = `${isNewUser ? "🎉 New user" : "👋 Returning user"} signed in: ${userName} ${userEmail ? `(${userEmail})` : ""}`;
+        const slackResult = await slackUs(slackMessage);
+        if (!slackResult.success)
+          console.error("Failed to send Slack notification:", slackResult.error);
       }
       return token;
     },

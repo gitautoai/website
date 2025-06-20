@@ -6,10 +6,10 @@ import { useActionState, useState, useEffect } from "react";
 // Local imports (Absolute imports)
 import { sendEmail } from "@/app/actions/resend/send-email";
 import { generateContactConfirmationText } from "@/app/actions/resend/generate-contact-confirmation-text";
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { saveContact } from "@/app/actions/supabase/save-contact";
 import Modal from "@/app/components/Modal";
 import { EMAIL, EMAIL_FROM, PRODUCT_NAME } from "@/config";
-import { slackUs } from "@/lib/slack/slackUs";
 import { getRandomItem } from "@/utils/get-random-item";
 
 // Local imports (Relative imports)
