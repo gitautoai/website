@@ -7,7 +7,7 @@ import { pythonCoverageJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Python Coverage Setup - pytest & coverage.py Configuration`,
-  description: `Configure Python test coverage for GitAuto automation. Complete setup guide for pytest, coverage.py, and GitHub Actions integration for automated test generation.`,
+  description: `Configure Python test coverage for GitAuto automation. Complete setup guide for pytest, coverage.py, and GitHub Actions integration.`,
   url: ABSOLUTE_URLS.GITAUTO.DOCS.COVERAGE.PYTHON,
   images: [{ url: THUMBNAILS.DOCS.COVERAGE.PYTHON, alt: `${PRODUCT_NAME} Python Coverage Setup` }],
   keywords: [

@@ -7,7 +7,7 @@ import { screenshotsJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Screenshot Settings - Configure Visual Testing`,
-  description: `Configure screenshot evidence settings for GitAuto visual testing. Set up production URLs, local ports, and startup commands for automated screenshot comparisons.`,
+  description: `Configure screenshot evidence settings for GitAuto. Set up production URLs, local ports, and startup commands for automated screenshot comparisons.`,
   url: ABSOLUTE_URLS.GITAUTO.SETTINGS.SCREENSHOTS,
   images: [{ url: THUMBNAILS.SETTINGS.SCREENSHOTS, alt: `${PRODUCT_NAME} Screenshot Settings` }],
   keywords: [

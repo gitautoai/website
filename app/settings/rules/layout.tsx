@@ -7,7 +7,7 @@ import { rulesJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Rules Settings - Configure Test Generation Rules`,
-  description: `Configure custom rules for GitAuto test generation. Define repository-specific coding standards, testing patterns, and guidelines for consistent automated test creation.`,
+  description: `Configure custom rules for GitAuto. Define repository-specific coding standards, testing patterns, and guidelines for consistent automated test creation.`,
   url: ABSOLUTE_URLS.GITAUTO.SETTINGS.RULES,
   images: [{ url: THUMBNAILS.SETTINGS.RULES, alt: `${PRODUCT_NAME} Rules Settings` }],
   keywords: [
