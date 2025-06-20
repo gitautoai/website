@@ -4,6 +4,7 @@ import { glob } from "glob";
 import type { MetadataRoute } from "next";
 
 // Local imports
+import { getBlogPosts } from "@/app/blog/utils/get-blog-posts";
 import { BASE_URL, RELATIVE_URLS } from "@/config/urls";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -17,6 +18,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .replace("app", "")
         .replace(/\/page\.(ts|tsx|js|jsx|md|mdx)$/, "")
         .replace(/\/+/g, "/");
+
+      // Skip dynamic routes like [slug]
+      if (route.includes("[") && route.includes("]")) return null;
 
       const isLessImportant =
         route === RELATIVE_URLS.PRIVACY_POLICY || route === RELATIVE_URLS.TERMS_OF_SERVICE;
@@ -39,7 +43,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   );
 
-  return routes.sort((a, b) => {
+  // Add individual blog posts
+  const blogPosts = await getBlogPosts();
+  const blogRoutes = blogPosts.map((post) => ({
+    url: `${BASE_URL}/blog/${post.slug}`,
+    lastModified: new Date(post.updatedAt),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // Filter out null routes and combine with blog routes
+  const allRoutes = [...routes.filter((route) => route !== null), ...blogRoutes];
+
+  return allRoutes.sort((a, b) => {
     if (a.priority !== b.priority) {
       return b.priority - a.priority;
     }
