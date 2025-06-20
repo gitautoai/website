@@ -100,6 +100,13 @@ export const INTERNAL_LINKS = [
     showInNav: true,
   },
   {
+    href: RELATIVE_URLS.CONTACT,
+    eventType: "contact",
+    text: "Contact",
+    category: "resources",
+    showInNav: true,
+  },
+  {
     href: RELATIVE_URLS.PRIVACY_POLICY,
     eventType: "privacy_policy",
     text: "Privacy Policy",
