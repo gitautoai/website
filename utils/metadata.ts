@@ -3,8 +3,9 @@ import { Metadata } from "next";
 import { OpenGraphType } from "next/dist/lib/metadata/types/opengraph-types";
 
 // Local imports
-import { defaultMetadata } from "@/config/metadata";
+import { isPrd } from "@/config";
 import { KEYWORDS } from "@/config/keywords";
+import { defaultMetadata } from "@/config/metadata";
 
 export interface PageMetadataOptions {
   title: string;
@@ -19,10 +20,25 @@ export interface PageMetadataOptions {
 }
 
 /**
+ * Validate description length for SEO optimization
+ */
+function validateDescriptionLength(description: string, url: string): void {
+  const length = description.length;
+  if (length < 110 || length > 160) {
+    throw new Error(
+      `Meta description length violation for ${url}: ${length} characters. Must be between 110-160 characters according to Ahrefs.\nDescription: "${description}"`
+    );
+  }
+}
+
+/**
  * Generate specific metadata for each page
  */
 export function createPageMetadata(options: PageMetadataOptions): Metadata {
   const { title, description, url, images = [], keywords = [], type = "website" } = options;
+
+  // Validate description length in development
+  if (!isPrd) validateDescriptionLength(description, url);
 
   // Add standard dimensions to images
   const processedImages = images.map((img) => ({

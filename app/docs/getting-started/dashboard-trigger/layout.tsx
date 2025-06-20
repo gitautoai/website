@@ -7,7 +7,7 @@ import { dashboardTriggerJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Dashboard Trigger - Visual Test Generation Interface`,
-  description: `Learn how to use the GitAuto dashboard to generate tests visually. Browse files, select parent issues, create bulk GitHub issues, and manage automated test generation through an intuitive web interface.`,
+  description: `Use GitAuto dashboard to generate tests visually. Browse files, select parent issues, create bulk GitHub issues and manage automation.`,
   url: ABSOLUTE_URLS.GITAUTO.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER,
   images: [
     {

@@ -8,7 +8,7 @@ import { installationJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Installation Guide - Quick Setup in 5 Minutes`,
-  description: `Complete step-by-step installation guide for GitAuto. Learn how to install the GitHub App, configure repository access, and start automating unit test generation in just 5 minutes.`,
+  description: `Complete installation guide for GitAuto. Install the GitHub App, configure repository access, and start automating unit test generation.`,
   url: ABSOLUTE_URLS.GITAUTO.DOCS.GETTING_STARTED.INSTALLATION,
   images: [
     {
