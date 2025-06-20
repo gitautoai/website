@@ -7,7 +7,7 @@ import Script from "next/script";
 import { Suspense } from "react";
 
 // Local imports
-import { AccountContextWrapper } from "@/app/components/Context/Account";
+import { AccountContextWrapper } from "@/app/components/contexts/Account";
 import Footer from "@/app/components/Footer";
 import { InstallationSuccessPopup } from "@/app/components/InstallationSuccessPopup";
 // import IntercomMessenger from "@/app/components/Intercom";

@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
-import SubscribeButton from "@/app/components/Button/SubscribeButton";
+import SubscribeButton from "@/app/components/buttons/SubscribeButton";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
-import CheckMark from "@/app/components/Symbol/CheckMark";
+import CheckMark from "@/app/components/icons/CheckMark";
 
 type PricingPlanProps = {
   badge?: {

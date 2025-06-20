@@ -1,6 +1,6 @@
 "use client";
 
-import { useAccountContext } from "../Context/Account";
+import { useAccountContext } from "../contexts/Account";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { Installation } from "@/types/github";
 
@@ -94,7 +94,8 @@ export default function OwnerSelector({
                                   selectedIndex == index && "border-l-2 p-1 border-pink-600"
                                 }`}
                               >
-                                {item.owner_name} <span className="text-lg">- organization</span>{" "}
+                                {item.owner_name}{" "}
+                                <span className="text-lg">- organization</span>{" "}
                               </button>
                             )}
                           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 // Local imports
-import { useAccountContext } from "@/app/components/Context/Account";
+import { useAccountContext } from "@/app/components/contexts/Account";
 
 type RepositorySelectorProps = {
   onRepoChange?: (repo: string) => void;

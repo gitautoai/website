@@ -6,7 +6,7 @@ import crypto from "crypto";
 import { useEffect } from "react";
 
 // Local imports
-import { useAccountContext } from "./Context/Account";
+import { useAccountContext } from "./contexts/Account";
 import { INTERCOM_SECRET_KEY } from "@/config";
 
 /**

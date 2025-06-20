@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
 
 // Local imports
-import { useAccountContext } from "@/app/components/Context/Account";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import { PRODUCT_NAME } from "@/config";
 import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config/urls";
 

@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 
 // Local imports
 import { GitHubOwnerWithRepos } from "@/app/api/github/get-installed-repos/route";
-import { useAccountContext } from "@/app/components/Context/Account";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import { JiraSiteWithProjects } from "@/lib/jira";
 
 export function useIntegrations() {

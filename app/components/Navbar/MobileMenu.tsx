@@ -7,7 +7,7 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
 // Local Imports
-import { useAccountContext } from "@/app/components/Context/Account";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import OwnerSelector from "@/app/components/HomePage/OwnerSelector";
 import { INTERNAL_LINKS } from "@/config/internal-links";
 import { createPortalOrCheckoutURL } from "@/lib/stripe/createPortalOrCheckoutUrl";

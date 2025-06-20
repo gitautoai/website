@@ -4,7 +4,7 @@
 import { useEffect, useState, useMemo } from "react";
 
 // Local imports
-import { useAccountContext } from "@/app/components/Context/Account";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import FormField from "@/app/settings/components/FormField";
 import type { BaseSettings } from "@/app/settings/types";
