@@ -35,7 +35,7 @@ export default function Navbar() {
 
   if (hideNavbar) return null;
   return (
-    <div className="absolute top-4 left-0 flex flex-col w-full justify-center items-center font-helvetica sm:text-md xl:text-lg bg-white px-0 md:px-24">
+    <div className="absolute top-4 left-0 flex flex-col w-full justify-center items-center font-helvetica sm:text-md xl:text-lg bg-white px-0 md:px-24 z-50">
       <div className="flex flex-col w-full">
         <nav className="flex text-lg justify-center items-center">
           <Link href={RELATIVE_URLS.INDEX} className="mr-auto ml-5">
