@@ -57,7 +57,7 @@ export const FAQS: FAQItem[] = [
   {
     category: "language",
     question: `Do you support languages other than English?`,
-    answer: `Yes, you can assign GitHub issues in languages other than English. The pull request body will also be created in the corresponding language. If it defaults to English, please specify the language in the issue. If it still doesn't work, feel free to contact us at ${EMAIL}.`,
+    answer: `Yes, you can assign GitHub issues in languages other than English. The pull request body will also be created in the corresponding language. If it defaults to English, please specify the language in the issue. If it still doesn't work, feel free to [contact us](/contact).`,
   },
   {
     category: "language",
@@ -67,7 +67,7 @@ export const FAQS: FAQItem[] = [
   {
     category: "permissions",
     question: `I would like to use GitAuto in my company's repository, but can it only be installed by the repository owner?`,
-    answer: `Your organization owners or repository admins can install GitAuto (and all the GitHub apps). If you see “Settings” tab in your repository, you are likely your organization owner or the repository admin. Even if you don't see the 'Settings' tab in your repository, you might be able to request the installation to your owners.`,
+    answer: `Your organization owners or repository admins can install GitAuto (and all the GitHub apps). If you see "Settings" tab in your repository, you are likely your organization owner or the repository admin. Even if you don't see the "Settings" tab in your repository, you might be able to request the installation to your owners.`,
   },
   {
     category: "permissions",
@@ -121,6 +121,11 @@ export const FAQS: FAQItem[] = [
   {
     category: "support",
     question: `I want to know more about GitAuto, but it's a hassle to research. Can I ask online?`,
-    answer: `Sure, of course! Feel free to reach out via [Twitter DM](${ABSOLUTE_URLS.TWITTER}), [LinkedIn message](${ABSOLUTE_URLS.LINKEDIN}), email ${EMAIL}, Slack Connect (invite ${EMAIL}), or [book a meeting](${ABSOLUTE_URLS.CALENDLY}). Choose your preferred method.`,
+    answer: `Sure, of course! Feel free to reach out via [Twitter DM](${ABSOLUTE_URLS.TWITTER}), [LinkedIn message](${ABSOLUTE_URLS.LINKEDIN}), our [contact page](${RELATIVE_URLS.CONTACT}), email ${EMAIL}, Slack Connect (invite ${EMAIL}), or [book a meeting](${ABSOLUTE_URLS.CALENDLY}). Choose your preferred method.`,
+  },
+  {
+    category: "support",
+    question: `How can I contact GitAuto for sales inquiries or custom solutions?`,
+    answer: `For sales inquiries, custom enterprise solutions, or detailed discussions about your testing needs, please visit our [contact page](/contact) or email us at ${EMAIL}. We're here to help you achieve your test coverage goals.`,
   },
 ];

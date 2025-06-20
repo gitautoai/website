@@ -107,8 +107,8 @@ export default function Pricing() {
           features={ENTERPRISE_FEATURES}
           action={{
             text: "Contact Us",
-            href: "mailto:info@gitauto.ai",
-            target: "_blank",
+            href: RELATIVE_URLS.CONTACT,
+            target: "_self",
             style: "outline",
           }}
         />

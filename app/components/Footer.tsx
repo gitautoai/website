@@ -9,7 +9,7 @@ import { usePostHog } from "posthog-js/react";
 // Local imports
 import SNS from "@/app/components/Button/SNS";
 import { INTERNAL_LINKS } from "@/config/internal-links";
-import { ABSOLUTE_URLS, SNS_LINKS } from "@/config/urls";
+import { ABSOLUTE_URLS, RELATIVE_URLS, SNS_LINKS } from "@/config/urls";
 
 export default function Footer() {
   // Analytics
@@ -18,11 +18,14 @@ export default function Footer() {
   const hideFooter = pathname?.startsWith("/settings") || pathname?.startsWith("/dashboard");
   if (hideFooter) return null;
 
-  const groupedLinks = INTERNAL_LINKS.reduce((acc, link) => {
-    if (!acc[link.category]) acc[link.category] = [] as (typeof INTERNAL_LINKS)[number][];
-    acc[link.category].push(link);
-    return acc;
-  }, {} as Record<string, (typeof INTERNAL_LINKS)[number][]>);
+  const groupedLinks = INTERNAL_LINKS.reduce(
+    (acc, link) => {
+      if (!acc[link.category]) acc[link.category] = [] as (typeof INTERNAL_LINKS)[number][];
+      acc[link.category].push(link);
+      return acc;
+    },
+    {} as Record<string, (typeof INTERNAL_LINKS)[number][]>
+  );
 
   const categoryTitles: Record<string, string> = {
     product: "Product",
@@ -61,10 +64,16 @@ export default function Footer() {
                 Install Free
               </Link>
               <Link
-                href="#how-it-works"
+                href={RELATIVE_URLS.CONTACT}
+                onClick={() => {
+                  posthog.capture("$click", {
+                    $event_type: "footer_contact_button",
+                    $current_url: window.location.href,
+                  });
+                }}
                 className="px-8 py-3 bg-transparent border border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-center"
               >
-                Learn More
+                Contact Sales
               </Link>
             </div>
           </div>

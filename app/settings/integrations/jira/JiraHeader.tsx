@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { RELATIVE_URLS } from "@/config/urls";
 
 interface JiraHeaderProps {
   isConnected: boolean;
@@ -16,9 +17,9 @@ const description = [
   "Manage multiple project integrations.",
   "Toggle integration on/off at any time.",
   <>
-    Need help? Contact us via the chat icon in the bottom right corner or email{" "}
-    <Link href="mailto:info@gitauto.ai" className="text-pink-500 visited:text-pink-700 underline">
-      info@gitauto.ai
+    Need help? Contact us{" "}
+    <Link href={RELATIVE_URLS.CONTACT} className="text-pink-500 visited:text-pink-700 underline">
+      here
     </Link>
     .
   </>,
@@ -60,8 +61,8 @@ export function JiraHeader({ isConnected, isConnecting, onAuth }: JiraHeaderProp
           {isConnecting
             ? "Processing..."
             : isConnected
-            ? "Disconnect from Jira"
-            : "Connect with Jira"}
+              ? "Disconnect from Jira"
+              : "Connect with Jira"}
         </button>
       </div>
 
