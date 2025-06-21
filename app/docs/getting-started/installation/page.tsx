@@ -1,9 +1,9 @@
 // Third-party imports
 import Image from "next/image";
 import Link from "next/link";
-import { FaChevronRight } from "react-icons/fa";
 
 // Local imports
+import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
 import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config/urls";
 
 export default function GettingStartedPage() {
@@ -76,18 +76,12 @@ export default function GettingStartedPage() {
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="mt-12 pt-4 border-t border-gray-200">
-        <div className="flex justify-end">
-          <Link
-            href={RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_CHECKBOX_TRIGGER}
-            className="flex items-center text-pink-600 hover:text-pink-700 font-medium"
-          >
-            <span>GitHub Issues Checkbox Trigger</span>
-            <FaChevronRight className="h-5 w-5 ml-1" />
-          </Link>
-        </div>
-      </div>
+      <DocsNavigation
+        nextLink={{
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_CHECKBOX_TRIGGER,
+          title: "GitHub Issues Checkbox Trigger",
+        }}
+      />
     </div>
   );
 }

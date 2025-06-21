@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function DashboardTriggerPage() {
@@ -369,25 +369,16 @@ export default function DashboardTriggerPage() {
         </div>
       </div>
 
-      <div className="mt-12 pt-4 border-t border-gray-200">
-        <div className="flex justify-between">
-          <Link
-            href={RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_LABEL_TRIGGER}
-            className="flex items-center text-pink-600 hover:text-pink-700 font-medium"
-          >
-            <FaChevronLeft className="h-5 w-5 mr-1" />
-            <span>GitHub Issues Label Trigger</span>
-          </Link>
-
-          <Link
-            href={RELATIVE_URLS.DOCS.GETTING_STARTED.PARENT_ISSUE_RULES}
-            className="flex items-center text-pink-600 hover:text-pink-700 font-medium"
-          >
-            <span>Parent Issue Rules</span>
-            <FaChevronRight className="h-5 w-5 ml-1" />
-          </Link>
-        </div>
-      </div>
+      <DocsNavigation
+        previousLink={{
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_LABEL_TRIGGER,
+          title: "GitHub Issues Label Trigger",
+        }}
+        nextLink={{
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.PARENT_ISSUE_RULES,
+          title: "Parent Issue Rules",
+        }}
+      />
     </div>
   );
 }

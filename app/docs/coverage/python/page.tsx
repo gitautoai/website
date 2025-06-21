@@ -1,3 +1,5 @@
+import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { RELATIVE_URLS } from "@/config/urls";
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
@@ -35,6 +37,17 @@ export default function PythonConfigurationPage() {
           ]}
         />
       </div>
+
+      <DocsNavigation
+        previousLink={{
+          href: RELATIVE_URLS.DOCS.COVERAGE.OVERVIEW,
+          title: "Coverage Overview",
+        }}
+        nextLink={{
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER,
+          title: "Dashboard Trigger",
+        }}
+      />
     </>
   );
 }
