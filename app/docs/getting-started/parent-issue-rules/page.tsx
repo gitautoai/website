@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FaChevronLeft } from "react-icons/fa";
+import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function ParentIssueRulesPage() {
@@ -191,17 +191,12 @@ export default function ParentIssueRulesPage() {
         </div>
       </div>
 
-      <div className="mt-12 pt-4 border-t border-gray-200">
-        <div className="flex justify-start">
-          <Link
-            href={RELATIVE_URLS.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER}
-            className="flex items-center text-pink-600 hover:text-pink-700 font-medium"
-          >
-            <FaChevronLeft className="h-5 w-5 mr-1" />
-            <span>Dashboard Trigger</span>
-          </Link>
-        </div>
-      </div>
+      <DocsNavigation
+        previousLink={{
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER,
+          title: "Dashboard Trigger",
+        }}
+      />
     </div>
   );
 }

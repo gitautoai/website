@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { RELATIVE_URLS } from "@/config/urls";
 
 export default function DocsPage() {
   return (
@@ -100,6 +102,17 @@ export default function DocsPage() {
           </ol>
         </section>
       </div>
+
+      <DocsNavigation
+        previousLink={{
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION,
+          title: "Installation",
+        }}
+        nextLink={{
+          href: RELATIVE_URLS.DOCS.COVERAGE.JAVASCRIPT,
+          title: "JavaScript / TypeScript Coverage",
+        }}
+      />
     </>
   );
 }

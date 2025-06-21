@@ -1,10 +1,9 @@
 // Third-party imports
 import { Metadata } from "next";
 import Image from "next/image";
-import Link from "next/link";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 // Local imports
+import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export const metadata: Metadata = {
@@ -99,25 +98,16 @@ export default function IssueCheckboxTriggerPage() {
         </div>
       </div>
 
-      <div className="mt-12 pt-4 border-t border-gray-200">
-        <div className="flex justify-between">
-          <Link
-            href={RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION}
-            className="flex items-center text-pink-600 hover:text-pink-700 font-medium"
-          >
-            <FaChevronLeft className="h-5 w-5 mr-1" />
-            <span>Installation</span>
-          </Link>
-
-          <Link
-            href={RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_LABEL_TRIGGER}
-            className="flex items-center text-pink-600 hover:text-pink-700 font-medium"
-          >
-            <span>GitHub Issues Label Trigger</span>
-            <FaChevronRight className="h-5 w-5 ml-1" />
-          </Link>
-        </div>
-      </div>
+      <DocsNavigation
+        previousLink={{
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION,
+          title: "Installation",
+        }}
+        nextLink={{
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_LABEL_TRIGGER,
+          title: "GitHub Issues Label Trigger",
+        }}
+      />
     </div>
   );
 }

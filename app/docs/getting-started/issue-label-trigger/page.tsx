@@ -1,9 +1,8 @@
 // Third-party imports
 import Image from "next/image";
-import Link from "next/link";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 // Local imports
+import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function IssueLabelTriggerPage() {
@@ -141,25 +140,16 @@ export default function IssueLabelTriggerPage() {
         </div>
       </div>
 
-      <div className="mt-12 pt-4 border-t border-gray-200">
-        <div className="flex justify-between">
-          <Link
-            href={RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_CHECKBOX_TRIGGER}
-            className="flex items-center text-pink-600 hover:text-pink-700 font-medium"
-          >
-            <FaChevronLeft className="h-5 w-5 mr-1" />
-            <span>GitHub Issues Checkbox Trigger</span>
-          </Link>
-
-          <Link
-            href={RELATIVE_URLS.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER}
-            className="flex items-center text-pink-600 hover:text-pink-700 font-medium"
-          >
-            <span>Dashboard Trigger</span>
-            <FaChevronRight className="h-5 w-5 ml-1" />
-          </Link>
-        </div>
-      </div>
+      <DocsNavigation
+        previousLink={{
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_CHECKBOX_TRIGGER,
+          title: "GitHub Issues Checkbox Trigger",
+        }}
+        nextLink={{
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER,
+          title: "Dashboard Trigger",
+        }}
+      />
     </div>
   );
 }
