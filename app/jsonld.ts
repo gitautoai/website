@@ -106,7 +106,10 @@ export const OFFERS = [
 export const AUDIENCE = {
   "@type": "Audience",
   audienceType: "Software Developers and QA Engineers",
-  geographicArea: "Worldwide",
+  geographicArea: {
+    "@type": "AdministrativeArea",
+    name: "Worldwide",
+  },
 } as const;
 
 /**
