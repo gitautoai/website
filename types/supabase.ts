@@ -406,6 +406,7 @@ export type Database = {
           schedule_minute: number | null
           schedule_time: string | null
           startup_commands: string[] | null
+          structured_rules: Json | null
           target_branch: string
           trigger_on_commit: boolean
           trigger_on_merged: boolean
@@ -438,6 +439,7 @@ export type Database = {
           schedule_minute?: number | null
           schedule_time?: string | null
           startup_commands?: string[] | null
+          structured_rules?: Json | null
           target_branch?: string
           trigger_on_commit?: boolean
           trigger_on_merged?: boolean
@@ -470,6 +472,7 @@ export type Database = {
           schedule_minute?: number | null
           schedule_time?: string | null
           startup_commands?: string[] | null
+          structured_rules?: Json | null
           target_branch?: string
           trigger_on_commit?: boolean
           trigger_on_merged?: boolean

@@ -18,7 +18,7 @@ export const RULES_CONTENT = {
   repoRules: {
     title: "Repository Rules",
     description:
-      "Define repository-specific guidelines that apply across all issues and users within the repository.",
+      "Define repository-specific guidelines that apply across all issues and users within the repository. Write any coding standards, preferences, or requirements that GitAuto should follow when generating tests for this repository.",
     placeholder:
       "## Repository Purpose\n" +
       "This repository is...\n\n" +
@@ -26,9 +26,15 @@ export const RULES_CONTENT = {
       "- Primary language: Python 3.12\n" +
       "- Hosting: AWS Lambda\n" +
       "- Database: Supabase (PostgreSQL)\n\n" +
-      "## Coding Standards\n" +
-      "1. Unit test coverage must be 100% for all new changes\n" +
-      "2. Type safety is unnecessary in Python\n\n",
+      "## Additional Coding Guidelines\n" +
+      "1. Always use type hints in Python\n" +
+      "2. Prefer async/await for database operations\n" +
+      "3. Use pytest fixtures for test data setup\n\n" +
+      "## Custom Requirements\n" +
+      "- Follow PEP 8 style guide strictly\n" +
+      "- Mock external API calls in tests\n" +
+      "- Use descriptive variable names\n\n" +
+      "Note: Use the Structured Rules section above for detailed configuration options. This free-form text area is for additional context and specific requirements not covered by the structured settings.",
   },
 
   userRules: {

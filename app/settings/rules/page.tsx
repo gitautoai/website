@@ -10,8 +10,13 @@ import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import SaveButton from "@/app/settings/components/SaveButton";
+import StructuredRulesSection from "@/app/settings/rules/StructuredRulesSection";
 import { PLAN_LIMITS } from "@/app/settings/constants/plans";
-import { RULES_CONTENT } from "@/app/settings/constants/rulesDefaults";
+import { RULES_CONTENT } from "@/app/settings/rules/config/freeform-rules";
+import {
+  DEFAULT_STRUCTURED_RULES,
+  StructuredRules,
+} from "@/app/settings/rules/config/structured-rules";
 import { RulesSettings } from "@/app/settings/types";
 import { countTokens } from "@/utils/tokens";
 
@@ -36,6 +41,7 @@ export default function RulesPage() {
   // Form data
   const [formData, setFormData] = useState<RulesSettings>({
     repoRules: "",
+    structuredRules: DEFAULT_STRUCTURED_RULES,
     targetBranch: "",
   });
 
@@ -61,6 +67,9 @@ export default function RulesPage() {
           const newSettings: RulesSettings = {
             repoRules: data.repo_rules || "",
             targetBranch: data.target_branch || "",
+            structuredRules: data.structured_rules
+              ? { ...DEFAULT_STRUCTURED_RULES, ...data.structured_rules }
+              : DEFAULT_STRUCTURED_RULES,
           };
           setFormData(newSettings);
           setTokenCounts({ repoRules: countTokens(newSettings.repoRules) });
@@ -148,6 +157,41 @@ export default function RulesPage() {
     }
   }, []);
 
+  // Toggle rules change handler with auto-save for boolean and select types
+  const handleStructuredRulesChange = useCallback(
+    (key: keyof StructuredRules, value: boolean | string, shouldAutoSave: boolean = false) => {
+      setFormData((prev) => ({
+        ...prev,
+        structuredRules: { ...prev.structuredRules, [key]: value },
+      }));
+
+      // Auto-save for boolean and select types
+      if (shouldAutoSave && currentOwnerId && currentRepoId && currentRepoName && userId) {
+        const updatedFormData = {
+          ...formData,
+          structuredRules: { ...formData.structuredRules, [key]: value },
+        };
+
+        startTransition(async () => {
+          try {
+            await saveRepositorySettings(
+              currentOwnerId,
+              currentRepoId,
+              currentRepoName,
+              userId,
+              userName,
+              updatedFormData
+            );
+          } catch (error) {
+            setError("Failed to auto-save settings. Please try again later.");
+            console.error("Error auto-saving settings:", error);
+          }
+        });
+      }
+    },
+    [currentOwnerId, currentRepoId, currentRepoName, userId, userName, formData]
+  );
+
   // Save handler
   const handleSave = () => {
     if (!currentOwnerId || !currentRepoId || !currentRepoName || !userId) return;
@@ -221,7 +265,7 @@ export default function RulesPage() {
       <RepositorySelector />
 
       {/* Branch selector */}
-      <div className="mt-4 mb-6 w-48">
+      <div className="mt-4 mb-6 md:mb-0 w-48">
         <label className="block text-sm font-medium text-gray-700 mb-2">Target Branch</label>
         <select
           value={formData.targetBranch}
@@ -239,7 +283,14 @@ export default function RulesPage() {
       </div>
 
       <div className="space-y-6">
+        <StructuredRulesSection
+          structuredRules={formData.structuredRules}
+          onStructuredRulesChange={handleStructuredRulesChange}
+          disabled={isPending || isLoading}
+        />
+
         {renderRuleSection("repoRules")}
+
         <div className="mt-6">
           <SaveButton onClick={handleSave} isSaving={isPending} />
         </div>
