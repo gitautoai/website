@@ -1,4 +1,4 @@
-import { StructuredRules } from "./rules/types";
+import { StructuredRules } from "./rules/config/structured-rules";
 
 export type BaseSettings = {
   firstName: string;
