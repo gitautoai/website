@@ -2,26 +2,7 @@
 
 import { supabase } from "@/lib/supabase";
 import { Settings } from "@/app/settings/types";
-
-// Define the database column types
-type RepositoryRecord = {
-  owner_id: number;
-  repo_id: number;
-  repo_name: string;
-  created_by: string;
-  updated_by: string;
-  repo_rules: string;
-  target_branch: string;
-  use_screenshots: boolean;
-  production_url: string;
-  local_port: number;
-  startup_commands: string[];
-  web_urls: string[];
-  file_paths: string[];
-};
-
-// Add a type for partial updates
-type RepositoryUpdateData = Partial<Omit<RepositoryRecord, "owner_id" | "repo_id" | "repo_name">>;
+import { TablesInsert, TablesUpdate } from "@/types/supabase";
 
 export async function saveRepositorySettings(
   ownerId: number,
@@ -33,9 +14,7 @@ export async function saveRepositorySettings(
 ) {
   const startTime = performance.now();
   try {
-    if (!ownerId || !repoId || !repoName || !userId) {
-      throw new Error("Missing required parameters");
-    }
+    if (!ownerId || !repoId || !repoName || !userId) throw new Error("Missing required parameters");
 
     // Check if the repository record exists
     const { data: existingRepo } = await supabase
@@ -44,12 +23,13 @@ export async function saveRepositorySettings(
       .match({ owner_id: ownerId, repo_id: repoId })
       .maybeSingle();
 
-    const updateData: RepositoryUpdateData = {
+    const updateData: TablesUpdate<"repositories"> = {
       updated_by: userId.toString() + ":" + userName,
     };
 
     // Add key if it exists
     if ("repoRules" in settings) updateData.repo_rules = settings.repoRules;
+    if ("structuredRules" in settings) updateData.structured_rules = settings.structuredRules;
     if ("targetBranch" in settings) updateData.target_branch = settings.targetBranch;
     if ("webUrls" in settings) {
       updateData.web_urls = settings.webUrls.filter((url) => url !== "") || [];
@@ -73,7 +53,7 @@ export async function saveRepositorySettings(
       if (error) throw error;
     } else {
       // Insert new data
-      const insertData: RepositoryRecord = {
+      const insertData: TablesInsert<"repositories"> = {
         owner_id: ownerId,
         repo_id: repoId,
         repo_name: repoName,
@@ -82,6 +62,7 @@ export async function saveRepositorySettings(
 
         // Default values
         repo_rules: "",
+        structured_rules: null,
         target_branch: "",
         use_screenshots: false,
         production_url: "",

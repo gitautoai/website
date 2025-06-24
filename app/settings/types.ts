@@ -1,3 +1,5 @@
+import { StructuredRules } from "./rules/config/structured-rules";
+
 export type BaseSettings = {
   firstName: string;
   lastName: string;
@@ -13,6 +15,7 @@ export type BaseSettings = {
 export type RulesSettings = {
   repoRules: string;
   targetBranch: string;
+  structuredRules: StructuredRules;
 };
 
 export type ReferenceSettings = {
