@@ -10,8 +10,8 @@ const TYPE_FILE_PATTERNS = [
   /^types\//, // types/account.ts (root level types directory)
 
   // Common type file names
-  /\/types\.ts$/, // app/settings/types.ts, app/dashboard/coverage/types.ts
-  /\/type\.ts$/, // single type definition files
+  /(^|\/)types\.ts$/, // app/settings/types.ts, app/dashboard/coverage/types.ts
+  /(^|\/)type\.ts$/, // single type definition files
   /Types\.ts$/, // TypeScript convention
   /Type\.ts$/, // singular type files
 
@@ -19,7 +19,7 @@ const TYPE_FILE_PATTERNS = [
   /\/interfaces\//, // interfaces directory
   /^interfaces\//, // root level interfaces directory
   /\/interface\.ts$/, // interface.ts files
-  /Interface\.ts$/, // Interface.ts files
+  /(^|\/)Interface\.ts$/, // Interface.ts files
 
   // Schema files (often contain only type definitions)
   /\/schema\.ts$/, // schema.ts files
