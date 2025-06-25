@@ -13,8 +13,6 @@ const customJestConfig: Config = {
   testPathIgnorePatterns: ["/node_modules/", "/e2e/"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
-    "^@octokit/rest$": "<rootDir>/__mocks__/@octokit/rest.ts",
-    "^@octokit/auth-app$": "<rootDir>/__mocks__/@octokit/auth-app.ts",
   },
   clearMocks: true,
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
