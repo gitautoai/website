@@ -9,7 +9,7 @@ const TYPE_FILE_PATTERNS = [
   /\/types\//, // types/supabase.ts, types/github.ts
   /^types\//, // types/account.ts (root level types directory)
 
-  // Common type file names (only for TypeScript files)
+  // Common type file names
   /(^|\/)types\.ts$/, // app/settings/types.ts, app/dashboard/coverage/types.ts
   /(^|\/)type\.ts$/, // single type definition files
   /Types\.ts$/, // TypeScript convention
@@ -18,9 +18,8 @@ const TYPE_FILE_PATTERNS = [
   // Interface files
   /\/interfaces\//, // interfaces directory
   /^interfaces\//, // root level interfaces directory
-  /\/interface\.ts$/, // interface.ts files
-  /Interface\.ts$/, // UserInterface.ts, ApiInterface.ts
-  /(^|\/)Interface\.ts$/, // Interface.ts files in any directory
+  /(^|\/)interface\.ts$/, // interface.ts files
+  /Interface\.ts$/, // Interface.ts files
 
   // Schema files (often contain only type definitions)
   /\/schema\.ts$/, // schema.ts files
@@ -39,17 +38,11 @@ const TYPE_FILE_PATTERNS = [
   // Other type definition patterns
   /\.types\.ts$/, // api.types.ts, user.types.ts
   /\.type\.ts$/, // user.type.ts, api.type.ts
-  /Interface\.ts$/, // UserInterface.ts, ApiInterface.ts
 ];
 
 /**
  * Check if a file path matches type file patterns
  */
 export function isTypeFile(filePath: string): boolean {
-  // Skip non-TypeScript files for type-related patterns unless they are GraphQL, Proto, or in type directories
-  if (!filePath.endsWith('.ts') && !filePath.endsWith('.tsx')) {
-    return /\.(graphql|gql|proto)$|\/types\/|^types\/|\/interfaces\/|^interfaces\/|\/schemas\/|^schemas\//.test(filePath);
-  }
-  // Apply all patterns for TypeScript files
-  return TYPE_FILE_PATTERNS.some(pattern => pattern.test(filePath));
+  return TYPE_FILE_PATTERNS.some((pattern) => pattern.test(filePath));
 }
