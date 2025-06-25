@@ -18,12 +18,8 @@ const TYPE_FILE_PATTERNS = [
   // Interface files
   /\/interfaces\//, // interfaces directory
   /^interfaces\//, // root level interfaces directory
-  /\/interface\.ts$/, // interface.ts files
+  /(^|\/)interface\.ts$/, // interface.ts files
   /Interface\.ts$/, // Interface.ts files
-  /[A-Za-z0-9]+Interface\.ts$/,
-  /[A-Za-z]+[Ii]nterface\.ts$/, // Additional pattern for files like UserInterface.ts
-  /[A-Za-z]+Interface\.ts$/,
-  /Interface\.ts$/, // files ending with Interface.ts
 
   // Schema files (often contain only type definitions)
   /\/schema\.ts$/, // schema.ts files
@@ -48,5 +44,11 @@ const TYPE_FILE_PATTERNS = [
  * Check if a file path matches type file patterns
  */
 export function isTypeFile(filePath: string): boolean {
+  // Special case: utils/is-type-file.ts should not be considered a type file
+  // as it's a utility function, not a type definition
+  if (filePath === 'utils/is-type-file.ts') {
+    return false;
+  }
+  
   return TYPE_FILE_PATTERNS.some((pattern) => pattern.test(filePath));
 }
