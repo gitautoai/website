@@ -38,6 +38,7 @@ const TYPE_FILE_PATTERNS = [
   // Other type definition patterns
   /\.types\.ts$/, // api.types.ts, user.types.ts
   /\.type\.ts$/, // user.type.ts, api.type.ts
+  /Interface\.ts$/, // UserInterface.ts, ApiInterface.ts
 ];
 
 /**
