@@ -13,7 +13,7 @@ const TYPE_FILE_PATTERNS = [
   /(^|\/)types\.ts$/, // app/settings/types.ts, app/dashboard/coverage/types.ts
   /(^|\/)type\.ts$/, // single type definition files (exact match)
   /Types\.ts$/, // TypeScript convention
-  /Type\.ts$/, // UserType.ts, ApiType.ts
+  /[A-Z]\w*Type\.ts$/, // UserType.ts, ApiType.ts (but not is-type-file.ts)
 
   // Interface files
   /\/interfaces\//, // interfaces directory
