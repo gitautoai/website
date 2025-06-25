@@ -45,5 +45,11 @@ const TYPE_FILE_PATTERNS = [
  * Check if a file path matches type file patterns
  */
 export function isTypeFile(filePath: string): boolean {
+  // Special case: utils/is-type-file.ts should not be considered a type file
+  // even though it has "type" in the name, as it's a utility function
+  if (filePath === 'utils/is-type-file.ts') {
+    return false;
+  }
+  
   return TYPE_FILE_PATTERNS.some((pattern) => pattern.test(filePath));
 }
