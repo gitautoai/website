@@ -7,7 +7,6 @@ const customJestConfig: Config = {
     "^@/(.*)$": "<rootDir>/$1",
   },
   testEnvironment: "jsdom",
-  extensionsToTreatAsEsm: [".ts", ".tsx", ".mjs"],
   modulePathIgnorePatterns: [
     "<rootDir>/dist/",
     "<rootDir>/.next/",
@@ -16,11 +15,8 @@ const customJestConfig: Config = {
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
   transformIgnorePatterns: [
     // Allow next-auth, octokit and their dependencies to be transformed
-    "/node_modules/(?!(@octokit|octokit|@next-auth|next-auth|jose|openid-client|universal-user-agent|before-after-hook|deprecation))/",
+    "/node_modules/(?!(@octokit|octokit|next-auth|@next-auth|jose|openid-client|universal-user-agent))/",
   ],
-  transform: {
-    "^.+\.[jt]sx?$": "babel-jest"
-  },
   collectCoverage: true,
   collectCoverageFrom: [
     "app/**/*.{js,jsx,ts,tsx}",
