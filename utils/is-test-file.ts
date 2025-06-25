@@ -13,13 +13,13 @@ const TEST_FILE_PATTERNS = [
   /spec_/, // spec_button.rb, spec_helper.rb
 
   // Test directories
-  /\/__tests__\//, // src/__tests__/Button.tsx
+  /(^|\/)(__tests__)(\/|$)/, // src/__tests__/Button.tsx or __tests__/utils.js
   /\/tests?\//, // src/tests/Button.tsx, src/test/Button.java
   /^tests?\//, // tests/constants.py, test/utils.py (root level test directories)
   /^__tests__\/|^\/?__tests__\//, // __tests__/utils.js (root level or nested __tests__ directory)
   /\/e2e\//, // e2e/login.spec.ts
   /^cypress\//, // cypress/integration/login.js (root level cypress directory)
-  /\/cypress\//, // cypress/integration/login.js
+  /(^|\/)cypress(\/|$)/, // cypress/integration/login.js or cypress/*
   /\/playwright\//, // playwright/tests/login.spec.ts
   /^cypress\/|^\/?cypress\//, // cypress/integration/login.js (root level or nested cypress directory)
   /\/testing\//, // testing/utils.py
