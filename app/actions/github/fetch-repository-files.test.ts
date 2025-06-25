@@ -411,5 +411,34 @@ describe('fetchRepositoryFiles', () => {
 
       expect(result).toEqual([]);
     });
+
+    it('should handle files with missing sha property', async () => {
+      const mockTreeData = {
+        data: {
+          tree: [
+            {
+              path: 'src/app.ts',
+              type: 'blob',
+              // sha property is missing
+              size: 1024,
+            },
+          ],
+        },
+      };
+
+      mockOctokit.rest.git.getTree.mockResolvedValue(mockTreeData);
+      mockIsCodeFile.mockReturnValue(true);
+      mockIsTestFile.mockReturnValue(false);
+      mockIsTypeFile.mockReturnValue(false);
+
+      const result = await fetchRepositoryFiles(
+        defaultParams.ownerName,
+        defaultParams.repoName,
+        defaultParams.accessToken
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0].sha).toBeUndefined();
+    });
   });
 });
