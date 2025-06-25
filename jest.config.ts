@@ -17,7 +17,7 @@ const customJestConfig: Config = {
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
   transformIgnorePatterns: [
     // Allow ES modules to be transformed
-    "/node_modules/(?!(next-auth|@next-auth|jose|openid-client|@octokit|octokit|universal-user-agent|before-after-hook|deprecation))/",
+    "/node_modules/(?!(next-auth|@next-auth|jose|openid-client|@octokit|octokit|universal-user-agent|before-after-hook|deprecation|@octokit/.*|octokit/.*))/",
   ],
   collectCoverage: true,
   collectCoverageFrom: [
