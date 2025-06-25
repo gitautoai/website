@@ -15,7 +15,7 @@ const customJestConfig: Config = {
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
   transformIgnorePatterns: [
     // Allow next-auth, octokit and their dependencies to be transformed
-    "/node_modules/(?!(@octokit|octokit|next-auth|@next-auth|jose|openid-client))/",
+    "/node_modules/(?!(@octokit|octokit|@next-auth|next-auth|jose|openid-client|universal-user-agent|before-after-hook|deprecation))/",
   ],
   transform: {
     "^.+\.[jt]sx?$": "babel-jest"
