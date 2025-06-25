@@ -1,13 +1,11 @@
 import type { Config } from "jest";
 import { createJestConfig } from "next/jest";
 
-// Custom Jest configuration
 const customJestConfig: Config = {
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
-  extensionsToTreatAsEsm: [".ts", ".tsx"],
   testEnvironment: "jsdom",
   modulePathIgnorePatterns: [
     "<rootDir>/dist/",
@@ -19,6 +17,9 @@ const customJestConfig: Config = {
     // Allow next-auth, octokit and their dependencies to be transformed
     "/node_modules/(?!(@octokit|octokit|next-auth|@next-auth|jose|openid-client))/",
   ],
+  transform: {
+    "^.+\.[jt]sx?$": "babel-jest"
+  },
   collectCoverage: true,
   collectCoverageFrom: [
     "app/**/*.{js,jsx,ts,tsx}",
