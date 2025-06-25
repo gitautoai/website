@@ -13,9 +13,9 @@ jest.mock('@/utils/is-test-file');
 jest.mock('@/utils/is-type-file');
 
 const mockGetOctokitForUser = jest.mocked(getOctokitForUser);
-const mockIsCodeFile = isCodeFile as jest.MockedFunction<typeof isCodeFile>;
-const mockIsTestFile = isTestFile as jest.MockedFunction<typeof isTestFile>;
-const mockIsTypeFile = isTypeFile as jest.MockedFunction<typeof isTypeFile>;
+const mockIsCodeFile = jest.mocked(isCodeFile);
+const mockIsTestFile = jest.mocked(isTestFile);
+const mockIsTypeFile = jest.mocked(isTypeFile);
 
 describe('fetchRepositoryFiles', () => {
   const mockOctokit = {
