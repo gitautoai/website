@@ -6,7 +6,7 @@ import { isTypeFile } from '@/utils/is-type-file';
 
 // Mock the dependencies
 jest.mock('@/app/api/github', () => ({
-  getOctokitForUser: jest.fn(),
+  getOctokitForUser: jest.fn()
 }));
 jest.mock('@/utils/is-code-file');
 jest.mock('@/utils/is-test-file');
