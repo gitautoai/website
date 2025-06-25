@@ -5,7 +5,7 @@ import { getDefaultBranch } from "@/app/actions/github/get-default-branch";
 import { deleteCoverage } from "@/app/actions/supabase/delete-coverage";
 import { insertCoverage } from "@/app/actions/supabase/insert-coverage";
 import { updateCoverage } from "@/app/actions/supabase/update-coverage";
-import { CoverageData } from "@/app/dashboard/coverage/types";
+import { Tables } from "@/types/supabase";
 
 /**
  * Sync repository files to coverage database
@@ -18,7 +18,7 @@ export async function syncRepositoryFiles(
   accessToken: string,
   userId: number,
   userName: string,
-  coverageData: CoverageData[]
+  coverageData: Tables<"coverages">[]
 ) {
   const startTime = performance.now();
 

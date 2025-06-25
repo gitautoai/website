@@ -3,8 +3,11 @@
 // Third-party imports
 import { useEffect, useState } from "react";
 
-// Local imports (Absolute imports)
+// Local imports (Actions)
+import { toggleExclusion } from "@/app/actions/supabase/toggle-exclusion";
 import { syncRepositoryFiles } from "@/app/actions/sync-repository-files";
+
+// Local imports (Components and others)
 import { useAccountContext } from "@/app/components/contexts/Account";
 import DocsLink from "@/app/components/DocsLink";
 import ErrorBanner from "@/app/components/ErrorBanner";
@@ -14,6 +17,7 @@ import Modal from "@/app/components/Modal";
 import Toast from "@/app/components/Toast";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { Tables } from "@/types/supabase";
 
 // Local imports (Relative imports)
 import ActionsDropdown from "./components/ActionsDropdown";
@@ -25,6 +29,7 @@ import {
   createPackageOptions,
   createParentIssueOptions,
   COVERAGE_FILTER_OPTIONS,
+  EXCLUSION_FILTER_OPTIONS,
   MOBILE_METRIC_OPTIONS,
 } from "./constants/filter-options";
 import { SYNC_MESSAGES } from "./constants/sync-messages";
@@ -34,7 +39,7 @@ import { handleCreateIssues } from "./handlers/handle-create-issues";
 import { handleSelectAll } from "./handlers/handle-select-all";
 import { handleSelectRow } from "./handlers/handle-select-row";
 import { handleSort } from "./handlers/handle-sort";
-import { CoverageData, Metric, ParentIssue, SortDirection, SortField } from "./types";
+import { Metric, ParentIssue, SortDirection, SortField } from "./types";
 import { filterAndSortData } from "./utils/filter-and-sort-data";
 import { getSortFieldForMetric } from "./utils/get-sort-field-for-metric";
 
@@ -61,9 +66,9 @@ export default function CoveragePage() {
   const [error, setError] = useState<string | null>(null);
 
   // Data states
-  const [coverageData, setCoverageData] = useState<CoverageData[]>([]);
+  const [coverageData, setCoverageData] = useState<Tables<"coverages">[]>([]);
   const [packageNames, setPackageNames] = useState<string[]>([]);
-  const [levels] = useState<CoverageData["level"][]>(["repository", "directory", "file"]);
+  const [levels] = useState<Tables<"coverages">["level"][]>(["repository", "directory", "file"]);
   const [openIssues, setOpenIssues] = useState<ParentIssue[]>([]);
 
   // UI states
@@ -75,6 +80,8 @@ export default function CoveragePage() {
   const [sortField, setSortField] = useState<SortField>("statement_coverage");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [selectedExclusionFilter, setSelectedExclusionFilter] = useState<string>("");
+  const [isTogglingExclusion, setIsTogglingExclusion] = useState(false);
 
   // Load sort settings from localStorage
   useEffect(() => {
@@ -83,6 +90,13 @@ export default function CoveragePage() {
 
     if (savedSortField) setSortField(savedSortField);
     if (savedSortDirection) setSortDirection(savedSortDirection);
+  }, []);
+
+  // Load filter settings from localStorage if it exists
+  useEffect(() => {
+    setSelectedLevel(localStorage.getItem("selectedCoverageLevel") || "");
+    setSelectedExclusionFilter(localStorage.getItem("selectedExclusionFilter") || "");
+    setHideFullCoverage((localStorage.getItem("hideFullCoverage") as "all" | "hide") || "hide");
   }, []);
 
   // Fetch coverage data
@@ -154,11 +168,6 @@ export default function CoveragePage() {
     userName,
   ]);
 
-  // Load selected level from localStorage if it exists
-  useEffect(() => {
-    setSelectedLevel(localStorage.getItem("selectedCoverageLevel") || "");
-  }, []);
-
   // When repository changes, update parent issue list
   useEffect(() => {
     if (!currentOwnerName || !currentRepoName || !accessToken) return;
@@ -180,9 +189,13 @@ export default function CoveragePage() {
     selectedPackage,
     selectedLevel,
     hideFullCoverage,
+    selectedExclusionFilter,
     sortField,
     sortDirection
   );
+
+  // Get selected data for actions
+  const selectedData = filteredData.filter((item) => selectedRows.includes(item.id));
 
   // Check if we have any package names to show the filter
   const hasPackages = packageNames.length > 0;
@@ -190,6 +203,45 @@ export default function CoveragePage() {
   const handleLevelChange = (value: string) => {
     setSelectedLevel(value);
     localStorage.setItem("selectedCoverageLevel", value);
+  };
+
+  const handleCoverageFilterChange = (value: string) => {
+    const filterValue = value as "all" | "hide";
+    setHideFullCoverage(filterValue);
+    localStorage.setItem("hideFullCoverage", filterValue);
+  };
+
+  const handleExclusionFilterChange = (value: string) => {
+    setSelectedExclusionFilter(value);
+    localStorage.setItem("selectedExclusionFilter", value);
+  };
+
+  const handleToggleExclusion = async (isExcluded: boolean) => {
+    if (!userId || !userName || selectedRows.length === 0) return;
+
+    try {
+      setIsTogglingExclusion(true);
+      setError(null);
+
+      await toggleExclusion(selectedRows, isExcluded, userId, userName);
+
+      // Refresh data
+      await fetchCoverageData(
+        currentOwnerId,
+        currentRepoId,
+        setCoverageData,
+        setPackageNames,
+        setError,
+        setIsLoadingDB
+      );
+
+      setSelectedRows([]);
+      setActionSuccess(true);
+    } catch (error) {
+      setError(`Failed to ${isExcluded ? "exclude" : "include"} files`);
+    } finally {
+      setIsTogglingExclusion(false);
+    }
   };
 
   return (
@@ -227,7 +279,7 @@ export default function CoveragePage() {
         <FilterSelect
           label="Coverage Filter"
           value={hideFullCoverage}
-          onChange={(value) => setHideFullCoverage(value as "all" | "hide")}
+          onChange={handleCoverageFilterChange}
           options={COVERAGE_FILTER_OPTIONS}
           disabled={isLoadingDB}
         />
@@ -259,9 +311,16 @@ export default function CoveragePage() {
           />
         </div>
 
+        <FilterSelect
+          label="Exclusion Status"
+          value={selectedExclusionFilter}
+          onChange={handleExclusionFilterChange}
+          options={EXCLUSION_FILTER_OPTIONS}
+        />
+
         <ActionsDropdown
           isOpen={isActionsOpen}
-          onToggle={() => setIsActionsOpen(!isActionsOpen)}
+          onToggleDropdown={() => setIsActionsOpen(!isActionsOpen)}
           selectedRows={selectedRows}
           isCreatingIssues={isCreatingIssues}
           onCreateIssues={(hasLabel) => {
@@ -285,6 +344,9 @@ export default function CoveragePage() {
               setIsCreatingIssues,
             });
           }}
+          onToggleExclusion={handleToggleExclusion}
+          isTogglingExclusion={isTogglingExclusion}
+          selectedData={selectedData}
         />
       </div>
 

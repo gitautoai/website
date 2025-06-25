@@ -92,6 +92,7 @@ export type Database = {
           function_coverage: number | null
           github_issue_url: string | null
           id: number
+          is_excluded_from_testing: boolean | null
           level: string
           line_coverage: number | null
           owner_id: number
@@ -116,6 +117,7 @@ export type Database = {
           function_coverage?: number | null
           github_issue_url?: string | null
           id?: number
+          is_excluded_from_testing?: boolean | null
           level: string
           line_coverage?: number | null
           owner_id: number
@@ -140,6 +142,7 @@ export type Database = {
           function_coverage?: number | null
           github_issue_url?: string | null
           id?: number
+          is_excluded_from_testing?: boolean | null
           level?: string
           line_coverage?: number | null
           owner_id?: number

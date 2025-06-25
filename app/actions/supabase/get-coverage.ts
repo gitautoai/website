@@ -1,7 +1,7 @@
 "use server";
 
-import { CoverageData } from "@/app/dashboard/coverage/types";
 import { supabase } from "@/lib/supabase";
+import { Tables } from "@/types/supabase";
 
 /**
  * Get existing coverage data from Supabase
@@ -18,5 +18,5 @@ export async function getCoverage(ownerId: number, repoId: number) {
     throw error;
   }
 
-  return data as CoverageData[];
+  return data as Tables<"coverages">[];
 }

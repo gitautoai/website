@@ -1,5 +1,5 @@
 import { getCoverage } from "@/app/actions/supabase/get-coverage";
-import { CoverageData } from "@/app/dashboard/coverage/types";
+import { Tables } from "@/types/supabase";
 
 /**
  * Handle fetching coverage data from Supabase
@@ -7,11 +7,11 @@ import { CoverageData } from "@/app/dashboard/coverage/types";
 export async function fetchCoverageData(
   currentOwnerId: number | null,
   currentRepoId: number | null,
-  setCoverageData: (data: CoverageData[]) => void,
+  setCoverageData: (data: Tables<"coverages">[]) => void,
   setPackageNames: (names: string[]) => void,
   setError: (error: string | null) => void,
   setIsLoading: (loading: boolean) => void
-): Promise<CoverageData[]> {
+): Promise<Tables<"coverages">[]> {
   if (!currentOwnerId || !currentRepoId) {
     setIsLoading(false);
     return [];
