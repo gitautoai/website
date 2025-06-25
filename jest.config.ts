@@ -27,6 +27,7 @@ const customJestConfig: Config = {
     "!app/**/_*.{js,jsx,ts,tsx}", // Exclude files starting with _
     "!utils/**/*.test.{js,jsx,ts,tsx}", // Exclude test files
     "!app/**/*.d.ts", // Exclude declaration files
+    "!utils/**/*.d.ts", // Exclude declaration files in utils
     "!**/node_modules/**", // Exclude node_modules
   ],
   coverageReporters: ["text", "lcov"],
