@@ -20,6 +20,7 @@ const TYPE_FILE_PATTERNS = [
   /^interfaces\//, // root level interfaces directory
   /\/interface\.ts$/, // interface.ts files
   /Interface\.ts$/, // Interface.ts files
+  /[A-Za-z]+[Ii]nterface\.ts$/, // Additional pattern for files like UserInterface.ts
   /[A-Za-z]+Interface\.ts$/,
   /Interface\.ts$/, // files ending with Interface.ts
 
