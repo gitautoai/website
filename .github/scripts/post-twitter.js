@@ -1,6 +1,32 @@
 const { TwitterApi } = require("twitter-api-v2");
 
 /**
+ * Post tweet with retry logic for 403 errors
+ */
+async function postTweetWithRetry(client, message, title, url, description) {
+  let tweet = description
+    ? `${message}: ${title} ${url}\n\n${description}`
+    : `${message}: ${title} ${url}`;
+
+  try {
+    return await client.v2.tweet(tweet);
+  } catch (error) {
+    if (error.code === 403 && description) {
+      // Fit as much description as possible
+      const baseLength = `${message}: ${title} ${url}\n\n`.length;
+      const maxDescLength = 280 - baseLength - 3; // 3 for "..."
+      if (maxDescLength > 10) {
+        tweet = `${message}: ${title} ${url}\n\n${description.substring(0, maxDescLength)}...`;
+      } else {
+        tweet = `${message}: ${title} ${url}`;
+      }
+      return await client.v2.tweet(tweet);
+    }
+    throw error;
+  }
+}
+
+/**
  * @see https://developer.x.com/en/docs/x-api/tweets/manage-tweets/api-reference/post-tweets
  */
 async function postTwitter({ context, isBlog, postUrl }) {
@@ -41,8 +67,8 @@ async function postTwitter({ context, isBlog, postUrl }) {
 
   // Post tweets and get their IDs
   // https://github.com/PLhery/node-twitter-api-v2/blob/master/doc/v2.md#create-a-tweet
-  const gitAutoTweet = await clientGitAuto.v2.tweet(tweet);
-  const wesTweet = await clientWes.v2.tweet(tweet);
+  const gitAutoTweet = await postTweetWithRetry(clientGitAuto, message, title, url, description);
+  const wesTweet = await postTweetWithRetry(clientWes, message, title, url, description);
 
   // https://docs.x.com/x-api/posts/creation-of-a-post
   // const communityTweets = await Promise.all(
