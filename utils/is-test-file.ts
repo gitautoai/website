@@ -3,38 +3,36 @@
  */
 const TEST_FILE_PATTERNS = [
   // Test file naming patterns
-  /\.test\./,           // Button.test.tsx, utils.test.js
-  /\.spec\./,           // Button.spec.tsx, api.spec.js
-  /Test\./,              // ButtonTest.java, UserTest.cs
-  /Tests\./,             // ButtonTests.java, UserTests.cs
-  /_test\./,             // button_test.py, user_test.go
-  /_spec\./,             // button_spec.rb, user_spec.rb
-  /test_/,               // test_button.py, test_utils.py
-  /spec_/,               // spec_button.rb, spec_helper.rb
+  /\.test\./, // Button.test.tsx, utils.test.js
+  /\.spec\./, // Button.spec.tsx, api.spec.js
+  /Test\./, // ButtonTest.java, UserTest.cs
+  /Tests\./, // ButtonTests.java, UserTests.cs
+  /_test\./, // button_test.py, user_test.go
+  /_spec\./, // button_spec.rb, user_spec.rb
+  /test_/, // test_button.py, test_utils.py
+  /spec_/, // spec_button.rb, spec_helper.rb
 
   // Test directories
-  /^tests?\//,          // tests/constants.py, test/utils.js (root level test directories)
-  /^__tests__\//,        // __tests__/utils.js (root level __tests__ directory)
-  /^e2e\//,             // e2e/login.spec.ts (root level e2e directory)
-  /^cypress\//,         // cypress/integration/login.js (root level cypress directory)
-  /\/e2e\//,           // e2e/login.spec.ts
-  /\/cypress\//,       // cypress/integration/login.js
-  /\/playwright\//,    // playwright/tests/login.spec.ts
-  /\/spec\//,          // spec/models/user_spec.rb
-  /\/testing\//,       // testing/utils.js
+  /(^|\/)(__tests__)(\/|$)/, // src/__tests__/Button.tsx or __tests__/utils.js
+  /\/tests?\//, // src/tests/Button.tsx, src/test/Button.java
+  /^tests?\//, // tests/constants.py, test/utils.py (root level test directories)
+  /\/e2e\//, // e2e/login.spec.ts
+  /(^|\/)cypress(\/|$)/, // cypress/integration/login.js
+  /\/playwright\//, // playwright/tests/login.spec.ts
+  /\/testing\//, // testing/utils.py
 
   // Mock files
-  /\/__mocks__\//,      // src/__mocks__/api.js
-  /\.mock\./,           // api.mock.ts, database.mock.js
-  /Mock\./,              // ApiMock.java, DatabaseMock.cs
-  /Mocks\./,             // ApiMocks.java, DatabaseMocks.cs
+  /\/__mocks__\//, // src/__mocks__/api.js
+  /\.mock\./, // api.mock.ts, database.mock.js
+  /Mock\./, // ApiMock.java, DatabaseMock.cs
+  /Mocks\./, // ApiMocks.java, DatabaseMocks.cs
 
   // Common test file names
-  /^test\./,            // test.js, test.py (root level test files)
-  /^spec\./,            // spec.rb, spec.js (root level spec files)
+  /^test\./, // test.js, test.py (root level test files)
+  /^spec\./, // spec.rb, spec.js (root level spec files)
 
   // CI/CD and infrastructure scripts
-  /^\.github\//         // .github/scripts/*, .github/workflows/*
+  /^\.github\//, // .github/scripts/*, .github/workflows/*
 ];
 
 /**
