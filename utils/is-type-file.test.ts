@@ -139,5 +139,15 @@ describe('isTypeFile', () => {
       expect(isTypeFile('.')).toBe(false);
       expect(isTypeFile('..')).toBe(false);
     });
+
+    it('should handle case sensitivity correctly', () => {
+      // Test case variations that should still match
+      expect(isTypeFile('UserTypes.ts')).toBe(true);
+      expect(isTypeFile('ApiType.ts')).toBe(true);
+      
+      // Test lowercase variations that should not match capital patterns
+      expect(isTypeFile('usertypes.ts')).toBe(false);
+      expect(isTypeFile('apitype.ts')).toBe(false);
+    });
   });
 });
