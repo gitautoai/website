@@ -13,13 +13,13 @@ const TYPE_FILE_PATTERNS = [
   /(^|\/)types\.ts$/, // app/settings/types.ts, app/dashboard/coverage/types.ts
   /(^|\/)type\.ts$/, // single type definition files (exact match)
   /Types\.ts$/, // TypeScript convention
-  /Type\.ts$/, // singular type files
+  /[A-Z].*Type\.ts$/, // UserType.ts, ApiType.ts, XMLType.ts (but not is-type-file.ts)
 
   // Interface files
   /\/interfaces\//, // interfaces directory
   /^interfaces\//, // root level interfaces directory
-  /(^|\/)interface\.ts$/, // interface.ts files
-  /.*Interface\.ts$/, // files ending with Interface.ts
+  /\/interface\.ts$/, // interface.ts files
+  /[A-Z].*Interface\.ts$/, // UserInterface.ts, ApiInterface.ts, XMLInterface.ts
 
   // Schema files (often contain only type definitions)
   /\/schema\.ts$/, // schema.ts files
@@ -44,12 +44,5 @@ const TYPE_FILE_PATTERNS = [
  * Check if a file path matches type file patterns
  */
 export function isTypeFile(filePath: string): boolean {
-  // Special cases: utility files that have "type" in their name but are not type definition files
-  if (filePath === 'utils/is-type-file.ts' || 
-      filePath.startsWith('utils/is-type-file.test') || 
-      filePath.startsWith('utils/is-type-file.spec')) {
-    return false;
-  }
-  
   return TYPE_FILE_PATTERNS.some((pattern) => pattern.test(filePath));
 }
