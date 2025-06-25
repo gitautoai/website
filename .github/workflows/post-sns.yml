@@ -21,7 +21,7 @@ jobs:
       # https://github.com/actions/setup-node
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "20" # Updated to latest LTS version
 
       # https://github.com/plhery/node-twitter-api-v2
       # https://github.com/linkedin-developers/linkedin-api-js-client#linkedin-api-javascript-client
