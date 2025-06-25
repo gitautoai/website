@@ -11,7 +11,7 @@ const TYPE_FILE_PATTERNS = [
 
   // Common type file names
   /(^|\/)types\.ts$/, // app/settings/types.ts, app/dashboard/coverage/types.ts
-  /(^|\/)type\.ts$/, // single type definition files
+  /(^|\/)type\.ts$/, // single type definition files (exact match)
   /Types\.ts$/, // TypeScript convention
   /Type\.ts$/, // singular type files
 
