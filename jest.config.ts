@@ -7,6 +7,7 @@ const customJestConfig: Config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
+  extensionsToTreatAsEsm: [".ts", ".tsx"],
   testEnvironment: "jsdom",
   modulePathIgnorePatterns: [
     "<rootDir>/dist/",
