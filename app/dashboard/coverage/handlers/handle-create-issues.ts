@@ -1,5 +1,6 @@
+import { IssueResponse, ParentIssue } from "@/app/dashboard/coverage/types";
+import { Tables } from "@/types/supabase";
 import { fetchWithTiming } from "@/utils/fetch";
-import { CoverageData, IssueResponse, ParentIssue } from "@/app/dashboard/coverage/types";
 
 /**
  * Handle creating GitHub issues for selected coverage items
@@ -19,13 +20,13 @@ export async function handleCreateIssues({
   setIsCreatingIssues,
 }: {
   selectedRows: number[];
-  coverageData: CoverageData[];
+  coverageData: Tables<"coverages">[];
   currentOwnerName: string;
   currentRepoName: string;
   accessToken: string;
   selectedParentIssue: ParentIssue | null;
   hasLabel?: boolean;
-  setCoverageData: (fn: (prev: CoverageData[]) => CoverageData[]) => void;
+  setCoverageData: (fn: (prev: Tables<"coverages">[]) => Tables<"coverages">[]) => void;
   setSelectedRows: (rows: number[]) => void;
   setActionSuccess: (success: boolean) => void;
   setError: (error: string) => void;

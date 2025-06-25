@@ -1,10 +1,10 @@
+import { Tables } from "@/types/supabase";
 import { formatDateTime } from "@/utils/format-date-time";
-import { CoverageData } from "@/app/dashboard/coverage/types";
 
 /**
  * Get the latest update timestamp from coverage data
  */
-export function getLatestUpdate(coverageData: CoverageData[]) {
+export function getLatestUpdate(coverageData: Tables<"coverages">[]) {
   if (coverageData.length === 0) return null;
 
   const latestDate = coverageData.reduce((latest, item) => {

@@ -1,10 +1,10 @@
-import { CoverageData } from "@/app/dashboard/coverage/types";
+import { Tables } from "@/types/supabase";
 
 /**
  * Handle select all/deselect all functionality
  */
 export function handleSelectAll(
-  filteredData: CoverageData[],
+  filteredData: Tables<"coverages">[],
   selectedRows: number[],
   setSelectedRows: (rows: number[]) => void
 ) {
