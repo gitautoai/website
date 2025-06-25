@@ -13,13 +13,16 @@ const customJestConfig: Config = {
     "<rootDir>/node_modules/",
   ],
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-  transformIgnorePatterns: [
-    // Allow next-auth, octokit and their dependencies to be transformed
-    "/node_modules/(?!(.*\.mjs$|@octokit|octokit|@next-auth|next-auth|jose|openid-client|universal-user-agent|before-after-hook|deprecation))/",
-  ],
-  transform: {
-    "^.+\.(js|jsx|ts|tsx|mjs)$": "babel-jest"
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  globals: {
+    'ts-jest': {
+      useESM: true
+    }
   },
+  transformIgnorePatterns: [
+    // Allow ES modules and specific packages to be transformed
+    "node_modules/(?!(@octokit|octokit|@next-auth|next-auth|jose|openid-client|universal-user-agent|before-after-hook|deprecation)/)"
+  ],
   collectCoverage: true,
   collectCoverageFrom: [
     "app/**/*.{js,jsx,ts,tsx}",
