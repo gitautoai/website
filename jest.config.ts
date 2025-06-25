@@ -13,15 +13,9 @@ const customJestConfig: Config = {
     "<rootDir>/node_modules/",
   ],
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  globals: {
-    'ts-jest': {
-      useESM: true
-    }
-  },
   transformIgnorePatterns: [
-    // Allow ES modules and specific packages to be transformed
-    "node_modules/(?!(@octokit|octokit|@next-auth|next-auth|jose|openid-client|universal-user-agent|before-after-hook|deprecation)/)"
+    // Allow next-auth, octokit and their dependencies to be transformed
+    "/node_modules/(?!(@octokit|next-auth|@next-auth|jose|openid-client))/",
   ],
   collectCoverage: true,
   collectCoverageFrom: [
