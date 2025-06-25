@@ -3,6 +3,7 @@
 import { getOctokitForUser } from "@/app/api/github";
 import { isCodeFile } from "@/utils/is-code-file";
 import { isTestFile } from "@/utils/is-test-file";
+import { isTypeFile } from "@/utils/is-type-file";
 
 export interface RepositoryFile {
   path: string;
@@ -40,6 +41,9 @@ export async function fetchRepositoryFiles(
 
       // Skip test files
       if (isTestFile(item.path)) continue;
+
+      // Skip type files
+      if (isTypeFile(item.path)) continue;
 
       allFiles.push({
         path: item.path,
