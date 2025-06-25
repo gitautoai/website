@@ -12,7 +12,7 @@ jest.mock('@/utils/is-code-file');
 jest.mock('@/utils/is-test-file');
 jest.mock('@/utils/is-type-file');
 
-const mockGetOctokitForUser = getOctokitForUser as jest.MockedFunction<typeof getOctokitForUser>;
+const mockGetOctokitForUser = jest.mocked(getOctokitForUser);
 const mockIsCodeFile = isCodeFile as jest.MockedFunction<typeof isCodeFile>;
 const mockIsTestFile = isTestFile as jest.MockedFunction<typeof isTestFile>;
 const mockIsTypeFile = isTypeFile as jest.MockedFunction<typeof isTypeFile>;
