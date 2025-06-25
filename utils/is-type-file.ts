@@ -19,7 +19,8 @@ const TYPE_FILE_PATTERNS = [
   /\/interfaces\//, // interfaces directory
   /^interfaces\//, // root level interfaces directory
   /\/interface\.ts$/, // interface.ts files
-  /(^|\/)Interface\.ts$/, // Interface.ts files
+  /Interface\.ts$/, // UserInterface.ts, ApiInterface.ts
+  /(^|\/)Interface\.ts$/, // Interface.ts files in any directory
 
   // Schema files (often contain only type definitions)
   /\/schema\.ts$/, // schema.ts files
