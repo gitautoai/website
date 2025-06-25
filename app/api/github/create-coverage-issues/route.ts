@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { getGraphQL } from "@/app/api/github";
-import { CoverageData } from "@/app/dashboard/coverage/types";
 import { PRODUCT_ID } from "@/config";
 import { ABSOLUTE_URLS } from "@/config/urls";
 import { supabase } from "@/lib/supabase";
+import { Tables } from "@/types/supabase";
 
 type CreateIssueResponse = {
   createIssue: {
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
     }
 
     const createdIssues = await Promise.all(
-      selectedCoverages.map(async (coverage: CoverageData) => {
+      selectedCoverages.map(async (coverage: Tables<"coverages">) => {
         const {
           full_path,
           line_coverage,
@@ -149,10 +149,10 @@ export async function POST(request: Request) {
 
         const body = `## File: [${full_path}](https://github.com/${ownerName}/${repoName}/blob/HEAD/${full_path})
 
-- Line Coverage: ${Math.floor(line_coverage)}% ${uncoveredLines}
-- Statement Coverage: ${Math.floor(statement_coverage)}%
-- Function Coverage: ${Math.floor(function_coverage)}% ${uncoveredFunctions}
-- Branch Coverage: ${Math.floor(branch_coverage)}% ${uncoveredBranches}
+- Line Coverage: ${Math.floor(line_coverage || 0)}% ${uncoveredLines}
+- Statement Coverage: ${Math.floor(statement_coverage || 0)}%
+- Function Coverage: ${Math.floor(function_coverage || 0)}% ${uncoveredFunctions}
+- Branch Coverage: ${Math.floor(branch_coverage || 0)}% ${uncoveredBranches}
 
 Last Updated: ${new Date(updated_at).toLocaleString()}
 

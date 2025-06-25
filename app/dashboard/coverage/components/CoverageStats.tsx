@@ -1,10 +1,10 @@
-import { CoverageData } from "../types";
+import { Tables } from "@/types/supabase";
 import { getLevelCounts } from "../utils/get-level-counts";
 import { getLatestUpdate } from "../utils/get-latest-update";
 
 interface CoverageStatsProps {
-  filteredData: CoverageData[];
-  coverageData: CoverageData[];
+  filteredData: Tables<"coverages">[];
+  coverageData: Tables<"coverages">[];
 }
 
 export default function CoverageStats({ filteredData, coverageData }: CoverageStatsProps) {

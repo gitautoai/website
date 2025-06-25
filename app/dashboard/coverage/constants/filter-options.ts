@@ -1,4 +1,4 @@
-import { CoverageData } from "../types";
+import { Tables } from "@/types/supabase";
 
 // Package filter options
 export const createPackageOptions = (packageNames: string[]) => [
@@ -7,7 +7,7 @@ export const createPackageOptions = (packageNames: string[]) => [
 ];
 
 // Level filter options
-export const createLevelOptions = (levels: CoverageData["level"][]) => [
+export const createLevelOptions = (levels: Tables<"coverages">["level"][]) => [
   { value: "", label: "All Levels" },
   ...levels.map((level) => ({
     value: level,
@@ -38,4 +38,10 @@ export const createParentIssueOptions = (
     value: issue.number.toString(),
     label: `#${issue.number} ${issue.title}`,
   })),
+];
+
+export const EXCLUSION_FILTER_OPTIONS = [
+  { value: "", label: "All Files" },
+  { value: "included", label: "Included Only" },
+  { value: "excluded", label: "Excluded Only" },
 ];
