@@ -9,6 +9,7 @@ const createJestConfig = nextJest({
 // Custom Jest configuration
 const customJestConfig: Config = {
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
   testEnvironment: "jest-environment-jsdom",
   testPathIgnorePatterns: ["/node_modules/", "/e2e/"],
   moduleNameMapper: {
