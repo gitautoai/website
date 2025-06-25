@@ -12,6 +12,7 @@ import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import TriggerToggle from "@/app/settings/components/TriggerToggle";
 import type { TriggerSettings } from "@/app/settings/types";
+import { PRODUCT_NAME } from "@/config";
 
 export default function TriggersPage() {
   const { currentOwnerId, currentOwnerName, currentRepoId, currentRepoName, userId, userName } =
@@ -89,10 +90,18 @@ export default function TriggersPage() {
   const handleToggle = (key: keyof TriggerSettings) => {
     const oldValue = triggerSettings[key];
     const newValue = !oldValue;
-    const updatedSettings = {
+
+    let updatedSettings = {
       ...triggerSettings,
       [key]: newValue,
     };
+
+    // When enabling triggerOnCommit, disable triggerOnMerged
+    if (key === "triggerOnCommit" && newValue) updatedSettings.triggerOnMerged = false;
+
+    // When enabling triggerOnMerged, disable triggerOnCommit
+    if (key === "triggerOnMerged" && newValue) updatedSettings.triggerOnCommit = false;
+
     setTriggerSettings(updatedSettings);
     saveSettings(updatedSettings);
     notifyChange(key, oldValue, newValue);
@@ -179,16 +188,16 @@ export default function TriggersPage() {
             />
 
             <TriggerToggle
-              title="(WIP) On commit"
-              description="Triggers GitAuto to add unit tests when commits are made by users in this repository. Not triggered by GitAuto's own commits to avoid recursive automation."
+              title="On push"
+              description={`Triggers ${PRODUCT_NAME} to add unit tests when commits are made by users in this repository. Not triggered by ${PRODUCT_NAME} or other bots' commits to avoid recursive automation. Cannot be used together with 'On merge' trigger.`}
               isEnabled={triggerSettings.triggerOnCommit}
               isDisabled={isSaving}
               onToggle={() => handleToggle("triggerOnCommit")}
             />
 
             <TriggerToggle
-              title="(WIP) On merge"
-              description="Triggers GitAuto to add unit tests for code that has been merged into your target branch. Ensures newly merged features have proper test coverage."
+              title="On merge"
+              description={`Triggers ${PRODUCT_NAME} to add unit tests for code that has been merged into your target branch. Ensures newly merged features have proper test coverage. Cannot be used together with 'On push' trigger.`}
               isEnabled={triggerSettings.triggerOnMerged}
               isDisabled={isSaving}
               onToggle={() => handleToggle("triggerOnMerged")}
