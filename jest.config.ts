@@ -13,10 +13,6 @@ const customJestConfig: Config = {
     "<rootDir>/node_modules/",
   ],
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
-  transformIgnorePatterns: [
-    // Allow next-auth, octokit and their dependencies to be transformed
-    "/node_modules/(?!(@octokit|next-auth|@next-auth|jose|openid-client))/",
-  ],
   collectCoverage: true,
   collectCoverageFrom: [
     "app/**/*.{js,jsx,ts,tsx}",
