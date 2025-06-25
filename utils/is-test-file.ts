@@ -16,6 +16,7 @@ const TEST_FILE_PATTERNS = [
   /\/__tests__\//, // src/__tests__/Button.tsx
   /\/tests?\//, // src/tests/Button.tsx, src/test/Button.java
   /^tests?\//, // tests/constants.py, test/utils.py (root level test directories)
+  /^__tests__\//, // __tests__/utils.js (root level __tests__ directory)
   /\/e2e\//, // e2e/login.spec.ts
   /\/cypress\//, // cypress/integration/login.js
   /\/playwright\//, // playwright/tests/login.spec.ts
