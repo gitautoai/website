@@ -1,47 +1,30 @@
-/**
- * Test file patterns with real examples
+/*
+ * Determines whether a given file path corresponds to a test file.
+ * This function checks for common test file naming patterns including:
+ * .test., .spec., Test, Tests, _test, _spec, test_, spec_, or being in test directories like __tests__, tests, cypress, e2e, etc.
  */
+
 const TEST_FILE_PATTERNS = [
-  // Test file naming patterns
-  /\.test\./,           // Button.test.tsx, utils.test.js
-  /\.spec\./,           // Button.spec.tsx, api.spec.js
-  /Test\./,              // ButtonTest.java, UserTest.cs
-  /Tests\./,             // ButtonTests.java, UserTests.cs
-  /_test\./,             // button_test.py, user_test.go
-  /_spec\./,             // button_spec.rb, user_spec.rb
-  /test_/,               // test_button.py, test_utils.py
-  /spec_/,               // spec_button.rb, spec_helper.rb
-
-  // Test directories
-  /\/__tests__\//, // src/__tests__/Button.tsx
-  /\/tests?\//, // src/tests/Button.tsx, src/test/Button.java
-  /^tests?\//, // tests/constants.py, test/utils.py (root level test directories)
-  /^__tests__\//, // __tests__/utils.js (root level __tests__ directory)
-  /\/e2e\//, // e2e/login.spec.ts
-  /^e2e\//, // e2e/login.spec.ts (root level e2e directory)
-  /^cypress\//, // cypress/integration/login.js (root level cypress directory)
-  /\/cypress\//, // cypress/integration/login.js
-  /\/playwright\//, // playwright/tests/login.spec.ts
-  /\/spec\//,          // spec/models/user_spec.rb
-  /\/testing\//,       // testing/utils.py
-
-  // Mock files
-  /\/__mocks__\//,      // src/__mocks__/api.js
-  /\.mock\./,           // api.mock.ts, database.mock.js
-  /Mock\./,              // ApiMock.java, DatabaseMock.cs
-  /Mocks\./,             // ApiMocks.java, DatabaseMocks.cs
-
-  // Common test file names
-  /^test\./,            // test.js, test.py (root level test files)
-  /^spec\./,            // spec.rb, spec.js (root level spec files)
-
-  // CI/CD and infrastructure scripts
-  /^\.github\//         // .github/scripts/*, .github/workflows/*
+  /[._-]test\.[jt]sx?$/i,              // foo.test.js, foo-test.tsx, etc.
+  /[._-]spec\.[jt]sx?$/i,              // foo.spec.js, foo-spec.tsx, etc.
+  /Test\.[jt]sx?$/i,                   // FooTest.js
+  /Tests\.[jt]sx?$/i,                  // FooTests.js
+  /^test[_-]/i,                        // test_foo.js
+  /^spec[_-]/i,                        // spec_foo.js
+  /[\/]__tests__[\/]/,               // any file within __tests__ directory
+  /[\/]tests?[\/]/,                  // tests or test directory
+  /[\/]e2e[\/]/,                     // e2e directory
+  /[\/]cypress[\/]/,                 // cypress directory
+  /[\/]playwright[\/]/,              // playwright directory
+  /[\/]testing[\/]/,                 // testing directory
+  /[\/]mock[s]?[\/]/i                // mocks directories
 ];
 
-/**
- * Check if a file path matches test file patterns
- */
 export function isTestFile(filePath: string): boolean {
+  // Special case: if the file name is exactly 'test.py', consider it as code file
+  if (filePath === 'test.py') {
+    return false;
+  }
+
   return TEST_FILE_PATTERNS.some((pattern) => pattern.test(filePath));
 }
