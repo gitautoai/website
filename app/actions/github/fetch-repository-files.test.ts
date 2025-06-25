@@ -1,16 +1,29 @@
 import { fetchRepositoryFiles } from './fetch-repository-files';
+
+// Mock all the dependencies at the module level
+jest.mock('@/app/api/github', () => ({
+  getOctokitForUser: jest.fn(),
+  getOctokitForInstallation: jest.fn(),
+  getGraphQL: jest.fn(),
+}));
+
+jest.mock('@/utils/is-code-file', () => ({
+  isCodeFile: jest.fn(),
+}));
+
+jest.mock('@/utils/is-test-file', () => ({
+  isTestFile: jest.fn(),
+}));
+
+jest.mock('@/utils/is-type-file', () => ({
+  isTypeFile: jest.fn(),
+}));
+
+// Import the mocked functions
 import { getOctokitForUser } from '@/app/api/github';
 import { isCodeFile } from '@/utils/is-code-file';
 import { isTestFile } from '@/utils/is-test-file';
 import { isTypeFile } from '@/utils/is-type-file';
-
-// Mock the dependencies
-jest.mock('@/app/api/github', () => ({
-  getOctokitForUser: jest.fn()
-}));
-jest.mock('@/utils/is-code-file');
-jest.mock('@/utils/is-test-file');
-jest.mock('@/utils/is-type-file');
 
 const mockGetOctokitForUser = jest.mocked(getOctokitForUser);
 const mockIsCodeFile = jest.mocked(isCodeFile);
