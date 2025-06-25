@@ -25,6 +25,7 @@ const customJestConfig: Config = {
     "app/**/*.{js,jsx,ts,tsx}", // Include all files in the app directory
     "utils/**/*.{js,jsx,ts,tsx}", // Include all files in the utils directory
     "!app/**/_*.{js,jsx,ts,tsx}", // Exclude files starting with _
+    "!utils/**/*.test.{js,jsx,ts,tsx}", // Exclude test files
     "!app/**/*.d.ts", // Exclude declaration files
     "!**/node_modules/**", // Exclude node_modules
   ],
