@@ -14,6 +14,7 @@ const customJestConfig: Config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
+  clearMocks: true,
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
   transformIgnorePatterns: [
     // Allow ES modules to be transformed by Jest - include all Octokit-related packages
