@@ -56,6 +56,11 @@ describe('isTypeFile', () => {
     });
 
     it('should identify Interface.ts files as type files', () => {
+    it('should debug Interface pattern', () => {
+      console.log('Testing UserInterface.ts:', /[A-Z].*Interface\.ts$/.test('UserInterface.ts'));
+      console.log('Testing src/ApiInterface.ts:', /[A-Z].*Interface\.ts$/.test('src/ApiInterface.ts'));
+    });
+
       expect(isTypeFile('UserInterface.ts')).toBe(true);
       expect(isTypeFile('src/ApiInterface.ts')).toBe(true);
     });
