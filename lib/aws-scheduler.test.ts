@@ -1,8 +1,9 @@
 import { SchedulerClient } from "@aws-sdk/client-scheduler";
-import { schedulerClient } from "./aws-scheduler";
 
 // Mock the AWS SDK
 jest.mock("@aws-sdk/client-scheduler");
+
+const MockedSchedulerClient = SchedulerClient as jest.MockedClass<typeof SchedulerClient>;
 
 describe("aws-scheduler", () => {
   beforeEach(() => {
@@ -18,7 +19,7 @@ describe("aws-scheduler", () => {
     jest.resetModules();
     require("./aws-scheduler");
 
-    expect(SchedulerClient).toHaveBeenCalledWith({
+    expect(MockedSchedulerClient).toHaveBeenCalledWith({
       region: "us-east-1",
       credentials: {
         accessKeyId: undefined,
@@ -35,12 +36,20 @@ describe("aws-scheduler", () => {
     jest.resetModules();
     require("./aws-scheduler");
 
-    expect(SchedulerClient).toHaveBeenCalledWith({
+    expect(MockedSchedulerClient).toHaveBeenCalledWith({
       region: "eu-west-1",
       credentials: {
         accessKeyId: "test-access-key",
         secretAccessKey: "test-secret-key",
       },
     });
+  });
+
+  it("should export schedulerClient instance", () => {
+    jest.resetModules();
+    const { schedulerClient } = require("./aws-scheduler");
+    
+    expect(schedulerClient).toBeDefined();
+    expect(schedulerClient).toBeInstanceOf(MockedSchedulerClient);
   });
 });
