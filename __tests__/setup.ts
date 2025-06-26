@@ -1,5 +1,9 @@
 // Global test setup for AWS SDK mocks and environment variables
 
+// Mock environment variables for Supabase
+process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
+process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
+
 // Mock environment variables for AWS
 process.env.AWS_REGION = "us-east-1";
 process.env.AWS_ACCESS_KEY_ID = "test-access-key";
@@ -13,3 +17,5 @@ global.console = {
   ...console,
   error: jest.fn(),
 };
+
+// This file is a setup file, not a test file
