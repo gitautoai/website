@@ -59,4 +59,3 @@ Outputs:
     Value: !Ref GitAutoAccessKey
   SecretAccessKey:
     Value: !GetAtt GitAutoAccessKey.SecretAccessKey
-    NoEcho: true
