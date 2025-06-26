@@ -8,7 +8,7 @@ const createJestConfig = nextJest({
 
 // Custom Jest configuration
 const customJestConfig: Config = {
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts", "<rootDir>/__tests__/setup.ts"],
   testEnvironment: "jest-environment-jsdom",
   testPathIgnorePatterns: ["/node_modules/", "/e2e/"],
   moduleNameMapper: {
@@ -21,9 +21,12 @@ const customJestConfig: Config = {
   ],
   collectCoverage: true,
   collectCoverageFrom: [
-    "app/**/*.{js,jsx,ts,tsx}", // Include all files in the app directory
+    "app/**/*.{js,jsx,ts,tsx}",
+    "lib/**/*.{js,jsx,ts,tsx}",
+    "utils/**/*.{js,jsx,ts,tsx}",
     "!app/**/_*.{js,jsx,ts,tsx}", // Exclude files starting with _
     "!app/**/*.d.ts", // Exclude declaration files
+    "!**/*.test.{js,jsx,ts,tsx}", // Exclude test files
     "!**/node_modules/**", // Exclude node_modules
   ],
   coverageReporters: ["text", "lcov"],
