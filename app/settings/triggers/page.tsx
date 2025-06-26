@@ -3,10 +3,14 @@
 // Third-party imports
 import { useEffect, useState } from "react";
 
-// Local imports
+// Local imports (Actions)
 import { slackUs } from "@/app/actions/slack/slack-us";
 import { getTriggerSettings } from "@/app/actions/supabase/get-trigger-settings";
 import { saveTriggerSettings } from "@/app/actions/supabase/save-trigger-settings";
+import { createOrUpdateSchedule } from "@/app/actions/aws/create-or-update-schedule";
+import { deleteSchedule } from "@/app/actions/aws/delete-schedule";
+
+// Local imports (Components and etc.)
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
@@ -51,6 +55,8 @@ export default function TriggersPage() {
 
     try {
       setIsSaving(true);
+
+      // Save to Supabase first
       await saveTriggerSettings(
         currentOwnerId,
         currentRepoId,
@@ -59,6 +65,18 @@ export default function TriggersPage() {
         userName,
         updatedSettings
       );
+
+      // Handle AWS scheduling separately
+      if (updatedSettings.triggerOnSchedule) {
+        await createOrUpdateSchedule({
+          ownerId: currentOwnerId,
+          repoId: currentRepoId,
+          scheduleTime: updatedSettings.scheduleTime,
+          includeWeekends: updatedSettings.scheduleIncludeWeekends,
+        });
+      } else {
+        await deleteSchedule(currentOwnerId, currentRepoId);
+      }
     } catch (error) {
       console.error("Error saving trigger settings:", error);
     } finally {
@@ -205,7 +223,7 @@ export default function TriggersPage() {
 
             <div>
               <TriggerToggle
-                title="(WIP) On schedule"
+                title="On schedule"
                 description="Triggers GitAuto to automatically create a PR to add unit tests at specified times, prioritizing files with the lowest test coverage first."
                 isEnabled={triggerSettings.triggerOnSchedule}
                 isDisabled={isSaving}
