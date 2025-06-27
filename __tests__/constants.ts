@@ -1,3 +1,4 @@
+import { describe, it, expect } from "@jest/globals";
 // Test constants for GitAuto website tests
 
 export const MOCK_OWNER = {
