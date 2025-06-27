@@ -28,6 +28,8 @@ export async function getTriggerSettings(
     .eq("repo_id", repoId)
     .maybeSingle();
 
+  if (settingsError) throw settingsError;
+
   if (!settings) {
     return {
       triggerOnReviewComment: true,
