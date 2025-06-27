@@ -24,14 +24,17 @@ describe("getTriggerSettings", () => {
   beforeEach(() => {
     mockSupabase.from.mockReturnValue({
       select: mockSelect,
-    });
+    } as any);
     mockSelect.mockReturnValue({
       eq: mockEq,
-    });
-    mockEq.mockReturnValue({
-      eq: mockEq,
     } as any);
+    
+    // Create a proper chain for eq().eq().maybeSingle()
+    const mockSecondEq = jest.fn();
     mockEq.mockReturnValue({
+      eq: mockSecondEq,
+    } as any);
+    mockSecondEq.mockReturnValue({
       maybeSingle: mockMaybeSingle,
     } as any);
   });
