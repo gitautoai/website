@@ -19,8 +19,15 @@ import type { TriggerSettings } from "@/app/settings/types";
 import { PRODUCT_NAME } from "@/config";
 
 export default function TriggersPage() {
-  const { currentOwnerId, currentOwnerName, currentRepoId, currentRepoName, userId, userName } =
-    useAccountContext();
+  const {
+    currentOwnerId,
+    currentOwnerType,
+    currentOwnerName,
+    currentRepoId,
+    currentRepoName,
+    userId,
+    userName,
+  } = useAccountContext();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -51,7 +58,15 @@ export default function TriggersPage() {
   }, [currentOwnerId, currentRepoId]);
 
   const saveSettings = async (updatedSettings: TriggerSettings) => {
-    if (!currentOwnerId || !currentRepoId || !currentRepoName || !userId) return;
+    if (
+      !currentOwnerId ||
+      !currentOwnerType ||
+      !currentOwnerName ||
+      !currentRepoId ||
+      !currentRepoName ||
+      !userId
+    )
+      return;
 
     try {
       setIsSaving(true);
@@ -70,7 +85,10 @@ export default function TriggersPage() {
       if (updatedSettings.triggerOnSchedule) {
         await createOrUpdateSchedule({
           ownerId: currentOwnerId,
+          ownerType: currentOwnerType,
+          ownerName: currentOwnerName,
           repoId: currentRepoId,
+          repoName: currentRepoName,
           scheduleTime: updatedSettings.scheduleTime,
           includeWeekends: updatedSettings.scheduleIncludeWeekends,
         });
