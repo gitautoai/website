@@ -37,11 +37,11 @@ describe("getTriggerSettings", () => {
   });
 
   it("should throw error when ownerId is missing", async () => {
-    await expect(getTriggerSettings(0, 123)).rejects.toThrow("Missing required parameters");
+    await expect(getTriggerSettings(0, MOCK_REPO.id)).rejects.toThrow("Missing required parameters");
   });
 
   it("should throw error when repoId is missing", async () => {
-    await expect(getTriggerSettings(123, 0)).rejects.toThrow("Missing required parameters");
+    await expect(getTriggerSettings(MOCK_OWNER.id, 0)).rejects.toThrow("Missing required parameters");
   });
 
   it("should throw error when both parameters are missing", async () => {
