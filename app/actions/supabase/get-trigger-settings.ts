@@ -43,8 +43,6 @@ export async function getTriggerSettings(
     };
   }
 
-  if (settingsError) throw settingsError;
-
   // Convert UTC time to local time
   let scheduleTime = "09:00";
   if (settings.schedule_time) {
