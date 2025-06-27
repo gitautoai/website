@@ -45,4 +45,12 @@ export const createMockSupabaseChain = () => {
     mockInsert,
     mockMatch,
   };
+
+// Simple test to prevent "no tests" error
+describe("Test Utils", () => {
+  it("should export test utilities", () => {
+    expect(render).toBeDefined();
+    expect(createMockSupabaseResponse).toBeDefined();
+  });
+});
 };
