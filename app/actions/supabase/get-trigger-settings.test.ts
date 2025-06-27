@@ -1,6 +1,7 @@
 import { getTriggerSettings } from "./get-trigger-settings";
 import { supabase } from "@/lib/supabase";
 import type { TriggerSettings } from "@/app/settings/types";
+import { MOCK_OWNER, MOCK_REPO, MOCK_TRIGGER_SETTINGS, MOCK_DATABASE_ERROR } from "@/__tests__/constants";
 
 // Mock the supabase module
 jest.mock("@/lib/supabase", () => ({
