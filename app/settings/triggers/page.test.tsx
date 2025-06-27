@@ -7,6 +7,9 @@ import { deleteSchedule } from "@/app/actions/aws/delete-schedule";
 import { slackUs } from "@/app/actions/slack/slack-us";
 import TriggersPage from "./page";
 
+jest.mock("@/config", () => ({
+  PRODUCT_NAME: "GitAuto",
+}));
 jest.mock("@/app/components/contexts/Account");
 jest.mock("@/app/actions/supabase/get-trigger-settings");
 jest.mock("@/app/actions/supabase/save-trigger-settings");
