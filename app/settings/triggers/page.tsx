@@ -35,6 +35,7 @@ export default function TriggersPage() {
     triggerOnReviewComment: true,
     triggerOnTestFailure: true,
     triggerOnCommit: false,
+    triggerOnPrChange: false,
     triggerOnMerged: false,
     triggerOnSchedule: false,
     scheduleTime: "09:00",
@@ -108,6 +109,7 @@ export default function TriggersPage() {
       triggerOnReviewComment: "Review Comment trigger",
       triggerOnTestFailure: "Test Failure trigger",
       triggerOnCommit: "Commit trigger",
+      triggerOnPrChange: "PR Change trigger",
       triggerOnMerged: "Merged trigger",
       triggerOnSchedule: "Schedule trigger",
       scheduleTime: "Schedule time",
@@ -132,11 +134,11 @@ export default function TriggersPage() {
       [key]: newValue,
     };
 
-    // When enabling triggerOnCommit, disable triggerOnMerged
-    if (key === "triggerOnCommit" && newValue) updatedSettings.triggerOnMerged = false;
+    // When enabling triggerOnMerged, disable triggerOnPrChange
+    if (key === "triggerOnMerged" && newValue) updatedSettings.triggerOnPrChange = false;
 
-    // When enabling triggerOnMerged, disable triggerOnCommit
-    if (key === "triggerOnMerged" && newValue) updatedSettings.triggerOnCommit = false;
+    // When enabling triggerOnPrChange, disable triggerOnMerged
+    if (key === "triggerOnPrChange" && newValue) updatedSettings.triggerOnMerged = false;
 
     setTriggerSettings(updatedSettings);
     saveSettings(updatedSettings);
@@ -224,16 +226,16 @@ export default function TriggersPage() {
             />
 
             <TriggerToggle
-              title="On push"
-              description={`Triggers ${PRODUCT_NAME} to add unit tests when commits are made by users in this repository. Not triggered by ${PRODUCT_NAME} or other bots' commits to avoid recursive automation. Cannot be used together with 'On merge' trigger.`}
-              isEnabled={triggerSettings.triggerOnCommit}
+              title="On PR change"
+              description={`Triggers ${PRODUCT_NAME} to add unit tests when pull requests are opened, updated, or synchronized in this repository. Cannot be used together with 'On merge' trigger.`}
+              isEnabled={triggerSettings.triggerOnPrChange}
               isDisabled={isSaving}
-              onToggle={() => handleToggle("triggerOnCommit")}
+              onToggle={() => handleToggle("triggerOnPrChange")}
             />
 
             <TriggerToggle
               title="On merge"
-              description={`Triggers ${PRODUCT_NAME} to add unit tests for code that has been merged into your target branch. Ensures newly merged features have proper test coverage. Cannot be used together with 'On push' trigger.`}
+              description={`Triggers ${PRODUCT_NAME} to add unit tests for code that has been merged into your target branch. Ensures newly merged features have proper test coverage. Cannot be used together with 'On PR change' trigger.`}
               isEnabled={triggerSettings.triggerOnMerged}
               isDisabled={isSaving}
               onToggle={() => handleToggle("triggerOnMerged")}
