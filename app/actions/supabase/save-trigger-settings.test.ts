@@ -21,6 +21,7 @@ describe("saveTriggerSettings", () => {
   const mockMaybeSingle = jest.fn();
   const mockUpdate = jest.fn();
   const mockInsert = jest.fn();
+  const mockUpdateMatch = jest.fn();
 
   const mockSettings: TriggerSettings = {
     triggerOnReviewComment: true,
@@ -48,13 +49,14 @@ describe("saveTriggerSettings", () => {
       maybeSingle: mockMaybeSingle,
     } as any);
     
+    // For update operations
+    mockUpdateMatch.mockResolvedValue({ error: null });
     mockUpdate.mockReturnValue({
-      match: mockMatch,
+      match: mockUpdateMatch,
     } as any);
     
-    mockMatch.mockReturnValue({
-      match: mockMatch, // For chaining
-    } as any);
+    // For insert operations
+    mockInsert.mockResolvedValue({ error: null });
   });
 
   describe("parameter validation", () => {
@@ -90,7 +92,6 @@ describe("saveTriggerSettings", () => {
 
     it("should not throw error when userName is missing (not required)", async () => {
       mockMaybeSingle.mockResolvedValue({ data: null, error: null });
-      mockInsert.mockResolvedValue({ error: null });
 
       await expect(
         saveTriggerSettings(123, 456, "repo", 789, "", mockSettings)
@@ -102,7 +103,6 @@ describe("saveTriggerSettings", () => {
     it("should update existing repository when found", async () => {
       const existingRepo = { repo_id: 456 };
       mockMaybeSingle.mockResolvedValue({ data: existingRepo, error: null });
-      mockUpdate.mockResolvedValue({ error: null });
 
       await saveTriggerSettings(123, 456, "test-repo", 789, "testuser", mockSettings);
 
@@ -128,7 +128,7 @@ describe("saveTriggerSettings", () => {
       const existingRepo = { repo_id: 456 };
       const updateError = new Error("Update failed");
       mockMaybeSingle.mockResolvedValue({ data: existingRepo, error: null });
-      mockUpdate.mockResolvedValue({ error: updateError });
+      mockUpdateMatch.mockResolvedValue({ error: updateError });
 
       await expect(
         saveTriggerSettings(123, 456, "test-repo", 789, "testuser", mockSettings)
@@ -139,7 +139,6 @@ describe("saveTriggerSettings", () => {
   describe("new repository creation", () => {
     it("should insert new repository when not found", async () => {
       mockMaybeSingle.mockResolvedValue({ data: null, error: null });
-      mockInsert.mockResolvedValue({ error: null });
 
       await saveTriggerSettings(123, 456, "test-repo", 789, "testuser", mockSettings);
 
@@ -191,7 +190,6 @@ describe("saveTriggerSettings", () => {
       };
 
       mockMaybeSingle.mockResolvedValue({ data: null, error: null });
-      mockInsert.mockResolvedValue({ error: null });
 
       await saveTriggerSettings(123, 456, "test-repo", 789, "testuser", settingsWithSchedule);
 
@@ -208,7 +206,6 @@ describe("saveTriggerSettings", () => {
       };
 
       mockMaybeSingle.mockResolvedValue({ data: null, error: null });
-      mockInsert.mockResolvedValue({ error: null });
 
       await saveTriggerSettings(123, 456, "test-repo", 789, "testuser", settingsWithoutSchedule);
 
@@ -225,7 +222,6 @@ describe("saveTriggerSettings", () => {
       };
 
       mockMaybeSingle.mockResolvedValue({ data: null, error: null });
-      mockInsert.mockResolvedValue({ error: null });
 
       await saveTriggerSettings(123, 456, "test-repo", 789, "testuser", settingsWithMidnight);
 
@@ -241,7 +237,6 @@ describe("saveTriggerSettings", () => {
       };
 
       mockMaybeSingle.mockResolvedValue({ data: null, error: null });
-      mockInsert.mockResolvedValue({ error: null });
 
       await saveTriggerSettings(123, 456, "test-repo", 789, "testuser", settingsWithLateTime);
 
@@ -253,7 +248,6 @@ describe("saveTriggerSettings", () => {
   describe("data structure validation", () => {
     it("should properly format updated_by and created_by fields", async () => {
       mockMaybeSingle.mockResolvedValue({ data: null, error: null });
-      mockInsert.mockResolvedValue({ error: null });
 
       await saveTriggerSettings(123, 456, "test-repo", 789, "testuser", mockSettings);
 
@@ -264,7 +258,6 @@ describe("saveTriggerSettings", () => {
 
     it("should include all required default fields for new repository", async () => {
       mockMaybeSingle.mockResolvedValue({ data: null, error: null });
-      mockInsert.mockResolvedValue({ error: null });
 
       await saveTriggerSettings(123, 456, "test-repo", 789, "testuser", mockSettings);
 
