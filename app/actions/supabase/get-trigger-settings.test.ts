@@ -19,6 +19,7 @@ describe("getTriggerSettings", () => {
 
   const mockSelect = jest.fn();
   const mockEq = jest.fn();
+  const mockSecondEq = jest.fn();
   const mockMaybeSingle = jest.fn();
 
   beforeEach(() => {
@@ -28,9 +29,6 @@ describe("getTriggerSettings", () => {
     mockSelect.mockReturnValue({
       eq: mockEq,
     } as any);
-    
-    // Create a proper chain for eq().eq().maybeSingle()
-    const mockSecondEq = jest.fn();
     mockEq.mockReturnValue({
       eq: mockSecondEq,
     } as any);
@@ -170,7 +168,7 @@ describe("getTriggerSettings", () => {
       expect.stringContaining("trigger_on_review_comment")
     );
     expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
-    expect(mockEq).toHaveBeenCalledWith("repo_id", 456);
+    expect(mockSecondEq).toHaveBeenCalledWith("repo_id", 456);
     expect(mockMaybeSingle).toHaveBeenCalled();
   });
 
