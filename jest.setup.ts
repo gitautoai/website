@@ -8,3 +8,6 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
 process.env.AWS_REGION = "us-east-1";
 process.env.AWS_ACCESS_KEY_ID = "test-access-key-id";
 process.env.AWS_SECRET_ACCESS_KEY = "test-secret-access-key";
+
+// Mock Slack environment variables
+process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test-webhook";
