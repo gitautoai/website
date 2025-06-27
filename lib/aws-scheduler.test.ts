@@ -8,18 +8,19 @@ const MockedSchedulerClient = SchedulerClient as jest.MockedClass<typeof Schedul
 describe("aws-scheduler", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.resetModules();
   });
 
   it("should create SchedulerClient with default region when AWS_REGION is not set", () => {
     // Clear AWS_REGION to test default behavior
+    const originalRegion = process.env.AWS_REGION;
     delete process.env.AWS_REGION;
     
     // Set required credentials
     process.env.AWS_ACCESS_KEY_ID = "test-access-key";
     process.env.AWS_SECRET_ACCESS_KEY = "test-secret-key";
 
-    // Re-import to trigger module initialization
+    // Clear module cache and re-import
+    jest.resetModules();
     require("./aws-scheduler");
 
     expect(MockedSchedulerClient).toHaveBeenCalledWith({
@@ -29,6 +30,9 @@ describe("aws-scheduler", () => {
         secretAccessKey: "test-secret-key",
       },
     });
+
+    // Restore original value
+    if (originalRegion) process.env.AWS_REGION = originalRegion;
   });
 
   it("should create SchedulerClient with custom region when AWS_REGION is set", () => {
@@ -36,7 +40,8 @@ describe("aws-scheduler", () => {
     process.env.AWS_ACCESS_KEY_ID = "test-access-key";
     process.env.AWS_SECRET_ACCESS_KEY = "test-secret-key";
 
-    // Re-import to trigger module initialization
+    // Clear module cache and re-import
+    jest.resetModules();
     require("./aws-scheduler");
 
     expect(MockedSchedulerClient).toHaveBeenCalledWith({
@@ -53,8 +58,4 @@ describe("aws-scheduler", () => {
     expect(schedulerClient).toBeDefined();
     expect(schedulerClient).toBeInstanceOf(SchedulerClient);
   });
-
-  // Note: Testing missing credentials would require mocking the module initialization
-  // which is complex in Jest. In a real scenario, missing credentials would cause
-  // runtime errors when AWS SDK methods are called, not during module initialization.
 });
