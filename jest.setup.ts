@@ -14,3 +14,9 @@ process.env.AWS_EVENTBRIDGE_SCHEDULER_ROLE_ARN = "arn:aws:iam::123456789012:role
 
 // Mock Slack environment variables
 process.env.SLACK_WEBHOOK_URL = "https://hooks.slack.com/test-webhook";
+
+// Mock Sentry environment variables
+process.env.NEXT_PUBLIC_SENTRY_DSN = "https://test@sentry.io/test";
+
+// Mock Node environment
+process.env.NODE_ENV = "test";
