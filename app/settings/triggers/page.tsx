@@ -16,7 +16,11 @@ import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import TriggerToggle from "@/app/settings/components/TriggerToggle";
 import type { TriggerSettings } from "@/app/settings/types";
+
+// Local imports (Others)
 import { PRODUCT_NAME } from "@/config";
+import { convertLocalToUTC } from "@/utils/convert-local-to-utc";
+import { convertUTCToLocal } from "@/utils/convert-utc-to-local";
 
 export default function TriggersPage() {
   const {
@@ -38,24 +42,34 @@ export default function TriggersPage() {
     triggerOnPrChange: false,
     triggerOnMerged: false,
     triggerOnSchedule: false,
-    scheduleTime: "09:00",
+    scheduleTimeLocal: "09:00",
+    scheduleTimeUTC: "",
     scheduleIncludeWeekends: false,
   });
 
-  useEffect(() => {
+  // Common function to fetch and set trigger settings
+  const fetchAndSetTriggerSettings = async () => {
     if (!currentOwnerId || !currentRepoId) return;
 
-    (async () => {
-      try {
-        setIsLoading(true);
-        const settings = await getTriggerSettings(currentOwnerId, currentRepoId);
-        setTriggerSettings(settings);
-      } catch (error) {
-        console.error("Failed to fetch trigger settings:", error);
-      } finally {
-        setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const settings = await getTriggerSettings(currentOwnerId, currentRepoId);
+
+      // If we have UTC time but no local time, convert UTC to local
+      if (settings.scheduleTimeUTC && !settings.scheduleTimeLocal) {
+        settings.scheduleTimeLocal = convertUTCToLocal(settings.scheduleTimeUTC);
       }
-    })();
+
+      setTriggerSettings(settings);
+    } catch (error) {
+      console.error("Failed to fetch trigger settings:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAndSetTriggerSettings();
   }, [currentOwnerId, currentRepoId]);
 
   const saveSettings = async (updatedSettings: TriggerSettings) => {
@@ -90,7 +104,7 @@ export default function TriggersPage() {
           ownerName: currentOwnerName,
           repoId: currentRepoId,
           repoName: currentRepoName,
-          scheduleTime: updatedSettings.scheduleTime,
+          scheduleTimeUTC: updatedSettings.scheduleTimeUTC,
           includeWeekends: updatedSettings.scheduleIncludeWeekends,
         });
       } else {
@@ -112,7 +126,7 @@ export default function TriggersPage() {
       triggerOnPrChange: "PR Change trigger",
       triggerOnMerged: "Merged trigger",
       triggerOnSchedule: "Schedule trigger",
-      scheduleTime: "Schedule time",
+      scheduleTimeLocal: "Schedule time",
       scheduleIncludeWeekends: "Include weekends",
     };
 
@@ -134,6 +148,11 @@ export default function TriggersPage() {
       [key]: newValue,
     };
 
+    // If schedule is enabled, calculate UTC if it's not calculated yet
+    if (key === "triggerOnSchedule" && newValue && !triggerSettings.scheduleTimeUTC) {
+      updatedSettings.scheduleTimeUTC = convertLocalToUTC(triggerSettings.scheduleTimeLocal);
+    }
+
     // When enabling triggerOnMerged, disable triggerOnPrChange
     if (key === "triggerOnMerged" && newValue) updatedSettings.triggerOnPrChange = false;
 
@@ -146,33 +165,21 @@ export default function TriggersPage() {
   };
 
   const handleScheduleChange = (
-    field: "scheduleTime" | "scheduleIncludeWeekends",
+    field: "scheduleTimeLocal" | "scheduleIncludeWeekends",
     value: string | boolean
   ) => {
-    const oldValue = triggerSettings[field];
-    const updatedSettings = {
+    let updatedSettings = {
       ...triggerSettings,
       [field]: value,
     };
+
+    if (field === "scheduleTimeLocal" && typeof value === "string") {
+      updatedSettings.scheduleTimeUTC = convertLocalToUTC(value);
+    }
+
     setTriggerSettings(updatedSettings);
     saveSettings(updatedSettings);
-    notifyChange(field, oldValue, value);
-  };
-
-  const handleRepoChange = () => {
-    if (!currentOwnerId || !currentRepoId) return;
-
-    (async () => {
-      try {
-        setIsLoading(true);
-        const settings = await getTriggerSettings(currentOwnerId, currentRepoId);
-        setTriggerSettings(settings);
-      } catch (error) {
-        console.error("Failed to fetch trigger settings:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
+    notifyChange(field, triggerSettings[field], value);
   };
 
   // Function to get timezone information
@@ -196,7 +203,7 @@ export default function TriggersPage() {
       <h1 className="text-3xl font-bold mb-6 text-left">Trigger settings</h1>
 
       <div className="mb-6">
-        <RepositorySelector onRepoChange={handleRepoChange} />
+        <RepositorySelector onRepoChange={fetchAndSetTriggerSettings} />
       </div>
 
       <p className="mb-6 text-gray-600">
@@ -254,16 +261,16 @@ export default function TriggersPage() {
                 <div className="ml-10 mt-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
                   <div className="mb-4">
                     <label
-                      htmlFor="scheduleTime"
+                      htmlFor="scheduleTimeLocal"
                       className="block text-sm font-medium text-gray-700 mb-1"
                     >
                       Daily run time
                     </label>
                     <input
                       type="time"
-                      id="scheduleTime"
-                      value={triggerSettings.scheduleTime}
-                      onChange={(e) => handleScheduleChange("scheduleTime", e.target.value)}
+                      id="scheduleTimeLocal"
+                      value={triggerSettings.scheduleTimeLocal}
+                      onChange={(e) => handleScheduleChange("scheduleTimeLocal", e.target.value)}
                       className="w-40 p-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
                       disabled={isSaving}
                     />

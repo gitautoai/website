@@ -26,26 +26,6 @@ export async function saveTriggerSettings(
     .match({ owner_id: ownerId, repo_id: repoId })
     .maybeSingle();
 
-  // Update the time conversion logic in saveSettings API
-  let scheduleTimeObj = null;
-  if (settings.triggerOnSchedule && settings.scheduleTime) {
-    // Parse the local time from HH:MM format
-    const [localHours, localMinutes] = settings.scheduleTime.split(":").map(Number);
-
-    // Create a Date object with the local time
-    const localTime = new Date();
-    localTime.setHours(localHours, localMinutes, 0, 0);
-
-    // Convert to UTC
-    const utcHours = localTime.getUTCHours();
-    const utcMinutes = localTime.getUTCMinutes();
-
-    // Format as time with time zone for Postgres
-    scheduleTimeObj = `${utcHours.toString().padStart(2, "0")}:${utcMinutes
-      .toString()
-      .padStart(2, "0")}:00+00`;
-  }
-
   // Update data structure
   const updateData = {
     updated_by: userId.toString() + ":" + userName,
@@ -56,7 +36,10 @@ export async function saveTriggerSettings(
     trigger_on_merged: settings.triggerOnMerged,
     trigger_on_schedule: settings.triggerOnSchedule,
     schedule_frequency: settings.triggerOnSchedule ? "daily" : null,
-    schedule_time: scheduleTimeObj,
+    schedule_time:
+      settings.triggerOnSchedule && settings.scheduleTimeUTC
+        ? `${settings.scheduleTimeUTC}:00+00` // "22:00" → "22:00:00+00"
+        : null,
     schedule_include_weekends: settings.scheduleIncludeWeekends,
   };
 

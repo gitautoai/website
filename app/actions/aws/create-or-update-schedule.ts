@@ -18,13 +18,13 @@ interface ScheduleConfig {
   ownerName: string;
   repoId: number;
   repoName: string;
-  scheduleTime: string;
+  scheduleTimeUTC: string;
   includeWeekends: boolean;
 }
 
 export async function createOrUpdateSchedule(config: ScheduleConfig) {
   const scheduleName = getScheduleName(config.ownerId, config.repoId);
-  const cronExpression = createCronExpression(config.scheduleTime, config.includeWeekends);
+  const cronExpression = createCronExpression(config.scheduleTimeUTC, config.includeWeekends);
 
   const scheduleInput = {
     Name: scheduleName,
@@ -40,7 +40,7 @@ export async function createOrUpdateSchedule(config: ScheduleConfig) {
         repoId: config.repoId,
         repoName: config.repoName,
         triggerType: "schedule",
-        scheduleTime: config.scheduleTime,
+        scheduleTimeUTC: config.scheduleTimeUTC,
         includeWeekends: config.includeWeekends,
       }),
     },
