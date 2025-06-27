@@ -413,7 +413,7 @@ export type Database = {
           target_branch: string
           trigger_on_commit: boolean
           trigger_on_merged: boolean
-          trigger_on_pr_change: boolean | null
+          trigger_on_pr_change: boolean
           trigger_on_review_comment: boolean
           trigger_on_schedule: boolean
           trigger_on_test_failure: boolean
@@ -447,7 +447,7 @@ export type Database = {
           target_branch?: string
           trigger_on_commit?: boolean
           trigger_on_merged?: boolean
-          trigger_on_pr_change?: boolean | null
+          trigger_on_pr_change?: boolean
           trigger_on_review_comment?: boolean
           trigger_on_schedule?: boolean
           trigger_on_test_failure?: boolean
@@ -481,7 +481,7 @@ export type Database = {
           target_branch?: string
           trigger_on_commit?: boolean
           trigger_on_merged?: boolean
-          trigger_on_pr_change?: boolean | null
+          trigger_on_pr_change?: boolean
           trigger_on_review_comment?: boolean
           trigger_on_schedule?: boolean
           trigger_on_test_failure?: boolean
