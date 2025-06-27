@@ -34,6 +34,7 @@ export type TriggerSettings = {
   triggerOnReviewComment: boolean;
   triggerOnTestFailure: boolean;
   triggerOnCommit: boolean;
+  triggerOnPrChange: boolean;
   triggerOnMerged: boolean;
   triggerOnSchedule: boolean;
   scheduleTime: string; // Format: "HH:MM" (24-hour format)
