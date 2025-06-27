@@ -2,11 +2,6 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import TriggersPage from "./page";
-import { getTriggerSettings } from "@/app/actions/supabase/get-trigger-settings";
-import { saveTriggerSettings } from "@/app/actions/supabase/save-trigger-settings";
-import { createOrUpdateSchedule } from "@/app/actions/aws/create-or-update-schedule";
-import { deleteSchedule } from "@/app/actions/aws/delete-schedule";
-import { slackUs } from "@/app/actions/slack/slack-us";
 
 // Mock all the action imports
 jest.mock("@/app/actions/supabase/get-trigger-settings");
@@ -67,6 +62,13 @@ jest.mock("@/app/settings/components/TriggerToggle", () => {
     );
   };
 });
+
+// Import the mocked functions
+import { getTriggerSettings } from "@/app/actions/supabase/get-trigger-settings";
+import { saveTriggerSettings } from "@/app/actions/supabase/save-trigger-settings";
+import { createOrUpdateSchedule } from "@/app/actions/aws/create-or-update-schedule";
+import { deleteSchedule } from "@/app/actions/aws/delete-schedule";
+import { slackUs } from "@/app/actions/slack/slack-us";
 
 const mockGetTriggerSettings = getTriggerSettings as jest.MockedFunction<typeof getTriggerSettings>;
 const mockSaveTriggerSettings = saveTriggerSettings as jest.MockedFunction<typeof saveTriggerSettings>;
