@@ -14,7 +14,10 @@ import { createCronExpression } from "@/utils/create-cron-expression";
 
 interface ScheduleConfig {
   ownerId: number;
+  ownerType: string;
+  ownerName: string;
   repoId: number;
+  repoName: string;
   scheduleTime: string;
   includeWeekends: boolean;
 }
@@ -32,7 +35,10 @@ export async function createOrUpdateSchedule(config: ScheduleConfig) {
       RoleArn: process.env.AWS_EVENTBRIDGE_SCHEDULER_ROLE_ARN!,
       Input: JSON.stringify({
         ownerId: config.ownerId,
+        ownerType: config.ownerType,
+        ownerName: config.ownerName,
         repoId: config.repoId,
+        repoName: config.repoName,
         triggerType: "schedule",
         scheduleTime: config.scheduleTime,
         includeWeekends: config.includeWeekends,
@@ -42,7 +48,7 @@ export async function createOrUpdateSchedule(config: ScheduleConfig) {
       Mode: FlexibleTimeWindowMode.OFF,
     },
     State: ScheduleState.ENABLED,
-    Description: `GitAuto scheduled trigger for repository ${config.ownerId}/${config.repoId}`,
+    Description: `GitAuto scheduled trigger for repository ${config.ownerName}/${config.repoName}`,
     ActionAfterCompletion: ActionAfterCompletion.NONE,
   };
 
