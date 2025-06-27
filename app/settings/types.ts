@@ -37,7 +37,8 @@ export type TriggerSettings = {
   triggerOnPrChange: boolean;
   triggerOnMerged: boolean;
   triggerOnSchedule: boolean;
-  scheduleTime: string; // Format: "HH:MM" (24-hour format)
+  scheduleTimeLocal: string; // Format: "HH:MM" (24-hour format)
+  scheduleTimeUTC: string; // Format: "HH:MM" (24-hour format)
   scheduleIncludeWeekends: boolean;
 };
 

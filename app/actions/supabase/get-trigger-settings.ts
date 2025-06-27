@@ -36,34 +36,21 @@ export async function getTriggerSettings(
       triggerOnPrChange: false,
       triggerOnMerged: false,
       triggerOnSchedule: false,
-      scheduleTime: "09:00",
+      scheduleTimeLocal: "09:00",
+      scheduleTimeUTC: "",
       scheduleIncludeWeekends: false,
     };
   }
 
   if (settingsError) throw settingsError;
 
-  // Convert UTC time to local time
-  let scheduleTime = "09:00";
+  // Get UTC time from DB
+  let scheduleTimeUTC = "";
   if (settings.schedule_time) {
-    try {
-      // Parse the time string from DB (format: HH:MM:SS+00)
-      const timeParts = settings.schedule_time.split(":");
-      const utcHours = parseInt(timeParts[0], 10);
-      const utcMinutes = parseInt(timeParts[1], 10);
-
-      // Create Date object with current date and UTC time
-      const date = new Date();
-      date.setUTCHours(utcHours, utcMinutes, 0, 0);
-
-      // Get local time components
-      scheduleTime = `${date.getHours().toString().padStart(2, "0")}:${date
-        .getMinutes()
-        .toString()
-        .padStart(2, "0")}`;
-    } catch (e) {
-      console.error("Failed to convert schedule time from UTC to local:", e);
-    }
+    const timeParts = settings.schedule_time.split(":");
+    const utcHours = parseInt(timeParts[0], 10);
+    const utcMinutes = parseInt(timeParts[1], 10);
+    scheduleTimeUTC = `${utcHours.toString().padStart(2, "0")}:${utcMinutes.toString().padStart(2, "0")}`;
   }
 
   return {
@@ -73,7 +60,8 @@ export async function getTriggerSettings(
     triggerOnPrChange: settings.trigger_on_pr_change || false,
     triggerOnMerged: settings.trigger_on_merged || false,
     triggerOnSchedule: settings.trigger_on_schedule || false,
-    scheduleTime,
+    scheduleTimeLocal: "", // Calculate on the client side
+    scheduleTimeUTC,
     scheduleIncludeWeekends: settings.schedule_include_weekends || false,
   };
 }
