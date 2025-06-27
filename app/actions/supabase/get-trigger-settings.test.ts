@@ -51,7 +51,7 @@ describe("getTriggerSettings", () => {
   it("should return default settings when no data is found", async () => {
     mockMaybeSingle.mockResolvedValue({ data: null, error: null });
 
-    const result = await getTriggerSettings(123, 456);
+    const result = await getTriggerSettings(MOCK_OWNER.id, MOCK_REPO.id);
 
     expect(result).toEqual({
       triggerOnReviewComment: true,
