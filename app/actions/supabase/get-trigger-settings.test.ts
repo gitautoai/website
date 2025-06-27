@@ -68,7 +68,7 @@ describe("getTriggerSettings", () => {
   it("should throw error when supabase returns an error", async () => {
     mockMaybeSingle.mockResolvedValue({ data: {}, error: MOCK_DATABASE_ERROR });
 
-    await expect(getTriggerSettings(123, 456)).rejects.toThrow("Database error");
+    await expect(getTriggerSettings(MOCK_OWNER.id, MOCK_REPO.id)).rejects.toThrow("Database connection failed");
   });
 
   it("should return settings with converted schedule time from UTC to local", async () => {
