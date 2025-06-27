@@ -41,5 +41,13 @@ export const MOCK_TRIGGER_SETTINGS = {
   },
 };
 
+
+// Simple test to prevent "no tests" error
+describe("Test Constants", () => {
+  it("should export mock constants", () => {
+    expect(MOCK_OWNER).toBeDefined();
+    expect(MOCK_REPO).toBeDefined();
+  });
+});
 export const MOCK_DATABASE_ERROR = new Error("Database connection failed");
 export const MOCK_AWS_ERROR = new Error("AWS operation failed");
