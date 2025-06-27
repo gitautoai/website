@@ -14,7 +14,8 @@ const customJestConfig: Config = {
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
   },
-  testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+  testMatch: ["**/__tests__/**/*.test.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
+  testPathIgnorePatterns: ["/node_modules/", "/e2e/", "/__tests__/constants.ts", "/__tests__/test-utils.tsx"],
   transformIgnorePatterns: [
     // Allow next-auth and its dependencies to be transformed
     "/node_modules/(?!(next-auth|@next-auth|jose|openid-client))/",
