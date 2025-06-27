@@ -66,7 +66,7 @@ describe("getTriggerSettings", () => {
   });
 
   it("should throw error when supabase returns an error", async () => {
-    const mockError = new Error("Database error");
+    mockMaybeSingle.mockResolvedValue({ data: {}, error: MOCK_DATABASE_ERROR });
     mockMaybeSingle.mockResolvedValue({ data: {}, error: mockError });
 
     await expect(getTriggerSettings(123, 456)).rejects.toThrow("Database error");
