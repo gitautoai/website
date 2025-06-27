@@ -24,10 +24,10 @@ describe("getTriggerSettings", () => {
   beforeEach(() => {
     mockSupabase.from.mockReturnValue({
       select: mockSelect,
-    } as any);
+    });
     mockSelect.mockReturnValue({
       eq: mockEq,
-    } as any);
+    });
     mockEq.mockReturnValue({
       eq: mockEq,
     } as any);
