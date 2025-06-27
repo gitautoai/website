@@ -1,5 +1,4 @@
 import { SchedulerClient } from "@aws-sdk/client-scheduler";
-import { schedulerClient } from "./aws-scheduler";
 
 // Mock the AWS SDK
 jest.mock("@aws-sdk/client-scheduler");
@@ -9,26 +8,18 @@ const MockedSchedulerClient = SchedulerClient as jest.MockedClass<typeof Schedul
 describe("aws-scheduler", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // Clear environment variables
-    delete process.env.AWS_REGION;
-    delete process.env.AWS_ACCESS_KEY_ID;
-    delete process.env.AWS_SECRET_ACCESS_KEY;
-  });
-
-  afterEach(() => {
-    // Restore environment variables
-    process.env.AWS_REGION = "us-west-1";
-    process.env.AWS_ACCESS_KEY_ID = "test-access-key";
-    process.env.AWS_SECRET_ACCESS_KEY = "test-secret-key";
+    jest.resetModules();
   });
 
   it("should create SchedulerClient with default region when AWS_REGION is not set", () => {
+    // Clear AWS_REGION to test default behavior
+    delete process.env.AWS_REGION;
+    
     // Set required credentials
     process.env.AWS_ACCESS_KEY_ID = "test-access-key";
     process.env.AWS_SECRET_ACCESS_KEY = "test-secret-key";
 
     // Re-import to trigger module initialization
-    jest.resetModules();
     require("./aws-scheduler");
 
     expect(MockedSchedulerClient).toHaveBeenCalledWith({
@@ -46,7 +37,6 @@ describe("aws-scheduler", () => {
     process.env.AWS_SECRET_ACCESS_KEY = "test-secret-key";
 
     // Re-import to trigger module initialization
-    jest.resetModules();
     require("./aws-scheduler");
 
     expect(MockedSchedulerClient).toHaveBeenCalledWith({
@@ -59,6 +49,7 @@ describe("aws-scheduler", () => {
   });
 
   it("should export schedulerClient instance", () => {
+    const { schedulerClient } = require("./aws-scheduler");
     expect(schedulerClient).toBeDefined();
     expect(schedulerClient).toBeInstanceOf(SchedulerClient);
   });
