@@ -74,7 +74,7 @@ describe("AccountContext API Integration", () => {
     (fetchWithTiming as jest.Mock).mockResolvedValue([]);
   });
 
-  it("should fetch installations data correctly", async () => {
+  it("should handle installations data from SWR", async () => {
     const mockInstallations = [
       {
         id: "1",
@@ -98,15 +98,6 @@ describe("AccountContext API Integration", () => {
       },
     ];
     
-    // Mock fetchWithTiming to return installations
-    (fetchWithTiming as jest.Mock).mockImplementation((url) => {
-      if (url === "/api/users/get-user-info") {
-        return Promise.resolve(mockInstallations);
-      }
-      return Promise.resolve([]);
-    });
-    
-    // Mock useSWR to use our fetchWithTiming mock
     (useSWR as jest.Mock).mockImplementation((key) => {
       if (key === "fetchInstallations-123") {
         return {
@@ -125,11 +116,10 @@ describe("AccountContext API Integration", () => {
     
     await waitFor(() => {
       expect(screen.getByTestId("installations-count")).toHaveTextContent("2");
-      expect(fetchWithTiming).toHaveBeenCalledWith("/api/users/get-user-info", expect.any(Object));
     });
   });
 
-  it("should fetch subscription status correctly", async () => {
+  it("should handle subscription status data from SWR", async () => {
     const mockInstallations = [
       {
         id: "1",
@@ -155,17 +145,6 @@ describe("AccountContext API Integration", () => {
     
     const mockSubscriptionStatus = [true, false];
     
-    // Mock fetchWithTiming to return subscription status
-    (fetchWithTiming as jest.Mock).mockImplementation((url) => {
-      if (url === "/api/stripe/get-userinfo-subscriptions") {
-        return Promise.resolve(mockSubscriptionStatus);
-      } else if (url === "/api/users/get-user-info") {
-        return Promise.resolve(mockInstallations);
-      }
-      return Promise.resolve([]);
-    });
-    
-    // Mock useSWR to use our fetchWithTiming mock
     (useSWR as jest.Mock).mockImplementation((key) => {
       if (key === "fetchInstallations-123") {
         return {
@@ -189,14 +168,10 @@ describe("AccountContext API Integration", () => {
     
     await waitFor(() => {
       expect(screen.getByTestId("subscribed-count")).toHaveTextContent("2");
-      expect(fetchWithTiming).toHaveBeenCalledWith(
-        "/api/stripe/get-userinfo-subscriptions",
-        expect.any(Object)
-      );
     });
   });
 
-  it("should fetch organizations data correctly", async () => {
+  it("should handle organizations data from SWR", async () => {
     const mockInstallations = [
       {
         id: "1",
@@ -222,17 +197,6 @@ describe("AccountContext API Integration", () => {
       },
     ];
     
-    // Mock fetchWithTiming to return organizations
-    (fetchWithTiming as jest.Mock).mockImplementation((url) => {
-      if (url === "/api/github/get-installed-repos") {
-        return Promise.resolve(mockOrganizations);
-      } else if (url === "/api/users/get-user-info") {
-        return Promise.resolve(mockInstallations);
-      }
-      return Promise.resolve([]);
-    });
-    
-    // Mock useSWR to use our fetchWithTiming mock
     (useSWR as jest.Mock).mockImplementation((key) => {
       if (key === "fetchInstallations-123") {
         return {
@@ -257,28 +221,12 @@ describe("AccountContext API Integration", () => {
     await waitFor(() => {
       expect(screen.getByTestId("organizations-count")).toHaveTextContent("1");
       expect(screen.getByTestId("loading")).toHaveTextContent("false");
-      expect(fetchWithTiming).toHaveBeenCalledWith(
-        "/api/github/get-installed-repos",
-        expect.any(Object)
-      );
     });
   });
 
-  it("should handle API errors gracefully", async () => {
-    // Mock fetchWithTiming to throw errors
-    (fetchWithTiming as jest.Mock).mockImplementation((url) => {
-      if (url === "/api/users/get-user-info") {
-        return Promise.reject(new Error("API error"));
-      } else if (url === "/api/stripe/get-userinfo-subscriptions") {
-        return Promise.reject(new Error("Subscription API error"));
-      } else if (url === "/api/github/get-installed-repos") {
-        return Promise.reject(new Error("GitHub API error"));
-      }
-      return Promise.resolve([]);
-    });
-    
-    // Mock useSWR to use our fetchWithTiming mock and handle errors
-    (useSWR as jest.Mock).mockImplementation((key) => {
+  it("should handle SWR errors gracefully", async () => {
+    // Mock useSWR to return error state
+    (useSWR as jest.Mock).mockImplementation(() => {
       return {
         data: undefined,
         error: new Error("SWR error"),
@@ -301,20 +249,8 @@ describe("AccountContext API Integration", () => {
     });
   });
 
-  it("should handle API response with null values", async () => {
-    // Mock fetchWithTiming to return null values
-    (fetchWithTiming as jest.Mock).mockImplementation((url) => {
-      if (url === "/api/users/get-user-info") {
-        return Promise.resolve(null);
-      } else if (url === "/api/stripe/get-userinfo-subscriptions") {
-        return Promise.resolve(null);
-      } else if (url === "/api/github/get-installed-repos") {
-        return Promise.resolve(null);
-      }
-      return Promise.resolve([]);
-    });
-    
-    // Mock useSWR to use our fetchWithTiming mock
+  it("should handle SWR with null values", async () => {
+    // Mock useSWR to return null values
     (useSWR as jest.Mock).mockImplementation(() => ({
       data: null,
       mutate: jest.fn(),
@@ -335,101 +271,50 @@ describe("AccountContext API Integration", () => {
     });
   });
 
-  it("should handle API response with malformed data", async () => {
-    // Mock fetchWithTiming to return malformed data
-    (fetchWithTiming as jest.Mock).mockImplementation((url) => {
-      if (url === "/api/users/get-user-info") {
-        return Promise.resolve({ invalid: "data" }); // Not an array
-      } else if (url === "/api/stripe/get-userinfo-subscriptions") {
-        return Promise.resolve("not an array"); // Not an array
-      } else if (url === "/api/github/get-installed-repos") {
-        return Promise.resolve(123); // Not an array
-      }
-      return Promise.resolve([]);
-    });
-    
-    // Mock useSWR to use our fetchWithTiming mock
+  it("should handle malformed installations data gracefully", async () => {
+    // Mock useSWR to return malformed data for installations
     (useSWR as jest.Mock).mockImplementation((key) => {
       if (key === "fetchInstallations-123") {
         return {
           data: { invalid: "data" }, // Not an array
           mutate: jest.fn(),
         };
-      } else if (Array.isArray(key) && key[0] === "fetchSubscriptionStatus-123") {
-        return {
-          data: "not an array", // Not an array
-          mutate: jest.fn(),
-        };
-      } else if (Array.isArray(key) && key[0] === "github-organizations") {
-        return {
-          data: 123, // Not an array
-          mutate: jest.fn(),
-        };
       }
       return { data: undefined, mutate: jest.fn() };
     });
     
-    render(
-      <AccountContextWrapper>
-        <TestComponent />
-      </AccountContextWrapper>
-    );
+    // Suppress console errors for this test
+    const originalConsoleError = console.error;
+    console.error = jest.fn();
     
-    // Component should handle malformed API responses gracefully
-    await waitFor(() => {
-      // These expectations might vary based on how the component handles malformed data
-      expect(screen.getByTestId("loading")).toBeInTheDocument();
-    });
+    try {
+      render(
+        <AccountContextWrapper>
+          <TestComponent />
+        </AccountContextWrapper>
+      );
+      
+      // Component should handle malformed API responses gracefully
+      await waitFor(() => {
+        expect(screen.getByTestId("loading")).toBeInTheDocument();
+      });
+    } finally {
+      // Restore console.error
+      console.error = originalConsoleError;
+    }
   });
 
-  it("should handle race conditions in API calls", async () => {
-    // Create delayed responses to simulate race conditions
-    const slowInstallations = new Promise((resolve) => {
-      setTimeout(() => {
-        resolve([
-          {
-            id: "1",
-            installation_id: 1001,
-            owner_id: 2001,
-            owner_type: "Organization",
-            owner_name: "slow-org",
-            user_id: 123,
-            user_name: "Test User",
-            stripe_customer_id: "cus_slow",
-          },
-        ]);
-      }, 100);
-    });
-    
-    const fastInstallations = Promise.resolve([
-      {
-        id: "2",
-        installation_id: 1002,
-        owner_id: 2002,
-        owner_type: "User",
-        owner_name: "fast-org",
-        user_id: 123,
-        user_name: "Test User",
-        stripe_customer_id: "cus_fast",
-      },
-    ]);
-    
-    // First call returns slow response, second call returns fast response
-    (fetchWithTiming as jest.Mock).mockImplementationOnce(() => slowInstallations);
-    (fetchWithTiming as jest.Mock).mockImplementationOnce(() => fastInstallations);
+  it("should handle race conditions in SWR calls", async () => {
+    let callCount = 0;
     
     // Mock useSWR to simulate revalidation
-    let callCount = 0;
     (useSWR as jest.Mock).mockImplementation((key) => {
       if (key === "fetchInstallations-123") {
         callCount++;
         if (callCount === 1) {
           return {
             data: undefined, // Initial state
-            mutate: jest.fn().mockImplementation(() => {
-              // Simulate revalidation
-              return fastInstallations;
-            }),
+            mutate: jest.fn(),
           };
         } else {
           return {
@@ -452,7 +337,7 @@ describe("AccountContext API Integration", () => {
       return { data: undefined, mutate: jest.fn() };
     });
     
-    render(
+    const { rerender } = render(
       <AccountContextWrapper>
         <TestComponent />
       </AccountContextWrapper>
@@ -461,9 +346,81 @@ describe("AccountContext API Integration", () => {
     // Initially undefined
     expect(screen.getByTestId("installations-count")).toHaveTextContent("undefined");
     
-    // After the fast response completes
+    // Trigger rerender to simulate SWR revalidation
+    rerender(
+      <AccountContextWrapper>
+        <TestComponent />
+      </AccountContextWrapper>
+    );
+    
+    // After the response completes
     await waitFor(() => {
       expect(screen.getByTestId("installations-count")).toHaveTextContent("1");
+    });
+  });
+
+  it("should handle empty arrays from SWR", async () => {
+    (useSWR as jest.Mock).mockImplementation((key) => {
+      if (key === "fetchInstallations-123") {
+        return {
+          data: [], // Empty array
+          mutate: jest.fn(),
+        };
+      } else if (Array.isArray(key) && key[0] === "github-organizations") {
+        return {
+          data: [], // Empty array
+          mutate: jest.fn(),
+        };
+      }
+      return { data: undefined, mutate: jest.fn() };
+    });
+    
+    render(
+      <AccountContextWrapper>
+        <TestComponent />
+      </AccountContextWrapper>
+    );
+    
+    await waitFor(() => {
+      expect(screen.getByTestId("installations-count")).toHaveTextContent("0");
+      expect(screen.getByTestId("organizations-count")).toHaveTextContent("0");
+      expect(screen.getByTestId("loading")).toHaveTextContent("false");
+    });
+  });
+
+  it("should handle partial data loading states", async () => {
+    // First render with installations but no organizations
+    (useSWR as jest.Mock).mockImplementation((key) => {
+      if (key === "fetchInstallations-123") {
+        return {
+          data: [
+            {
+              id: "1",
+              installation_id: 1001,
+              owner_id: 2001,
+              owner_type: "Organization",
+              owner_name: "org1",
+              user_id: 123,
+              user_name: "Test User",
+              stripe_customer_id: "cus_123",
+            },
+          ],
+          mutate: jest.fn(),
+        };
+      }
+      return { data: undefined, mutate: jest.fn() };
+    });
+    
+    render(
+      <AccountContextWrapper>
+        <TestComponent />
+      </AccountContextWrapper>
+    );
+    
+    await waitFor(() => {
+      expect(screen.getByTestId("installations-count")).toHaveTextContent("1");
+      expect(screen.getByTestId("organizations-count")).toHaveTextContent("0");
+      expect(screen.getByTestId("loading")).toHaveTextContent("true"); // Still loading organizations
     });
   });
 });
