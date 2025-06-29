@@ -12,7 +12,7 @@ import { AccountContextType } from "@/types/account";
 import { Installation, Organization } from "@/types/github";
 import { fetchWithTiming } from "@/utils/fetch";
 
-const AccountContext = createContext<AccountContextType>({
+const AccountContext = createContext<AccountContextType | undefined>(undefined);
   installations: undefined,
   mutateInstallations: () => {},
   installationsSubscribed: null,
