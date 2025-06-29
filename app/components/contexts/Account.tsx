@@ -13,32 +13,6 @@ import { Installation, Organization } from "@/types/github";
 import { fetchWithTiming } from "@/utils/fetch";
 
 const AccountContext = createContext<AccountContextType | undefined>(undefined);
-  installations: undefined,
-  mutateInstallations: () => {},
-  installationsSubscribed: null,
-  selectedIndex: undefined,
-  setSelectedIndex: () => {},
-  userId: null,
-  userName: "Unknown User",
-  email: null,
-  installationIds: [],
-  jwtToken: null,
-  accessToken: undefined,
-  organizations: [],
-  currentOwnerId: null,
-  currentOwnerType: null,
-  currentOwnerName: null,
-  currentRepoId: null,
-  currentRepoName: null,
-  currentInstallationId: null,
-  currentStripeCustomerId: null,
-  billingPeriod: "Monthly",
-  isLoading: true,
-  refreshData: async () => {},
-  setBillingPeriod: () => {},
-  setCurrentOwnerName: () => {},
-  setCurrentRepoName: () => {},
-});
 
 export function AccountContextWrapper({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
