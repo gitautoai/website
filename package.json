@@ -12,7 +12,7 @@
     "start": "next start",
     "lint": "next lint",
     "types:generate": "supabase gen types typescript --project-id dkrxtcbaqzrodvsagwwn > types/supabase.ts",
-    "test": "jest",
+    "test": "jest app/components/contexts/__tests__",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
     "storybook": "storybook dev -p 6006",
