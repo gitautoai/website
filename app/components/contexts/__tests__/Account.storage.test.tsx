@@ -48,13 +48,14 @@ const TestComponent = () => {
 describe("AccountContext localStorage Interactions", () => {
   // Real localStorage implementation for these tests
   let originalLocalStorage: Storage;
+  let mockLocalStorage: any;
   
   beforeAll(() => {
     // Save original localStorage
     originalLocalStorage = window.localStorage;
     
     // Create a mock localStorage
-    const localStorageMock = (() => {
+    mockLocalStorage = (() => {
       let store: Record<string, string> = {};
       return {
         getItem: jest.fn((key: string) => store[key] || null),
@@ -74,13 +75,8 @@ describe("AccountContext localStorage Interactions", () => {
     
     // Replace global localStorage with mock
     Object.defineProperty(window, 'localStorage', {
-      value: localStorageMock,
+      value: mockLocalStorage,
       writable: true
-    });
-    
-    // Set length property based on store size
-    Object.defineProperty(localStorageMock, 'length', {
-      get: function() { return Object.keys(store).length; }
     });
   });
   
@@ -94,7 +90,7 @@ describe("AccountContext localStorage Interactions", () => {
   
   beforeEach(() => {
     jest.clearAllMocks();
-    window.localStorage.clear();
+    mockLocalStorage.clear();
     
     // Default mock implementations
     (useSession as jest.Mock).mockReturnValue({
@@ -120,8 +116,8 @@ describe("AccountContext localStorage Interactions", () => {
 
   it("should read initial values from localStorage", async () => {
     // Set initial values in localStorage
-    window.localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, "initial-owner");
-    window.localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, "initial-repo");
+    mockLocalStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, "initial-owner");
+    mockLocalStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, "initial-repo");
     
     const mockOrganizations = [
       {
@@ -157,8 +153,8 @@ describe("AccountContext localStorage Interactions", () => {
     });
     
     // Verify localStorage was read
-    expect(window.localStorage.getItem).toHaveBeenCalledWith(STORAGE_KEYS.CURRENT_OWNER_NAME);
-    expect(window.localStorage.getItem).toHaveBeenCalledWith(STORAGE_KEYS.CURRENT_REPO_NAME);
+    expect(mockLocalStorage.getItem).toHaveBeenCalledWith(STORAGE_KEYS.CURRENT_OWNER_NAME);
+    expect(mockLocalStorage.getItem).toHaveBeenCalledWith(STORAGE_KEYS.CURRENT_REPO_NAME);
   });
 
   it("should write owner name to localStorage when changed", async () => {
@@ -196,7 +192,7 @@ describe("AccountContext localStorage Interactions", () => {
     
     await waitFor(() => {
       expect(screen.getByTestId("owner-name")).toHaveTextContent("test-owner");
-      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
         STORAGE_KEYS.CURRENT_OWNER_NAME,
         "test-owner"
       );
@@ -217,7 +213,7 @@ describe("AccountContext localStorage Interactions", () => {
     
     await waitFor(() => {
       expect(screen.getByTestId("repo-name")).toHaveTextContent("test-repo");
-      expect(window.localStorage.setItem).toHaveBeenCalledWith(
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
         STORAGE_KEYS.CURRENT_REPO_NAME,
         "test-repo"
       );
@@ -226,8 +222,8 @@ describe("AccountContext localStorage Interactions", () => {
 
   it("should remove owner name from localStorage when cleared", async () => {
     // Set initial values in localStorage
-    window.localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, "initial-owner");
-    window.localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, "initial-repo");
+    mockLocalStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, "initial-owner");
+    mockLocalStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, "initial-repo");
     
     render(
       <AccountContextWrapper>
@@ -242,15 +238,15 @@ describe("AccountContext localStorage Interactions", () => {
     
     await waitFor(() => {
       expect(screen.getByTestId("owner-name")).toHaveTextContent("null");
-      expect(window.localStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.CURRENT_OWNER_NAME);
-      expect(window.localStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.CURRENT_REPO_NAME);
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.CURRENT_OWNER_NAME);
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.CURRENT_REPO_NAME);
     });
   });
 
   it("should remove repo name from localStorage when cleared", async () => {
     // Set initial values in localStorage
-    window.localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, "initial-owner");
-    window.localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, "initial-repo");
+    mockLocalStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, "initial-owner");
+    mockLocalStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, "initial-repo");
     
     render(
       <AccountContextWrapper>
@@ -265,25 +261,34 @@ describe("AccountContext localStorage Interactions", () => {
     
     await waitFor(() => {
       expect(screen.getByTestId("repo-name")).toHaveTextContent("null");
-      expect(window.localStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.CURRENT_REPO_NAME);
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(STORAGE_KEYS.CURRENT_REPO_NAME);
     });
   });
 
   it("should handle localStorage errors gracefully", async () => {
     // Make localStorage.getItem throw an error
-    window.localStorage.getItem = jest.fn().mockImplementation(() => {
+    mockLocalStorage.getItem = jest.fn().mockImplementation(() => {
       throw new Error("localStorage error");
     });
     
-    render(
-      <AccountContextWrapper>
-        <TestComponent />
-      </AccountContextWrapper>
-    );
+    // Suppress console errors for this test
+    const originalConsoleError = console.error;
+    console.error = jest.fn();
     
-    // Component should render without crashing
-    expect(screen.getByTestId("owner-name")).toBeInTheDocument();
-    expect(screen.getByTestId("repo-name")).toBeInTheDocument();
+    try {
+      render(
+        <AccountContextWrapper>
+          <TestComponent />
+        </AccountContextWrapper>
+      );
+      
+      // Component should render without crashing
+      expect(screen.getByTestId("owner-name")).toBeInTheDocument();
+      expect(screen.getByTestId("repo-name")).toBeInTheDocument();
+    } finally {
+      // Restore console.error
+      console.error = originalConsoleError;
+    }
   });
 
   it("should handle localStorage being unavailable", async () => {
@@ -320,7 +325,7 @@ describe("AccountContext localStorage Interactions", () => {
 
   it("should handle localStorage quota exceeded error", async () => {
     // Make localStorage.setItem throw a quota exceeded error
-    window.localStorage.setItem = jest.fn().mockImplementation(() => {
+    mockLocalStorage.setItem = jest.fn().mockImplementation(() => {
       const error = new Error("localStorage quota exceeded");
       error.name = "QuotaExceededError";
       throw error;
@@ -350,5 +355,99 @@ describe("AccountContext localStorage Interactions", () => {
       // Restore console.error
       console.error = originalConsoleError;
     }
+  });
+
+  it("should handle setting owner with organizations data", async () => {
+    const mockOrganizations = [
+      {
+        ownerId: 2001,
+        ownerName: "test-owner",
+        ownerType: "Organization",
+        repositories: [
+          { repoId: 3001, repoName: "auto-repo" },
+        ],
+      },
+    ];
+    
+    (useSWR as jest.Mock).mockImplementation((key) => {
+      if (Array.isArray(key) && key[0] === "github-organizations") {
+        return {
+          data: mockOrganizations,
+          mutate: jest.fn(),
+        };
+      }
+      return { data: undefined, mutate: jest.fn() };
+    });
+    
+    render(
+      <AccountContextWrapper>
+        <TestComponent />
+      </AccountContextWrapper>
+    );
+    
+    // Click set owner button
+    act(() => {
+      screen.getByTestId("set-owner-button").click();
+    });
+    
+    await waitFor(() => {
+      expect(screen.getByTestId("owner-name")).toHaveTextContent("test-owner");
+      expect(screen.getByTestId("repo-name")).toHaveTextContent("auto-repo");
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+        STORAGE_KEYS.CURRENT_OWNER_NAME,
+        "test-owner"
+      );
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+        STORAGE_KEYS.CURRENT_REPO_NAME,
+        "auto-repo"
+      );
+    });
+  });
+
+  it("should handle setting repo with organizations data", async () => {
+    const mockOrganizations = [
+      {
+        ownerId: 2001,
+        ownerName: "auto-owner",
+        ownerType: "Organization",
+        repositories: [
+          { repoId: 3001, repoName: "test-repo" },
+        ],
+      },
+    ];
+    
+    (useSWR as jest.Mock).mockImplementation((key) => {
+      if (Array.isArray(key) && key[0] === "github-organizations") {
+        return {
+          data: mockOrganizations,
+          mutate: jest.fn(),
+        };
+      }
+      return { data: undefined, mutate: jest.fn() };
+    });
+    
+    render(
+      <AccountContextWrapper>
+        <TestComponent />
+      </AccountContextWrapper>
+    );
+    
+    // Click set repo button
+    act(() => {
+      screen.getByTestId("set-repo-button").click();
+    });
+    
+    await waitFor(() => {
+      expect(screen.getByTestId("repo-name")).toHaveTextContent("test-repo");
+      expect(screen.getByTestId("owner-name")).toHaveTextContent("auto-owner");
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+        STORAGE_KEYS.CURRENT_REPO_NAME,
+        "test-repo"
+      );
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
+        STORAGE_KEYS.CURRENT_OWNER_NAME,
+        "auto-owner"
+      );
+    });
   });
 });
