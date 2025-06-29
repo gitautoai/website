@@ -248,4 +248,60 @@ describe("AccountContext Provider and Hook", () => {
       });
     });
   });
+
+  it("should handle organizations data loading state", async () => {
+    // Mock organizations data
+    const mockOrganizations = [
+      {
+        ownerId: 2001,
+        ownerName: "org1",
+        ownerType: "Organization",
+        repositories: [
+          { repoId: 3001, repoName: "repo1" },
+        ],
+      },
+    ];
+
+    (useSWR as jest.Mock).mockImplementation((key) => {
+      if (Array.isArray(key) && key[0] === "github-organizations") {
+        return {
+          data: mockOrganizations,
+          mutate: jest.fn(),
+        };
+      }
+      return { data: undefined, mutate: jest.fn() };
+    });
+    
+    render(
+      <AccountContextWrapper>
+        <TestConsumer />
+      </AccountContextWrapper>
+    );
+    
+    await waitFor(() => {
+      expect(screen.getByTestId("is-loading")).toHaveTextContent("false");
+    });
+  });
+
+  it("should handle empty organizations data", async () => {
+    (useSWR as jest.Mock).mockImplementation((key) => {
+      if (Array.isArray(key) && key[0] === "github-organizations") {
+        return {
+          data: [],
+          mutate: jest.fn(),
+        };
+      }
+      return { data: undefined, mutate: jest.fn() };
+    });
+    
+    render(
+      <AccountContextWrapper>
+        <TestConsumer />
+      </AccountContextWrapper>
+    );
+    
+    await waitFor(() => {
+      expect(screen.getByTestId("is-loading")).toHaveTextContent("false");
+    });
+  });
 });
