@@ -313,5 +313,9 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 }
 
 export function useAccountContext() {
-  return useContext(AccountContext);
+  const context = useContext(AccountContext);
+  if (!context) {
+    throw new Error("useAccountContext must be used within an AccountContextWrapper");
+  }
+  return context;
 }
