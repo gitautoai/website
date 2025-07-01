@@ -22,6 +22,7 @@ const customJestConfig: Config = {
   collectCoverage: true,
   collectCoverageFrom: [
     "app/**/*.{js,jsx,ts,tsx}", // Include all files in the app directory
+    ".storybook/**/*.{js,jsx,ts,tsx}", // Include Storybook configuration files
     "!app/**/_*.{js,jsx,ts,tsx}", // Exclude files starting with _
     "!app/**/*.d.ts", // Exclude declaration files
     "!**/node_modules/**", // Exclude node_modules
