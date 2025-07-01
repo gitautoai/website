@@ -49,7 +49,6 @@ describe("Storybook Configuration Integration", () => {
 
   describe("file structure validation", () => {
     it("should have all required configuration files", () => {
-      const fs = require("fs");
       
       expect(fs.existsSync(".storybook/main.ts")).toBe(true);
       expect(fs.existsSync(".storybook/preview.ts")).toBe(true);
