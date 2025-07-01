@@ -31,6 +31,7 @@ export default function TriggersPage() {
     currentRepoName,
     userId,
     userName,
+    currentInstallationId,
   } = useAccountContext();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -80,7 +81,8 @@ export default function TriggersPage() {
       !currentOwnerName ||
       !currentRepoId ||
       !currentRepoName ||
-      !userId
+      !userId ||
+      !currentInstallationId
     )
       return;
 
@@ -105,6 +107,9 @@ export default function TriggersPage() {
           ownerName: currentOwnerName,
           repoId: currentRepoId,
           repoName: currentRepoName,
+          userId: userId,
+          userName: userName,
+          installationId: currentInstallationId,
           scheduleTimeUTC: updatedSettings.scheduleTimeUTC,
           includeWeekends: updatedSettings.scheduleIncludeWeekends,
         });

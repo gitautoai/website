@@ -18,6 +18,9 @@ interface ScheduleConfig {
   ownerName: string;
   repoId: number;
   repoName: string;
+  userId: number;
+  userName: string;
+  installationId: number;
   scheduleTimeUTC: string;
   includeWeekends: boolean;
 }
@@ -39,6 +42,9 @@ export async function createOrUpdateSchedule(config: ScheduleConfig) {
         ownerName: config.ownerName,
         repoId: config.repoId,
         repoName: config.repoName,
+        userId: config.userId,
+        userName: config.userName,
+        installationId: config.installationId,
         triggerType: "schedule",
         scheduleTimeUTC: config.scheduleTimeUTC,
         includeWeekends: config.includeWeekends,
