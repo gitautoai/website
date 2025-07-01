@@ -28,7 +28,7 @@ export async function createOrUpdateSchedule(config: ScheduleConfig) {
 
   const scheduleInput = {
     Name: scheduleName,
-    GroupName: process.env.AWS_SCHEDULE_GROUP_NAME || "default",
+    GroupName: "default",
     ScheduleExpression: cronExpression,
     Target: {
       Arn: process.env.AWS_LAMBDA_FUNCTION_ARN!,
@@ -56,7 +56,7 @@ export async function createOrUpdateSchedule(config: ScheduleConfig) {
     await schedulerClient.send(
       new GetScheduleCommand({
         Name: scheduleName,
-        GroupName: process.env.AWS_SCHEDULE_GROUP_NAME || "default",
+        GroupName: "default",
       })
     );
     await schedulerClient.send(new UpdateScheduleCommand(scheduleInput));
