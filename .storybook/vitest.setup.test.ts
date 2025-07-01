@@ -3,8 +3,7 @@
  * Note: This file tests the setup configuration rather than executing the setup itself
  */
 
-import * as fs from "fs";
-import * as path from "path";
+const fs = require("fs");
 
 describe(".storybook/vitest.setup.ts", () => {
   let setupContent: string;
