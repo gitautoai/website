@@ -46,6 +46,7 @@ export default function TriggersPage() {
     scheduleTimeUTC: "",
     scheduleIncludeWeekends: false,
   });
+  const [originalScheduleTime, setOriginalScheduleTime] = useState<string>("");
 
   // Common function to fetch and set trigger settings
   const fetchAndSetTriggerSettings = async () => {
@@ -178,8 +179,24 @@ export default function TriggersPage() {
     }
 
     setTriggerSettings(updatedSettings);
-    saveSettings(updatedSettings);
-    notifyChange(field, triggerSettings[field], value);
+
+    // For checkbox changes, save immediately
+    if (field === "scheduleIncludeWeekends") {
+      saveSettings(updatedSettings);
+      notifyChange(field, triggerSettings[field], value);
+    }
+  };
+
+  const handleTimeBlur = () => {
+    // Only save if the time actually changed
+    if (triggerSettings.scheduleTimeLocal !== originalScheduleTime) {
+      saveSettings(triggerSettings);
+      notifyChange("scheduleTimeLocal", originalScheduleTime, triggerSettings.scheduleTimeLocal);
+    }
+  };
+
+  const handleTimeFocus = () => {
+    setOriginalScheduleTime(triggerSettings.scheduleTimeLocal);
   };
 
   // Function to get timezone information
@@ -271,6 +288,8 @@ export default function TriggersPage() {
                       id="scheduleTimeLocal"
                       value={triggerSettings.scheduleTimeLocal}
                       onChange={(e) => handleScheduleChange("scheduleTimeLocal", e.target.value)}
+                      onFocus={handleTimeFocus}
+                      onBlur={handleTimeBlur}
                       className="w-40 p-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
                       disabled={isSaving}
                     />
