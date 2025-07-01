@@ -25,6 +25,7 @@ const customJestConfig: Config = {
     ".storybook/**/*.{js,jsx,ts,tsx}", // Include Storybook configuration files
     "!app/**/_*.{js,jsx,ts,tsx}", // Exclude files starting with _
     "!app/**/*.d.ts", // Exclude declaration files
+    "!**/*.test.{js,jsx,ts,tsx}", // Exclude test files
     "!**/node_modules/**", // Exclude node_modules
   ],
   coverageReporters: ["text", "lcov"],
