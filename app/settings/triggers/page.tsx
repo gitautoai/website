@@ -40,7 +40,7 @@ export default function TriggersPage() {
     triggerOnReviewComment: true,
     triggerOnTestFailure: true,
     triggerOnCommit: false,
-    triggerOnPrChange: false,
+    triggerOnPrChange: true,
     triggerOnMerged: false,
     triggerOnSchedule: false,
     scheduleTimeLocal: "09:00",
