@@ -4,6 +4,7 @@
  */
 
 import mainConfig from "./main";
+const fs = require("fs");
 import previewConfig from "./preview";
 
 describe("Storybook Configuration Integration", () => {
