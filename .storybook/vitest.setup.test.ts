@@ -4,6 +4,7 @@
  */
 
 const fs = require("fs");
+const path = require("path");
 
 describe(".storybook/vitest.setup.ts", () => {
   let setupContent: string;
