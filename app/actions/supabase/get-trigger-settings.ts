@@ -33,7 +33,7 @@ export async function getTriggerSettings(
       triggerOnReviewComment: true,
       triggerOnTestFailure: true,
       triggerOnCommit: false,
-      triggerOnPrChange: false,
+      triggerOnPrChange: true,
       triggerOnMerged: false,
       triggerOnSchedule: false,
       scheduleTimeLocal: "09:00",
@@ -57,7 +57,7 @@ export async function getTriggerSettings(
     triggerOnReviewComment: settings.trigger_on_review_comment || false,
     triggerOnTestFailure: settings.trigger_on_test_failure || false,
     triggerOnCommit: settings.trigger_on_commit || false,
-    triggerOnPrChange: settings.trigger_on_pr_change || false,
+    triggerOnPrChange: settings.trigger_on_pr_change || true,
     triggerOnMerged: settings.trigger_on_merged || false,
     triggerOnSchedule: settings.trigger_on_schedule || false,
     scheduleTimeLocal: "", // Calculate on the client side
