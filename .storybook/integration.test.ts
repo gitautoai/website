@@ -43,7 +43,6 @@ describe("Storybook Configuration Integration", () => {
       expect(mainConfig.addons).toContain("@storybook/addon-vitest");
       
       // Verify setup file exists (this is tested indirectly)
-      const fs = require("fs");
       expect(fs.existsSync(".storybook/vitest.setup.ts")).toBe(true);
     });
   });
