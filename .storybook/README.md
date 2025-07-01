@@ -10,6 +10,7 @@ This directory contains the Storybook configuration and its corresponding unit t
 - `preview.test.ts` - Unit tests for the preview configuration
 - `vitest.setup.test.ts` - Unit tests for the Vitest setup configuration
 - `vitest.setup.ts` - Vitest setup for Storybook tests
+- `integration.test.ts` - Integration tests for all configuration files
 
 ## Test Coverage
 
@@ -53,6 +54,12 @@ The `main.test.ts` file provides comprehensive test coverage for the Storybook c
 - Tests integration with a11y addon
 - Verifies setProjectAnnotations configuration
 - Ensures proper setup file structure
+
+### Integration Tests (`integration.test.ts`)
+- Tests compatibility between main and preview configurations
+- Verifies framework and addon compatibility
+- Validates consistent accessibility configuration across files
+- Ensures all required configuration files exist
 
 ## Running Tests
 
