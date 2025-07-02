@@ -78,7 +78,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
           />
         </button>
         {isMenuOpen && (
-          <div className="absolute right-0 mt-2 w-48 py-1 rounded-md shadow-lg">
+          <div className="absolute right-0 mt-2 w-48 py-1 rounded-md shadow-lg bg-white">
             {(() => {
               if (
                 !userId ||
@@ -110,7 +110,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
               currentOwnerName &&
               currentStripeCustomerId && (
                 <button
-                  className="w-full text-left px-4 py-2 hover:bg-transparent"
+                  className="w-full text-left px-4 py-2"
                   onClick={() =>
                     createPortalOrCheckoutURL({
                       userId,
@@ -131,7 +131,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
 
             {installations && installations.length > 0 && (
               <button
-                className="w-full text-left px-4 py-2 hover:bg-transparent"
+                className="w-full text-left px-4 py-2"
                 onClick={() => {
                   setIsOwnerSelectorOpen(true);
                   setIsMenuOpen(false);
@@ -142,7 +142,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
             )}
 
             <button
-              className="w-full text-left px-4 py-2 hover:bg-transparent"
+              className="w-full text-left px-4 py-2"
               onClick={() => signOut({ callbackUrl: pathname })}
             >
               <span className="link">Sign Out</span>
