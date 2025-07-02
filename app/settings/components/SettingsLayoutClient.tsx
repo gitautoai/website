@@ -15,9 +15,11 @@ export default function SettingsLayoutClient({ children }: { children: React.Rea
   const pathname = usePathname();
   const { status } = useSession();
 
-  // Redirect to login if not authenticated
+  // Only redirect in browser environment, not during static generation/OG image generation
   useEffect(() => {
-    if (status === "unauthenticated") signIn("github", { callbackUrl: pathname });
+    if (typeof window !== "undefined" && status === "unauthenticated") {
+      signIn("github", { callbackUrl: pathname });
+    }
   }, [status, pathname]);
 
   return (
