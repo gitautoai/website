@@ -25,7 +25,10 @@ export function useIntegrations() {
     // setTimeout with 0ms delay to move async process to microtask queue
     setTimeout(async () => {
       try {
-        const query = new URLSearchParams({ userId: session.user.userId, serviceName: "jira" });
+        const query = new URLSearchParams({
+          userId: session.user.userId.toString(),
+          serviceName: "jira",
+        });
         const response = await fetch(`/api/supabase/get-oauth-token?${query}`);
         const data = await response.json();
         setIsConnected(!!data.accessToken);
@@ -42,7 +45,7 @@ export function useIntegrations() {
     // setTimeout to move async process to microtask queue
     setTimeout(async () => {
       try {
-        const query = new URLSearchParams({ userId: session.user.userId });
+        const query = new URLSearchParams({ userId: session.user.userId.toString() });
         const response = await fetch(`/api/jira/get-projects?${query}`);
         const sitesWithProjects: JiraSiteWithProjects[] = await response.json();
         if (!sitesWithProjects.length) return;
