@@ -19,6 +19,7 @@ const AccountContext = createContext<AccountContextType>({
   selectedIndex: undefined,
   setSelectedIndex: () => {},
   userId: null,
+  userLogin: null,
   userName: "Unknown User",
   email: null,
   installationIds: [],
@@ -44,6 +45,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const { data: session } = useSession();
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>(undefined);
   const [userId, setUserId] = useState<number | null>(null);
+  const [userLogin, setUserLogin] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("Unknown User");
   const [email, setEmail] = useState<string | null>(null);
   const [installationIds, setInstallationIds] = useState<number[]>([]);
@@ -62,6 +64,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   useEffect(() => {
     if (!session) return;
     setUserId(session.user.userId);
+    setUserLogin(session.user.login || null);
     setUserName(session.user.name || "Unknown User");
     setEmail(session.user.email || "Unknown Email");
     setJwtToken(session.jwtToken);
@@ -283,6 +286,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         selectedIndex,
         setSelectedIndex,
         userId,
+        userLogin,
         userName,
         email,
         installationIds,

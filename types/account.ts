@@ -8,6 +8,7 @@ export interface AccountContextType {
   selectedIndex: number | undefined;
   setSelectedIndex: React.Dispatch<React.SetStateAction<number | undefined>>;
   userId: number | null;
+  userLogin: string | null;
   userName: string;
   email: string | null;
   installationIds: number[];

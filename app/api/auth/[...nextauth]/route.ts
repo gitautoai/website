@@ -22,6 +22,15 @@ const handler = NextAuth({
           scope: "read:user user:email read:org repo",
         },
       },
+      profile(profile) {
+        return {
+          id: profile.id.toString(),
+          name: profile.name || profile.login,
+          email: profile.email,
+          image: profile.avatar_url,
+          login: profile.login,
+        };
+      },
     }),
   ],
   callbacks: {
@@ -40,6 +49,7 @@ const handler = NextAuth({
         token.user_id = userId;
         token.jwtToken = sign(user, config.JWT_SECRET, { algorithm: "HS256", expiresIn: "100d" });
         token.accessToken = account.access_token;
+        token.login = user.login;
 
         // Upsert user in Supabase
         const userName = user.name || "Unknown User";
@@ -59,6 +69,13 @@ const handler = NextAuth({
         if (!slackResult.success)
           console.error("Failed to send Slack notification:", slackResult.error);
       }
+
+      // Existing session: sign out if login is missing
+      if (token.user_id && !token.login) {
+        console.log("Existing user missing GitHub login, signing out");
+        return {};
+      }
+
       return token;
     },
 
@@ -69,6 +86,7 @@ const handler = NextAuth({
         session.jwtToken = token.jwtToken as string;
         session.accessToken = token.accessToken as string;
         session.user.userId = Number(token.user_id);
+        session.user.login = token.login as string;
       } catch (err) {
         console.error(err);
       }
