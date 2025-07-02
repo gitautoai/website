@@ -70,12 +70,6 @@ const handler = NextAuth({
           console.error("Failed to send Slack notification:", slackResult.error);
       }
 
-      // Existing session: sign out if login is missing
-      if (token.user_id && !token.login) {
-        console.log("Existing user missing GitHub login, signing out");
-        return {};
-      }
-
       return token;
     },
 

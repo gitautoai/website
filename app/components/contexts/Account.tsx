@@ -1,7 +1,7 @@
 "use client";
 
 // Third party imports
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { createContext, useContext, useState, useEffect } from "react";
 import useSWR from "swr";
 
@@ -63,6 +63,14 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   // Process session information
   useEffect(() => {
     if (!session) return;
+
+    // Force sign out if login is missing
+    if (session.user.userId && !session.user.login) {
+      console.log("Missing login, signing out");
+      signOut();
+      return;
+    }
+
     setUserId(session.user.userId);
     setUserLogin(session.user.login || null);
     setUserName(session.user.name || "Unknown User");
