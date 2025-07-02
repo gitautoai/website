@@ -40,6 +40,8 @@ export type TriggerSettings = {
   scheduleTimeLocal: string; // Format: "HH:MM" (24-hour format)
   scheduleTimeUTC: string; // Format: "HH:MM" (24-hour format)
   scheduleIncludeWeekends: boolean;
+  scheduleExecutionCount: number;
+  scheduleIntervalMinutes: number;
 };
 
 export type Settings = RulesSettings | ReferenceSettings | ScreenshotSettings | TriggerSettings;
