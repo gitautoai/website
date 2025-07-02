@@ -102,7 +102,10 @@ export default function CoveragePage() {
   // Fetch coverage data
   useEffect(() => {
     const loadDataAndSync = async () => {
-      if (!currentOwnerId || !currentRepoId) return;
+      if (!currentOwnerId || !currentRepoId) {
+        setIsLoadingDB(false);
+        return;
+      }
 
       // First, fetch data from the database
       const coverageData = await fetchCoverageData(

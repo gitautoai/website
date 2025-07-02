@@ -72,6 +72,10 @@ export default function TriggersPage() {
   };
 
   useEffect(() => {
+    if (!currentOwnerId || !currentRepoId) {
+      setIsLoading(false);
+      return;
+    }
     fetchAndSetTriggerSettings();
   }, [currentOwnerId, currentRepoId]);
 
