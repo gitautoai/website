@@ -389,12 +389,12 @@ export type Database = {
       }
       repositories: {
         Row: {
-          blank_lines: number | null
-          code_lines: number | null
-          comment_lines: number | null
+          blank_lines: number
+          code_lines: number
+          comment_lines: number
           created_at: string
           created_by: string
-          file_count: number | null
+          file_count: number
           file_paths: string[] | null
           id: number
           local_port: number | null
@@ -423,12 +423,12 @@ export type Database = {
           web_urls: string[] | null
         }
         Insert: {
-          blank_lines?: number | null
-          code_lines?: number | null
-          comment_lines?: number | null
+          blank_lines?: number
+          code_lines?: number
+          comment_lines?: number
           created_at?: string
           created_by: string
-          file_count?: number | null
+          file_count?: number
           file_paths?: string[] | null
           id?: number
           local_port?: number | null
@@ -457,12 +457,12 @@ export type Database = {
           web_urls?: string[] | null
         }
         Update: {
-          blank_lines?: number | null
-          code_lines?: number | null
-          comment_lines?: number | null
+          blank_lines?: number
+          code_lines?: number
+          comment_lines?: number
           created_at?: string
           created_by?: string
-          file_count?: number | null
+          file_count?: number
           file_paths?: string[] | null
           id?: number
           local_port?: number | null
@@ -521,6 +521,7 @@ export type Database = {
           token_input: number | null
           token_output: number | null
           total_seconds: number | null
+          trigger: string
           user_id: number
         }
         Insert: {
@@ -543,6 +544,7 @@ export type Database = {
           token_input?: number | null
           token_output?: number | null
           total_seconds?: number | null
+          trigger?: string
           user_id: number
         }
         Update: {
@@ -565,6 +567,7 @@ export type Database = {
           token_input?: number | null
           token_output?: number | null
           total_seconds?: number | null
+          trigger?: string
           user_id?: number
         }
         Relationships: []
