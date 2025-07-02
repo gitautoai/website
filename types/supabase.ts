@@ -404,8 +404,10 @@ export type Database = {
           repo_name: string
           repo_rules: string | null
           schedule_day_of_week: string | null
+          schedule_execution_count: number
           schedule_frequency: string | null
           schedule_include_weekends: boolean
+          schedule_interval_minutes: number
           schedule_minute: number | null
           schedule_time: string | null
           startup_commands: string[] | null
@@ -438,8 +440,10 @@ export type Database = {
           repo_name: string
           repo_rules?: string | null
           schedule_day_of_week?: string | null
+          schedule_execution_count?: number
           schedule_frequency?: string | null
           schedule_include_weekends?: boolean
+          schedule_interval_minutes?: number
           schedule_minute?: number | null
           schedule_time?: string | null
           startup_commands?: string[] | null
@@ -472,8 +476,10 @@ export type Database = {
           repo_name?: string
           repo_rules?: string | null
           schedule_day_of_week?: string | null
+          schedule_execution_count?: number
           schedule_frequency?: string | null
           schedule_include_weekends?: boolean
+          schedule_interval_minutes?: number
           schedule_minute?: number | null
           schedule_time?: string | null
           startup_commands?: string[] | null

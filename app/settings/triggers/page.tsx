@@ -8,7 +8,7 @@ import { slackUs } from "@/app/actions/slack/slack-us";
 import { getTriggerSettings } from "@/app/actions/supabase/get-trigger-settings";
 import { saveTriggerSettings } from "@/app/actions/supabase/save-trigger-settings";
 import { createOrUpdateSchedule } from "@/app/actions/aws/create-or-update-schedule";
-import { deleteSchedule } from "@/app/actions/aws/delete-schedule";
+import { deleteSchedules } from "@/app/actions/aws/delete-schedules";
 
 // Local imports (Components and etc.)
 import { useAccountContext } from "@/app/components/contexts/Account";
@@ -47,8 +47,13 @@ export default function TriggersPage() {
     scheduleTimeLocal: "09:00",
     scheduleTimeUTC: "",
     scheduleIncludeWeekends: false,
+    scheduleExecutionCount: 1,
+    scheduleIntervalMinutes: 15,
   });
   const [originalScheduleTime, setOriginalScheduleTime] = useState<string>("");
+
+  const MAX_EXECUTIONS = 12; // Up to 12 times per day
+  const ALLOWED_INTERVALS = [5, 10, 15, 20, 30, 60]; // minutes
 
   // Common function to fetch and set trigger settings
   const fetchAndSetTriggerSettings = async () => {
@@ -118,9 +123,11 @@ export default function TriggersPage() {
           installationId: currentInstallationId,
           scheduleTimeUTC: updatedSettings.scheduleTimeUTC,
           includeWeekends: updatedSettings.scheduleIncludeWeekends,
+          scheduleExecutionCount: updatedSettings.scheduleExecutionCount,
+          scheduleIntervalMinutes: updatedSettings.scheduleIntervalMinutes,
         });
       } else {
-        await deleteSchedule(currentOwnerId, currentRepoId);
+        await deleteSchedules(currentOwnerId, currentRepoId);
       }
     } catch (error) {
       console.error("Error saving trigger settings:", error);
@@ -140,6 +147,8 @@ export default function TriggersPage() {
       triggerOnSchedule: "Schedule trigger",
       scheduleTimeLocal: "Schedule time",
       scheduleIncludeWeekends: "Include weekends",
+      scheduleExecutionCount: "Executions per day",
+      scheduleIntervalMinutes: "Interval",
     };
 
     const readableSetting = settingLabels[key] || key;
@@ -177,8 +186,12 @@ export default function TriggersPage() {
   };
 
   const handleScheduleChange = (
-    field: "scheduleTimeLocal" | "scheduleIncludeWeekends",
-    value: string | boolean
+    field:
+      | "scheduleTimeLocal"
+      | "scheduleIncludeWeekends"
+      | "scheduleExecutionCount"
+      | "scheduleIntervalMinutes",
+    value: string | boolean | number
   ) => {
     let updatedSettings = {
       ...triggerSettings,
@@ -191,8 +204,8 @@ export default function TriggersPage() {
 
     setTriggerSettings(updatedSettings);
 
-    // For checkbox changes, save immediately
-    if (field === "scheduleIncludeWeekends") {
+    // For checkbox changes and execution count changes, save immediately
+    if (field === "scheduleIncludeWeekends" || field === "scheduleExecutionCount") {
       saveSettings(updatedSettings);
       notifyChange(field, triggerSettings[field], value);
     }
@@ -224,6 +237,27 @@ export default function TriggersPage() {
     } catch (e) {
       return "your local timezone";
     }
+  };
+
+  const calculateExecutionTimes = () => {
+    if (!triggerSettings.scheduleExecutionCount) return [];
+
+    const intervalMinutes = triggerSettings.scheduleIntervalMinutes;
+    const executionTimes = [];
+    const [startHour, startMinute] = triggerSettings.scheduleTimeLocal.split(":").map(Number);
+
+    for (let i = 0; i < triggerSettings.scheduleExecutionCount; i++) {
+      const totalMinutes = startMinute + i * intervalMinutes;
+      const hour = startHour + Math.floor(totalMinutes / 60);
+      const minute = totalMinutes % 60;
+
+      if (hour < 24) {
+        const timeStr = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+        executionTimes.push(timeStr);
+      }
+    }
+
+    return executionTimes;
   };
 
   return (
@@ -284,15 +318,19 @@ export default function TriggersPage() {
                 isDisabled={isSaving}
                 onToggle={() => handleToggle("triggerOnSchedule")}
               />
+            </div>
+          </div>
 
-              {triggerSettings.triggerOnSchedule && (
-                <div className="ml-10 mt-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                  <div className="mb-4">
+          <div className={`h-72 ${triggerSettings.triggerOnSchedule ? "block" : "invisible"}`}>
+            {triggerSettings.triggerOnSchedule && (
+              <div className="ml-10 mt-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                  <div>
                     <label
                       htmlFor="scheduleTimeLocal"
                       className="block text-sm font-medium text-gray-700 mb-1"
                     >
-                      Daily run time
+                      Start time
                     </label>
                     <input
                       type="time"
@@ -301,7 +339,7 @@ export default function TriggersPage() {
                       onChange={(e) => handleScheduleChange("scheduleTimeLocal", e.target.value)}
                       onFocus={handleTimeFocus}
                       onBlur={handleTimeBlur}
-                      className="w-40 p-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                      className="w-full h-12 p-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
                       disabled={isSaving}
                     />
                     <p className="mt-1 text-xs text-gray-500">
@@ -309,24 +347,88 @@ export default function TriggersPage() {
                     </p>
                   </div>
 
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="includeWeekends"
-                      checked={triggerSettings.scheduleIncludeWeekends}
-                      onChange={(e) =>
-                        handleScheduleChange("scheduleIncludeWeekends", e.target.checked)
-                      }
-                      className="h-4 w-4 text-pink-600 rounded border-gray-300"
-                      disabled={isSaving}
-                    />
-                    <label htmlFor="includeWeekends" className="ml-2 block text-sm text-gray-700">
-                      Include weekends
+                  <div>
+                    <label
+                      htmlFor="scheduleExecutions"
+                      className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                      Executions per day
                     </label>
+                    <select
+                      id="scheduleExecutions"
+                      value={triggerSettings.scheduleExecutionCount || 1}
+                      onChange={(e) =>
+                        handleScheduleChange("scheduleExecutionCount", parseInt(e.target.value))
+                      }
+                      className="w-full h-12 p-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                      disabled={isSaving}
+                    >
+                      {Array.from({ length: MAX_EXECUTIONS }, (_, i) => i + 1).map((count) => (
+                        <option key={count} value={count}>
+                          {count} time{count > 1 ? "s" : ""}
+                        </option>
+                      ))}
+                    </select>
                   </div>
+
+                  {/* Show interval settings only if execution count > 1 */}
+                  {(triggerSettings.scheduleExecutionCount || 1) > 1 && (
+                    <div>
+                      <label
+                        htmlFor="scheduleInterval"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Interval
+                      </label>
+                      <select
+                        id="scheduleInterval"
+                        value={triggerSettings.scheduleIntervalMinutes || 15}
+                        onChange={(e) =>
+                          handleScheduleChange("scheduleIntervalMinutes", parseInt(e.target.value))
+                        }
+                        className="w-full h-12 p-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                        disabled={isSaving}
+                      >
+                        {ALLOWED_INTERVALS.map((interval) => (
+                          <option key={interval} value={interval}>
+                            Every {interval} minutes
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+
+                {/* Preview execution times - show only if execution count > 1 */}
+                {(triggerSettings.scheduleExecutionCount || 1) > 1 &&
+                  calculateExecutionTimes().length > 0 && (
+                    <div className="bg-blue-50 p-3 rounded border border-blue-200 mb-4">
+                      <p className="text-sm font-medium text-blue-800 mb-2">
+                        Daily execution times:
+                      </p>
+                      <p className="text-sm text-blue-700">
+                        {calculateExecutionTimes().join(", ")}
+                      </p>
+                    </div>
+                  )}
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="includeWeekends"
+                    checked={triggerSettings.scheduleIncludeWeekends}
+                    onChange={(e) =>
+                      handleScheduleChange("scheduleIncludeWeekends", e.target.checked)
+                    }
+                    className="h-4 w-4 text-pink-600 rounded border-gray-300"
+                    disabled={isSaving}
+                  />
+                  <label htmlFor="includeWeekends" className="ml-2 block text-sm text-gray-700">
+                    Include weekends
+                  </label>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

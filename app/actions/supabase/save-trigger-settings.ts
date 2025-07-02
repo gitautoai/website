@@ -2,6 +2,7 @@
 
 import { supabase } from "@/lib/supabase";
 import type { TriggerSettings } from "@/app/settings/types";
+import type { TablesInsert, TablesUpdate } from "@/types/supabase";
 
 export async function saveTriggerSettings(
   ownerId: number,
@@ -26,9 +27,8 @@ export async function saveTriggerSettings(
     .match({ owner_id: ownerId, repo_id: repoId })
     .maybeSingle();
 
-  // Update data structure
-  const updateData = {
-    updated_by: userId.toString() + ":" + userName,
+  // Update data structure using Tables type
+  const updateData: TablesUpdate<"repositories"> = {
     trigger_on_review_comment: settings.triggerOnReviewComment,
     trigger_on_test_failure: settings.triggerOnTestFailure,
     trigger_on_commit: settings.triggerOnCommit,
@@ -41,6 +41,9 @@ export async function saveTriggerSettings(
         ? `${settings.scheduleTimeUTC}:00+00` // "22:00" → "22:00:00+00"
         : null,
     schedule_include_weekends: settings.scheduleIncludeWeekends,
+    schedule_execution_count: settings.scheduleExecutionCount,
+    schedule_interval_minutes: settings.scheduleIntervalMinutes,
+    updated_by: userId.toString() + ":" + userName,
   };
 
   if (existingRepo) {
@@ -51,12 +54,13 @@ export async function saveTriggerSettings(
 
     if (error) throw error;
   } else {
-    const insertData = {
+    const insertData: TablesInsert<"repositories"> = {
+      ...updateData,
       owner_id: ownerId,
       repo_id: repoId,
       repo_name: repoName,
       created_by: userId.toString() + ":" + userName,
-      ...updateData,
+      updated_by: userId.toString() + ":" + userName,
 
       // Default values for other required fields
       repo_rules: "",

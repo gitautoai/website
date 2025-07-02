@@ -2,7 +2,8 @@
 
 // Third party imports
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useSession, signIn } from "next-auth/react";
+import { useState, useEffect } from "react";
 
 // Local imports
 import AuthControls from "@/app/components/AuthControls";
@@ -12,6 +13,12 @@ import SettingsMenu from "@/app/settings/components/SettingsMenu";
 export default function SettingsLayoutClient({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { status } = useSession();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (status === "unauthenticated") signIn("github", { callbackUrl: pathname });
+  }, [status, pathname]);
 
   return (
     <div className="min-h-screen flex">
