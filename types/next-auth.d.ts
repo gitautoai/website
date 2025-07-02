@@ -6,10 +6,16 @@ declare module "next-auth" {
     jwtToken: string;
     accessToken?: string;
     user: {
-      userId: int;
+      userId: number;
+      login?: string | null;
       name?: string | null;
       email?: string | null;
       image?: string | null;
     } & DefaultSession["user"];
+  }
+
+  // Add this interface to extend the User type
+  interface User {
+    login?: string;
   }
 }

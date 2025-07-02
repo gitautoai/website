@@ -30,6 +30,7 @@ export default function TriggersPage() {
     currentRepoId,
     currentRepoName,
     userId,
+    userLogin,
     userName,
     currentInstallationId,
   } = useAccountContext();
@@ -82,6 +83,7 @@ export default function TriggersPage() {
       !currentRepoId ||
       !currentRepoName ||
       !userId ||
+      !userLogin ||
       !currentInstallationId
     )
       return;
@@ -95,7 +97,7 @@ export default function TriggersPage() {
         currentRepoId,
         currentRepoName,
         userId,
-        userName,
+        userLogin,
         updatedSettings
       );
 
@@ -108,7 +110,7 @@ export default function TriggersPage() {
           repoId: currentRepoId,
           repoName: currentRepoName,
           userId: userId,
-          userName: userName,
+          userName: userLogin,
           installationId: currentInstallationId,
           scheduleTimeUTC: updatedSettings.scheduleTimeUTC,
           includeWeekends: updatedSettings.scheduleIncludeWeekends,
