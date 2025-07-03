@@ -9,11 +9,11 @@ import { ABSOLUTE_URLS } from "@/config/urls";
 export const coverageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "@id": ABSOLUTE_URLS.GITAUTO.COVERAGE + "#webapplication",
+  "@id": ABSOLUTE_URLS.GITAUTO.DASHBOARD.COVERAGE + "#webapplication",
   name: `${PRODUCT_NAME} Coverage Dashboard`,
   description:
     "View and manage test coverage for your GitHub repositories. Track statement, function, and branch coverage across files and directories.",
-  url: ABSOLUTE_URLS.GITAUTO.COVERAGE,
+  url: ABSOLUTE_URLS.GITAUTO.DASHBOARD.COVERAGE,
   applicationCategory: "DeveloperApplication",
   applicationSubCategory: "Code Coverage Dashboard",
   operatingSystem: "All",
