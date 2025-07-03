@@ -7,6 +7,7 @@ export const THUMBNAILS = {
 
   // Dashboard
   DASHBOARD: {
+    CHARTS: `${BASE_URL}/og/dashboard-charts.png`,
     COVERAGE: `${BASE_URL}/og/dashboard-coverage.png`,
     USAGE: `${BASE_URL}/og/dashboard-usage.png`,
   },

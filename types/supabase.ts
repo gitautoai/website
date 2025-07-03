@@ -387,6 +387,54 @@ export type Database = {
         }
         Relationships: []
       }
+      repo_coverage: {
+        Row: {
+          branch_coverage: number
+          branch_name: string
+          created_at: string
+          created_by: string
+          function_coverage: number
+          id: number
+          line_coverage: number
+          owner_id: number
+          owner_name: string
+          primary_language: string | null
+          repo_id: number
+          repo_name: string
+          statement_coverage: number
+        }
+        Insert: {
+          branch_coverage?: number
+          branch_name: string
+          created_at?: string
+          created_by: string
+          function_coverage?: number
+          id?: number
+          line_coverage?: number
+          owner_id: number
+          owner_name: string
+          primary_language?: string | null
+          repo_id: number
+          repo_name: string
+          statement_coverage?: number
+        }
+        Update: {
+          branch_coverage?: number
+          branch_name?: string
+          created_at?: string
+          created_by?: string
+          function_coverage?: number
+          id?: number
+          line_coverage?: number
+          owner_id?: number
+          owner_name?: string
+          primary_language?: string | null
+          repo_id?: number
+          repo_name?: string
+          statement_coverage?: number
+        }
+        Relationships: []
+      }
       repositories: {
         Row: {
           blank_lines: number

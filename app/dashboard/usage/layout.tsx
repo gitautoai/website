@@ -9,7 +9,7 @@ import { usageJsonLd } from "./jsonld";
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Usage Dashboard - Monitor Your Stats & Billing`,
   description: `Monitor GitAuto usage statistics including pull requests generated, issues processed, and billing. Track automation activity.`,
-  url: ABSOLUTE_URLS.GITAUTO.USAGE,
+  url: ABSOLUTE_URLS.GITAUTO.DASHBOARD.USAGE,
   images: [{ url: THUMBNAILS.DASHBOARD.USAGE, alt: `${PRODUCT_NAME} Usage Dashboard` }],
   keywords: [
     "usage statistics dashboard",

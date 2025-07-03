@@ -29,6 +29,7 @@ export const RELATIVE_URLS = {
     },
   },
   DASHBOARD: {
+    CHARTS: "/dashboard/charts",
     COVERAGE: "/dashboard/coverage",
     USAGE: "/dashboard/usage",
   },
@@ -58,7 +59,11 @@ export const ABSOLUTE_URLS = {
     INDEX: BASE_URL,
     BLOG: `${BASE_URL}${RELATIVE_URLS.BLOG}`,
     CONTACT: `${BASE_URL}${RELATIVE_URLS.CONTACT}`,
-    COVERAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE}`,
+    DASHBOARD: {
+      CHARTS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.CHARTS}`,
+      COVERAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE}`,
+      USAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.USAGE}`,
+    },
     DOCS: {
       GETTING_STARTED: {
         INSTALLATION: `${BASE_URL}${RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION}`,
@@ -87,7 +92,6 @@ export const ABSOLUTE_URLS = {
         JIRA: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.JIRA}`,
       },
     },
-    USAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.USAGE}`,
   },
   GITHUB: {
     EMAIL_SETTING: "https://github.com/settings/emails",

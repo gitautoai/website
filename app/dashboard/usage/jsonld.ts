@@ -22,10 +22,10 @@ const VARIABLE_MEASURED = [
 export const usageJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "@id": ABSOLUTE_URLS.GITAUTO.USAGE + "#webapplication",
+  "@id": ABSOLUTE_URLS.GITAUTO.DASHBOARD.USAGE + "#webapplication",
   name: `${PRODUCT_NAME} Usage Dashboard`,
   description: DESCRIPTION,
-  url: ABSOLUTE_URLS.GITAUTO.USAGE,
+  url: ABSOLUTE_URLS.GITAUTO.DASHBOARD.USAGE,
   creator: CREATOR,
   audience: AUDIENCE,
   applicationCategory: "DeveloperApplication",
