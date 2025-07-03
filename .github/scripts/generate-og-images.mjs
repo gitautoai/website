@@ -54,7 +54,7 @@ async function generateOGImages() {
       const page = await browser.newPage();
       await page.setViewportSize({ width: 1200, height: 630 });
 
-      await page.goto(`${baseUrl}${pageConfig.path}`, {
+      await page.goto(`${baseUrl}${pageConfig.path}?og-generation=true`, {
         waitUntil: "domcontentloaded",
         timeout: 30000,
       });
