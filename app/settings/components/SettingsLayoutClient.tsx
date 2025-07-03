@@ -1,7 +1,7 @@
 "use client";
 
 // Third party imports
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
 
@@ -13,14 +13,18 @@ import SettingsMenu from "@/app/settings/components/SettingsMenu";
 export default function SettingsLayoutClient({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { status } = useSession();
+
+  // Check if this is OG image generation
+  const isOgGeneration = searchParams.get("og-generation") === "true";
 
   // Only redirect in browser environment, not during static generation/OG image generation
   useEffect(() => {
-    if (typeof window !== "undefined" && status === "unauthenticated") {
+    if (!isOgGeneration && status === "unauthenticated") {
       signIn("github", { callbackUrl: pathname });
     }
-  }, [status, pathname]);
+  }, [status, pathname, isOgGeneration]);
 
   return (
     <div className="min-h-screen flex">
