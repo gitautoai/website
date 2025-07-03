@@ -79,6 +79,13 @@ export const INTERNAL_LINKS = [
     showInNav: true,
   },
   {
+    href: RELATIVE_URLS.DASHBOARD.CHARTS,
+    eventType: "charts_dashboard",
+    text: "Charts",
+    category: "resources",
+    showInNav: false,
+  },
+  {
     text: "Usage",
     href: RELATIVE_URLS.DASHBOARD.USAGE,
     eventType: "usage_click",
