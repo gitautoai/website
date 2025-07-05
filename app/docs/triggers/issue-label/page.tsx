@@ -17,9 +17,9 @@ export default function IssueLabelTriggerPage() {
         {/* What */}
         <div>
           <p className="text-lg text-gray-700">
-            Trigger GitAuto by adding the 'gitauto' label to GitHub issues. This method works with
-            existing issues and supports automation through APIs, GitHub Actions, and external
-            workflows.
+            Trigger GitAuto by adding the &quot;gitauto&quot; label to GitHub issues. This method
+            works with existing issues and supports automation through APIs, GitHub Actions, and
+            external workflows.
           </p>
         </div>
 
@@ -36,8 +36,8 @@ export default function IssueLabelTriggerPage() {
 
             <p className="text-gray-700">
               <span className="text-rose-600 font-semibold">API Integration:</span> External tools
-              and services can automatically create issues with the 'gitauto' label, enabling
-              powerful automation workflows.
+              and services can automatically create issues with the &quot;gitauto&quot; label,
+              enabling powerful automation workflows.
             </p>
 
             <p className="text-gray-700">
@@ -78,10 +78,13 @@ export default function IssueLabelTriggerPage() {
                 2
               </div>
               <div>
-                <h3 className="text-lg font-semibold mt-0.5 mb-2">Add the 'gitauto' label</h3>
+                <h3 className="text-lg font-semibold mt-0.5 mb-2">
+                  Add the &quot;gitauto&quot; label
+                </h3>
                 <p className="text-gray-700 mb-3">
-                  In the right sidebar, click the gear icon next to "Labels" and type "gitauto". If
-                  the label doesn't exist, GitHub will let you create it.
+                  In the right sidebar, click the gear icon next to &quot;Labels&quot; and type
+                  &quot;gitauto&quot;. If the label doesn&apos;t exist, GitHub will let you create
+                  it.
                 </p>
                 <Image
                   src="/docs/add-gitauto-label.png"
@@ -101,7 +104,7 @@ export default function IssueLabelTriggerPage() {
                 <h3 className="text-lg font-semibold mt-0.5 mb-2">GitAuto analyzes and responds</h3>
                 <p className="text-gray-700 mb-3">
                   Once the label is added, GitAuto will automatically analyze the issue and add a
-                  comment acknowledging that it's working on generating tests.
+                  comment acknowledging that it&apos;s working on generating tests.
                 </p>
                 <Image
                   src="/docs/gitauto-response.png"
@@ -156,10 +159,10 @@ export default function IssueLabelTriggerPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Add the 'gitauto' label to any issue
+              Add the &quot;gitauto&quot; label to any issue
             </Link>
           ) : (
-            <span className="text-gray-500">Add the 'gitauto' label to any issue</span>
+            <span className="text-gray-500">Add the &quot;gitauto&quot; label to any issue</span>
           )}{" "}
           and experience seamless test generation integration.
         </p>

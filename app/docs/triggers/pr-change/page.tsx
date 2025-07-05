@@ -86,7 +86,7 @@ export default function PRChangeTriggerPage() {
               <div>
                 <h3 className="text-lg font-semibold mt-0.5 mb-2">Enable PR Change Trigger</h3>
                 <p className="text-gray-700 mb-3">
-                  Toggle the "On PR change" option to enable the trigger.
+                  Toggle the &quot;On PR change&quot; option to enable the trigger.
                 </p>
                 <Image
                   src="/docs/triggers/enable-schedule-toggle.png"
@@ -139,15 +139,15 @@ export default function PRChangeTriggerPage() {
                   Rollback Protection (Optional)
                 </h3>
                 <p className="text-gray-700 mb-3">
-                  If you're not satisfied with generated tests, you can easily revert using Git.
-                  Since your local branch is still clean (GitAuto only modified remote), you can
-                  simply force push your original code:
+                  If you&apos;re not satisfied with generated tests, you can easily revert using
+                  Git. Since your local branch is still clean (GitAuto only modified remote), you
+                  can simply force push your original code:
                 </p>
                 <div className="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm">
                   <div className="text-green-400">git push --force-with-lease</div>
                 </div>
                 <p className="text-gray-700 mt-3">
-                  This overwrites GitAuto's remote changes with your clean local code.
+                  This overwrites GitAuto&apos;s remote changes with your clean local code.
                 </p>
               </div>
             </div>

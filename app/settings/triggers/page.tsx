@@ -328,8 +328,8 @@ export default function TriggersPage() {
               description={
                 <>
                   Triggers {PRODUCT_NAME} to add unit tests when pull requests are opened, updated,
-                  or synchronized in this repository. Cannot be used together with 'On merge'
-                  trigger.{" "}
+                  or synchronized in this repository. Cannot be used together with &quot;On
+                  merge&quot; trigger.{" "}
                   <Link
                     href={RELATIVE_URLS.DOCS.TRIGGERS.PR_CHANGE}
                     className="text-pink-600 hover:text-pink-700 underline"
@@ -351,7 +351,7 @@ export default function TriggersPage() {
                 <>
                   Triggers {PRODUCT_NAME} to add unit tests for code that has been merged into your
                   target branch. Ensures newly merged features have proper test coverage. Cannot be
-                  used together with 'On PR change' trigger.{" "}
+                  used together with &quot;On PR change&quot; trigger.{" "}
                   <Link
                     href={RELATIVE_URLS.DOCS.TRIGGERS.PR_MERGE}
                     className="text-pink-600 hover:text-pink-700 underline"

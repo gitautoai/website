@@ -68,7 +68,8 @@ export default function TestFailureTriggerPage() {
                   >
                     Trigger Settings
                   </Link>{" "}
-                  and ensure "On test failure" is enabled. This trigger is enabled by default.
+                  and ensure &quot;On test failure&quot; is enabled. This trigger is enabled by
+                  default.
                 </p>
               </div>
             </div>

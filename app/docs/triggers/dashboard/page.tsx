@@ -62,8 +62,8 @@ export default function DashboardTriggerPage() {
                   Sign in to the GitAuto dashboard
                 </h3>
                 <p className="text-gray-700 mb-3">
-                  Click the "Sign in" button in the top right corner and authenticate with your
-                  GitHub account.
+                  Click the &quot;Sign in&quot; button in the top right corner and authenticate with
+                  your GitHub account.
                 </p>
                 <Image
                   src="/docs/sign-in.png"
@@ -102,8 +102,8 @@ export default function DashboardTriggerPage() {
               <div>
                 <h3 className="text-lg font-semibold mt-0.5 mb-2">Browse repository files</h3>
                 <p className="text-gray-700 mb-3">
-                  The dashboard displays a list of files in your repository. If you've integrated
-                  coverage reports, you'll see coverage percentages for each file.
+                  The dashboard displays a list of files in your repository. If you&apos;ve
+                  integrated coverage reports, you&apos;ll see coverage percentages for each file.
                 </p>
                 <Image
                   src="/docs/file-list.png"
@@ -125,7 +125,8 @@ export default function DashboardTriggerPage() {
                 </h3>
                 <p className="text-gray-700 mb-3">
                   Check the boxes next to the files you want to generate tests for, then click the
-                  "Actions" button and select "Create Issues" to trigger GitAuto.
+                  &quot;Actions&quot; button and select &quot;Create Issues&quot; to trigger
+                  GitAuto.
                 </p>
                 <Image
                   src="/docs/select-files-on-dashboard.png"

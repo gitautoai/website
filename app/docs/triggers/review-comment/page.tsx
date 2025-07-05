@@ -29,8 +29,8 @@ export default function ReviewCommentTriggerPage() {
           <div className="space-y-4">
             <p className="text-gray-700">
               <span className="text-pink-600 font-semibold">Natural Workflow:</span> Use the same
-              GitHub review process you're already familiar with - no need to learn new tools or
-              interfaces.
+              GitHub review process you&apos;re already familiar with - no need to learn new tools
+              or interfaces.
             </p>
 
             <p className="text-gray-700">
@@ -48,7 +48,7 @@ export default function ReviewCommentTriggerPage() {
             <p className="text-gray-700">
               <span className="text-purple-600 font-semibold">Perfect for:</span> Fine-tuning
               generated tests, requesting specific test scenarios, and ensuring tests match your
-              team's coding standards.
+              team&apos;s coding standards.
             </p>
           </div>
         </div>
@@ -74,7 +74,8 @@ export default function ReviewCommentTriggerPage() {
                   >
                     Trigger Settings
                   </Link>{" "}
-                  and ensure "On review comment" is enabled. This trigger is enabled by default.
+                  and ensure &quot;On review comment&quot; is enabled. This trigger is enabled by
+                  default.
                 </p>
               </div>
             </div>
@@ -106,8 +107,9 @@ export default function ReviewCommentTriggerPage() {
               <div>
                 <h3 className="text-lg font-semibold mb-2">Leave a Review Comment</h3>
                 <p className="text-gray-700 mb-3">
-                  Click "Start a review" and select "Request changes". Leave your feedback as
-                  comments. You can comment on specific lines, files, or the entire PR.
+                  Click &quot;Start a review&quot; and select &quot;Request changes&quot;. Leave
+                  your feedback as comments. You can comment on specific lines, files, or the entire
+                  PR.
                 </p>
                 <Image
                   src="/docs/triggers/add-review-comment-to-a-line.png"
@@ -132,8 +134,9 @@ export default function ReviewCommentTriggerPage() {
                 />
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3">
                   <p className="text-blue-800 text-sm">
-                    <strong>Important:</strong> Make sure to select "Request changes" when
-                    submitting your review. Comments without this selection won't trigger GitAuto.
+                    <strong>Important:</strong> Make sure to select &quot;Request changes&quot; when
+                    submitting your review. Comments without this selection won&apos;t trigger
+                    GitAuto.
                   </p>
                 </div>
               </div>

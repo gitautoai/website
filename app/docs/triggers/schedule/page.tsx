@@ -107,7 +107,7 @@ export default function ScheduleTriggerPage() {
               <div>
                 <h3 className="text-lg font-semibold mt-0.5 mb-2">Enable Schedule Trigger</h3>
                 <p className="text-gray-700 mb-3">
-                  Toggle the "On schedule" option to enable the trigger.
+                  Toggle the &quot;On schedule&quot; option to enable the trigger.
                 </p>
                 <Image
                   src="/docs/triggers/enable-schedule-toggle.png"

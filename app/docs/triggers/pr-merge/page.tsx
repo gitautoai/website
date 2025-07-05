@@ -31,8 +31,8 @@ export default function MergeTriggerPage() {
 
             <p className="text-gray-700">
               <span className="text-rose-600 font-semibold">Easy Rejection:</span> Simply close the
-              test PR if you don't want the generated tests - no need to learn Git reset commands or
-              worry about rollbacks.
+              test PR if you don&apos;t want the generated tests - no need to learn Git reset
+              commands or worry about rollbacks.
             </p>
 
             <p className="text-gray-700">
@@ -86,7 +86,7 @@ export default function MergeTriggerPage() {
               <div>
                 <h3 className="text-lg font-semibold mt-0.5 mb-2">Enable PR Merge Trigger</h3>
                 <p className="text-gray-700 mb-3">
-                  Toggle the "On merge" option to enable the trigger.
+                  Toggle the &quot;On merge&quot; option to enable the trigger.
                 </p>
                 <Image
                   src="/docs/triggers/enable-schedule-toggle.png"
@@ -111,7 +111,7 @@ export default function MergeTriggerPage() {
               <div>
                 <h3 className="text-lg font-semibold mt-0.5 mb-2">Workflow Example</h3>
                 <p className="text-gray-700 mb-3">
-                  Here's what happens after you enable this trigger:
+                  Here&apos;s what happens after you enable this trigger:
                 </p>
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="border-l-4 border-purple-500 pl-4">
