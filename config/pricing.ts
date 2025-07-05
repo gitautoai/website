@@ -2,6 +2,29 @@ import { ANTHROPIC_MODEL_CLAUDE_40 } from "./anthropic";
 import { GOOGLE_GEMINI } from "./google";
 import { OPENAI_MODEL_O4_MINI } from "./openai";
 
+export const PRICES = {
+  MONTHLY: {
+    STANDARD: {
+      NUMBER: 100,
+      STRING: "$100",
+    },
+    ENTERPRISE: {
+      NUMBER: 500,
+      STRING: "$500+",
+    },
+  },
+  YEARLY: {
+    STANDARD: {
+      NUMBER: 1000,
+      STRING: "$1,000",
+    },
+    ENTERPRISE: {
+      NUMBER: 5000,
+      STRING: "$5,000+",
+    },
+  },
+};
+
 export const PRS = {
   MONTHLY: {
     FREE: 3,

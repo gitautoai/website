@@ -8,10 +8,10 @@ import { parentIssueRulesJsonLd } from "./jsonld";
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Parent Issue Rules - Test Generation Standards`,
   description: `Write effective parent issue rules for consistent GitAuto test generation. Define coding standards, file paths, and testing guidelines.`,
-  url: ABSOLUTE_URLS.GITAUTO.DOCS.GETTING_STARTED.PARENT_ISSUE_RULES,
+  url: ABSOLUTE_URLS.GITAUTO.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES,
   images: [
     {
-      url: THUMBNAILS.DOCS.GETTING_STARTED.PARENT_ISSUE_RULES,
+      url: THUMBNAILS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES,
       alt: `${PRODUCT_NAME} Parent Issue Rules Guide`,
     },
   ],

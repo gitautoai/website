@@ -50,7 +50,7 @@ export default function HowToGetStarted() {
       title: "You're all set!",
       description: "GitAuto will automatically create pull requests with tests",
       ctaText: "Learn More",
-      ctaLink: RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_CHECKBOX_TRIGGER,
+      ctaLink: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_CHECKBOX,
     },
   ];
 

@@ -37,16 +37,26 @@ export const RELATIVE_URLS = {
   DOCS: {
     GETTING_STARTED: {
       INSTALLATION: "/docs/getting-started/installation",
-      ISSUE_CHECKBOX_TRIGGER: "/docs/getting-started/issue-checkbox-trigger",
-      ISSUE_LABEL_TRIGGER: "/docs/getting-started/issue-label-trigger",
-      DASHBOARD_TRIGGER: "/docs/getting-started/dashboard-trigger",
-      PARENT_ISSUE_RULES: "/docs/getting-started/parent-issue-rules",
     },
     COVERAGE: {
       OVERVIEW: "/docs/coverage",
       JAVASCRIPT: "/docs/coverage/javascript",
       PYTHON: "/docs/coverage/python",
       FLUTTER: "/docs/coverage/flutter",
+    },
+    TRIGGERS: {
+      OVERVIEW: "/docs/triggers",
+      DASHBOARD: "/docs/triggers/dashboard",
+      ISSUE_CHECKBOX: "/docs/triggers/issue-checkbox",
+      ISSUE_LABEL: "/docs/triggers/issue-label",
+      PR_CHANGE: "/docs/triggers/pr-change",
+      PR_MERGE: "/docs/triggers/pr-merge",
+      REVIEW_COMMENT: "/docs/triggers/review-comment",
+      SCHEDULE: "/docs/triggers/schedule",
+      TEST_FAILURE: "/docs/triggers/test-failure",
+    },
+    CUSTOMIZATION: {
+      PARENT_ISSUE_RULES: "/docs/customization/parent-issue-rules",
     },
   },
   PRIVACY_POLICY: "/privacy-policy",
@@ -67,16 +77,26 @@ export const ABSOLUTE_URLS = {
     DOCS: {
       GETTING_STARTED: {
         INSTALLATION: `${BASE_URL}${RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION}`,
-        ISSUE_CHECKBOX_TRIGGER: `${BASE_URL}${RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_CHECKBOX_TRIGGER}`,
-        ISSUE_LABEL_TRIGGER: `${BASE_URL}${RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_LABEL_TRIGGER}`,
-        DASHBOARD_TRIGGER: `${BASE_URL}${RELATIVE_URLS.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER}`,
-        PARENT_ISSUE_RULES: `${BASE_URL}${RELATIVE_URLS.DOCS.GETTING_STARTED.PARENT_ISSUE_RULES}`,
       },
       COVERAGE: {
         OVERVIEW: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.OVERVIEW}`,
         JAVASCRIPT: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.JAVASCRIPT}`,
         PYTHON: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.PYTHON}`,
         FLUTTER: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.FLUTTER}`,
+      },
+      TRIGGERS: {
+        OVERVIEW: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW}`,
+        DASHBOARD: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD}`,
+        ISSUE_CHECKBOX: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_CHECKBOX}`,
+        ISSUE_LABEL: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL}`,
+        PR_CHANGE: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.PR_CHANGE}`,
+        PR_MERGE: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.PR_MERGE}`,
+        REVIEW_COMMENT: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT}`,
+        SCHEDULE: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE}`,
+        TEST_FAILURE: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE}`,
+      },
+      CUSTOMIZATION: {
+        PARENT_ISSUE_RULES: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES}`,
       },
     },
     LOGO: `${BASE_URL}/logo.png`,

@@ -55,7 +55,7 @@ export default function JavaScriptConfigurationPage() {
           title: "Coverage Overview",
         }}
         nextLink={{
-          href: RELATIVE_URLS.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER,
+          href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD,
           title: "Dashboard Trigger",
         }}
       />

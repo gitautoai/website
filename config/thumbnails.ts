@@ -28,16 +28,26 @@ export const THUMBNAILS = {
   DOCS: {
     GETTING_STARTED: {
       INSTALLATION: `${BASE_URL}/og/docs-getting-started-installation.png`,
-      ISSUE_CHECKBOX_TRIGGER: `${BASE_URL}/og/docs-getting-started-issue-checkbox-trigger.png`,
-      ISSUE_LABEL_TRIGGER: `${BASE_URL}/og/docs-getting-started-issue-label-trigger.png`,
-      DASHBOARD_TRIGGER: `${BASE_URL}/og/docs-getting-started-dashboard-trigger.png`,
-      PARENT_ISSUE_RULES: `${BASE_URL}/og/docs-getting-started-parent-issue-rules.png`,
     },
     COVERAGE: {
       INDEX: `${BASE_URL}/og/docs-coverage.png`,
       PYTHON: `${BASE_URL}/og/docs-coverage-python.png`,
       JAVASCRIPT: `${BASE_URL}/og/docs-coverage-javascript.png`,
       FLUTTER: `${BASE_URL}/og/docs-coverage-flutter.png`,
+    },
+    TRIGGERS: {
+      INDEX: `${BASE_URL}/og/docs-triggers.png`,
+      DASHBOARD: `${BASE_URL}/og/docs-triggers-dashboard.png`,
+      ISSUE_CHECKBOX: `${BASE_URL}/og/docs-triggers-issue-checkbox.png`,
+      ISSUE_LABEL: `${BASE_URL}/og/docs-triggers-issue-label.png`,
+      PR_CHANGE: `${BASE_URL}/og/docs-triggers-pr-change.png`,
+      PR_MERGE: `${BASE_URL}/og/docs-triggers-pr-merge.png`,
+      REVIEW_COMMENT: `${BASE_URL}/og/docs-triggers-review-comment.png`,
+      SCHEDULE: `${BASE_URL}/og/docs-triggers-schedule.png`,
+      TEST_FAILURE: `${BASE_URL}/og/docs-triggers-test-failure.png`,
+    },
+    CUSTOMIZATION: {
+      PARENT_ISSUE_RULES: `${BASE_URL}/og/docs-customization-parent-issue-rules.png`,
     },
   },
 
