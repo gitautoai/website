@@ -1,6 +1,8 @@
+import { ReactNode } from "react";
+
 type TriggerToggleProps = {
   title: string;
-  description: string;
+  description: string | ReactNode;
   isEnabled: boolean;
   isDisabled?: boolean;
   onToggle: () => void;
@@ -30,7 +32,7 @@ export default function TriggerToggle({
       </button>
       <div className="ml-4 flex-1">
         <h3 className="font-medium text-gray-900">{title}</h3>
-        <p className="text-sm text-gray-600">{description}</p>
+        <div className="text-sm text-gray-600">{description}</div>
       </div>
     </div>
   );

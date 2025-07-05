@@ -1,6 +1,7 @@
 "use client";
 
 // Third-party imports
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 // Local imports (Actions)
@@ -19,6 +20,7 @@ import type { TriggerSettings } from "@/app/settings/types";
 
 // Local imports (Others)
 import { PRODUCT_NAME } from "@/config";
+import { RELATIVE_URLS } from "@/config/urls";
 import { convertLocalToUTC } from "@/utils/convert-local-to-utc";
 import { convertUTCToLocal } from "@/utils/convert-utc-to-local";
 
@@ -280,7 +282,21 @@ export default function TriggersPage() {
           <div className="space-y-3">
             <TriggerToggle
               title="On review comment"
-              description="Triggers GitAuto to respond to review comments on GitAuto-created PRs by automatically creating fix commits. Not triggered by comments on PRs created by others."
+              description={
+                <>
+                  Triggers GitAuto to respond to review comments on GitAuto-created PRs by
+                  automatically creating fix commits. Not triggered by comments on PRs created by
+                  others.{" "}
+                  <Link
+                    href={RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT}
+                    className="text-pink-600 hover:text-pink-700 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Learn more →
+                  </Link>
+                </>
+              }
               isEnabled={triggerSettings.triggerOnReviewComment}
               isDisabled={isSaving}
               onToggle={() => handleToggle("triggerOnReviewComment")}
@@ -288,7 +304,20 @@ export default function TriggersPage() {
 
             <TriggerToggle
               title="On test failure"
-              description="Triggers GitAuto to automatically create a fix commit when a CI test fails on a GitAuto-created PR. Not triggered by test failures on PRs created by others."
+              description={
+                <>
+                  Triggers GitAuto to automatically create a fix commit when a CI test fails on a
+                  GitAuto-created PR. Not triggered by test failures on PRs created by others.{" "}
+                  <Link
+                    href={RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE}
+                    className="text-pink-600 hover:text-pink-700 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Learn more →
+                  </Link>
+                </>
+              }
               isEnabled={triggerSettings.triggerOnTestFailure}
               isDisabled={isSaving}
               onToggle={() => handleToggle("triggerOnTestFailure")}
@@ -296,7 +325,21 @@ export default function TriggersPage() {
 
             <TriggerToggle
               title="On PR change"
-              description={`Triggers ${PRODUCT_NAME} to add unit tests when pull requests are opened, updated, or synchronized in this repository. Cannot be used together with 'On merge' trigger.`}
+              description={
+                <>
+                  Triggers {PRODUCT_NAME} to add unit tests when pull requests are opened, updated,
+                  or synchronized in this repository. Cannot be used together with &quot;On
+                  merge&quot; trigger.{" "}
+                  <Link
+                    href={RELATIVE_URLS.DOCS.TRIGGERS.PR_CHANGE}
+                    className="text-pink-600 hover:text-pink-700 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Learn more →
+                  </Link>
+                </>
+              }
               isEnabled={triggerSettings.triggerOnPrChange}
               isDisabled={isSaving}
               onToggle={() => handleToggle("triggerOnPrChange")}
@@ -304,7 +347,21 @@ export default function TriggersPage() {
 
             <TriggerToggle
               title="On merge"
-              description={`Triggers ${PRODUCT_NAME} to add unit tests for code that has been merged into your target branch. Ensures newly merged features have proper test coverage. Cannot be used together with 'On PR change' trigger.`}
+              description={
+                <>
+                  Triggers {PRODUCT_NAME} to add unit tests for code that has been merged into your
+                  target branch. Ensures newly merged features have proper test coverage. Cannot be
+                  used together with &quot;On PR change&quot; trigger.{" "}
+                  <Link
+                    href={RELATIVE_URLS.DOCS.TRIGGERS.PR_MERGE}
+                    className="text-pink-600 hover:text-pink-700 underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Learn more →
+                  </Link>
+                </>
+              }
               isEnabled={triggerSettings.triggerOnMerged}
               isDisabled={isSaving}
               onToggle={() => handleToggle("triggerOnMerged")}
@@ -313,7 +370,20 @@ export default function TriggersPage() {
             <div>
               <TriggerToggle
                 title="On schedule"
-                description="Triggers GitAuto to automatically create a PR to add unit tests at specified times, prioritizing files with the lowest test coverage first."
+                description={
+                  <>
+                    Triggers GitAuto to automatically create a PR to add unit tests at specified
+                    times, prioritizing files with the lowest test coverage first.{" "}
+                    <Link
+                      href={RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE}
+                      className="text-pink-600 hover:text-pink-700 underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Learn more →
+                    </Link>
+                  </>
+                }
                 isEnabled={triggerSettings.triggerOnSchedule}
                 isDisabled={isSaving}
                 onToggle={() => handleToggle("triggerOnSchedule")}

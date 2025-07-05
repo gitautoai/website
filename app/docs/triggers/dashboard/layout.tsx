@@ -6,23 +6,16 @@ import { createPageMetadata } from "@/utils/metadata";
 import { dashboardTriggerJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `${PRODUCT_NAME} Dashboard Trigger - Visual Test Generation Interface`,
-  description: `Use GitAuto dashboard to generate tests visually. Browse files, select parent issues, create bulk GitHub issues and manage automation.`,
-  url: ABSOLUTE_URLS.GITAUTO.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER,
-  images: [
-    {
-      url: THUMBNAILS.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER,
-      alt: `${PRODUCT_NAME} Dashboard Trigger Guide`,
-    },
-  ],
+  title: `${PRODUCT_NAME} Dashboard Trigger - Bulk unit test generation`,
+  description: `Learn how to trigger GitAuto from the coverage dashboard by selecting specific files. Bulk unit test generation with coverage insights.`,
+  url: ABSOLUTE_URLS.GITAUTO.DOCS.TRIGGERS.DASHBOARD,
+  images: [{ url: THUMBNAILS.DOCS.TRIGGERS.DASHBOARD, alt: `${PRODUCT_NAME} Dashboard Trigger` }],
   keywords: [
     "GitAuto dashboard trigger",
-    "visual test generation",
-    "dashboard interface",
-    "bulk issue creation",
-    "parent issue management",
+    "visual file selection",
     "coverage dashboard",
-    "repository file browser",
+    "bulk test generation",
+    "file coverage insights",
   ],
 });
 

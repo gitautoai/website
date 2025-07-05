@@ -6,18 +6,20 @@ import { RELATIVE_URLS } from "@/config/urls";
 const sidebarItems = [
   {
     title: "Getting Started",
+    items: [{ href: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION, label: "Installation" }],
+  },
+  {
+    title: "Triggers",
     items: [
-      { href: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION, label: "Installation" },
-      {
-        href: RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_CHECKBOX_TRIGGER,
-        label: "GitHub Issues Checkbox Trigger",
-      },
-      {
-        href: RELATIVE_URLS.DOCS.GETTING_STARTED.ISSUE_LABEL_TRIGGER,
-        label: "GitHub Issues Label Trigger",
-      },
-      { href: RELATIVE_URLS.DOCS.GETTING_STARTED.DASHBOARD_TRIGGER, label: "Dashboard Trigger" },
-      { href: RELATIVE_URLS.DOCS.GETTING_STARTED.PARENT_ISSUE_RULES, label: "Parent Issue Rules" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW, label: "Overview" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_CHECKBOX, label: "Issue Checkbox Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL, label: "Issue Label Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD, label: "Dashboard Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT, label: "Review Comment Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE, label: "Test Failure Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE, label: "Schedule Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.PR_CHANGE, label: "PR Change Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.PR_MERGE, label: "PR Merge Trigger" },
     ],
   },
   {
@@ -27,6 +29,12 @@ const sidebarItems = [
       { href: RELATIVE_URLS.DOCS.COVERAGE.JAVASCRIPT, label: "JavaScript Testing" },
       { href: RELATIVE_URLS.DOCS.COVERAGE.PYTHON, label: "Python Testing" },
       { href: RELATIVE_URLS.DOCS.COVERAGE.FLUTTER, label: "Flutter Testing" },
+    ],
+  },
+  {
+    title: "Customization",
+    items: [
+      { href: RELATIVE_URLS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES, label: "Parent Issue Rules" },
     ],
   },
 ];
