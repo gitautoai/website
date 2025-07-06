@@ -94,6 +94,15 @@ export default function DocsPage() {
             <li>Select specific files for improvement</li>
             <li>Create GitHub issues individually or in bulk</li>
             <li>Assign issues to GitAuto for automated improvement</li>
+            <li>
+              Track progress over time with{" "}
+              <Link
+                href={RELATIVE_URLS.DOCS.COVERAGE.CHARTS}
+                className="text-pink-600 hover:text-pink-700 underline"
+              >
+                Coverage Charts
+              </Link>
+            </li>
           </ul>
         </section>
 

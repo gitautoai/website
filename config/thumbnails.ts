@@ -34,6 +34,7 @@ export const THUMBNAILS = {
       PYTHON: `${BASE_URL}/og/docs-coverage-python.png`,
       JAVASCRIPT: `${BASE_URL}/og/docs-coverage-javascript.png`,
       FLUTTER: `${BASE_URL}/og/docs-coverage-flutter.png`,
+      CHARTS: `${BASE_URL}/og/docs-coverage-charts.png`,
     },
     TRIGGERS: {
       INDEX: `${BASE_URL}/og/docs-triggers.png`,

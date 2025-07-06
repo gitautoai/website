@@ -29,6 +29,7 @@ const sidebarItems = [
       { href: RELATIVE_URLS.DOCS.COVERAGE.JAVASCRIPT, label: "JavaScript Testing" },
       { href: RELATIVE_URLS.DOCS.COVERAGE.PYTHON, label: "Python Testing" },
       { href: RELATIVE_URLS.DOCS.COVERAGE.FLUTTER, label: "Flutter Testing" },
+      { href: RELATIVE_URLS.DOCS.COVERAGE.CHARTS, label: "Coverage Charts" },
     ],
   },
   {
@@ -52,7 +53,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
         {/* Sidebar - Desktop */}
         <div className="hidden lg:block w-56 relative">
           <div className="sticky top-28">
-            <nav className="space-y-6">
+            <nav className="space-y-3">
               {sidebarItems.map((section, idx) => (
                 <div key={idx}>
                   <h3 className="font-medium text-gray-900 text-sm mb-2">{section.title}</h3>

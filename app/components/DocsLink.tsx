@@ -2,12 +2,13 @@ import Link from "next/link";
 
 interface DocsLinkProps {
   className?: string;
+  href: string;
 }
 
-export default function DocsLink({ className = "" }: DocsLinkProps) {
+export default function DocsLink({ className = "", href }: DocsLinkProps) {
   return (
     <Link
-      href="/docs/coverage"
+      href={href}
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors text-gray-600 ${className}`}
       aria-label="Documentation"
     >

@@ -165,7 +165,14 @@ export default function DashboardTriggerPage() {
           >
             coverage dashboard
           </Link>{" "}
-          to see how to use the coverage dashboard.
+          to see how to use the coverage dashboard. Once you start improving your coverage, track
+          your progress with the{" "}
+          <Link
+            href={RELATIVE_URLS.DOCS.COVERAGE.CHARTS}
+            className="text-pink-600 hover:text-pink-700 underline"
+          >
+            Coverage Charts
+          </Link>
         </p>
       </div>
 

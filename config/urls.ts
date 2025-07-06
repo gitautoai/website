@@ -43,6 +43,7 @@ export const RELATIVE_URLS = {
       JAVASCRIPT: "/docs/coverage/javascript",
       PYTHON: "/docs/coverage/python",
       FLUTTER: "/docs/coverage/flutter",
+      CHARTS: "/docs/coverage/charts",
     },
     TRIGGERS: {
       OVERVIEW: "/docs/triggers",
@@ -84,6 +85,7 @@ export const ABSOLUTE_URLS = {
         JAVASCRIPT: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.JAVASCRIPT}`,
         PYTHON: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.PYTHON}`,
         FLUTTER: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.FLUTTER}`,
+        CHARTS: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.CHARTS}`,
       },
       TRIGGERS: {
         OVERVIEW: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW}`,

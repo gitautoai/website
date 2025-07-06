@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { getRepoCoverage } from "@/app/actions/supabase/get-repo-coverage";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import DocsLink from "@/app/components/DocsLink";
 import ErrorBanner from "@/app/components/ErrorBanner";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import { RELATIVE_URLS } from "@/config/urls";
 import { Tables } from "@/types/supabase";
-import { getRepoCoverage } from "@/app/actions/supabase/get-repo-coverage";
+
+// Relative imports
 import { generateDummyData } from "./utils/generate-dummy-data";
 import CoverageChart from "./components/CoverageChart";
 import CoverageStats from "./components/CoverageStats";
@@ -61,7 +64,7 @@ export default function ChartsPage() {
     <div className="relative min-h-screen">
       <div className="w-7/12 md:w-auto flex items-center gap-2 mb-6">
         <h1 className="text-3xl font-bold">Coverage Charts</h1>
-        <DocsLink />
+        <DocsLink href={RELATIVE_URLS.DOCS.COVERAGE.CHARTS} />
       </div>
 
       <ErrorBanner error={error} />
