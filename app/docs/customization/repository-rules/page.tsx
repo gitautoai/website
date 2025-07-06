@@ -35,8 +35,14 @@ export default function RulesPage() {
         <section id="what-are-repository-rules">
           <h2 className="text-3xl font-semibold mt-0 mb-6">What are Repository Rules?</h2>
           <p className="text-gray-700 mb-4">
-            Rules are loaded every time GitAuto starts working on your repository. They control how
-            tests are generated, ensuring consistent code quality across all your projects.
+            <Link
+              href={RELATIVE_URLS.SETTINGS.RULES}
+              className="text-pink-600 hover:text-pink-700 underline"
+            >
+              Repository rules
+            </Link>{" "}
+            are loaded every time GitAuto starts working on your repository. They control how tests
+            are generated, ensuring consistent code quality across all your projects.
           </p>
           <p className="text-gray-700">
             The rules page has many options, but this guide explains what each one actually does,
@@ -338,9 +344,9 @@ export default function RulesPage() {
         <section id="custom-rules">
           <h2 className="text-3xl font-semibold mt-0 mb-6">Custom Repository Rules</h2>
           <p className="text-gray-700 mb-4">
-            The free-form rules section is where you add project-specific requirements that aren&apos;t
-            covered by the structured options. This is often the most important part of your
-            configuration.
+            The free-form rules section is where you add project-specific requirements that
+            aren&apos;t covered by the structured options. This is often the most important part of
+            your configuration.
           </p>
 
           <CodeBlock code={customRulesExample} language="text" filename="Example custom rules" />
@@ -386,8 +392,8 @@ export default function RulesPage() {
               <h3 className="text-xl font-semibold mb-3">3. Test and Refine</h3>
               <p className="text-gray-700">
                 Create a test issue to see how GitAuto applies your rules. Adjust the configuration
-                based on the results. Rules are meant to be iterative - you&apos;ll refine them as you
-                learn what works best for your project.
+                based on the results. Rules are meant to be iterative - you&apos;ll refine them as
+                you learn what works best for your project.
               </p>
             </div>
           </div>
@@ -399,12 +405,12 @@ export default function RulesPage() {
 
           <div className="bg-pink-50 rounded-lg p-6">
             <p className="text-gray-700 mb-4">
-              <strong>Want a rule that doesn&apos;t exist?</strong> Use the free-form section to write
-              exactly what you need. GitAuto is flexible and can follow detailed instructions.
+              <strong>Want a rule that doesn&apos;t exist?</strong> Use the free-form section to
+              write exactly what you need. GitAuto is flexible and can follow detailed instructions.
             </p>
             <p className="text-gray-700 mb-4">
-              <strong>Have questions about configuration?</strong> We&apos;re here to help you get the
-              most out of GitAuto&apos;s rules system.
+              <strong>Have questions about configuration?</strong> We&apos;re here to help you get
+              the most out of GitAuto&apos;s rules system.
             </p>
             <p className="text-gray-700">
               <Link
