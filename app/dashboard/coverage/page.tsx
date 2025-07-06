@@ -16,6 +16,7 @@ import LoadingSpinner from "@/app/components/LoadingSpinner";
 import Modal from "@/app/components/Modal";
 import Toast from "@/app/components/Toast";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import { RELATIVE_URLS } from "@/config/urls";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { Tables } from "@/types/supabase";
 
@@ -251,7 +252,7 @@ export default function CoveragePage() {
     <div className="relative min-h-screen">
       <div className="w-7/12 md:w-auto flex items-center gap-2 mb-6">
         <h1 className="text-3xl font-bold">Coverage Dashboard</h1>
-        <DocsLink />
+        <DocsLink href={RELATIVE_URLS.DOCS.COVERAGE.OVERVIEW} />
       </div>
 
       <ErrorBanner error={error} />
