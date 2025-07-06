@@ -34,6 +34,7 @@ const sidebarItems = [
   {
     title: "Customization",
     items: [
+      { href: RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES, label: "Repository Rules" },
       { href: RELATIVE_URLS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES, label: "Parent Issue Rules" },
     ],
   },

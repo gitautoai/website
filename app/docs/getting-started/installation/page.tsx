@@ -78,8 +78,8 @@ export default function GettingStartedPage() {
 
       <DocsNavigation
         nextLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_CHECKBOX,
-          title: "Issue Checkbox Trigger",
+          href: RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW,
+          title: "Triggers Overview",
         }}
       />
     </div>

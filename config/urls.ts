@@ -57,6 +57,7 @@ export const RELATIVE_URLS = {
     },
     CUSTOMIZATION: {
       PARENT_ISSUE_RULES: "/docs/customization/parent-issue-rules",
+      REPOSITORY_RULES: "/docs/customization/repository-rules",
     },
   },
   PRIVACY_POLICY: "/privacy-policy",
@@ -97,6 +98,7 @@ export const ABSOLUTE_URLS = {
       },
       CUSTOMIZATION: {
         PARENT_ISSUE_RULES: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES}`,
+        REPOSITORY_RULES: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES}`,
       },
     },
     LOGO: `${BASE_URL}/logo.png`,

@@ -285,57 +285,6 @@ export const STRUCTURED_RULES_CONFIG = {
       },
     ],
   },
-  integrationTestRules: {
-    title: "Integration Test Rules",
-    description: "Configure integration test preferences",
-    rules: [
-      {
-        key: "enableIntegrationTestsForReadOnlyOperations",
-        label: "Enable integration tests for read-only operations",
-        description: "Create integration tests for API endpoints that only read data",
-        type: "boolean",
-        default: false,
-      },
-      {
-        key: "separateUnitAndIntegrationTests",
-        label: "Separate unit and integration tests",
-        description: "Keep unit tests and integration tests in separate files",
-        type: "boolean",
-        default: true,
-      },
-      {
-        key: "preferredIntegrationTestFileSuffix",
-        label: "Preferred integration test file suffix",
-        description: "File suffix for integration test files",
-        type: "select",
-        options: [
-          "Auto-detect language conventions",
-          "{filename}.integration.test (JS/TS)",
-          "test_integration_{filename}.py (Python)",
-          "Custom suffix",
-        ],
-        default: "Auto-detect language conventions",
-        examples: {
-          "Auto-detect language conventions":
-            "JS: auth.integration.test.js, Python: test_integration_auth.py",
-          "{filename}.integration.test (JS/TS)": "auth.integration.test.js",
-          "test_integration_{filename}.py (Python)": "test_integration_auth.py",
-          "Custom suffix": "Specify custom suffix pattern",
-        },
-      },
-      {
-        key: "customIntegrationTestFileSuffix",
-        label: "Custom integration test file suffix",
-        description:
-          "Custom pattern for integration test file naming (use {filename} as placeholder)",
-        type: "text",
-        default: "",
-        placeholder: "e.g., {filename}.int.test.js or test_{filename}_int.py",
-        dependsOn: "preferredIntegrationTestFileSuffix",
-        dependsOnValue: "Custom suffix",
-      },
-    ],
-  },
   componentTestRules: {
     title: "Component Test Rules",
     description: "Configure component test preferences (React, Vue, etc.)",
