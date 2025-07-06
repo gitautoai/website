@@ -193,8 +193,8 @@ export default function ParentIssueRulesPage() {
 
       <DocsNavigation
         previousLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD,
-          title: "Dashboard Trigger",
+          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES,
+          title: "Repository Rules",
         }}
       />
     </div>

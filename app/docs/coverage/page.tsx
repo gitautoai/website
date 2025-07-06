@@ -11,8 +11,14 @@ export default function DocsPage() {
       <div className="space-y-8">
         <section>
           <p className="text-gray-600 mb-6">
-            Learn how to use GitAuto&apos;s Coverage Dashboard to identify and improve low test
-            coverage in your codebase.
+            Learn how to use GitAuto&apos;s{" "}
+            <Link
+              href={RELATIVE_URLS.DASHBOARD.COVERAGE}
+              className="text-pink-600 hover:text-pink-700 underline"
+            >
+              Coverage Dashboard
+            </Link>{" "}
+            to identify and improve low test coverage in your codebase.
           </p>
           <Image
             src="/docs/coverage/coverage-dashboard-sample.png"
@@ -88,7 +94,16 @@ export default function DocsPage() {
 
         <section>
           <h2 className="text-2xl font-semibold mt-0 mb-4 text-left">Dashboard Features</h2>
-          <p className="text-gray-600 mb-4">From the Coverage Dashboard, you can:</p>
+          <p className="text-gray-600 mb-4">
+            From the{" "}
+            <Link
+              href={RELATIVE_URLS.DASHBOARD.COVERAGE}
+              className="text-pink-600 hover:text-pink-700 underline"
+            >
+              Coverage Dashboard
+            </Link>
+            , you can:
+          </p>
           <ul className="list-disc list-outside space-y-2 text-gray-600 mb-6 ml-5">
             <li>View files with low test coverage</li>
             <li>Select specific files for improvement</li>
@@ -111,7 +126,7 @@ export default function DocsPage() {
           <p className="text-gray-600 mb-4">
             Once issues are created and assigned to GitAuto, it will:
           </p>
-          <ol className="list-decimal list-outside space-y-2 text-gray-600 ml-5">
+          <ol className="list-decimal list-outside space-y-2 text-gray-600 ml-6">
             <li>Analyze the code in files with low coverage</li>
             <li>Generate appropriate test cases</li>
             <li>Create pull requests with the new tests</li>

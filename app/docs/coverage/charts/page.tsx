@@ -253,12 +253,12 @@ export default function CoverageChartsPage() {
 
       <DocsNavigation
         previousLink={{
-          href: RELATIVE_URLS.DOCS.COVERAGE.FLUTTER,
-          title: "Flutter Testing",
+          href: RELATIVE_URLS.DOCS.COVERAGE.OVERVIEW,
+          title: "Coverage Overview",
         }}
         nextLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD,
-          title: "Dashboard Trigger",
+          href: RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE,
+          title: "Schedule Trigger",
         }}
       />
     </>

@@ -52,8 +52,8 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
 
         {/* Sidebar - Desktop */}
         <div className="hidden lg:block w-56 relative">
-          <div className="sticky top-28">
-            <nav className="space-y-3">
+          <div className="sticky top-8">
+            <nav className="space-y-1">
               {sidebarItems.map((section, idx) => (
                 <div key={idx}>
                   <h3 className="font-medium text-gray-900 text-sm mb-2">{section.title}</h3>
