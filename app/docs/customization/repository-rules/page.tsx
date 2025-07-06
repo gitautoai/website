@@ -118,8 +118,8 @@ export default function RulesPage() {
             <div>
               <h3 className="text-2xl font-semibold mb-4">Code Pattern Strategy</h3>
               <p className="text-gray-700 mb-4">
-                "Best practices first" gradually improves your codebase while respecting existing
-                patterns. "Consistency first" always matches your current style.
+                &quot;Best practices first&quot; gradually improves your codebase while respecting
+                existing patterns. &quot;Consistency first&quot; always matches your current style.
               </p>
 
               <CodeBlock
@@ -176,7 +176,7 @@ export default function RulesPage() {
               <h3 className="text-2xl font-semibold mb-4">Test File Placement</h3>
               <p className="text-gray-700 mb-4">
                 Test files are placed next to source files by default. This makes it immediately
-                obvious what's tested and what isn't.
+                obvious what&apos;s tested and what isn&apos;t.
               </p>
 
               <CodeBlock
@@ -338,7 +338,7 @@ export default function RulesPage() {
         <section id="custom-rules">
           <h2 className="text-3xl font-semibold mt-0 mb-6">Custom Repository Rules</h2>
           <p className="text-gray-700 mb-4">
-            The free-form rules section is where you add project-specific requirements that aren't
+            The free-form rules section is where you add project-specific requirements that aren&apos;t
             covered by the structured options. This is often the most important part of your
             configuration.
           </p>
@@ -370,7 +370,7 @@ export default function RulesPage() {
                 >
                   Rules Settings
                 </Link>{" "}
-                and see what's already configured.
+                and see what&apos;s already configured.
               </p>
             </div>
 
@@ -386,7 +386,7 @@ export default function RulesPage() {
               <h3 className="text-xl font-semibold mb-3">3. Test and Refine</h3>
               <p className="text-gray-700">
                 Create a test issue to see how GitAuto applies your rules. Adjust the configuration
-                based on the results. Rules are meant to be iterative - you'll refine them as you
+                based on the results. Rules are meant to be iterative - you&apos;ll refine them as you
                 learn what works best for your project.
               </p>
             </div>
@@ -399,12 +399,12 @@ export default function RulesPage() {
 
           <div className="bg-pink-50 rounded-lg p-6">
             <p className="text-gray-700 mb-4">
-              <strong>Want a rule that doesn't exist?</strong> Use the free-form section to write
+              <strong>Want a rule that doesn&apos;t exist?</strong> Use the free-form section to write
               exactly what you need. GitAuto is flexible and can follow detailed instructions.
             </p>
             <p className="text-gray-700 mb-4">
-              <strong>Have questions about configuration?</strong> We're here to help you get the
-              most out of GitAuto's rules system.
+              <strong>Have questions about configuration?</strong> We&apos;re here to help you get the
+              most out of GitAuto&apos;s rules system.
             </p>
             <p className="text-gray-700">
               <Link
