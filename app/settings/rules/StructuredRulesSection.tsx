@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback } from "react";
+import { RELATIVE_URLS } from "@/config/urls";
 import { STRUCTURED_RULES_CONFIG, StructuredRules } from "./config/structured-rules";
 
 type StructuredRulesSectionProps = {
@@ -12,6 +14,15 @@ type StructuredRulesSectionProps = {
   ) => void;
   disabled?: boolean;
 };
+
+const SECTION_TO_DOC_ANCHOR = {
+  codingRules: "codingRules",
+  commentRules: "commentRules",
+  testFileLocationAndNaming: "testFileLocationAndNaming",
+  testConstantsRules: "testConstantsRules",
+  unitTestRules: "unitTestRules",
+  componentTestRules: "componentTestRules",
+} as const;
 
 export default function StructuredRulesSection({
   structuredRules,
@@ -181,8 +192,35 @@ export default function StructuredRulesSection({
       {Object.entries(STRUCTURED_RULES_CONFIG).map(([sectionKey, section]) => (
         <div key={sectionKey} className="border border-gray-200 rounded-xl overflow-hidden">
           <div className="bg-gradient-to-r from-pink-50 to-purple-50 px-6 py-5 border-b border-gray-200">
-            <h2 className="text-xl font-semibold text-gray-900 text-left my-0">{section.title}</h2>
-            <p className="text-gray-600 text-base mt-1">{section.description}</p>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h2 className="text-xl font-semibold text-gray-900 text-left my-0">
+                  {section.title}
+                </h2>
+                <p className="text-gray-600 text-base mt-1">{section.description}</p>
+              </div>
+              {SECTION_TO_DOC_ANCHOR[sectionKey as keyof typeof SECTION_TO_DOC_ANCHOR] && (
+                <Link
+                  href={`${RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES}#${SECTION_TO_DOC_ANCHOR[sectionKey as keyof typeof SECTION_TO_DOC_ANCHOR]}`}
+                  className="ml-4 inline-flex items-center px-3 py-1.5 text-sm font-medium text-pink-600 bg-white border border-pink-300 rounded-md hover:bg-pink-50 hover:border-pink-400 transition-colors flex-shrink-0"
+                >
+                  <svg
+                    className="w-4 h-4 mr-1.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  View in docs
+                </Link>
+              )}
+            </div>
           </div>
           <div className="bg-white">{section.rules.map(renderRule)}</div>
         </div>

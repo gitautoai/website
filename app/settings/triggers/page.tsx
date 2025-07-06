@@ -84,6 +84,7 @@ export default function TriggersPage() {
       return;
     }
     fetchAndSetTriggerSettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentOwnerId, currentRepoId]);
 
   const saveSettings = async (updatedSettings: TriggerSettings) => {

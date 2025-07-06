@@ -9,6 +9,9 @@ const nextConfig = {
       {
         hostname: "avatars.githubusercontent.com",
       },
+      {
+        hostname: "localhost",
+      },
     ],
   },
   // https://nextjs.org/docs/app/api-reference/next-config-js/logging

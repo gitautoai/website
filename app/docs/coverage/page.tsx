@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
 import { RELATIVE_URLS } from "@/config/urls";
@@ -13,10 +14,17 @@ export default function DocsPage() {
             Learn how to use GitAuto&apos;s Coverage Dashboard to identify and improve low test
             coverage in your codebase.
           </p>
+          <Image
+            src="/docs/coverage/coverage-dashboard-sample.png"
+            alt="Coverage Dashboard"
+            width={1000}
+            height={500}
+            className="w-full border border-gray-200 rounded-lg"
+          />
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4 text-left">Requirements</h2>
+          <h2 className="text-2xl font-semibold mt-0 mb-4 text-left">Requirements</h2>
           <p className="text-gray-600 mb-4">To use GitAuto&apos;s coverage analysis:</p>
           <ul className="list-disc list-outside space-y-2 text-gray-600 mb-6 ml-5">
             <li>Coverage report must be in LCOV format</li>
@@ -26,27 +34,27 @@ export default function DocsPage() {
             <li>
               Report must be uploaded as GitHub Actions artifact named <code>coverage-report</code>
             </li>
+            <li>Your project uses GitHub (GitAuto is a GitHub App)</li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4 text-left">Supported Frameworks</h2>
+          <h2 className="text-2xl font-semibold mt-0 mb-4">Language & Framework Support</h2>
           <p className="text-gray-600 mb-4">
-            GitAuto is test framework agnostic. Any testing framework that can generate LCOV reports
-            is supported. Simply ensure:
+            GitAuto is language and test framework agnostic. Any programming language or testing
+            framework that can generate LCOV reports is fully supported.
           </p>
-          <ul className="list-disc list-outside space-y-2 text-gray-600 mb-6 ml-5">
-            <li>Coverage report is in LCOV format</li>
-            <li>
-              Report is saved as <code>coverage/lcov.info</code>
-            </li>
-            <li>
-              Report is uploaded as a GitHub Actions artifact named <code>coverage-report</code>
-            </li>
-          </ul>
 
           <p className="text-gray-600 mb-4">
-            We provide detailed configuration guides for popular frameworks:
+            This means GitAuto works with any language or framework including JavaScript, Python,
+            Java, C#, Go, Ruby, PHP, Rust, and many more. Any testing framework that generates LCOV
+            reports is supported - Jest, pytest, JUnit, xUnit, Go test, RSpec, PHPUnit, Cargo test,
+            and others.
+          </p>
+
+          <p className="text-gray-600 mb-4">
+            We provide detailed configuration examples for popular combinations to help you get
+            started quickly:
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -54,7 +62,7 @@ export default function DocsPage() {
               href="/docs/coverage/javascript"
               className="block p-6 border rounded-lg hover:border-pink-600"
             >
-              <h3 className="text-xl font-semibold mb-2">JavaScript / TypeScript Testing</h3>
+              <h3 className="text-xl font-semibold mb-2">JavaScript / TypeScript</h3>
               <p className="text-gray-600">
                 Jest, Vitest, and other JavaScript / TypeScript test frameworks
               </p>
@@ -64,7 +72,7 @@ export default function DocsPage() {
               href="/docs/coverage/python"
               className="block p-6 border rounded-lg hover:border-pink-600"
             >
-              <h3 className="text-xl font-semibold mb-2">Python Testing</h3>
+              <h3 className="text-xl font-semibold mb-2">Python</h3>
               <p className="text-gray-600">pytest and other Python test frameworks</p>
             </Link>
 
@@ -72,14 +80,14 @@ export default function DocsPage() {
               href="/docs/coverage/flutter"
               className="block p-6 border rounded-lg hover:border-pink-600"
             >
-              <h3 className="text-xl font-semibold mb-2">Flutter Testing</h3>
+              <h3 className="text-xl font-semibold mb-2">Flutter</h3>
               <p className="text-gray-600">Flutter&apos;s built-in test framework</p>
             </Link>
           </div>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4 text-left">Dashboard Features</h2>
+          <h2 className="text-2xl font-semibold mt-0 mb-4 text-left">Dashboard Features</h2>
           <p className="text-gray-600 mb-4">From the Coverage Dashboard, you can:</p>
           <ul className="list-disc list-outside space-y-2 text-gray-600 mb-6 ml-5">
             <li>View files with low test coverage</li>
@@ -90,7 +98,7 @@ export default function DocsPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4 text-left">Automated Improvements</h2>
+          <h2 className="text-2xl font-semibold mt-0 mb-4 text-left">Automated Improvements</h2>
           <p className="text-gray-600 mb-4">
             Once issues are created and assigned to GitAuto, it will:
           </p>

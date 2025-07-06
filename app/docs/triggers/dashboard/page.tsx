@@ -158,7 +158,14 @@ export default function DashboardTriggerPage() {
           >
             Visit the coverage dashboard
           </Link>{" "}
-          and start selecting files for targeted test generation.
+          and start selecting files for targeted test generation. Or learn more about the{" "}
+          <Link
+            href={RELATIVE_URLS.DOCS.COVERAGE.OVERVIEW}
+            className="text-pink-600 hover:text-pink-700 underline"
+          >
+            coverage dashboard
+          </Link>{" "}
+          to see how to use the coverage dashboard.
         </p>
       </div>
 

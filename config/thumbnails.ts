@@ -48,6 +48,7 @@ export const THUMBNAILS = {
     },
     CUSTOMIZATION: {
       PARENT_ISSUE_RULES: `${BASE_URL}/og/docs-customization-parent-issue-rules.png`,
+      REPOSITORY_RULES: `${BASE_URL}/og/docs-customization-repository-rules.png`,
     },
   },
 
