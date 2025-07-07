@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function TestFailureTriggerPage() {
@@ -175,6 +176,13 @@ export default function TestFailureTriggerPage() {
           and let GitAuto handle CI/CD failures automatically.
         </p>
       </div>
+
+      <DocsContact
+        title="CI/CD Pipeline Chaos?"
+        description="When your CI/CD pipeline is more complex than a Rube Goldberg machine, getting GitAuto to play nicely can be challenging. We love solving these integration puzzles!"
+        callToAction="Contact us"
+        linkText="and let's tame that pipeline!"
+      />
 
       <DocsNavigation
         previousLink={{

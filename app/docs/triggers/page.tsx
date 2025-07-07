@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function TriggersOverviewPage() {
   return (
-    <div className="w-full max-w-3xl mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Triggers</h1>
+    <div className="w-full max-w-3xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6">Triggers Overview</h1>
 
-      <div className="prose prose-lg max-w-none space-y-6">
+      <div className="prose prose-lg max-w-none space-y-12">
         <p className="text-lg text-gray-700">
           GitAuto offers various trigger types that automatically generate unit tests based on
           different events in your development workflow.
@@ -152,6 +153,13 @@ export default function TriggersOverviewPage() {
           </ol>
         </div>
       </div>
+
+      <DocsContact
+        title="Trigger Overload?"
+        description="With 8 different triggers, it's easy to feel overwhelmed! Each team's workflow is unique, and what works for one project might not work for another. Let's find your perfect trigger combination."
+        callToAction="Contact us"
+        linkText="and we'll design your ideal workflow!"
+      />
 
       <DocsNavigation
         nextLink={{

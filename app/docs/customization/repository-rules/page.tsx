@@ -25,6 +25,7 @@ import { refactoringBefore } from "./code/refactoring-before";
 import { refactoringAfter } from "./code/refactoring-after";
 import { functionComponentTest } from "./code/function-component-test";
 import { isolatedComponentTest } from "./code/isolated-component-test";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 
 export default function RulesPage() {
   return (
@@ -399,30 +400,12 @@ export default function RulesPage() {
           </div>
         </section>
 
-        {/* Need Help? */}
-        <section>
-          <h2 className="text-3xl font-semibold mt-0 mb-6">Need Help?</h2>
-
-          <div className="bg-pink-50 rounded-lg p-6">
-            <p className="text-gray-700 mb-4">
-              <strong>Want a rule that doesn&apos;t exist?</strong> Use the free-form section to
-              write exactly what you need. GitAuto is flexible and can follow detailed instructions.
-            </p>
-            <p className="text-gray-700 mb-4">
-              <strong>Have questions about configuration?</strong> We&apos;re here to help you get
-              the most out of GitAuto&apos;s rules system.
-            </p>
-            <p className="text-gray-700">
-              <Link
-                href={RELATIVE_URLS.CONTACT}
-                className="text-pink-600 hover:text-pink-700 underline"
-              >
-                Contact us
-              </Link>{" "}
-              with your questions or suggestions for new structured rules.
-            </p>
-          </div>
-        </section>
+        <DocsContact
+          title="Need Help?"
+          description="Want a rule that doesn't exist? Use the free-form section to write exactly what you need. GitAuto is flexible and can follow detailed instructions. Have questions about configuration? We're here to help you get the most out of GitAuto's rules system."
+          callToAction="Contact us"
+          linkText="with your questions or suggestions for new structured rules."
+        />
       </div>
 
       <DocsNavigation

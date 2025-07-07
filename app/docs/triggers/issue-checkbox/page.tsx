@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 import { useAccountContext } from "@/app/components/contexts/Account";
 
@@ -143,6 +144,13 @@ export default function IssueCheckboxTriggerPage() {
           and watch GitAuto automatically add a checkbox for you to trigger test generation.
         </p>
       </div>
+
+      <DocsContact
+        title="Checkbox Not Appearing?"
+        description="It's frustrating when you create an issue and GitAuto stays silent! Usually it's a simple permission or installation issue, but sometimes GitHub webhooks can be mysterious."
+        callToAction="Contact us"
+        linkText="and we'll get that checkbox showing up!"
+      />
 
       <DocsNavigation
         previousLink={{

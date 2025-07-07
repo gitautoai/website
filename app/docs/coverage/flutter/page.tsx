@@ -1,4 +1,5 @@
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
@@ -33,6 +34,13 @@ export default function FlutterConfigurationPage() {
           ]}
         />
       </div>
+
+      <DocsContact
+        title="Flutter Coverage Acting Weird?"
+        description="Flutter testing can be surprisingly finicky! Whether your coverage reports are missing, GitHub Actions are timing out, or the lcov.info file is nowhere to be found, we've been there."
+        callToAction="Contact us"
+        linkText="and let's get your Flutter tests flying!"
+      />
 
       <DocsNavigation
         previousLink={{

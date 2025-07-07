@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function MergeTriggerPage() {
@@ -154,6 +155,13 @@ export default function MergeTriggerPage() {
           and enjoy clean separation between features and tests.
         </p>
       </div>
+
+      <DocsContact
+        title="Production Workflow Perfectionist?"
+        description="You're smart to keep feature development and test generation separate! Clean workflows are beautiful workflows. We can help you design a system that's both safe and efficient."
+        callToAction="Contact us"
+        linkText="and let's perfect your production process!"
+      />
 
       <DocsNavigation
         previousLink={{

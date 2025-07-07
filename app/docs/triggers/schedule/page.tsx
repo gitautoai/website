@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 import { PRS, PRICES } from "@/config/pricing";
 import { ALLOWED_INTERVALS, MAX_EXECUTIONS } from "@/config/schedule";
@@ -162,6 +163,13 @@ export default function ScheduleTriggerPage() {
           and let GitAuto consistently improve your codebase while you focus on building features.
         </p>
       </div>
+
+      <DocsContact
+        title="Planning Your Coverage Victory?"
+        description="Going from 0% to 90% coverage is like planning a marathon! You need the right strategy, pacing, and realistic milestones. We love helping teams design their coverage improvement journey!"
+        callToAction="Contact us"
+        linkText="and let's map out your path to victory!"
+      />
 
       <DocsNavigation
         previousLink={{

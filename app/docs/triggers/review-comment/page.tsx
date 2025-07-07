@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 import { useAccountContext } from "@/app/components/contexts/Account";
 
@@ -196,6 +197,13 @@ export default function ReviewCommentTriggerPage() {
           and start leaving review comments to fine-tune your tests.
         </p>
       </div>
+
+      <DocsContact
+        title="Teaching GitAuto Your Style?"
+        description="The review comment trigger is like having a conversation with a really eager junior developer. The more specific your feedback, the better GitAuto gets at matching your team's coding style and preferences."
+        callToAction="Contact us"
+        linkText="for tips on effective GitAuto mentoring!"
+      />
 
       <DocsNavigation
         previousLink={{
