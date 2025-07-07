@@ -13,5 +13,8 @@ jobs:
       # https://github.com/gitautoai/website/settings/secrets/actions
       - name: Send Slack notification
         run: |
-          PR_TITLE=$(echo '${{ github.event.pull_request.title }}' | sed 's/"/\\"/g' | sed "s/'/\\'/g")
-          curl -X POST -H 'Content-type: application/json' --data "{\"msg\": \"Website PR Merged: <${{ github.event.pull_request.html_url }}|${PR_TITLE}>\"}" ${{ secrets.SLACK_WEBHOOK_URL }}
+          jq -n \
+            --arg title "${{ github.event.pull_request.title }}" \
+            --arg url "${{ github.event.pull_request.html_url }}" \
+            '{"msg": "Website PR Merged: <\($url)|\($title)>"}' | \
+          curl -X POST -H 'Content-type: application/json' -d @- ${{ secrets.SLACK_WEBHOOK_URL }}
