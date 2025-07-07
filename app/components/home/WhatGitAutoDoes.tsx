@@ -1,30 +1,36 @@
-import { FaRobot, FaCodeBranch, FaTools, FaChartLine } from "react-icons/fa";
+import { FaCogs, FaRocket, FaTools, FaChartLine } from "react-icons/fa";
 import { motion } from "framer-motion";
+import Link from "next/link";
+import { RELATIVE_URLS } from "@/config/urls";
 
 const whatItems = [
   {
-    icon: <FaRobot className="text-pink-500 text-4xl mb-3" />,
+    icon: <FaCogs className="text-pink-500 text-4xl mb-3" />,
     color: "text-pink-500",
-    title: "Generates Unit Tests When Asked",
-    desc: "Trigger GitAuto by specifying a file in an issue, from the dashboard, or with a review comment.",
+    title: "Integrates with Your Coverage Reports",
+    desc: "Connect your existing coverage reports to identify files that need testing. Works with any language and testing framework.",
+    link: RELATIVE_URLS.DOCS.COVERAGE.OVERVIEW,
   },
   {
-    icon: <FaCodeBranch className="text-purple-500 text-4xl mb-3" />,
+    icon: <FaRocket className="text-purple-500 text-4xl mb-3" />,
     color: "text-purple-500",
-    title: "Opens PRs and Runs Tests",
-    desc: "GitAuto opens a pull request for the new tests, and runs them with GitHub Actions. You review and merge when ready.",
+    title: "Automates Test Gen on Schedule",
+    desc: "Set up repository rules and schedule triggers to automatically generate tests daily. GitAuto picks the lowest coverage files and creates PRs in your style.",
+    link: RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW,
   },
   {
     icon: <FaTools className="text-red-500 text-4xl mb-3" />,
     color: "text-red-500",
     title: "Fixes Test Failures Automatically",
-    desc: "If a generated test fails, GitAuto checks the error, analyzes the cause, updates code or tests, and retries until it passes.",
+    desc: "When tests fail, GitAuto analyzes errors, updates code or tests, and retries until everything passes. No manual intervention needed.",
+    link: RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE,
   },
   {
     icon: <FaChartLine className="text-green-500 text-4xl mb-3" />,
     color: "text-green-500",
-    title: "Maintains High Test Coverage",
-    desc: "GitAuto can also add missing tests after commits, merges, or on a schedule to keep your coverage high as your project grows.",
+    title: "Tracks Progress with Charts",
+    desc: "Monitor your journey from low coverage to 90%+ with visual charts. See trends, celebrate wins, and stay motivated.",
+    link: RELATIVE_URLS.DOCS.COVERAGE.CHARTS,
   },
 ];
 
@@ -32,15 +38,15 @@ const WhatGitAutoDoes = () => {
   return (
     <section
       id="what-gitauto-does"
-      className="w-full max-w-5xl mx-auto my-16 px-4 text-center"
+      className="w-full mx-auto my-16 text-center"
       aria-label="What GitAuto Does section"
     >
       <h2 className="text-2xl md:text-4xl font-bold mb-10">What GitAuto Does</h2>
-      <div className="flex flex-col md:flex-row gap-8 justify-center items-stretch">
+      <div className="flex flex-col md:flex-row gap-4 justify-center items-stretch">
         {whatItems.map((item, idx) => (
           <motion.div
             key={idx}
-            className="flex-1 bg-white/90 rounded-xl shadow-md py-8 px-4 flex flex-col items-center transition-transform duration-200 hover:shadow-2xl"
+            className="flex-1 bg-white/90 rounded-xl shadow-md py-8 px-4 flex flex-col items-center transition-transform duration-200 hover:shadow-2xl relative"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             whileHover={{ scale: 1.05 }}
@@ -57,7 +63,13 @@ const WhatGitAutoDoes = () => {
             >
               {item.title}
             </h3>
-            <p className="text-lg text-gray-700">{item.desc}</p>
+            <p className="text-lg text-gray-700 mb-4 flex-grow">{item.desc}</p>
+            <Link
+              href={item.link}
+              className="text-base text-gray-500 hover:text-pink-600 underline mt-auto"
+            >
+              Learn more →
+            </Link>
           </motion.div>
         ))}
       </div>

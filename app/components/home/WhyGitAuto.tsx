@@ -1,4 +1,4 @@
-import { FaBug, FaRegClock, FaMagic } from "react-icons/fa";
+import { FaBug, FaMagic, FaClock } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const whyItems = [
@@ -6,10 +6,10 @@ const whyItems = [
     icon: <FaBug className="text-pink-500 text-4xl mb-3" />,
     color: "text-pink-500",
     title: "Low Test Coverage Means More Bugs",
-    desc: "Most teams struggle to keep up with unit tests. Low coverage leads to more bugs and slower releases.",
+    desc: "Most teams struggle to maintain high test coverage. Low coverage leads to more bugs, slower releases, and reduced confidence in deployments.",
   },
   {
-    icon: <FaRegClock className="text-purple-500 text-4xl mb-3" />,
+    icon: <FaClock className="text-purple-500 text-4xl mb-3" />,
     color: "text-purple-500",
     title: (
       <>
@@ -17,13 +17,13 @@ const whyItems = [
         <br /> No Problem
       </>
     ),
-    desc: "Many teams have little or no automated testing for their GitHub repositories. There's no time, no clear standard, and not enough resources to start from scratch.",
+    desc: "But explaining your testing standards and writing comprehensive tests are still time-consuming and often gets deprioritized, even with current AI tools.",
   },
   {
     icon: <FaMagic className="text-red-500 text-4xl mb-3" />,
     color: "text-red-500",
-    title: "Let GitAuto Handle the Tedious Parts",
-    desc: "Writing and maintaining tests isn't the most exciting work. GitAuto automates the boring parts, so you can focus on building features and shipping faster.",
+    title: "Set It Up Once, Reach 90%+ Coverage",
+    desc: "Connect your coverage reports, configure repository rules, enable schedule triggers. GitAuto works 24/7 to automatically improve your coverage while you focus on building features.",
   },
 ];
 
