@@ -92,6 +92,8 @@ export const INTERNAL_LINKS = [
     category: "resources",
     showInNav: false,
   },
+
+  // Settings
   {
     href: RELATIVE_URLS.SETTINGS.INDEX,
     eventType: "settings",
@@ -100,12 +102,30 @@ export const INTERNAL_LINKS = [
     showInNav: true,
   },
   {
+    href: RELATIVE_URLS.SETTINGS.TRIGGERS,
+    eventType: "triggers",
+    text: "Triggers",
+    category: "resources",
+    showInNav: false,
+  },
+  {
+    href: RELATIVE_URLS.SETTINGS.RULES,
+    eventType: "rules",
+    text: "Rules",
+    category: "resources",
+    showInNav: false,
+  },
+
+  // Documentation
+  {
     href: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION,
     eventType: "documentation",
     text: "Docs",
     category: "resources",
     showInNav: true,
   },
+
+  // Contact
   {
     href: RELATIVE_URLS.CONTACT,
     eventType: "contact",
@@ -113,6 +133,8 @@ export const INTERNAL_LINKS = [
     category: "resources",
     showInNav: true,
   },
+
+  // Legal
   {
     href: RELATIVE_URLS.PRIVACY_POLICY,
     eventType: "privacy_policy",
