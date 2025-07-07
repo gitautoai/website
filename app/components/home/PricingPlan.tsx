@@ -73,7 +73,7 @@ export const PricingPlan = ({
       <div className="flex-1">
         <h3 className="text-xl font-bold mb-1">{title}</h3>
         <div className="mb-2">{price}</div>
-        <p className="text-gray-600 mb-6">{description}</p>
+        <p className="text-gray-600 mb-6 md:h-12">{description}</p>
 
         {/* Feature list - fill with empty div to keep height */}
         <ul className="space-y-2 mb-auto">
