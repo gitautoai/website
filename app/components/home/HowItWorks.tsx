@@ -1,6 +1,6 @@
 // Third-party imports
 import Link from "next/link";
-import { FaTachometerAlt, FaListAlt, FaFileAlt, FaCheckCircle } from "react-icons/fa";
+import { FaUpload, FaRobot, FaCodeBranch, FaChartLine } from "react-icons/fa";
 
 // Local imports
 import DemoVideo from "@/app/components/videos/Demo";
@@ -8,32 +8,52 @@ import { RELATIVE_URLS } from "@/config/urls";
 
 const steps = [
   {
-    icon: <FaTachometerAlt className="text-pink-500 text-3xl" />,
-    title: "Go to the Dashboard",
+    icon: <FaUpload className="text-pink-500 text-3xl" />,
+    title: "Coverage Reports Uploaded",
     desc: (
       <>
-        Visit your{" "}
-        <Link href={RELATIVE_URLS.DASHBOARD.COVERAGE} className="text-pink-500 underline">
-          coverage dashboard
-        </Link>{" "}
-        to see which files need more tests.
+        Your CI/CD uploads coverage reports. GitAuto identifies low-coverage files.{" "}
+        <Link href={RELATIVE_URLS.DOCS.COVERAGE.OVERVIEW} className="text-pink-500 underline">
+          Setup guide →
+        </Link>
       </>
     ),
   },
   {
-    icon: <FaListAlt className="text-purple-500 text-3xl" />,
-    title: "Select Files",
-    desc: "Choose one or more files you want to improve coverage for.",
+    icon: <FaRobot className="text-purple-500 text-3xl" />,
+    title: "Tests Generated Daily",
+    desc: (
+      <>
+        GitAuto automatically picks files and generates tests using your repository rules.{" "}
+        <Link href={RELATIVE_URLS.SETTINGS.RULES} className="text-purple-500 underline">
+          Setup rules →
+        </Link>
+      </>
+    ),
   },
   {
-    icon: <FaFileAlt className="text-red-500 text-3xl" />,
-    title: "Create Issue or PR",
-    desc: "With one click, create an issue or both an issue and a pull request for each selected file.",
+    icon: <FaCodeBranch className="text-red-500 text-3xl" />,
+    title: "PRs Created & Fixed",
+    desc: (
+      <>
+        Pull requests are opened with tests. If they fail, GitAuto fixes them automatically.{" "}
+        <Link href={RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE} className="text-red-500 underline">
+          Learn more →
+        </Link>
+      </>
+    ),
   },
   {
-    icon: <FaCheckCircle className="text-green-500 text-3xl" />,
-    title: "Review & Merge",
-    desc: "Once tests pass, review the code and merge the pull request.",
+    icon: <FaChartLine className="text-green-500 text-3xl" />,
+    title: "Coverage Improves",
+    desc: (
+      <>
+        You review and merge PRs. Watch your coverage climb to 90%+ over time.{" "}
+        <Link href={RELATIVE_URLS.DASHBOARD.CHARTS} className="text-green-500 underline">
+          View charts →
+        </Link>
+      </>
+    ),
   },
 ];
 

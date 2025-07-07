@@ -24,7 +24,7 @@ export default function HowToGetStarted() {
   const steps = [
     {
       title: `Install ${PRODUCT_NAME}`,
-      description: "Simple one-click installation process that takes less than 2 minutes",
+      description: "Simple one-click GitHub App installation that takes less than 2 minutes",
       ctaText: "Install Now",
       ctaLink: ABSOLUTE_URLS.GITHUB.INSTALL_GITAUTO,
       ctaAction: () => {
@@ -35,22 +35,24 @@ export default function HowToGetStarted() {
       },
     },
     {
-      title: "Select repositories",
-      description: "Choose which repositories to test - you can change this anytime",
-      ctaText: "Manage Repositories",
-      ctaLink: getManageReposUrl(),
+      title: "Connect Coverage Reports",
+      description: "Upload your existing coverage reports to identify files that need testing",
+      ctaText: "Setup Guide",
+      ctaLink: RELATIVE_URLS.DOCS.COVERAGE.OVERVIEW,
     },
     {
-      title: "Free to start",
-      description: "No payment method required to get started with the free plan",
-      ctaText: "Learn More",
-      ctaLink: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION,
+      title: "Configure Repository Rules",
+      description:
+        "Set your coding style and testing preferences so GitAuto generates tests in your style",
+      ctaText: "Configure Rules",
+      ctaLink: RELATIVE_URLS.SETTINGS.RULES,
     },
     {
-      title: "You're all set!",
-      description: "GitAuto will automatically create pull requests with tests",
-      ctaText: "Learn More",
-      ctaLink: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_CHECKBOX,
+      title: "Enable Schedule Trigger",
+      description:
+        "Set up daily automation to continuously improve coverage while you focus on features",
+      ctaText: "Setup Schedule",
+      ctaLink: RELATIVE_URLS.SETTINGS.TRIGGERS,
     },
   ];
 
