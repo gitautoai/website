@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function DashboardTriggerPage() {
@@ -175,6 +176,13 @@ export default function DashboardTriggerPage() {
           </Link>
         </p>
       </div>
+
+      <DocsContact
+        title="Dashboard Looking Empty?"
+        description="Empty coverage in your dashboard usually means your coverage reports aren't making it through the pipeline. It's like having a beautiful sports car with no gas. Let's get your data flowing!"
+        callToAction="Contact us"
+        linkText="and fill up that dashboard!"
+      />
 
       <DocsNavigation
         previousLink={{

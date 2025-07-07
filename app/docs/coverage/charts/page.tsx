@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function CoverageChartsPage() {
@@ -216,40 +217,14 @@ export default function CoverageChartsPage() {
             </div>
           </div>
         </section>
-
-        <section>
-          <h2 className="text-2xl font-semibold mt-0 mb-4">Success Stories</h2>
-          <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-3">🎉 Share Your Achievement!</h3>
-            <p className="text-gray-700 mb-3">
-              When you successfully improve your coverage, don&apos;t keep it to yourself:
-            </p>
-            <ul className="list-disc list-outside space-y-2 text-gray-700 ml-5">
-              <li>
-                <strong>Internal Recognition:</strong> Share progress with your team and management
-              </li>
-              <li>
-                <strong>External Visibility:</strong> Post about your success on social media or
-                tech blogs
-              </li>
-              <li>
-                <strong>Help GitAuto:</strong> Tell us about your journey - we love hearing success
-                stories!
-              </li>
-            </ul>
-            <p className="text-gray-700 mt-4">
-              Your success story can inspire other teams and help improve GitAuto for everyone.{" "}
-              <Link
-                href={RELATIVE_URLS.CONTACT}
-                className="text-pink-600 hover:text-pink-700 underline"
-              >
-                Contact us
-              </Link>{" "}
-              to share your coverage improvement journey!
-            </p>
-          </div>
-        </section>
       </div>
+
+      <DocsContact
+        title="🎉 Share Your Achievement!"
+        description="When you successfully improve your coverage, don't keep it to yourself! Share progress with your team and management, post about your success on social media or tech blogs, and don't forget to tell us about your journey! We love hearing success stories!"
+        callToAction="Contact us"
+        linkText="to share your coverage improvement journey!"
+      />
 
       <DocsNavigation
         previousLink={{

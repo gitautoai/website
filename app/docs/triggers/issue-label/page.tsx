@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 import { useAccountContext } from "@/app/components/contexts/Account";
 
@@ -167,6 +168,13 @@ export default function IssueLabelTriggerPage() {
           and experience seamless test generation integration.
         </p>
       </div>
+
+      <DocsContact
+        title="Want to Build Something Cool?"
+        description="The label trigger opens up amazing automation possibilities! We've seen teams build incredible workflows, from Slack bots that create labeled issues to project management integrations that automatically request tests."
+        callToAction="Contact us"
+        linkText="and let's brainstorm your automation ideas!"
+      />
 
       <DocsNavigation
         previousLink={{

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function DocsPage() {
@@ -134,6 +135,13 @@ export default function DocsPage() {
           </ol>
         </section>
       </div>
+
+      <DocsContact
+        title="Coverage Reports Not Showing Up?"
+        description="Don't worry, we've all been there! LCOV setup can be tricky, and every testing framework has its quirks. Let's get your coverage dashboard populated with real data so you can start improving your tests."
+        callToAction="Contact us"
+        linkText="and we'll help you debug it together!"
+      />
 
       <DocsNavigation
         previousLink={{

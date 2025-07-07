@@ -4,6 +4,7 @@ import Link from "next/link";
 
 // Local imports
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config/urls";
 
 export default function GettingStartedPage() {
@@ -75,6 +76,13 @@ export default function GettingStartedPage() {
           </div>
         </div>
       </div>
+
+      <DocsContact
+        title="Installation Hiccups?"
+        description="Sometimes GitHub Apps can be finicky about permissions, or repositories don't show up where they should. Don't spend hours troubleshooting. We can usually spot the issue in minutes!"
+        callToAction="Contact us"
+        linkText="and get you up and running fast!"
+      />
 
       <DocsNavigation
         nextLink={{

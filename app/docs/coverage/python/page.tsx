@@ -1,4 +1,5 @@
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
@@ -37,6 +38,13 @@ export default function PythonConfigurationPage() {
           ]}
         />
       </div>
+
+      <DocsContact
+        title="pytest-cov Giving You Headaches?"
+        description="Python testing should be simple, but sometimes it feels like you're fighting with import paths, virtual environments, and mysterious coverage gaps. We get it - let's fix this together!"
+        callToAction="Contact us"
+        linkText="and make Python testing fun again!"
+      />
 
       <DocsNavigation
         previousLink={{

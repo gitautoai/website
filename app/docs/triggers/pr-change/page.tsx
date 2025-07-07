@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
 import { RELATIVE_URLS } from "@/config/urls";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 
 export default function PRChangeTriggerPage() {
   return (
@@ -175,6 +176,13 @@ export default function PRChangeTriggerPage() {
           and never worry about coverage gates again.
         </p>
       </div>
+
+      <DocsContact
+        title="Coverage Gates Driving You Crazy?"
+        description="Nothing's more frustrating than a failed CI check blocking your feature deployment! Setting up coverage requirements that help rather than hinder your team takes some finesse."
+        callToAction="Contact us"
+        linkText="and let's build gates that actually work!"
+      />
 
       <DocsNavigation
         previousLink={{

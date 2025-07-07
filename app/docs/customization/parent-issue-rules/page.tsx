@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function ParentIssueRulesPage() {
@@ -190,6 +191,13 @@ export default function ParentIssueRulesPage() {
           </div>
         </div>
       </div>
+
+      <DocsContact
+        title="Rules Getting Out of Hand?"
+        description="Creating the perfect parent issue rules is like writing a recipe for your grandmother's secret sauce! It needs to be detailed enough to work consistently, but not so rigid that it kills creativity."
+        callToAction="Contact us"
+        linkText="and let's craft your perfect rulebook!"
+      />
 
       <DocsNavigation
         previousLink={{

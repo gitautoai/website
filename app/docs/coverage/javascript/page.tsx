@@ -1,4 +1,5 @@
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
+import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
@@ -48,6 +49,13 @@ export default function JavaScriptConfigurationPage() {
           ]}
         />
       </div>
+
+      <DocsContact
+        title="Jest Acting Up Again?"
+        description="JavaScript testing can be a maze of configurations! Whether Jest is being stubborn, Vitest is throwing mysterious errors, or your GitHub Actions are failing silently, we've probably seen it before."
+        callToAction="Contact us"
+        linkText="and let's solve this JavaScript puzzle!"
+      />
 
       <DocsNavigation
         previousLink={{
