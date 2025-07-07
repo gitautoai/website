@@ -15,7 +15,7 @@ export default function Pricing() {
   return (
     <section
       id="pricing"
-      className="w-full max-w-6xl mx-auto py-20 px-4"
+      className="w-full py-20"
       aria-label="Pricing section"
     >
       <h2 className="text-2xl md:text-4xl font-bold mb-4 text-center">Pricing</h2>
