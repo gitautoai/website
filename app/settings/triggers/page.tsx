@@ -65,9 +65,10 @@ export default function TriggersPage() {
       setIsLoading(true);
       const settings = await getTriggerSettings(currentOwnerId, currentRepoId);
 
-      // If we have UTC time but no local time, convert UTC to local
       if (settings.scheduleTimeUTC && !settings.scheduleTimeLocal) {
         settings.scheduleTimeLocal = convertUTCToLocal(settings.scheduleTimeUTC);
+      } else if (!settings.scheduleTimeUTC && !settings.scheduleTimeLocal) {
+        settings.scheduleTimeLocal = "09:00";
       }
 
       setTriggerSettings(settings);
@@ -172,9 +173,12 @@ export default function TriggersPage() {
       [key]: newValue,
     };
 
-    // If schedule is enabled, calculate UTC if it's not calculated yet
-    if (key === "triggerOnSchedule" && newValue && !triggerSettings.scheduleTimeUTC) {
-      updatedSettings.scheduleTimeUTC = convertLocalToUTC(triggerSettings.scheduleTimeLocal);
+    // When enabling triggerOnSchedule, calculate UTC if it's not calculated yet
+    if (key === "triggerOnSchedule" && newValue) {
+      if (!updatedSettings.scheduleTimeLocal) updatedSettings.scheduleTimeLocal = "09:00";
+
+      if (!updatedSettings.scheduleTimeUTC)
+        updatedSettings.scheduleTimeUTC = convertLocalToUTC(updatedSettings.scheduleTimeLocal);
     }
 
     // When enabling triggerOnMerged, disable triggerOnPrChange
