@@ -24,17 +24,18 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      # https://docs.stripe.com/stripe-cli?install-method=apt#install
       - name: Install Stripe CLI
         run: |
-          # https://docs.stripe.com/stripe-cli?install-method=apt
           curl -s https://packages.stripe.dev/api/security/keypair/stripe-cli-gpg/public | gpg --dearmor | sudo tee /usr/share/keyrings/stripe.gpg
           echo "deb [signed-by=/usr/share/keyrings/stripe.gpg] https://packages.stripe.dev/stripe-cli-debian-local stable main" | sudo tee -a /etc/apt/sources.list.d/stripe.list
           sudo apt update
           sudo apt install stripe
           stripe --version
 
+      # https://docs.stripe.com/stripe-cli?install-method=apt#login-account
       - name: Login to Stripe CLI
-        run: stripe login --api-key ${{ secrets.STRIPE_SECRET_KEY }}
+        run: stripe login --interactive --api-key ${{ secrets.STRIPE_SECRET_KEY }}
 
       - name: Run E2E tests
         run: npx playwright test
