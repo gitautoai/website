@@ -1,9 +1,9 @@
 "use server";
-import { NextResponse, NextRequest } from "next/server";
-import { supabase } from "@/lib/supabase";
 import { Octokit } from "@octokit/rest";
+import { NextResponse, NextRequest } from "next/server";
 
 // Utils
+import { supabaseAdmin } from "@/lib/supabase/server";
 import { stringify } from "@/utils/transform";
 
 export async function POST(req: NextRequest) {
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     const ownerIds = [userId, ...orgs.map((org) => org.id)];
 
     // Get installations for these owners
-    const { data: installationsData, error: installationsError } = await supabase
+    const { data: installationsData, error: installationsError } = await supabaseAdmin
       .from("installations")
       .select(
         `
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
       owner_name: installation.owner_name,
 
       // Other properties
-      stripe_customer_id: installation.owners?.stripe_customer_id || null,
+      stripe_customer_id: installation.owners.stripe_customer_id,
     }));
 
     return new NextResponse(stringify(installations), { status: 200, headers });

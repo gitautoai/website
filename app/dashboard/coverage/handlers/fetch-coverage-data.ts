@@ -1,4 +1,4 @@
-import { getCoverage } from "@/app/actions/supabase/get-coverage";
+import { getCoverage } from "@/app/actions/supabase/coverage/get-coverage";
 import { Tables } from "@/types/supabase";
 
 /**

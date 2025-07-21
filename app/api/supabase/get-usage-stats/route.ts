@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+
 import { PullRequestStats } from "@/app/dashboard/usage/types";
+import { supabaseAdmin } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Period is required" }, { status: 400 });
 
     // Get all-time stats
-    const { data: allTimeData, error: allTimeError } = await supabase
+    const { data: allTimeData, error: allTimeError } = await supabaseAdmin
       .from("usage_with_issues")
       .select("*")
       .eq("owner_name", ownerName);
@@ -23,18 +24,18 @@ export async function POST(request: Request) {
 
     console.log("allTimeData.length: ", allTimeData.length);
 
-    // Get current cycle stats
-    const { data: currentCycleData, error: currentCycleError } = await supabase
+    // Get this month stats
+    const { data: thisMonthData, error: thisMonthError } = await supabaseAdmin
       .from("usage_with_issues")
       .select("*")
       .eq("owner_name", ownerName)
       .gte("created_at", periodStart)
       .lte("created_at", periodEnd);
 
-    if (currentCycleError)
-      return NextResponse.json({ error: "Failed to fetch current cycle data" }, { status: 500 });
+    if (thisMonthError)
+      return NextResponse.json({ error: "Failed to fetch this month data" }, { status: 500 });
 
-    console.log("currentCycleData.length: ", currentCycleData.length);
+    console.log("thisMonthData.length: ", thisMonthData.length);
 
     const calculateStats = (data: any[]): PullRequestStats => {
       // PR count is the number of records in the usage table
@@ -80,7 +81,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       all_time: calculateStats(allTimeData || []),
-      current_cycle: calculateStats(currentCycleData),
+      this_month: calculateStats(thisMonthData),
     });
   } catch (error) {
     console.error("Error in get-github-stats:", error);

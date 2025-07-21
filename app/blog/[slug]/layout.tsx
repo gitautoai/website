@@ -1,6 +1,6 @@
 import JsonLdScript from "@/app/components/JsonLdScript";
 import { PRODUCT_NAME } from "@/config";
-import { ABSOLUTE_URLS } from "@/config/urls";
+import { BASE_URL, ABSOLUTE_URLS } from "@/config/urls";
 import { createPageMetadata } from "@/utils/metadata";
 import { getBlogPostFromPosts } from "../utils/get-blog-post-from-posts";
 import { createBlogPostJsonLd } from "./jsonld";
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: post.description,
     url: `${ABSOLUTE_URLS.GITAUTO.BLOG}/${slug}`,
     keywords: post.tags || [],
-    images: [{ url: ABSOLUTE_URLS.GITAUTO.INDEX + "/og/blog-" + slug + ".png", alt: post.title }],
+    images: [{ url: BASE_URL + "/og/blog-" + slug + ".png", alt: post.title }],
     type: "article",
   });
 }

@@ -7,13 +7,8 @@ export interface PullRequestStats {
   user_merges: number;
 }
 
-export interface BillingPeriod {
-  current_period_start: string;
-  current_period_end: string;
-  request_limit: number;
-}
 
 export interface UsageStats {
   all_time: PullRequestStats;
-  current_cycle: PullRequestStats;
+  this_month: PullRequestStats;
 }

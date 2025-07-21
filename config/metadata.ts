@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { DESCRIPTION, EMAIL, LEGAL_NAME, PRODUCT_NAME, TEAM_NAME, TITLE } from "@/config";
 import { KEYWORDS } from "@/config/keywords";
 import { THUMBNAILS } from "@/config/thumbnails";
-import { ABSOLUTE_URLS } from "@/config/urls";
+import { ABSOLUTE_URLS, BASE_URL } from "@/config/urls";
 
 const IMAGES = { url: THUMBNAILS.HOME, width: 1200, height: 630, alt: TITLE } as const;
 
@@ -21,18 +21,18 @@ export const defaultMetadata: Metadata = {
   applicationName: PRODUCT_NAME,
   referrer: "origin-when-cross-origin",
   keywords: KEYWORDS,
-  authors: [{ name: TEAM_NAME, url: ABSOLUTE_URLS.GITAUTO.INDEX }],
+  authors: [{ name: TEAM_NAME, url: BASE_URL }],
   creator: TEAM_NAME,
   publisher: LEGAL_NAME,
   abstract: DESCRIPTION,
   formatDetection: { email: false, address: false, telephone: false },
-  metadataBase: new URL(ABSOLUTE_URLS.GITAUTO.INDEX),
+  metadataBase: new URL(BASE_URL),
 
   // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#opengraph
   openGraph: {
     title: TITLE,
     description: DESCRIPTION,
-    url: ABSOLUTE_URLS.GITAUTO.INDEX,
+    url: BASE_URL,
     siteName: PRODUCT_NAME,
     images: [IMAGES],
     locale: "en_US",
@@ -78,6 +78,6 @@ export const defaultMetadata: Metadata = {
   },
 
   // https://nextjs.org/docs/app/api-reference/functions/generate-metadata#category
-  bookmarks: [ABSOLUTE_URLS.GITAUTO.INDEX],
+  bookmarks: [BASE_URL],
   category: "Developer Tools",
 };

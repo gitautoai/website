@@ -8,9 +8,9 @@ import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 
 // Local
+import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import OwnerSelector from "@/app/components/home/OwnerSelector";
-import { createPortalOrCheckoutURL } from "@/lib/stripe/createPortalOrCheckoutUrl";
 
 interface ProfileIconProps {
   session: Session | null;
@@ -111,19 +111,17 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
               currentStripeCustomerId && (
                 <button
                   className="w-full text-left px-4 py-2"
-                  onClick={() =>
-                    createPortalOrCheckoutURL({
-                      userId,
-                      jwtToken,
-                      customerId: currentStripeCustomerId,
-                      email,
-                      ownerId: currentOwnerId,
-                      ownerType: currentOwnerType,
-                      ownerName: currentOwnerName,
-                      userName,
-                      router,
-                    })
-                  }
+                  onClick={async () => {
+                    try {
+                      const portalUrl = await createCustomerPortalSession({
+                        stripe_customer_id: currentStripeCustomerId,
+                        return_url: window.location.href,
+                      });
+                      window.location.href = portalUrl;
+                    } catch (error) {
+                      console.error("Error creating customer portal session:", error);
+                    }
+                  }}
                 >
                   <span className="link">Manage Subscriptions</span>
                 </button>

@@ -33,10 +33,8 @@ const AccountContext = createContext<AccountContextType>({
   currentRepoName: null,
   currentInstallationId: null,
   currentStripeCustomerId: null,
-  billingPeriod: "Monthly",
   isLoading: true,
   refreshData: async () => {},
-  setBillingPeriod: () => {},
   setCurrentOwnerName: () => {},
   setCurrentRepoName: () => {},
 });
@@ -58,7 +56,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const [currentRepoName, setCurrentRepoName] = useState<string | null>(null);
   const [currentInstallationId, setCurrentInstallationId] = useState<number | null>(null);
   const [currentStripeCustomerId, setCurrentStripeCustomerId] = useState<string | null>(null);
-  const [billingPeriod, setBillingPeriod] = useState<"Monthly" | "Yearly">("Monthly");
 
   // Process session information
   useEffect(() => {
@@ -210,7 +207,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
     if (currentInstallation) {
       setCurrentInstallationId(Number(currentInstallation.installation_id));
-      setCurrentStripeCustomerId(currentInstallation.stripe_customer_id || null);
+      setCurrentStripeCustomerId(currentInstallation.stripe_customer_id);
     }
   }, [installations, currentOwnerName]);
 
@@ -308,13 +305,11 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         currentRepoName,
         currentInstallationId,
         currentStripeCustomerId,
-        billingPeriod,
         isLoading: !organizations,
         refreshData: async () => {
           await mutateOrganizations();
           return;
         },
-        setBillingPeriod,
         setCurrentOwnerName: handleOwnerSelection,
         setCurrentRepoName: handleRepoSelection,
       }}

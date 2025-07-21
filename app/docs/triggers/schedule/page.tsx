@@ -3,13 +3,13 @@ import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
 import { DocsContact } from "@/app/components/docs/DocsContact";
 import { RELATIVE_URLS } from "@/config/urls";
-import { PRS, PRICES } from "@/config/pricing";
+import { CREDIT_PRICING } from "@/config/pricing";
 import { ALLOWED_INTERVALS, MAX_EXECUTIONS } from "@/config/schedule";
 
 export default function ScheduleTriggerPage() {
   const monthlyRequests = 100;
   const exampleExecutions = 5;
-  const costForRequests = (monthlyRequests / PRS.MONTHLY.STANDARD) * PRICES.MONTHLY.STANDARD.NUMBER;
+  const costForRequests = monthlyRequests * CREDIT_PRICING.PER_PR.AMOUNT_USD;
 
   return (
     <div className="w-full max-w-3xl mx-auto">

@@ -22,7 +22,8 @@ export const ATLASSIAN_SCOPE = "read:jira-work";
 export const ATLASSIAN_TOKEN_URL = "https://auth.atlassian.com/oauth/token";
 
 // Stripe Credentials
-export const STRIPE_STANDARD_PLAN_PRODUCT_ID = process.env.STRIPE_STANDARD_PLAN_PRODUCT_ID || "";
+export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
+export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
 
 // Intercom Credentials
 export const INTERCOM_SECRET_KEY = process.env.NEXT_PUBLIC_INTERCOM_SECRET_KEY || "";
@@ -36,13 +37,6 @@ export const config = {
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || "",
   JWT_SECRET: process.env.JWT_SECRET || "",
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "",
-
-  // Stripe
-  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || "",
-  STRIPE_FREE_TIER_PRICE_ID: process.env.STRIPE_FREE_TIER_PRICE_ID || "",
-  STRIPE_STANDARD_PLAN_PRODUCT_ID: process.env.STRIPE_STANDARD_PLAN_PRODUCT_ID || "",
-  STRIPE_STANDARD_PLAN_MONTHLY_PRICE_ID: process.env.STRIPE_STANDARD_PLAN_MONTHLY_PRICE_ID || "",
-  STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID: process.env.STRIPE_STANDARD_PLAN_YEARLY_PRICE_ID || "",
 
   // PostHog
   NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY || "",

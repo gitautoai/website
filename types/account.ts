@@ -22,10 +22,8 @@ export interface AccountContextType {
   currentRepoName: string | null;
   currentInstallationId: number | null;
   currentStripeCustomerId: string | null;
-  billingPeriod: "Monthly" | "Yearly";
   isLoading: boolean;
   refreshData: () => Promise<void>;
-  setBillingPeriod: (period: "Monthly" | "Yearly") => void;
   setCurrentOwnerName: (ownerName: string | null) => void;
   setCurrentRepoName: (repoName: string | null) => void;
 }

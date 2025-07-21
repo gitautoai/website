@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 
 // Local imports (Actions)
-import { toggleExclusion } from "@/app/actions/supabase/toggle-exclusion";
+import { toggleExclusion } from "@/app/actions/supabase/coverage/toggle-exclusion";
 import { syncRepositoryFiles } from "@/app/actions/sync-repository-files";
 
 // Local imports (Components and others)

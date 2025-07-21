@@ -4,7 +4,7 @@ import { THUMBNAILS } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 const DESCRIPTION =
-  "Track and monitor your GitAuto usage statistics including pull requests generated, issues processed, billing cycle information, and credit management.";
+  "Track and monitor your GitAuto usage statistics including pull requests generated, issues processed, monthly usage information, and credit management.";
 const VARIABLE_MEASURED = [
   "Total Pull Requests",
   "Total Issues",
@@ -12,7 +12,7 @@ const VARIABLE_MEASURED = [
   "User Pull Requests",
   "User Issues",
   "User Merged PRs",
-  "Billing Cycle Usage",
+  "Monthly Usage",
   "Request Limits",
 ];
 
@@ -35,13 +35,13 @@ export const usageJsonLd = {
   featureList: [
     "View usage statistics across all repositories",
     "Track pull requests and issues generated",
-    "Monitor billing cycle usage and limits",
-    "Manage credits and subscription",
-    "Compare all-time vs current cycle metrics",
+    "Monitor monthly usage and activity",
+    "Manage credits and auto-reload settings",
+    "Compare all-time vs monthly metrics",
     "Access Stripe customer portal",
   ],
   applicationSuite: "GitAuto QA Automation Platform",
-  softwareRequirements: "Active GitAuto subscription",
+  softwareRequirements: "GitAuto account with credits",
   screenshot: {
     "@type": "ImageObject",
     url: THUMBNAILS.DASHBOARD.USAGE,
@@ -53,7 +53,7 @@ export const usageJsonLd = {
     "@type": "CreativeWork",
     name: "Usage Dashboard Usage",
     description:
-      "Monitor your GitAuto usage statistics, track billing cycles, and manage credits through integrated Stripe portal",
+      "Monitor your GitAuto usage statistics, track monthly activity, and manage credits through integrated Stripe portal",
   },
   mainEntity: {
     "@type": "Dataset",

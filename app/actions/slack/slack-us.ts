@@ -1,6 +1,14 @@
 "use server";
 
+import { isPrd } from "@/config";
+
 export async function slackUs(message: string) {
+  // Only send Slack notifications in production
+  if (!isPrd) {
+    console.log("Slack notification skipped (non-production):", message);
+    return { success: true, skipped: true };
+  }
+
   const webhookUrl = process.env.SLACK_WEBHOOK_URL;
 
   if (!webhookUrl) {

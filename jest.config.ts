@@ -13,11 +13,19 @@ const customJestConfig: Config = {
   testPathIgnorePatterns: ["/node_modules/", "/e2e/"],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
+
+    // isows is a WebSocket library used by @supabase/realtime-js (part of @supabase/supabase-js)
+    // The library ships with both ESM and CommonJS versions
+    // Jest runs in Node.js and has issues with ES modules, causing "Cannot use import statement outside a module" errors
+    // These mappings force Jest to use the CommonJS version (_cjs) instead of the ESM version (_esm)
+    // Without these mappings, all tests that import Supabase will fail
+    "^isows/(.*)$": "<rootDir>/node_modules/isows/_cjs/$1",
+    "^isows$": "<rootDir>/node_modules/isows/_cjs/index.js",
   },
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
   transformIgnorePatterns: [
-    // Allow next-auth and its dependencies to be transformed
-    "/node_modules/(?!(next-auth|@next-auth|jose|openid-client))/",
+    // Transform all necessary ES modules
+    "/node_modules/(?!(next-auth|@next-auth|jose|openid-client|@supabase|supabase-js|isows))/",
   ],
   collectCoverage: true,
   collectCoverageFrom: [

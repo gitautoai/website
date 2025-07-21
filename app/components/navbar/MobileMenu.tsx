@@ -7,10 +7,10 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
 // Local Imports
+import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import OwnerSelector from "@/app/components/home/OwnerSelector";
 import { INTERNAL_LINKS } from "@/config/internal-links";
-import { createPortalOrCheckoutURL } from "@/lib/stripe/createPortalOrCheckoutUrl";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -81,19 +81,17 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
                     <li>
                       <span
                         className={`link `}
-                        onClick={() =>
-                          createPortalOrCheckoutURL({
-                            userId,
-                            jwtToken,
-                            customerId: currentStripeCustomerId,
-                            email,
-                            ownerId: currentOwnerId,
-                            ownerType: currentOwnerType,
-                            ownerName: currentOwnerName,
-                            userName,
-                            router,
-                          })
-                        }
+                        onClick={async () => {
+                          try {
+                            const portalUrl = await createCustomerPortalSession({
+                              stripe_customer_id: currentStripeCustomerId,
+                              return_url: window.location.href,
+                            });
+                            window.location.href = portalUrl;
+                          } catch (error) {
+                            console.error("Error creating customer portal session:", error);
+                          }
+                        }}
                       >
                         Manage Subscriptions
                       </span>

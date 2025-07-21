@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
-import SubscribeButton from "@/app/components/buttons/SubscribeButton";
+import CreditPurchaseButton from "@/app/dashboard/credits/components/CreditPurchaseButton";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
 import CheckMark from "@/app/components/icons/CheckMark";
 
@@ -24,7 +24,6 @@ type PricingPlanProps = {
     style: "primary" | "secondary" | "outline";
     icon?: string;
     isSubscribe?: boolean;
-    billingPeriod?: string;
   };
 };
 
@@ -89,10 +88,7 @@ export const PricingPlan = ({
       {/* Action button - fixed at bottom */}
       <div className="mt-6">
         {action.isSubscribe ? (
-          <SubscribeButton
-            billingPeriod={action.billingPeriod || "Monthly"}
-            className="w-full px-6 py-3 font-semibold"
-          />
+          <CreditPurchaseButton className="w-full px-6 py-3 font-semibold" />
         ) : action.href ? (
           <Link
             href={action.href}

@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { Fragment } from "react";
-import SubscribeButton from "@/app/components/buttons/SubscribeButton";
-import { useAccountContext } from "@/app/components/contexts/Account";
+import CreditPurchaseButton from "@/app/dashboard/credits/components/CreditPurchaseButton";
 import { PRICE_FEATURES, TABLE_FEATURES } from "@/config/pricing";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
@@ -36,8 +35,6 @@ const XMark = () => (
 );
 
 export default function PricingTable() {
-  const { billingPeriod } = useAccountContext();
-
   return (
     <div className="max-w-5xl w-full mx-auto">
       <table className="w-full border-collapse">
@@ -69,10 +66,7 @@ export default function PricingTable() {
               </Link>
             </td>
             <td className="py-4 px-6 text-center bg-pink-50">
-              <SubscribeButton
-                billingPeriod={billingPeriod}
-                className="inline-block py-2 px-4 w-full"
-              />
+              <CreditPurchaseButton className="inline-block py-2 px-4 w-full" />
             </td>
             <td className="py-4 px-6 text-center">
               <Link
@@ -92,18 +86,10 @@ export default function PricingTable() {
             </td>
             <td className="py-4 px-6 text-center">{PRICE_FEATURES[0].free}</td>
             <td className="py-4 px-6 text-center font-medium bg-pink-50">
-              {billingPeriod === "Monthly"
-                ? PRICE_FEATURES[0].standard
-                : PRICE_FEATURES[0].standardYearly}
-              <br />
-              <span className="text-sm text-gray-500">
-                {billingPeriod === "Yearly" && "Save $200/year"}
-              </span>
+              {PRICE_FEATURES[0].standard}
             </td>
             <td className="py-4 px-6 text-center">
-              {billingPeriod === "Monthly"
-                ? PRICE_FEATURES[0].enterprise
-                : PRICE_FEATURES[0].enterpriseYearly}
+              {PRICE_FEATURES[0].enterprise}
               <br />
               <span className="text-sm text-gray-500">Custom pricing</span>
             </td>
@@ -170,10 +156,7 @@ export default function PricingTable() {
               </Link>
             </td>
             <td className="py-4 px-6 text-center bg-pink-50">
-              <SubscribeButton
-                billingPeriod={billingPeriod}
-                className="inline-block py-2 px-4 w-full"
-              />
+              <CreditPurchaseButton className="inline-block py-2 px-4 w-full" />
             </td>
             <td className="py-4 px-6 text-center">
               <Link
