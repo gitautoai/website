@@ -24,6 +24,16 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      - name: Install Stripe CLI
+        run: |
+          wget -q https://github.com/stripe/stripe-cli/releases/latest/download/stripe_linux_x86_64.tar.gz
+          tar -xzf stripe_linux_x86_64.tar.gz
+          sudo mv stripe /usr/local/bin/
+          stripe --version
+
+      - name: Login to Stripe CLI
+        run: stripe login --api-key ${{ secrets.STRIPE_SECRET_KEY }}
+
       - name: Run E2E tests
         run: npx playwright test
         env:
@@ -33,6 +43,14 @@ jobs:
           # To ignore NextAuth warnings
           NEXTAUTH_URL: http://localhost:4000
           NEXTAUTH_SECRET: "dummy-secret-for-testing"
+          
+          # Stripe credentials for E2E tests
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          
+          # Supabase credentials for E2E tests
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
