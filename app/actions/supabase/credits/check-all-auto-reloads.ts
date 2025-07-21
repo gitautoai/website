@@ -85,7 +85,9 @@ export async function checkAllAutoReloads() {
               `Error: ${chargeResult.error || "Unknown error"}`
           );
 
-          console.error(`❌ Auto-reload failed for owner ${owner.owner_id}:`, chargeResult.error);
+          // Don't log errors for test customers (reduces noise in test output)
+          if (!owner.stripe_customer_id?.includes("test"))
+            console.error(`❌ Auto-reload failed for owner ${owner.owner_id}:`, chargeResult.error);
         }
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : "Unknown error";

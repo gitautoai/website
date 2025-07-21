@@ -42,6 +42,7 @@ export async function chargeSavedPaymentMethod({
 
     // Create payment intent with specified payment method
     // payment_method_types is required when using error_on_requires_action: true
+    // https://docs.stripe.com/api/payment_intents/create
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amountUsd * 100, // Convert dollars to cents for Stripe
       currency: "usd",
@@ -70,7 +71,8 @@ export async function chargeSavedPaymentMethod({
       };
     }
   } catch (error: any) {
-    console.error("Error charging saved payment method:", error);
+    // Don't log errors for test customers (reduces noise in test output)
+    if (!customerId.includes("test")) console.error("Error charging saved payment method:", error);
 
     // Handle specific Stripe errors
     if (error.type === "StripeCardError") return { success: false, error: error.message };

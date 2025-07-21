@@ -109,7 +109,7 @@ export async function cleanupTestOwner(testOwnerId: number, testCustomerId?: str
       try {
         await stripe.customers.del(testCustomerId);
       } catch (error) {
-        console.warn("Failed to cleanup test customer:", error);
+        // Silently ignore cleanup errors for test customers (reduces noise)
       }
     }
   } catch (error) {
