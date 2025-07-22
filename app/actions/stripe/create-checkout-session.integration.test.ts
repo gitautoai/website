@@ -33,6 +33,7 @@ describe("createCheckoutSession integration", () => {
       customerId: customer.id,
       amountUsd: 25, // $25
       metadata: {
+        owner_id: "test-owner-" + Math.random().toString(36).substring(7),
         test: "true",
         purpose: "integration_test",
         amount: "25",
@@ -83,7 +84,10 @@ describe("createCheckoutSession integration", () => {
     const result = await createCheckoutSession({
       customerId: customer.id,
       amountUsd: 50,
-      metadata: { test_case: "payment_method_config" },
+      metadata: {
+        owner_id: "test-owner-" + Math.random().toString(36).substring(7),
+        test_case: "payment_method_config",
+      },
     });
 
     // Verify payment intent is not yet created (created when session is paid)
@@ -107,7 +111,9 @@ describe("createCheckoutSession integration", () => {
       createCheckoutSession({
         customerId: "cus_nonexistent",
         amountUsd: 10,
-        metadata: {},
+        metadata: {
+          owner_id: "test-owner-" + Math.random().toString(36).substring(7),
+        },
       })
     ).rejects.toThrow();
   });
@@ -126,7 +132,10 @@ describe("createCheckoutSession integration", () => {
       const result = await createCheckoutSession({
         customerId: customer.id,
         amountUsd: amount,
-        metadata: { amount_test: amount.toString() },
+        metadata: {
+          owner_id: "test-owner-" + Math.random().toString(36).substring(7),
+          amount_test: amount.toString(),
+        },
       });
 
       expect(result.amount_total).toBe(amount * 100); // Convert to cents

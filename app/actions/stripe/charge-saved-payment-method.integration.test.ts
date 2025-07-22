@@ -55,6 +55,7 @@ describe("chargeSavedPaymentMethod integration", () => {
       amountUsd: 10, // $10
       description: "Test charge",
       metadata: {
+        owner_id: "test-owner-" + Math.random().toString(36).substring(7),
         test: "true",
         purpose: "integration_test",
       },
@@ -84,7 +85,9 @@ describe("chargeSavedPaymentMethod integration", () => {
       customerId: "cus_nonexistent",
       amountUsd: 10,
       description: "Test charge",
-      metadata: {},
+      metadata: {
+        owner_id: "test-owner-" + Math.random().toString(36).substring(7),
+      },
     });
 
     expect(result.success).toBe(false);
@@ -104,7 +107,9 @@ describe("chargeSavedPaymentMethod integration", () => {
       customerId: customer.id,
       amountUsd: 10,
       description: "Test charge",
-      metadata: {},
+      metadata: {
+        owner_id: "test-owner-" + Math.random().toString(36).substring(7),
+      },
     });
 
     expect(result.success).toBe(false);
@@ -121,7 +126,10 @@ describe("chargeSavedPaymentMethod integration", () => {
         customerId: testCustomerId,
         amountUsd,
         description: `Test charge for $${amountUsd}`,
-        metadata: { amount_test: amountUsd.toString() },
+        metadata: {
+          owner_id: "test-owner-" + Math.random().toString(36).substring(7),
+          amount_test: amountUsd.toString(),
+        },
       });
 
       expect(result.success).toBe(true);
@@ -141,7 +149,10 @@ describe("chargeSavedPaymentMethod integration", () => {
       customerId: testCustomerId,
       amountUsd: 15,
       description: "Test payment method object",
-      metadata: { test_scenario: "payment_method_object" },
+      metadata: {
+        owner_id: "test-owner-" + Math.random().toString(36).substring(7),
+        test_scenario: "payment_method_object",
+      },
     });
 
     expect(result.success).toBe(true);
