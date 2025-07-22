@@ -4,19 +4,22 @@ import { useEffect, useState } from "react";
 import { getCreditTransactions } from "@/app/actions/supabase/credits/get-credit-transactions";
 import { Database } from "@/types/supabase";
 import { formatDateTime } from "@/utils/format-date-time";
+import { useAccountContext } from "@/app/components/contexts/Account";
 
 type CreditTransaction = Database["public"]["Tables"]["credits"]["Row"];
 
-type CreditTransactionHistoryProps = {
-  ownerId: number;
-};
-
-export default function CreditTransactionHistory({ ownerId }: CreditTransactionHistoryProps) {
+export default function CreditTransactionHistory() {
+  const { currentOwnerId: ownerId } = useAccountContext();
   const [transactions, setTransactions] = useState<CreditTransaction[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTransactions = async () => {
+      if (!ownerId) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const data = await getCreditTransactions(ownerId);
         setTransactions(data);

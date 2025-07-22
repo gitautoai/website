@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import { createCheckoutSession } from "@/app/actions/stripe/create-checkout-session";
-import { updateAutoReloadSettings } from "@/app/actions/supabase/credits/update-auto-reload-settings";
+import { updateAutoReloadSettings } from "@/app/actions/supabase/owners/update-auto-reload-settings";
 import { CREDIT_PRICING } from "@/config/pricing";
 import { validateCreditAmount } from "@/lib/validation/credit-amount";
 

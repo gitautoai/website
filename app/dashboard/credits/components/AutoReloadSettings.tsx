@@ -1,20 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CREDIT_PRICING } from "@/config/pricing";
-import { updateAutoReloadSettings } from "@/app/actions/supabase/credits/update-auto-reload-settings";
+import { updateAutoReloadSettings } from "@/app/actions/supabase/owners/update-auto-reload-settings";
+import { getOwner } from "@/app/actions/supabase/owners/get-owner";
+import { useAccountContext } from "@/app/components/contexts/Account";
 
-type AutoReloadSettingsProps = {
-  ownerId: number;
-};
-
-export default function AutoReloadSettings({ ownerId }: AutoReloadSettingsProps) {
+export default function AutoReloadSettings() {
+  const { currentOwnerId: ownerId } = useAccountContext();
   const [enabled, setEnabled] = useState(false);
   const [threshold, setThreshold] = useState(CREDIT_PRICING.AUTO_RELOAD.DEFAULT_TRIGGER_USD);
   const [target, setTarget] = useState(CREDIT_PRICING.AUTO_RELOAD.DEFAULT_TARGET_USD);
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchOwnerSettings = async () => {
+      if (!ownerId) return;
+      
+      setLoading(true);
+      try {
+        const owner = await getOwner(ownerId);
+        if (owner) {
+          setEnabled(owner.auto_reload_enabled);
+          setThreshold(owner.auto_reload_threshold_usd);
+          setTarget(owner.auto_reload_target_usd);
+        }
+      } catch (error) {
+        console.error("Error fetching auto-reload settings:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOwnerSettings();
+  }, [ownerId]);
 
   const handleSave = async (newEnabled?: boolean, newThreshold?: number, newTarget?: number) => {
+    if (!ownerId) return;
+    
     setSaving(true);
     try {
       await updateAutoReloadSettings({
@@ -32,6 +56,8 @@ export default function AutoReloadSettings({ ownerId }: AutoReloadSettingsProps)
   };
 
   const handleToggleChange = async (newEnabled: boolean) => {
+    if (!ownerId) return;
+    
     setEnabled(newEnabled);
 
     // Save silently in background without showing loading state
@@ -55,6 +81,7 @@ export default function AutoReloadSettings({ ownerId }: AutoReloadSettingsProps)
     setTarget(newTarget);
   };
 
+
   return (
     <div
       className="bg-white rounded-lg shadow p-6 flex flex-col"
@@ -68,9 +95,10 @@ export default function AutoReloadSettings({ ownerId }: AutoReloadSettingsProps)
           <button
             type="button"
             onClick={() => handleToggleChange(!enabled)}
+            disabled={loading || !ownerId}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 ${
               enabled ? "bg-pink-600" : "bg-gray-200"
-            }`}
+            } ${loading || !ownerId ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -95,9 +123,9 @@ export default function AutoReloadSettings({ ownerId }: AutoReloadSettingsProps)
               value={threshold}
               onChange={(e) => handleThresholdChange(Number(e.target.value))}
               min={0}
-              disabled={!enabled}
+              disabled={!enabled || loading || !ownerId}
               className={`pl-8 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 ${
-                !enabled
+                !enabled || loading || !ownerId
                   ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
                   : "border-gray-300"
               }`}
@@ -120,9 +148,9 @@ export default function AutoReloadSettings({ ownerId }: AutoReloadSettingsProps)
               value={target}
               onChange={(e) => handleTargetChange(Number(e.target.value))}
               min={10}
-              disabled={!enabled}
+              disabled={!enabled || loading || !ownerId}
               className={`pl-8 w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500 ${
-                !enabled
+                !enabled || loading || !ownerId
                   ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
                   : "border-gray-300"
               }`}
@@ -133,7 +161,7 @@ export default function AutoReloadSettings({ ownerId }: AutoReloadSettingsProps)
         <div className="flex-1"></div>
         <button
           onClick={() => handleSave()}
-          disabled={saving || !enabled}
+          disabled={saving || !enabled || loading || !ownerId}
           className="w-full py-2 px-4 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:opacity-50 mt-auto"
         >
           {saving ? "Saving..." : "Save Settings"}

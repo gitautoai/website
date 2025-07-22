@@ -7,7 +7,7 @@ import Confetti from "react-confetti";
 
 // Local imports
 import { useAccountContext } from "@/app/components/contexts/Account";
-import { getCreditBalance } from "@/app/actions/supabase/credits/get-credit-balance";
+import { getCreditBalance } from "@/app/actions/supabase/owners/get-credit-balance";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import Toast from "@/app/components/Toast";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
@@ -89,10 +89,10 @@ export default function CreditsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CreditBalanceCard balance={balance} pricePerPr={CREDIT_PRICING.PER_PR.AMOUNT_USD} />
-          {currentOwnerId && <AutoReloadSettings ownerId={currentOwnerId} />}
+          <AutoReloadSettings />
         </div>
 
-        {currentOwnerId && <CreditTransactionHistory ownerId={currentOwnerId} />}
+        <CreditTransactionHistory />
       </div>
 
       {showSuccessToast && (

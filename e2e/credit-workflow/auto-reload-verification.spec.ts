@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import { getCreditBalance } from "@/app/actions/supabase/credits/get-credit-balance";
-import { checkAllAutoReloads } from "@/app/actions/supabase/credits/check-all-auto-reloads";
+import { getCreditBalance } from "@/app/actions/supabase/owners/get-credit-balance";
+import { checkAllAutoReloads } from "@/app/actions/supabase/owners/check-all-auto-reloads";
 import { createTestOwner, cleanupTestOwner } from "../helpers/create-test-owner";
 
 test.describe("Auto-Reload Verification", () => {

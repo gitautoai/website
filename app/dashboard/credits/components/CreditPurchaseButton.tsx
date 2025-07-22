@@ -13,7 +13,7 @@ export default function CreditPurchaseButton({ className = "" }: CreditPurchaseB
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { selectedIndex, installationsSubscribed, currentStripeCustomerId } = useAccountContext();
+  const { selectedIndex, installationsSubscribed, currentStripeCustomerId, currentOwnerId } = useAccountContext();
 
   const hasActiveSubscription =
     selectedIndex != null &&
@@ -23,6 +23,8 @@ export default function CreditPurchaseButton({ className = "" }: CreditPurchaseB
   const buttonText = hasActiveSubscription ? "Manage" : "Buy Credits";
 
   const handleClick = async () => {
+    if (!currentOwnerId) return;
+    
     if (hasActiveSubscription && currentStripeCustomerId) {
       setIsLoading(true);
       try {
@@ -45,10 +47,10 @@ export default function CreditPurchaseButton({ className = "" }: CreditPurchaseB
     <>
       <button
         onClick={handleClick}
-        disabled={isLoading}
+        disabled={isLoading || !currentOwnerId}
         data-testid="purchase-credits-button"
         className={`py-2 px-4 rounded-lg font-medium bg-pink-600 text-white hover:bg-pink-700 ${
-          isLoading ? "opacity-75 cursor-not-allowed" : ""
+          isLoading || !currentOwnerId ? "opacity-75 cursor-not-allowed" : ""
         } ${className}`}
       >
         {isLoading ? "Loading..." : buttonText}

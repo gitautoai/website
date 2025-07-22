@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { checkAllAutoReloads } from "@/app/actions/supabase/credits/check-all-auto-reloads";
+import { checkAllAutoReloads } from "@/app/actions/supabase/owners/check-all-auto-reloads";
 import { verifyVercelCron } from "@/utils/auth/vercel-cron";
 
 export async function GET(request: NextRequest) {
