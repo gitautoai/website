@@ -38,12 +38,10 @@ export default defineConfig({
       dependencies: ["setup"],
     },
   ],
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: "npm run dev:test",
-        url: "http://localhost:4000",
-        reuseExistingServer: true,
-        timeout: 120000,
-      },
+  webServer: {
+    command: "npm run dev:test",
+    url: "http://localhost:4000",
+    reuseExistingServer: !process.env.CI,
+    timeout: 120000,
+  },
 });
