@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "npm run types:generate && next dev -p 4000 & npm run stripe",
     "stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:4000/api/stripe/webhook",
-    "dev:test": "next dev -p 4000",
+    "dev:test": "next dev -p 4000 & npm run stripe",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

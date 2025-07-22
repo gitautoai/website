@@ -39,9 +39,14 @@ jobs:
           NODE_ENV: test
           BASE_URL: http://localhost:4000
 
-          # To ignore NextAuth warnings
+          # NextAuth configuration
           NEXTAUTH_URL: http://localhost:4000
           NEXTAUTH_SECRET: "dummy-secret-for-testing"
+          JWT_SECRET: "dummy-jwt-secret-for-testing"
+
+          # GitHub OAuth credentials for E2E tests
+          GITHUB_CLIENT_ID: ${{ secrets.GH_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GH_CLIENT_SECRET }}
 
           # Stripe credentials for E2E tests
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
