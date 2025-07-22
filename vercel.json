@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/auto-reload",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 12 * * *"
     }
   ]
 }
