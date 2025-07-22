@@ -110,7 +110,7 @@ export default function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseM
           owner_id: currentOwnerId,
           credit_amount: purchaseAmountUsd,
         },
-        cancelUrl: window.location.pathname,
+        cancelUrl: window.location.href,
       });
 
       if (session.url) {

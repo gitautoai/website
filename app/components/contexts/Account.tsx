@@ -129,13 +129,16 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
       if (newIndex !== -1) {
         setSelectedIndex(newIndex);
+        setCurrentOwnerName(currentOwnerName); // Ensure context state matches localStorage
       } else if (installations.length > 0) {
         setSelectedIndex(0);
         localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, installations[0].owner_name);
+        setCurrentOwnerName(installations[0].owner_name);
       }
     } else if (installations.length > 0) {
       setSelectedIndex(0);
       localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, installations[0].owner_name);
+      setCurrentOwnerName(installations[0].owner_name);
     }
   }, [installations]);
 

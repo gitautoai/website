@@ -33,10 +33,6 @@ jobs:
           sudo apt install stripe
           stripe --version
 
-      # https://docs.stripe.com/stripe-cli?install-method=apt#login-account
-      - name: Login to Stripe CLI
-        run: stripe login --interactive --api-key ${{ secrets.STRIPE_SECRET_KEY }}
-
       - name: Run E2E tests
         run: npx playwright test
         env:

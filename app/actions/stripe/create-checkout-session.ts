@@ -69,7 +69,8 @@ export const createCheckoutSession = async ({
       tax_id_collection: { enabled: true },
     });
 
-    return checkoutSession;
+    // Return a plain object to avoid Next.js serialization errors
+    return { ...checkoutSession };
   } catch (error: any) {
     throw error;
   }

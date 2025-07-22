@@ -22,7 +22,7 @@ export const createCustomerPortalConfiguration = async (hasActiveSubscription = 
       payment_method_update: { enabled: true },
       // Enable subscription management only for customers with active subscriptions
       subscription_cancel: { enabled: hasActiveSubscription },
-      subscription_update: { enabled: hasActiveSubscription },
+      subscription_update: { enabled: false },
     },
     login_page: { enabled: true },
   });

@@ -59,7 +59,17 @@ npx playwright test e2e/website-accessibility.spec.ts
 
 ### Test Structure
 
-- Mock external dependencies (Supabase, Stripe, etc.)
+- **Unit tests**: Mock external dependencies (Supabase, Stripe, etc.)
+- **E2E tests**:
+  - Use real database and API calls for the functionality being tested
+  - Authentication can be mocked if the test focus is not on authentication itself
+  - Example: In credit system tests, mock auth APIs but use real Stripe/Supabase for credit operations
+  - **IMPORTANT**: Each test should use unique owner/customer IDs with proper cleanup
+  - Use helper functions from `e2e/helpers/` for creating test data:
+    - `createTestOwner()` for creating test owners with automatic cleanup
+    - `createTestCustomer()` for creating test Stripe customers
+    - Always call cleanup functions in `finally` blocks
+  - For Stripe webhook testing, use `stripe trigger payment_intent.succeeded` with metadata
 - Test success and error scenarios
 - Use descriptive test names that explain the behavior being tested
 
@@ -143,17 +153,20 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;
 
 ### LGTM Command
 
+**CRITICAL**: Never proceed with git add/commit/push unless ALL tests pass 100%. There is no "mostly passed" - either all tests pass or the task is incomplete.
+
 When the user says "LGTM", execute these commands in order:
 
 1. `npm run types:generate` - Generate TypeScript types
 2. `npm run lint` - Run linting
 3. `npx tsc --noEmit` - Type-check ALL files including tests (use this to catch TypeScript errors)
-4. `npm test` - Run unit tests
-5. `npm run test:e2e` - Run E2E tests
+4. `npm test` - Run unit tests (must pass 100%)
+5. `npm run test:e2e` - Run E2E tests (must pass 100%)
 6. `npm run build` - Build the project
-7. `git add .` - Stage all changes
-8. Create a descriptive commit message based on changes
-9. `git push` - Push to remote
+7. **STOP if any test fails** - Fix all failures before proceeding
+8. `git add .` - Stage all changes (only if ALL tests passed)
+9. Create a descriptive commit message based on changes
+10. `git push` - Push to remote
 
 ## TypeScript Error Checking Rule
 

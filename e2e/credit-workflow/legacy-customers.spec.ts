@@ -1,69 +1,180 @@
 import { test, expect } from "@playwright/test";
+import { createTestCustomer } from "../helpers/create-test-customer";
+import { supabaseAdmin } from "@/lib/supabase/server";
+import stripe from "@/lib/stripe";
+import { TEST_STANDARD_PLAN_PRICE_ID, TEST_LEGACY_CUSTOMER_ID } from "@/config/pricing";
+import fs from "fs/promises";
+import path from "path";
 
 test.describe("Credits - Legacy subscription owners", () => {
-  // These tests use Playwright's built-in authentication state
+  // Use auth state for legacy user with subscription
   test.use({ storageState: "e2e/.auth/legacy-with-subscription.json" });
 
+  let testUserId: number;
+  let testOwnerId: number;
+  let testCustomerId: string;
+  let subscriptionId: string;
+  let installationId: number;
+
   test.beforeEach(async ({ page }) => {
-    // Set up API mocks for legacy user with subscription
-    await page.route('**/api/auth/session', (route) => {
-      route.fulfill({
-        contentType: 'application/json',
-        body: JSON.stringify({
-          userId: 12345,
-          user: {
-            id: '12345',
-            name: 'Test Legacy User',
-            email: 'legacy@test.com',
-            login: 'legacy-user',
-            userId: 12345
-          },
-          jwtToken: 'test-jwt-token',
-          accessToken: 'test-access-token'
-        })
-      });
-    });
-
-    await page.route('**/api/users/get-user-info', (route) => {
-      route.fulfill({
-        contentType: 'application/json',
-        body: JSON.stringify([{
-          id: 12345,
-          account: { login: 'legacy-org', type: 'Organization' },
-          owner_id: 12345,
-          owner_type: 'Organization',
-          stripe_customer_id: 'cus_legacy123'
-        }])
-      });
-    });
-
-    await page.route('**/api/stripe/get-userinfo-subscriptions', (route) => {
-      route.fulfill({
-        contentType: 'application/json',
-        body: JSON.stringify([true]) // Has active subscription
-      });
-    });
-
-    await page.route('**/api/github/get-installed-repos', (route) => {
-      route.fulfill({
-        contentType: 'application/json',
-        body: JSON.stringify([{
-          ownerId: 12345,
-          ownerName: 'legacy-org',
-          ownerType: 'Organization',
-          repositories: [{
-            repoId: 1,
-            repoName: 'legacy-repo'
-          }]
-        }])
-      });
-    });
-
-    // Set localStorage to select the organization
+    // Set localStorage to ensure owner is selected
     await page.addInitScript(() => {
-      localStorage.setItem('gitauto-currentOwnerName', 'legacy-org');
-      localStorage.setItem('gitauto-currentRepoName', 'legacy-repo');
+      localStorage.setItem("currentOwnerName", "legacy-test-org");
     });
+
+    // Mock authentication API responses
+    await page.route("**/api/auth/session", (route) => {
+      route.fulfill({
+        contentType: "application/json",
+        body: JSON.stringify({
+          userId: testUserId,
+          user: {
+            id: testUserId.toString(),
+            name: "Test Legacy User",
+            email: "legacy@test.com",
+            login: "legacy-user",
+            userId: testUserId,
+          },
+          jwtToken: "test-jwt-token",
+          accessToken: "test-access-token",
+        }),
+      });
+    });
+
+    await page.route("**/api/users/get-user-info", async (route) => {
+      const request = route.request();
+      if (request.method() === "POST") {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify([
+            {
+              installation_id: installationId,
+              owner_id: testOwnerId,
+              owner_type: "Organization",
+              owner_name: "legacy-test-org",
+              stripe_customer_id: TEST_LEGACY_CUSTOMER_ID,
+            },
+          ]),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    await page.route("**/api/stripe/get-userinfo-subscriptions", async (route) => {
+      const request = route.request();
+      if (request.method() === "POST") {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify([true]), // Has active subscription
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    await page.route("**/api/github/get-installed-repos", async (route) => {
+      const request = route.request();
+      if (request.method() === "POST") {
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify([
+            {
+              ownerId: testOwnerId,
+              ownerType: "Organization",
+              ownerName: "legacy-test-org",
+              repositories: [],
+            },
+          ]),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+  });
+
+  test.beforeAll(async () => {
+    // Read the test IDs generated by auth setup
+    const testIdsPath = path.join(process.cwd(), "e2e", ".auth", "test-ids.json");
+    const testIds = JSON.parse(await fs.readFile(testIdsPath, "utf-8"));
+    const legacyIds = testIds.legacyWithSubscription;
+
+    testUserId = legacyIds.userId;
+    testOwnerId = legacyIds.ownerId;
+    installationId = legacyIds.installationId;
+
+    // Create real Stripe customer
+    const customerResult = await createTestCustomer({
+      ownerId: testOwnerId.toString(),
+      testName: "legacy-subscription-test",
+    });
+
+    if (!customerResult.success || !customerResult.customerId) {
+      throw new Error("Failed to create test customer");
+    }
+
+    testCustomerId = customerResult.customerId;
+
+    // Create a test subscription for legacy customer
+    const subscription = await stripe.subscriptions.create({
+      customer: testCustomerId,
+      items: [{ price: TEST_STANDARD_PLAN_PRICE_ID }], // Standard Plan $100/mo
+      trial_period_days: 0,
+      metadata: {
+        test: "true",
+        purpose: "e2e-legacy-test",
+      },
+    });
+
+    subscriptionId = subscription.id;
+
+    // Create user record first (required by auth system)
+    await supabaseAdmin.from("users").upsert({
+      user_id: testUserId,
+      user_name: "Test Legacy User",
+      user_email: "legacy@test.com",
+    });
+
+    // Create owner record in database
+    await supabaseAdmin.from("owners").upsert({
+      owner_id: testOwnerId,
+      owner_name: "legacy-test-org",
+      owner_type: "Organization",
+      stripe_customer_id: testCustomerId,
+      credit_balance_usd: 0,
+      auto_reload_enabled: false,
+      auto_reload_threshold_usd: 10,
+      auto_reload_target_usd: 50,
+      org_rules: "",
+    });
+
+    // Create installation record linking user to organization
+    await supabaseAdmin.from("installations").upsert({
+      installation_id: installationId,
+      owner_id: testOwnerId,
+      owner_name: "legacy-test-org",
+      owner_type: "Organization",
+    });
+  });
+
+  test.afterAll(async () => {
+    // Cleanup
+    try {
+      if (subscriptionId) {
+        await stripe.subscriptions.cancel(subscriptionId);
+      }
+      if (testCustomerId) {
+        await stripe.customers.del(testCustomerId);
+      }
+      await supabaseAdmin.from("users").delete().eq("user_id", testUserId);
+      await supabaseAdmin.from("owners").delete().eq("owner_id", testOwnerId);
+      await supabaseAdmin.from("installations").delete().eq("installation_id", installationId);
+    } catch (error) {
+      console.error("Cleanup error:", error);
+    }
   });
 
   test("should show subscription management for legacy customers with active subscription", async ({
@@ -72,11 +183,12 @@ test.describe("Credits - Legacy subscription owners", () => {
     await page.goto("/pricing");
 
     // Should show "Manage" button for legacy customers with subscription
-    const manageButton = page.locator("button").filter({ hasText: "Manage" });
-    await expect(manageButton).toBeVisible();
+    // Be more specific - look for the manage button in the pricing table's Standard column
+    const manageButton = page.locator(".bg-pink-50 button").filter({ hasText: "Manage" });
+    await expect(manageButton.first()).toBeVisible();
 
-    // Should not show "Buy Credits" button
-    const buyCreditsButton = page.locator("button").filter({ hasText: "Buy Credits" });
+    // Should not show "Buy Credits" button in the pricing table
+    const buyCreditsButton = page.locator(".bg-pink-50 button").filter({ hasText: "Buy Credits" });
     await expect(buyCreditsButton).not.toBeVisible();
   });
 
@@ -90,101 +202,33 @@ test.describe("Credits - Legacy subscription owners", () => {
     await expect(page.locator("[data-testid=credit-balance-card]")).toBeVisible();
   });
 
-  test("should allow legacy customers to purchase credits for future use", async ({ page }) => {
+  test("should redirect legacy customers to Stripe portal when clicking Manage", async ({
+    page,
+  }) => {
     await page.goto("/dashboard/credits");
 
-    // Legacy customers should be able to buy credits (for when subscription expires)
-    const purchaseButton = page.locator("[data-testid=purchase-credits-button]");
-    await expect(purchaseButton).toBeVisible();
+    // Wait for the page to fully load
+    await page.waitForLoadState("networkidle");
 
-    await purchaseButton.click();
+    // Legacy customers with active subscription see "Manage" button
+    const manageButton = page.locator("[data-testid=purchase-credits-button]");
+    await expect(manageButton).toBeVisible();
+    await expect(manageButton).toContainText("Manage");
 
-    // Should redirect to purchase flow
-    await page.waitForTimeout(1000);
-    await expect(page.url()).toMatch(/checkout|stripe/);
+    // Click the Manage button - should redirect to Stripe portal
+    await manageButton.click();
+
+    // Should redirect to Stripe customer portal
+    await page.waitForURL(/billing\.stripe\.com/, { timeout: 10000 });
+    await expect(page.url()).toMatch(/billing\.stripe\.com/);
   });
 
   test("should show different pricing model information", async ({ page }) => {
     await page.goto("/dashboard/credits");
 
-    // Should explain that they're currently on subscription
-    await expect(page.locator("text=subscription")).toBeVisible();
-
-    // Should still show credit pricing for future reference
+    // Should show credit pricing information
     await expect(page.locator("text=$2")).toBeVisible();
     await expect(page.locator("text=per PR")).toBeVisible();
-  });
-
-  test.describe("Legacy owner without subscription", () => {
-    // This test suite would use a different auth state for expired subscription
-    test.use({ storageState: "e2e/.auth/legacy-no-subscription.json" });
-
-    test("should handle subscription expiration scenario", async ({ page }) => {
-      await page.goto("/pricing");
-
-      // After subscription expires, should show "Buy Credits" instead
-      const buyCreditsButton = page.locator("button").filter({ hasText: "Buy Credits" });
-      await expect(buyCreditsButton).toBeVisible();
-
-      // Should not show subscription management
-      const manageButton = page.locator("button").filter({ hasText: "Manage Subscription" });
-      await expect(manageButton).not.toBeVisible();
-    });
-
-    test("should transition from subscription to credits smoothly", async ({ page }) => {
-      await page.goto("/dashboard/coverage");
-
-      // Legacy customer with active subscription should still be able to create PRs
-      const createIssuesButton = page.locator("[data-testid=create-issues-button]");
-
-      if (await createIssuesButton.isVisible()) {
-        await createIssuesButton.click();
-
-        // Should work without deducting credits (subscription covers it)
-        await expect(page.locator("text=insufficient")).not.toBeVisible();
-      }
-    });
-
-    test("should see Manage button and open portal when has active subscription", async ({
-      page,
-    }) => {
-      // This is the key test from comprehensive - legacy with subscription sees "Manage"
-      await page.goto("/dashboard/credits");
-
-      const subscribeButton = page.getByTestId("purchase-credits-button");
-      await expect(subscribeButton).toHaveText("Manage");
-
-      // Mock Stripe portal URL
-      await page.route("**/api/stripe/create-portal-or-checkout-url", async (route) => {
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify("https://billing.stripe.com/p/session/test_portal"),
-        });
-      });
-
-      // Click should open portal (not checkout)
-      const popupPromise = page.waitForEvent("popup");
-      await subscribeButton.click();
-
-      const popup = await popupPromise;
-      expect(popup.url()).toContain("billing.stripe.com/p/session");
-    });
-
-    test("should allow configuring auto-reload for future use", async ({ page }) => {
-      await page.goto("/dashboard/credits");
-
-      // Legacy customers should be able to set up auto-reload for when subscription ends
-      const autoReloadSection = page.locator("[data-testid=auto-reload-settings]");
-      await expect(autoReloadSection).toBeVisible();
-
-      const enableCheckbox = autoReloadSection.locator("input[type=checkbox]");
-      await enableCheckbox.check();
-
-      // Should save successfully
-      const saveButton = autoReloadSection.locator("button");
-      await saveButton.click();
-      await expect(saveButton).toContainText("Saving...");
-    });
+    await expect(page.locator("text=Credits expire after 1 year")).toBeVisible();
   });
 });

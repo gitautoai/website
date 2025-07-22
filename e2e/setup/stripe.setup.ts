@@ -27,8 +27,17 @@ async function globalSetup() {
     console.log("No existing Stripe processes found or failed to check");
   }
 
-  // Start Stripe webhook listener
-  stripeProcess = spawn("stripe", ["listen", "--forward-to", "localhost:4000/api/stripe/webhook"], {
+  // Start Stripe webhook listener with API key
+  const apiKey = process.env.STRIPE_SECRET_KEY;
+  if (!apiKey) throw new Error("STRIPE_SECRET_KEY environment variable is required for E2E tests");
+  
+  stripeProcess = spawn("stripe", [
+    "listen",
+    "--forward-to",
+    "localhost:4000/api/stripe/webhook",
+    "--api-key",
+    apiKey,
+  ], {
     stdio: "pipe",
   });
 

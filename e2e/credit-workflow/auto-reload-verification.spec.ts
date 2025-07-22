@@ -63,7 +63,6 @@ test.describe("Auto-Reload Verification", () => {
         const maxRetries = 5;
 
         while (newBalance <= initialBalance && retries < maxRetries) {
-          console.log(`Balance check ${retries + 1}: ${newBalance}, waiting for webhook...`);
           await new Promise((resolve) => setTimeout(resolve, 1000));
           newBalance = await getCreditBalance(testOwnerId);
           retries++;

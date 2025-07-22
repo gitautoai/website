@@ -34,7 +34,7 @@ export default function CreditBalanceCard({ balance, pricePerPr }: CreditBalance
         <div className="flex-1"></div>
 
         <div className="pt-4">
-          <CreditPurchaseButton className="w-full" data-testid="purchase-credits-button" />
+          <CreditPurchaseButton className="w-full" />
         </div>
       </div>
     </div>

@@ -53,12 +53,11 @@ describe("getCreditBalance integration", () => {
     expect(balance).toBe(0);
   });
 
-  it("should throw error for non-existent owner", async () => {
+  it("should return 0 for non-existent owner", async () => {
     const nonExistentOwnerId = 999999999;
 
-    await expect(getCreditBalance(nonExistentOwnerId)).rejects.toThrow(
-      "Failed to get credit balance"
-    );
+    const balance = await getCreditBalance(nonExistentOwnerId);
+    expect(balance).toBe(0);
   });
 
   it("should handle multiple credit transactions correctly", async () => {

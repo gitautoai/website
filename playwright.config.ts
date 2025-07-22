@@ -6,10 +6,10 @@ config({ path: ".env.local" });
 
 export default defineConfig({
   testDir: "./e2e",
-  fullyParallel: true,
+  fullyParallel: false, // Changed to false to prevent auto-reload race conditions
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: 1, // Force sequential execution to prevent concurrent auto-reload
   reporter: "list",
 
   // Global setup/teardown: runs ONCE for entire test suite (starts/stops Stripe webhook)

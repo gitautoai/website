@@ -2,6 +2,13 @@ import { ANTHROPIC_MODEL_CLAUDE_40 } from "./anthropic";
 import { GOOGLE_GEMINI } from "./google";
 import { OPENAI_MODEL_O4_MINI } from "./openai";
 
+// https://dashboard.stripe.com/test/prices/price_1QHCpnKUN3yUNaHzXNhxtQ8A
+export const TEST_STANDARD_PLAN_PRICE_ID = "price_1QHCpnKUN3yUNaHzXNhxtQ8A";
+
+// Test customer with active subscription in Stripe test mode
+// https://dashboard.stripe.com/test/customers/cus_QO4R5vh6FJuN7t
+export const TEST_LEGACY_CUSTOMER_ID = "cus_QO4R5vh6FJuN7t";
+
 export const CREDIT_PRICING = {
   PER_PR: {
     AMOUNT_USD: 2,

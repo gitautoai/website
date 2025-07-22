@@ -46,6 +46,7 @@ export default function CreditPurchaseButton({ className = "" }: CreditPurchaseB
       <button
         onClick={handleClick}
         disabled={isLoading}
+        data-testid="purchase-credits-button"
         className={`py-2 px-4 rounded-lg font-medium bg-pink-600 text-white hover:bg-pink-700 ${
           isLoading ? "opacity-75 cursor-not-allowed" : ""
         } ${className}`}
