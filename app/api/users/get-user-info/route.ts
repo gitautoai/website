@@ -27,6 +27,8 @@ export async function POST(req: NextRequest) {
     // Handle test environment with mock data
     let ownerIds = [userId];
     
+    console.log(`[DEBUG] NODE_ENV: ${process.env.NODE_ENV}, accessToken: ${accessToken}`);
+    
     if (process.env.NODE_ENV === "test" && accessToken === "test-access-token") {
       // In test environment, just use the userId without making GitHub API calls
       console.log(`[TEST MODE] Using mock owner IDs for user ${userId}`);

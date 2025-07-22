@@ -110,9 +110,16 @@ test.describe("Manual Credit Purchase", () => {
       const initialBalance = initialOwner?.credit_balance_usd || 0;
 
       // Trigger Stripe webhook using CLI to simulate successful payment
-      await execAsync(
-        `stripe trigger payment_intent.succeeded --add payment_intent:metadata[owner_id]=${testOwnerId} --add payment_intent:metadata[credit_amount]=100 --add payment_intent:metadata[auto_reload]=false`
-      );
+      // https://docs.stripe.com/cli/trigger
+      const stripeCommand = `stripe trigger payment_intent.succeeded --add payment_intent:metadata.owner_id=${testOwnerId} --add payment_intent:metadata.credit_amount=100 --add payment_intent:metadata.auto_reload=false`;
+      console.log(`Executing Stripe command: ${stripeCommand}`);
+
+      const { stdout, stderr } = await execAsync(stripeCommand, {
+        env: { ...process.env },
+      });
+
+      console.log(`Stripe trigger stdout: ${stdout}`);
+      if (stderr) console.log(`Stripe trigger stderr: ${stderr}`);
 
       // Wait for webhook processing
       await page.waitForTimeout(2000);
