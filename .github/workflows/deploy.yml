@@ -15,4 +15,5 @@ jobs:
         run: npm i -g vercel@latest
 
       - name: Deploy to Vercel
-        run: vercel --yes --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
+        # https://vercel.com/guides/branch-variables-and-domains-not-linked-to-cli-deployments
+        run: vercel --yes --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --meta githubDeployment="1" --meta githubCommitRef="${GITHUB_REF#refs/heads/}"
