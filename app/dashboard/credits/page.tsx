@@ -17,6 +17,7 @@ import { CREDIT_PRICING } from "@/config/pricing";
 import CreditBalanceCard from "./components/CreditBalanceCard";
 import CreditTransactionHistory from "./components/CreditTransactionHistory";
 import AutoReloadSettings from "./components/AutoReloadSettings";
+import SpendingLimitSettings from "./components/SpendingLimitSettings";
 
 export default function CreditsPage() {
   const { currentOwnerId } = useAccountContext();
@@ -90,6 +91,7 @@ export default function CreditsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CreditBalanceCard balance={balance} pricePerPr={CREDIT_PRICING.PER_PR.AMOUNT_USD} />
           <AutoReloadSettings />
+          <SpendingLimitSettings />
         </div>
 
         <CreditTransactionHistory />

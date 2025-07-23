@@ -9,10 +9,10 @@ import { useEffect, useState } from "react";
 
 // Local imports
 import AuthControls from "@/app/components/AuthControls";
-import HamburgerMenu from "@/app/components/navbar/hamburgerMenu";
-import MobileDrawer from "@/app/components/navbar/MobileMenu";
+import MobileDrawer from "@/app/components/navigations/MobileMenu";
 import { INTERNAL_LINKS } from "@/config/internal-links";
 import { RELATIVE_URLS } from "@/config/urls";
+import HamburgerMenu from "./hamburgerMenu";
 
 export default function Navbar() {
   // Analytics
@@ -42,7 +42,7 @@ export default function Navbar() {
             <Image src="/logo.png" width={150} height={78} loading="lazy" alt="GitAuto Logo" />
           </Link>
           <ol className="hidden md:flex items-center justify-center gap-5">
-            {INTERNAL_LINKS.filter((link) => link.showInNav).map((link) => (
+            {INTERNAL_LINKS.filter((link) => link.showInHeader).map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}

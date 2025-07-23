@@ -3,6 +3,7 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { chargeSavedPaymentMethod } from "@/app/actions/stripe/charge-saved-payment-method";
 import { slackUs } from "@/app/actions/slack/slack-us";
+import { validateAutoReloadSpendingLimit } from "./validate-spending-limit";
 
 export async function checkAllAutoReloads() {
   try {
@@ -46,10 +47,37 @@ export async function checkAllAutoReloads() {
           continue;
         }
 
+        // Check spending limit before charging
+        const spendingValidation = await validateAutoReloadSpendingLimit({
+          ownerId: owner.owner_id,
+          requestedAmountUsd: amountToPurchase,
+        });
+
+        if (!spendingValidation.allowed) {
+          results.push({
+            ownerId: owner.owner_id,
+            success: false,
+            reason: spendingValidation.reason,
+          });
+          continue;
+        }
+
+        // Use adjusted amount if spending limit requires it
+        const finalAmountToPurchase = spendingValidation.adjustedAmountUsd;
+
+        if (finalAmountToPurchase <= 0) {
+          results.push({
+            ownerId: owner.owner_id,
+            success: false,
+            reason: "Adjusted amount is zero due to spending limit",
+          });
+          continue;
+        }
+
         // Charge the customer's saved payment method directly
         const chargeResult = await chargeSavedPaymentMethod({
           customerId: owner.stripe_customer_id,
-          amountUsd: amountToPurchase,
+          amountUsd: finalAmountToPurchase,
           description: `Auto-reload credits to $${owner.auto_reload_target_usd}`,
           metadata: {
             owner_id: owner.owner_id.toString(),
@@ -63,12 +91,12 @@ export async function checkAllAutoReloads() {
           results.push({
             ownerId: owner.owner_id,
             success: true,
-            amountCharged: amountToPurchase,
+            amountCharged: finalAmountToPurchase,
             paymentIntentId: chargeResult.paymentIntentId,
           });
 
           console.log(
-            `✅ Auto-reload successful for owner ${owner.owner_id}: $${amountToPurchase}`
+            `✅ Auto-reload successful for owner ${owner.owner_id}: $${finalAmountToPurchase}${spendingValidation.isAdjusted ? ` (adjusted from $${amountToPurchase} due to spending limit)` : ""}`
           );
         } else {
           results.push({
@@ -81,7 +109,7 @@ export async function checkAllAutoReloads() {
           await slackUs(
             `❌ Auto-reload failed!\n` +
               `Owner: ${owner.owner_id}\n` +
-              `Attempted amount: $${amountToPurchase}\n` +
+              `Attempted amount: $${finalAmountToPurchase}\n` +
               `Error: ${chargeResult.error || "Unknown error"}`
           );
 

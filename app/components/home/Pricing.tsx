@@ -42,8 +42,7 @@ export default function Pricing() {
           title="Standard"
           price={
             <div>
-              <span className="text-3xl font-bold">${CREDIT_PRICING.PER_PR.AMOUNT_USD}</span>
-              <span className="text-lg text-gray-600">{" "}/ PR</span>
+              <span className="text-3xl font-bold">From ${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD}</span>
             </div>
           }
           description="Perfect for teams looking to boost test coverage"

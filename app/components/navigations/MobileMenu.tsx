@@ -11,6 +11,7 @@ import { createCustomerPortalSession } from "@/app/actions/stripe/create-custome
 import { useAccountContext } from "@/app/components/contexts/Account";
 import OwnerSelector from "@/app/components/home/OwnerSelector";
 import { INTERNAL_LINKS } from "@/config/internal-links";
+import Image from "next/image";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -48,7 +49,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
       >
         <div className="h-full p-0">
           <ol className="h-screen flex flex-col items-center justify-center gap-2.5">
-            {INTERNAL_LINKS.map((link) => (
+            {INTERNAL_LINKS.filter((link) => link.showInMobile).map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
