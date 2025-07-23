@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getRepoCoverage } from "@/app/actions/supabase/get-repo-coverage";
+import { getRepoCoverage } from "@/app/actions/supabase/coverage/get-repo-coverage";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import DocsLink from "@/app/components/DocsLink";
 import ErrorBanner from "@/app/components/ErrorBanner";

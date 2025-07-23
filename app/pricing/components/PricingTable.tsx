@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { Fragment } from "react";
-import SubscribeButton from "@/app/components/buttons/SubscribeButton";
-import { useAccountContext } from "@/app/components/contexts/Account";
+import CreditPurchaseButton from "@/app/dashboard/credits/components/CreditPurchaseButton";
 import { PRICE_FEATURES, TABLE_FEATURES } from "@/config/pricing";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
@@ -36,8 +35,6 @@ const XMark = () => (
 );
 
 export default function PricingTable() {
-  const { billingPeriod } = useAccountContext();
-
   return (
     <div className="max-w-5xl w-full mx-auto">
       <table className="w-full border-collapse">
@@ -69,10 +66,7 @@ export default function PricingTable() {
               </Link>
             </td>
             <td className="py-4 px-6 text-center bg-pink-50">
-              <SubscribeButton
-                billingPeriod={billingPeriod}
-                className="inline-block py-2 px-4 w-full"
-              />
+              <CreditPurchaseButton className="inline-block py-2 px-4 w-full" />
             </td>
             <td className="py-4 px-6 text-center">
               <Link
@@ -84,30 +78,20 @@ export default function PricingTable() {
             </td>
           </tr>
 
-          {/* Price */}
-          <tr className="border-b border-gray-200">
-            <td className="py-4 px-6 font-medium">
-              {PRICE_FEATURES[0].name}
-              <div className="text-sm text-gray-500">{PRICE_FEATURES[0].description}</div>
-            </td>
-            <td className="py-4 px-6 text-center">{PRICE_FEATURES[0].free}</td>
-            <td className="py-4 px-6 text-center font-medium bg-pink-50">
-              {billingPeriod === "Monthly"
-                ? PRICE_FEATURES[0].standard
-                : PRICE_FEATURES[0].standardYearly}
-              <br />
-              <span className="text-sm text-gray-500">
-                {billingPeriod === "Yearly" && "Save $200/year"}
-              </span>
-            </td>
-            <td className="py-4 px-6 text-center">
-              {billingPeriod === "Monthly"
-                ? PRICE_FEATURES[0].enterprise
-                : PRICE_FEATURES[0].enterpriseYearly}
-              <br />
-              <span className="text-sm text-gray-500">Custom pricing</span>
-            </td>
-          </tr>
+          {/* Pricing Features */}
+          {PRICE_FEATURES.map((feature, idx) => (
+            <tr key={`price-${idx}`} className="border-b border-gray-200">
+              <td className="py-4 px-6 font-medium">
+                {feature.name}
+                <div className="text-sm text-gray-500">{feature.description}</div>
+              </td>
+              <td className="py-4 px-6 text-center">{feature.free}</td>
+              <td className="py-4 px-6 text-center bg-pink-50">
+                {feature.standard}
+              </td>
+              <td className="py-4 px-6 text-center">{feature.enterprise}</td>
+            </tr>
+          ))}
 
           {/* Features */}
           {TABLE_FEATURES.map((section) => (
@@ -170,10 +154,7 @@ export default function PricingTable() {
               </Link>
             </td>
             <td className="py-4 px-6 text-center bg-pink-50">
-              <SubscribeButton
-                billingPeriod={billingPeriod}
-                className="inline-block py-2 px-4 w-full"
-              />
+              <CreditPurchaseButton className="inline-block py-2 px-4 w-full" />
             </td>
             <td className="py-4 px-6 text-center">
               <Link

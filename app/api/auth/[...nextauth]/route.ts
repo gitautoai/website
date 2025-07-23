@@ -6,8 +6,8 @@ import { config, isPrd } from "@/config";
 
 // Local imports
 import { slackUs } from "@/app/actions/slack/slack-us";
-import { getUser } from "@/app/actions/supabase/get-user";
-import { upsertUser } from "@/app/actions/supabase/upsert-user";
+import { getUser } from "@/app/actions/supabase/users/get-user";
+import { upsertUser } from "@/app/actions/supabase/users/upsert-user";
 
 const handler = NextAuth({
   // https://next-auth.js.org/providers/github

@@ -1,5 +1,5 @@
 import { PRODUCT_NAME, EMAIL, DESCRIPTION, LEGAL_NAME } from "@/config";
-import { ABSOLUTE_URLS } from "@/config/urls";
+import { BASE_URL, ABSOLUTE_URLS } from "@/config/urls";
 
 /**
  * @see https://schema.org/Organization
@@ -7,11 +7,11 @@ import { ABSOLUTE_URLS } from "@/config/urls";
 export const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "@id": ABSOLUTE_URLS.GITAUTO.INDEX + "#organization",
+  "@id": BASE_URL + "#organization",
   name: PRODUCT_NAME,
   alternateName: LEGAL_NAME,
   legalName: LEGAL_NAME,
-  url: ABSOLUTE_URLS.GITAUTO.INDEX,
+  url: BASE_URL,
   logo: { "@type": "ImageObject", url: ABSOLUTE_URLS.GITAUTO.LOGO },
   founder: {
     "@type": "Person",
@@ -54,9 +54,9 @@ export const organizationJsonLd = {
 
 export const CREATOR = {
   "@type": "Organization",
-  "@id": ABSOLUTE_URLS.GITAUTO.INDEX + "#organization",
+  "@id": BASE_URL + "#organization",
   name: PRODUCT_NAME,
-  url: ABSOLUTE_URLS.GITAUTO.INDEX,
+  url: BASE_URL,
 } as const;
 
 export const OFFERS = [
@@ -118,13 +118,13 @@ export const AUDIENCE = {
 export const softwareApplicationData = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "@id": ABSOLUTE_URLS.GITAUTO.INDEX + "#softwareapplication",
+  "@id": BASE_URL + "#softwareapplication",
   name: PRODUCT_NAME,
   operatingSystem: "All",
   applicationCategory: "DeveloperApplication",
   applicationSubCategory: "Unit Test Generator",
   description: DESCRIPTION,
-  url: ABSOLUTE_URLS.GITAUTO.INDEX,
+  url: BASE_URL,
   offers: OFFERS,
   creator: CREATOR,
   featureList:

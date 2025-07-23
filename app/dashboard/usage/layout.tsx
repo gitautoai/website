@@ -7,14 +7,14 @@ import { createPageMetadata } from "@/utils/metadata";
 import { usageJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `${PRODUCT_NAME} Usage Dashboard - Monitor Your Stats & Billing`,
-  description: `Monitor GitAuto usage statistics including pull requests generated, issues processed, and billing. Track automation activity.`,
+  title: `${PRODUCT_NAME} Usage Dashboard - Monitor Your Stats & Credits`,
+  description: `Monitor GitAuto usage statistics including pull requests generated, issues processed, and credit usage. Track automation activity.`,
   url: ABSOLUTE_URLS.GITAUTO.DASHBOARD.USAGE,
   images: [{ url: THUMBNAILS.DASHBOARD.USAGE, alt: `${PRODUCT_NAME} Usage Dashboard` }],
   keywords: [
     "usage statistics dashboard",
     "GitAuto analytics",
-    "billing cycle tracking",
+    "monthly usage tracking",
     "automation metrics",
     "pull request statistics",
     "credit management",

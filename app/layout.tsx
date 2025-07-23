@@ -11,7 +11,7 @@ import { AccountContextWrapper } from "@/app/components/contexts/Account";
 import Footer from "@/app/components/Footer";
 import { InstallationSuccessPopup } from "@/app/components/InstallationSuccessPopup";
 // import IntercomMessenger from "@/app/components/Intercom";
-import Navbar from "@/app/components/navbar";
+import Navbar from "@/app/components/navigations/Navbar";
 import { PHProvider } from "@/app/components/PostHog";
 import SessionProvider from "@/app/components/SessionProvider";
 import { isPrd } from "@/config";

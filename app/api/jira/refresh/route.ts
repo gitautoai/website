@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { upsertOAuthToken } from "@/lib/supabase";
 import { ATLASSIAN_CLIENT_ID, ATLASSIAN_CLIENT_SECRET, ATLASSIAN_TOKEN_URL } from "@/config";
+import { upsertOAuthToken } from "@/app/actions/supabase/oauth_tokens/upsert-oauth-token";
 
 export async function POST(request: Request) {
   try {

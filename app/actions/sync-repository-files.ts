@@ -2,9 +2,9 @@
 
 import { fetchRepositoryFiles } from "@/app/actions/github/fetch-repository-files";
 import { getDefaultBranch } from "@/app/actions/github/get-default-branch";
-import { deleteCoverage } from "@/app/actions/supabase/delete-coverage";
-import { insertCoverage } from "@/app/actions/supabase/insert-coverage";
-import { updateCoverage } from "@/app/actions/supabase/update-coverage";
+import { deleteCoverage } from "@/app/actions/supabase/coverage/delete-coverage";
+import { insertCoverage } from "@/app/actions/supabase/coverage/insert-coverage";
+import { updateCoverage } from "@/app/actions/supabase/coverage/update-coverage";
 import { Tables } from "@/types/supabase";
 
 /**

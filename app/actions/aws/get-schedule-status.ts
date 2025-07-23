@@ -11,9 +11,7 @@ export async function getScheduleStatus(ownerId: number, repoId: number) {
     const response = await schedulerClient.send(new GetScheduleCommand({ Name: scheduleName }));
     return response.State === ScheduleState.ENABLED;
   } catch (error: any) {
-    if (error.name === "ResourceNotFoundException") {
-      return false;
-    }
+    if (error.name === "ResourceNotFoundException") return false;
     throw error;
   }
 }

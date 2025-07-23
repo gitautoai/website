@@ -1,8 +1,7 @@
 import Stripe from "stripe";
-import { config } from "@/config";
+import { STRIPE_SECRET_KEY } from "@/config";
 
 // Get Stripe Secret Key from environment variables
-const STRIPE_SECRET_KEY = config.STRIPE_SECRET_KEY;
 if (!STRIPE_SECRET_KEY) throw new Error("STRIPE_SECRET_KEY is not set");
 
 /**
@@ -10,7 +9,7 @@ if (!STRIPE_SECRET_KEY) throw new Error("STRIPE_SECRET_KEY is not set");
  * @see https://github.com/stripe/stripe-node#usage-with-typescript
  */
 const stripe = new Stripe(STRIPE_SECRET_KEY, {
-  apiVersion: "2024-11-20.acacia",
+  apiVersion: "2025-06-30.basil",
   typescript: true,
   maxNetworkRetries: undefined, // Default is 0
   httpAgent: undefined,

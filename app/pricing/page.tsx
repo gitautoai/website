@@ -1,6 +1,5 @@
 // Local imports
 import FAQ from "@/app/components/home/FAQ";
-import BillingToggle from "@/app/pricing/components/BillingToggle";
 import PricingTable from "@/app/pricing/components/PricingTable";
 
 export default function PricingPage() {
@@ -13,7 +12,6 @@ export default function PricingPage() {
       </p>
 
       {/* Client Component for interactive parts */}
-      <BillingToggle />
       <PricingTable />
 
       <div className="max-w-5xl w-full mx-auto mt-16">

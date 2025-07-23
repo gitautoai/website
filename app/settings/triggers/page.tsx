@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 
 // Local imports (Actions)
 import { slackUs } from "@/app/actions/slack/slack-us";
-import { getTriggerSettings } from "@/app/actions/supabase/get-trigger-settings";
-import { saveTriggerSettings } from "@/app/actions/supabase/save-trigger-settings";
+import { getTriggerSettings } from "@/app/actions/supabase/repositories/get-trigger-settings";
+import { saveTriggerSettings } from "@/app/actions/supabase/repositories/save-trigger-settings";
 import { createOrUpdateSchedule } from "@/app/actions/aws/create-or-update-schedule";
 import { deleteSchedules } from "@/app/actions/aws/delete-schedules";
 

@@ -1,4 +1,4 @@
-import { getOAuthToken } from "@/lib/supabase";
+import { getOAuthToken } from "@/app/actions/supabase/oauth_tokens/get-oauth-token";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     if (!userId || !serviceName)
       return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
 
-    const accessToken = await getOAuthToken(userId, serviceName);
+    const accessToken = await getOAuthToken(Number(userId), serviceName);
     return NextResponse.json({ accessToken });
   } catch (error) {
     console.error("Error fetching OAuth token:", error);

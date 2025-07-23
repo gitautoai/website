@@ -2,10 +2,13 @@
 // Third party imports
 import { useEffect, useState } from "react";
 
-// Local imports
+// Local imports (Relative paths)
 import RepositorySelector from "../../settings/components/RepositorySelector";
 import { usageJsonLd } from "./jsonld";
-import { UsageStats, BillingPeriod } from "./types";
+import { UsageStats } from "./types";
+
+// Local imports
+import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
@@ -14,9 +17,8 @@ import { fetchWithTiming } from "@/utils/fetch";
 export default function UsagePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { userId, jwtToken, currentOwnerName, currentStripeCustomerId } = useAccountContext();
+  const { userId, currentOwnerName, currentStripeCustomerId } = useAccountContext();
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
-  const [billingPeriod, setBillingPeriod] = useState<BillingPeriod | null>(null);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
 
   useEffect(() => {
@@ -30,23 +32,20 @@ export default function UsagePage() {
         setError(null);
         setIsLoading(true);
 
-        // Fetch billing period
-        const billingData = await fetchWithTiming<BillingPeriod>(`/api/stripe/get-billing-period`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ stripe_customer_id: currentStripeCustomerId }),
-        });
-        setBillingPeriod(billingData);
+        // Calculate this month's period
+        const now = new Date();
+        const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+        const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
 
-        // Then fetch stats with billing period
+        // Fetch stats for this month
         const statsData = await fetchWithTiming<UsageStats>(`/api/supabase/get-usage-stats`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ownerName: currentOwnerName,
             userId: userId,
-            periodStart: billingData.current_period_start,
-            periodEnd: billingData.current_period_end,
+            periodStart: thisMonthStart,
+            periodEnd: nextMonthStart,
           }),
         });
 
@@ -80,16 +79,10 @@ export default function UsagePage() {
 
     setIsPortalLoading(true);
     try {
-      const portalUrl = await fetchWithTiming<string>("/api/stripe/create-portal-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId,
-          jwtToken,
-          customerId: currentStripeCustomerId,
-        }),
+      const portalUrl = await createCustomerPortalSession({
+        stripe_customer_id: currentStripeCustomerId,
+        return_url: window.location.href,
       });
-
       window.location.href = portalUrl;
     } catch (error) {
       console.error("Error opening portal:", error);
@@ -101,14 +94,12 @@ export default function UsagePage() {
   const StatBlock = ({
     title,
     allTime,
-    currentCycle,
-    limit,
+    thisMonth,
     showManageCredits,
   }: {
     title: string;
     allTime: number;
-    currentCycle: number;
-    limit?: number;
+    thisMonth: number;
     showManageCredits?: boolean;
   }) => (
     <div className="bg-white p-6 rounded-lg shadow-sm border">
@@ -119,11 +110,8 @@ export default function UsagePage() {
           <p className="text-2xl font-bold">{formatNumber(allTime)}</p>
         </div>
         <div>
-          <p className="text-sm text-gray-600">Current Billing Cycle</p>
-          <p className="text-2xl font-bold">
-            {formatNumber(currentCycle)}
-            {limit !== undefined && ` / ${formatNumber(limit)}`}
-          </p>
+          <p className="text-sm text-gray-600">This Month</p>
+          <p className="text-2xl font-bold">{formatNumber(thisMonth)}</p>
           {showManageCredits && (
             <button
               onClick={handleManageCredits}
@@ -162,42 +150,44 @@ export default function UsagePage() {
         )}
 
         <p className="text-gray-600">
-          Current billing cycle: {formatDate(billingPeriod?.current_period_start || "")} -{" "}
-          {formatDate(billingPeriod?.current_period_end || "")}
+          This month:{" "}
+          {formatDate(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString())} -{" "}
+          {formatDate(
+            new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString()
+          )}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatBlock
             title="Total Pull Requests"
             allTime={usageStats?.all_time.total_prs || 0}
-            currentCycle={usageStats?.current_cycle.total_prs || 0}
+            thisMonth={usageStats?.this_month.total_prs || 0}
           />
           <StatBlock
             title="Total Issues"
             allTime={usageStats?.all_time.total_issues || 0}
-            currentCycle={usageStats?.current_cycle.total_issues || 0}
-            limit={billingPeriod?.request_limit}
+            thisMonth={usageStats?.this_month.total_issues || 0}
             showManageCredits={true}
           />
           <StatBlock
             title="Total Merged PRs"
             allTime={usageStats?.all_time.total_merges || 0}
-            currentCycle={usageStats?.current_cycle.total_merges || 0}
+            thisMonth={usageStats?.this_month.total_merges || 0}
           />
           <StatBlock
             title="Your Pull Requests"
             allTime={usageStats?.all_time.user_prs || 0}
-            currentCycle={usageStats?.current_cycle.user_prs || 0}
+            thisMonth={usageStats?.this_month.user_prs || 0}
           />
           <StatBlock
             title="Your Issues"
             allTime={usageStats?.all_time.user_issues || 0}
-            currentCycle={usageStats?.current_cycle.user_issues || 0}
+            thisMonth={usageStats?.this_month.user_issues || 0}
           />
           <StatBlock
             title="Your Merged PRs"
             allTime={usageStats?.all_time.user_merges || 0}
-            currentCycle={usageStats?.current_cycle.user_merges || 0}
+            thisMonth={usageStats?.this_month.user_merges || 0}
           />
         </div>
 

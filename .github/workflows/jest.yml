@@ -25,6 +25,11 @@ jobs:
 
       - name: Run Jest with coverage
         run: npm test -- --coverage --coverageReporters="text" --coverageReporters="lcov"
+        env:
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4

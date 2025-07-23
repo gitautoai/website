@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
+import { getOAuthToken } from "@/app/actions/supabase/oauth_tokens/get-oauth-token";
 import { getUserJiraAccess } from "@/lib/jira";
-import { getOAuthToken } from "@/lib/supabase";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -9,7 +9,7 @@ export async function GET(request: Request) {
 
   try {
     // Get Jira access token from Supabase
-    const accessToken = await getOAuthToken(userId, "jira");
+    const accessToken = await getOAuthToken(Number(userId), "jira");
     if (!accessToken) return NextResponse.json({ sites: [] });
 
     const sitesWithProjects = await getUserJiraAccess(accessToken);

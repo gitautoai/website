@@ -1,7 +1,7 @@
 import { AUDIENCE, CREATOR } from "@/app/jsonld";
 import { PRODUCT_NAME } from "@/config";
 import { THUMBNAILS } from "@/config/thumbnails";
-import { ABSOLUTE_URLS } from "@/config/urls";
+import { BASE_URL, ABSOLUTE_URLS } from "@/config/urls";
 
 /**
  * @see https://schema.org/ContactPage
@@ -18,9 +18,9 @@ export const contactJsonLd = {
   image: THUMBNAILS.CONTACT,
   mainEntity: {
     "@type": "Organization",
-    "@id": ABSOLUTE_URLS.GITAUTO.INDEX + "#organization",
+    "@id": BASE_URL + "#organization",
     name: PRODUCT_NAME,
-    url: ABSOLUTE_URLS.GITAUTO.INDEX,
+    url: BASE_URL,
     contactPoint: {
       "@type": "ContactPoint",
       contactType: "Customer Support",
@@ -35,7 +35,7 @@ export const contactJsonLd = {
         "@type": "ListItem",
         position: 1,
         name: "Home",
-        item: ABSOLUTE_URLS.GITAUTO.INDEX,
+        item: BASE_URL,
       },
       {
         "@type": "ListItem",

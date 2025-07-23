@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState, useRef, useTransition } from "react";
 
 // Local imports
-import { getRepositorySettings } from "@/app/actions/supabase/get-repository-settings";
-import { saveRepositorySettings } from "@/app/actions/supabase/save-repository-settings";
+import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
+import { saveRepositorySettings } from "@/app/actions/supabase/repositories/save-repository-settings";
 import { Branch } from "@/app/api/github/get-branches/route";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
@@ -67,9 +67,14 @@ export default function RulesPage() {
           const newSettings: RulesSettings = {
             repoRules: data.repo_rules || "",
             targetBranch: data.target_branch || "",
-            structuredRules: data.structured_rules
-              ? { ...DEFAULT_STRUCTURED_RULES, ...data.structured_rules }
-              : DEFAULT_STRUCTURED_RULES,
+            structuredRules:
+              data &&
+              "structured_rules" in data &&
+              data.structured_rules &&
+              typeof data.structured_rules === "object" &&
+              !Array.isArray(data.structured_rules)
+                ? { ...DEFAULT_STRUCTURED_RULES, ...data.structured_rules }
+                : DEFAULT_STRUCTURED_RULES,
           };
           setFormData(newSettings);
           setTokenCounts({ repoRules: countTokens(newSettings.repoRules) });

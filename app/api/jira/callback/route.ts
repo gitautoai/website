@@ -1,5 +1,6 @@
 // This API endpoint should be identical to the one in https://developer.atlassian.com/console/myapps/b7aee3f7-7512-4f48-9d2d-73703cd9d38f/authorization/auth-code-grant and https://developer.atlassian.com/console/myapps/e2807e7d-f001-4838-9654-1cd0233e9726/authorization/auth-code-grant
 import { NextResponse } from "next/server";
+import { upsertOAuthToken } from "@/app/actions/supabase/oauth_tokens/upsert-oauth-token";
 import {
   ATLASSIAN_CLIENT_ID,
   ATLASSIAN_CLIENT_SECRET,
@@ -7,7 +8,6 @@ import {
   ATLASSIAN_TOKEN_URL,
 } from "@/config";
 import { BASE_URL } from "@/config/urls";
-import { upsertOAuthToken } from "@/lib/supabase";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

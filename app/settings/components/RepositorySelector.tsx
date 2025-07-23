@@ -10,13 +10,11 @@ type RepositorySelectorProps = {
 export default function RepositorySelector({ onRepoChange }: RepositorySelectorProps) {
   const {
     organizations,
-    currentRepoName,
-    setCurrentRepoName,
     currentOwnerName,
     setCurrentOwnerName,
+    currentRepoName,
+    setCurrentRepoName,
     isLoading,
-    installations,
-    setSelectedIndex,
   } = useAccountContext();
 
   const handleOwnerChange = (ownerName: string) => {
@@ -25,13 +23,8 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
     if (currentOrg && currentOrg.repositories.length > 0) {
       setCurrentOwnerName(ownerName);
 
-      const newIndex = installations?.findIndex(
-        (installation) => installation.owner_name === ownerName
-      );
-      if (newIndex !== -1) setSelectedIndex(newIndex);
-
-      const firstRepo = currentOrg.repositories[0].repoName;
-      handleRepoChange(firstRepo);
+      const firstRepo = currentOrg.repositories[0];
+      handleRepoChange(firstRepo.repoName);
     }
   };
 

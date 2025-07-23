@@ -24,15 +24,37 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
+      # https://docs.stripe.com/stripe-cli?install-method=apt#install
+      - name: Install Stripe CLI
+        run: |
+          curl -s https://packages.stripe.dev/api/security/keypair/stripe-cli-gpg/public | gpg --dearmor | sudo tee /usr/share/keyrings/stripe.gpg
+          echo "deb [signed-by=/usr/share/keyrings/stripe.gpg] https://packages.stripe.dev/stripe-cli-debian-local stable main" | sudo tee -a /etc/apt/sources.list.d/stripe.list
+          sudo apt update
+          sudo apt install stripe
+          stripe --version
+
       - name: Run E2E tests
         run: npx playwright test
         env:
           NODE_ENV: test
           BASE_URL: http://localhost:4000
 
-          # To ignore NextAuth warnings
+          # NextAuth configuration
           NEXTAUTH_URL: http://localhost:4000
           NEXTAUTH_SECRET: "dummy-secret-for-testing"
+          JWT_SECRET: "dummy-jwt-secret-for-testing"
+
+          # GitHub OAuth credentials for E2E tests
+          GITHUB_CLIENT_ID: ${{ secrets.GH_CLIENT_ID }}
+          GITHUB_CLIENT_SECRET: ${{ secrets.GH_CLIENT_SECRET }}
+
+          # Stripe credentials for E2E tests
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+
+          # Supabase credentials for E2E tests
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
       - name: Upload test results
         uses: actions/upload-artifact@v4

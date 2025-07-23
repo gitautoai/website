@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getGraphQL } from "@/app/api/github";
 import { PRODUCT_ID } from "@/config";
 import { ABSOLUTE_URLS } from "@/config/urls";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/server";
 import { Tables } from "@/types/supabase";
 
 type CreateIssueResponse = {
@@ -196,7 +196,7 @@ View full coverage details in the [Coverage Dashboard](${
     // Batch update coverage records with issue URLs
     await Promise.all(
       createdIssues.map(({ coverageId, issueUrl }) =>
-        supabase.from("coverages").update({ github_issue_url: issueUrl }).eq("id", coverageId)
+        supabaseAdmin.from("coverages").update({ github_issue_url: issueUrl }).eq("id", coverageId)
       )
     );
 

@@ -2,44 +2,37 @@ import { ANTHROPIC_MODEL_CLAUDE_40 } from "./anthropic";
 import { GOOGLE_GEMINI } from "./google";
 import { OPENAI_MODEL_O4_MINI } from "./openai";
 
-export const PRICES = {
-  MONTHLY: {
-    STANDARD: {
-      NUMBER: 100,
-      STRING: "$100",
-    },
-    ENTERPRISE: {
-      NUMBER: 500,
-      STRING: "$500+",
-    },
+// https://dashboard.stripe.com/test/prices/price_1QHCpnKUN3yUNaHzXNhxtQ8A
+export const TEST_STANDARD_PLAN_PRICE_ID = "price_1QHCpnKUN3yUNaHzXNhxtQ8A";
+
+// Test customer with active subscription in Stripe test mode
+// https://dashboard.stripe.com/test/customers/cus_QO4R5vh6FJuN7t
+export const TEST_LEGACY_CUSTOMER_ID = "cus_QO4R5vh6FJuN7t";
+
+export const CREDIT_PRICING = {
+  PER_PR: {
+    AMOUNT_USD: 2,
   },
-  YEARLY: {
-    STANDARD: {
-      NUMBER: 1000,
-      STRING: "$1,000",
-    },
-    ENTERPRISE: {
-      NUMBER: 5000,
-      STRING: "$5,000+",
-    },
+  PURCHASE_LIMITS: {
+    MIN_AMOUNT_USD: 10,
+    MAX_AMOUNT_USD: 5000,
+    DEFAULT_AMOUNT_USD: 100,
+  },
+  AUTO_RELOAD: {
+    DEFAULT_TRIGGER_USD: 10,
+    DEFAULT_TARGET_USD: 100,
+  },
+  SPENDING_LIMIT: {
+    DEFAULT_AMOUNT_USD: 5000,
   },
 };
 
-export const PRS = {
-  MONTHLY: {
-    FREE: 3,
-    STANDARD: 20,
-    ENTERPRISE: "200+",
-  },
-  YEARLY: {
-    STANDARD: 240,
-    ENTERPRISE: "2400+",
-  },
-};
+export const FREE_PRS_LIMIT = 5;
+export const FREE_CREDITS_AMOUNT_USD = 10;
 
 export const FREE_FEATURES = [
   ANTHROPIC_MODEL_CLAUDE_40,
-  `${PRS.MONTHLY.FREE} PRs per month per GitHub organization`,
+  `$${FREE_CREDITS_AMOUNT_USD} free credits`,
   "1 repository",
   "Unlimited users",
   "Issue checkbox trigger",
@@ -58,8 +51,11 @@ export const FREE_FEATURES = [
 
 export const STANDARD_FEATURES = [
   "Everything in Free plan",
-  `${PRS.MONTHLY.STANDARD} PRs per month per GitHub organization`,
-  `More PRs by increasing quantity (${PRS.MONTHLY.STANDARD} PRs x Qty)`,
+  `Starting at $${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD} for ${Math.floor(CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD / CREDIT_PRICING.PER_PR.AMOUNT_USD)} PRs`,
+  "Purchase credits as needed",
+  "Auto-reload when balance is low",
+  "Set spending limits for safety",
+  "Credits expire after 1 year",
   "Unlimited repositories",
   "Unlimited schedule trigger",
   "Unlimited test failure trigger retries",
@@ -73,7 +69,6 @@ export const STANDARD_FEATURES = [
 export const ENTERPRISE_FEATURES = [
   "Everything in Standard plan",
   `${ANTHROPIC_MODEL_CLAUDE_40}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
-  `${PRS.MONTHLY.ENTERPRISE} PRs per month per GitHub organization`,
   "Self LLM API key",
   "Self hosting",
   "SAML / SSO",
@@ -83,13 +78,32 @@ export const ENTERPRISE_FEATURES = [
 
 export const PRICE_FEATURES = [
   {
-    name: "Price",
-    description: "Choose the plan that fits your team's needs.",
+    name: "Pricing",
+    description: "Pay-as-you-go with pre-paid credits.",
     free: "$0",
-    standard: "$100/month",
-    enterprise: "$500+/month",
-    standardYearly: "$1,000/year",
-    enterpriseYearly: "$5,000+/year",
+    standard: `$${CREDIT_PRICING.PER_PR.AMOUNT_USD} per PR`,
+    enterprise: "Custom pricing",
+  },
+  {
+    name: "Minimum Purchase",
+    description: "Smallest credit package you can buy.",
+    free: "—",
+    standard: `$${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD}`,
+    enterprise: "Custom",
+  },
+  {
+    name: "Auto-reload",
+    description: "Automatically purchase credits when balance is low.",
+    free: "—",
+    standard: `Customizable (default: reload when < $${CREDIT_PRICING.AUTO_RELOAD.DEFAULT_TRIGGER_USD})`,
+    enterprise: "Custom",
+  },
+  {
+    name: "Spending Limits",
+    description: "Maximum monthly spending cap for safety.",
+    free: "—",
+    standard: `Customizable (default: $${CREDIT_PRICING.SPENDING_LIMIT.DEFAULT_AMOUNT_USD}/month)`,
+    enterprise: "Custom",
   },
 ];
 
@@ -105,11 +119,11 @@ export const TABLE_FEATURES = [
         enterprise: `${ANTHROPIC_MODEL_CLAUDE_40}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
       },
       {
-        name: "PRs per Month",
-        description: "Number of pull requests per month per GitHub organization",
-        free: `${PRS.MONTHLY.FREE}`,
-        standard: `${PRS.MONTHLY.STANDARD} × quantity`,
-        enterprise: `${PRS.MONTHLY.ENTERPRISE}`,
+        name: "Credits",
+        description: "Credits for pull request generation",
+        free: `$${FREE_CREDITS_AMOUNT_USD} free credits`,
+        standard: `$${CREDIT_PRICING.PER_PR.AMOUNT_USD} per PR`,
+        enterprise: "Custom pricing",
       },
       {
         name: "Repositories",

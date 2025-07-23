@@ -7,6 +7,7 @@ export interface Installation {
   user_id: number;
   user_name: string;
   stripe_customer_id: string;
+  hasActiveSubscription: boolean;
 }
 
 export interface Repository {

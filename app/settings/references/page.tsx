@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback, useTransition } from "react";
 
 // Local imports (Absolute imports)
-import { getRepositorySettings } from "@/app/actions/supabase/get-repository-settings";
-import { saveRepositorySettings } from "@/app/actions/supabase/save-repository-settings";
+import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
+import { saveRepositorySettings } from "@/app/actions/supabase/repositories/save-repository-settings";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 

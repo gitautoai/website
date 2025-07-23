@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback, useTransition } from "react";
 
 // Local imports
-import { getRepositorySettings } from "@/app/actions/supabase/get-repository-settings";
-import { saveRepositorySettings } from "@/app/actions/supabase/save-repository-settings";
+import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
+import { saveRepositorySettings } from "@/app/actions/supabase/repositories/save-repository-settings";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
@@ -43,8 +43,8 @@ export default function ScreenshotsPage() {
             productionUrl: data.production_url || "",
             localPort: data.local_port || 8080,
             startupCommands: Array.isArray(data.startup_commands)
-              ? data.startup_commands.join("\n")
-              : "",
+              ? data.startup_commands
+              : [],
           });
         } else {
           setSettings({

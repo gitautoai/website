@@ -1,0 +1,34 @@
+name: Deploy to Vercel
+
+on:
+  push:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Deploy to Vercel
+        id: deploy
+        # https://vercel.com/guides/branch-variables-and-domains-not-linked-to-cli-deployments
+        run: |
+          deployment_url=$(vercel --yes --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --meta githubDeployment="1" --meta githubCommitRef="${GITHUB_REF#refs/heads/}")
+          echo "deployment_url=$deployment_url" >> $GITHUB_OUTPUT
+        continue-on-error: true
+
+      - name: Notify Slack on Failure
+        if: failure()
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          webhook-type: incoming-webhook
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "<!channel> ❌ ${{ github.ref == 'refs/heads/main' && 'Production' || 'Preview' }} deployment failed${{ steps.deploy.outputs.deployment_url && format(' - {0}', steps.deploy.outputs.deployment_url) || '' }}"
+            }

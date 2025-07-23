@@ -8,6 +8,8 @@
 
 # testing
 /coverage
+e2e/.auth/
+test-results/
 
 # next.js
 /.next/
@@ -27,9 +29,6 @@ yarn-error.log*
 
 # env files
 .env*
-
-# vercel
-.vercel
 
 # typescript
 *.tsbuildinfo
