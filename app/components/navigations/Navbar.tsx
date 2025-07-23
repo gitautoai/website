@@ -12,7 +12,7 @@ import AuthControls from "@/app/components/AuthControls";
 import MobileDrawer from "@/app/components/navigations/MobileMenu";
 import { INTERNAL_LINKS } from "@/config/internal-links";
 import { RELATIVE_URLS } from "@/config/urls";
-import HamburgerMenu from "./hamburgerMenu";
+import HamburgerMenu from "./HamburgerMenu";
 
 export default function Navbar() {
   // Analytics

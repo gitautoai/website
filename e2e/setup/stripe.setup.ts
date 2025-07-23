@@ -7,9 +7,14 @@ let stripeProcess: ChildProcess | null = null;
 async function globalSetup() {
   // Kill any existing Stripe processes to prevent duplicates
   try {
-    const { stdout } = await execAsync("ps aux | grep 'stripe listen' | grep -v grep | awk '{print $2}'");
-    const pids = stdout.trim().split('\n').filter(pid => pid);
-    
+    const { stdout } = await execAsync(
+      "ps aux | grep 'stripe listen' | grep -v grep | awk '{print $2}'"
+    );
+    const pids = stdout
+      .trim()
+      .split("\n")
+      .filter((pid) => pid);
+
     for (const pid of pids) {
       if (pid) {
         console.log(`Killing existing Stripe process: ${pid}`);
@@ -20,9 +25,9 @@ async function globalSetup() {
         }
       }
     }
-    
+
     // Wait a moment for processes to be killed
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   } catch (error) {
     console.log("No existing Stripe processes found or failed to check");
   }
@@ -30,16 +35,22 @@ async function globalSetup() {
   // Start Stripe webhook listener with API key
   const apiKey = process.env.STRIPE_SECRET_KEY;
   if (!apiKey) throw new Error("STRIPE_SECRET_KEY environment variable is required for E2E tests");
-  
-  stripeProcess = spawn("stripe", [
-    "listen",
-    "--forward-to",
-    "localhost:4000/api/stripe/webhook",
-    "--api-key",
-    apiKey,
-  ], {
-    stdio: "pipe",
-  });
+
+  stripeProcess = spawn(
+    "stripe",
+    [
+      "listen",
+      "--events",
+      "payment_intent.succeeded",
+      "--forward-to",
+      "localhost:4000/api/stripe/webhook",
+      "--api-key",
+      apiKey,
+    ],
+    {
+      stdio: "pipe",
+    }
+  );
 
   // Wait for webhook listener to be ready
   await new Promise<void>((resolve, reject) => {

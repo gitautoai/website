@@ -4,6 +4,9 @@ import { config } from "dotenv";
 // Load environment variables from .env.local for E2E tests
 config({ path: ".env.local" });
 
+// Set environment variable to indicate Playwright test execution
+process.env.IS_PLAYWRIGHT = "true";
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false, // Changed to false to prevent auto-reload race conditions

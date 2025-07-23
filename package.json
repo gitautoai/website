@@ -6,9 +6,10 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "npm run types:generate && next dev -p 4000 & npm run stripe",
+    "dev": "npm run kill-port && npm run types:generate && next dev -p 4000 & npm run stripe",
+    "kill-port": "lsof -ti:4000 | xargs kill -9 2>/dev/null || true",
     "stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:4000/api/stripe/webhook",
-    "dev:test": "next dev -p 4000 & npm run stripe",
+    "dev:test": "IS_PLAYWRIGHT=true next dev -p 4000 & npm run stripe",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -16,6 +17,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test --max-failures=1",
+    "test:e2e-all": "playwright test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import CreditPurchaseModal from "./CreditPurchaseModal";
@@ -13,18 +13,23 @@ export default function CreditPurchaseButton({ className = "" }: CreditPurchaseB
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { selectedIndex, installationsSubscribed, currentStripeCustomerId, currentOwnerId } = useAccountContext();
+  const { installations, currentStripeCustomerId, currentOwnerId } = useAccountContext();
 
-  const hasActiveSubscription =
-    selectedIndex != null &&
-    installationsSubscribed &&
-    installationsSubscribed[selectedIndex] === true;
+  const hasActiveSubscription = useMemo(() => {
+    if (!installations || !currentOwnerId) return false;
+
+    const currentInstallation = installations.find(
+      (installation) => installation.owner_id === currentOwnerId
+    );
+
+    return currentInstallation?.hasActiveSubscription;
+  }, [installations, currentOwnerId]);
 
   const buttonText = hasActiveSubscription ? "Manage" : "Buy Credits";
 
   const handleClick = async () => {
     if (!currentOwnerId) return;
-    
+
     if (hasActiveSubscription && currentStripeCustomerId) {
       setIsLoading(true);
       try {

@@ -21,11 +21,13 @@ export interface TestOwnerResult {
 
 export async function createTestOwner(options: TestOwnerOptions = {}): Promise<TestOwnerResult> {
   const testOwnerId = Math.floor(Math.random() * 1000000) + 10000000;
+  const testInstallationId = Math.floor(Math.random() * 1000000) + 40000000; // Test installation ID
   let testCustomerId: string | undefined;
 
   try {
     // Clean up any existing data for this test owner first
     await supabaseAdmin.from("credits").delete().eq("owner_id", testOwnerId);
+    await supabaseAdmin.from("installations").delete().eq("owner_id", testOwnerId);
     await supabaseAdmin.from("owners").delete().eq("owner_id", testOwnerId);
 
     // Create Stripe customer if not provided
@@ -47,10 +49,12 @@ export async function createTestOwner(options: TestOwnerOptions = {}): Promise<T
       testCustomerId = customerResult.customerId!;
     }
 
+    const ownerName = options.ownerName || `test-owner-${testOwnerId}`;
+
     // Set up test owner
     await supabaseAdmin.from("owners").upsert({
       owner_id: testOwnerId,
-      owner_name: options.ownerName || `test-owner-${testOwnerId}`,
+      owner_name: ownerName,
       owner_type: "User",
       stripe_customer_id: testCustomerId,
       credit_balance_usd: 0, // Will be set by trigger
@@ -58,6 +62,15 @@ export async function createTestOwner(options: TestOwnerOptions = {}): Promise<T
       auto_reload_threshold_usd: options.autoReloadThreshold ?? 10,
       auto_reload_target_usd: options.autoReloadTarget ?? 50,
       org_rules: "",
+    });
+
+    // Create installation record for this owner
+    await supabaseAdmin.from("installations").upsert({
+      installation_id: testInstallationId,
+      owner_id: testOwnerId,
+      owner_type: "User",
+      owner_name: ownerName,
+      uninstalled_at: null,
     });
 
     // Insert initial credits if specified
@@ -102,6 +115,7 @@ export async function cleanupTestOwner(testOwnerId: number, testCustomerId?: str
   try {
     // Cleanup database records
     await supabaseAdmin.from("credits").delete().eq("owner_id", testOwnerId);
+    await supabaseAdmin.from("installations").delete().eq("owner_id", testOwnerId);
     await supabaseAdmin.from("owners").delete().eq("owner_id", testOwnerId);
 
     // Cleanup Stripe customer if provided

@@ -1,7 +1,11 @@
 import { createCustomer } from "@/app/actions/stripe/create-customer";
 import stripe from "@/lib/stripe";
+import { TEST_STANDARD_PLAN_PRICE_ID } from "@/config/pricing";
 
-export async function createTestCustomer(metadata: Record<string, string> = {}) {
+export async function createTestCustomer(
+  metadata: Record<string, string> = {},
+  options: { createSubscription?: boolean } = {}
+) {
   try {
     // First create customer without payment method
     const result = await createCustomer({
@@ -35,6 +39,20 @@ export async function createTestCustomer(metadata: Record<string, string> = {}) 
         default_payment_method: paymentMethod.id,
       },
     });
+
+    // Create subscription if requested
+    if (options.createSubscription) {
+      const subscription = await stripe.subscriptions.create({
+        customer: customerId,
+        items: [{ price: TEST_STANDARD_PLAN_PRICE_ID }],
+        default_payment_method: paymentMethod.id,
+      });
+
+      return {
+        ...result,
+        subscriptionId: subscription.id,
+      };
+    }
 
     return result;
   } catch (error) {

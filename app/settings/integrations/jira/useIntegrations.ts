@@ -5,17 +5,19 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
 // Local imports
-import { GitHubOwnerWithRepos } from "@/app/api/github/get-installed-repos/route";
+import { GitHubOwnerWithRepos } from "@/app/actions/github/get-installed-repos";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import { JiraSiteWithProjects } from "@/lib/jira";
 
 export function useIntegrations() {
   const { data: session } = useSession();
-  const { installationIds } = useAccountContext();
+  const { organizations } = useAccountContext();
   const [jiraSites, setJiraSites] = useState<JiraSiteWithProjects[]>([]);
-  const [githubOwners, setGithubOwners] = useState<GitHubOwnerWithRepos[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+
+  // Convert organizations to GitHubOwnerWithRepos format
+  const githubOwners: GitHubOwnerWithRepos[] = organizations;
 
   // Jira connection status - move async process to microtask queue
   useEffect(() => {
@@ -55,29 +57,6 @@ export function useIntegrations() {
       }
     }, 0);
   }, [session?.user?.userId]);
-
-  // Fetch GitHub repositories
-  useEffect(() => {
-    if (!installationIds.length) return;
-    console.log("API call: get-installed-repos");
-    // setTimeout to move async process to microtask queue
-    setTimeout(async () => {
-      try {
-        const response = await fetch("/api/github/get-installed-repos", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ installationIds }),
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch GitHub repositories");
-        const owners: GitHubOwnerWithRepos[] = await response.json();
-        setGithubOwners(owners);
-      } catch (error) {
-        console.error("Error fetching GitHub repositories:", error);
-        setGithubOwners([]);
-      }
-    }, 0);
-  }, [installationIds]);
 
   const handleJiraAuth = async () => {
     if (!session?.user?.userId) return;

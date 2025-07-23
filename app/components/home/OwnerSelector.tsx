@@ -14,23 +14,24 @@ export default function OwnerSelector({
   const {
     installations,
     mutateInstallations,
-    selectedIndex,
-    setSelectedIndex,
     organizations,
     setCurrentRepoName,
     setCurrentOwnerName,
+    currentOwnerId,
   } = useAccountContext();
 
-  function selectOwner(index: number) {
+  function selectOwner(ownerId: number) {
     if (!installations) return;
 
-    const newOwnerName = installations[index].owner_name;
+    const installation = installations.find((inst) => inst.owner_id === ownerId);
+    if (!installation) return;
+
+    const newOwnerName = installation.owner_name;
 
     // Store the selected owner in localStorage
     localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, newOwnerName);
 
-    // Update the selected index and owner name
-    setSelectedIndex(index);
+    // Update the owner name (ID will be auto-updated by useEffect)
     setCurrentOwnerName(newOwnerName);
 
     // Find the first repository of the selected owner and set it
@@ -73,10 +74,11 @@ export default function OwnerSelector({
                                 id={`${index}-user-${item.id}`}
                                 name={`${index}-user-${item.id}`}
                                 onClick={() => {
-                                  selectOwner(index);
+                                  selectOwner(item.owner_id);
                                 }}
                                 className={`${
-                                  selectedIndex == index && "border-l-2 p-1 border-pink-600"
+                                  currentOwnerId === item.owner_id &&
+                                  "border-l-2 p-1 border-pink-600"
                                 }`}
                               >
                                 {item.owner_name}
@@ -88,10 +90,11 @@ export default function OwnerSelector({
                                 id={`${index}-org-${item.id}`}
                                 name={`${index}-org-${item.id}`}
                                 onClick={() => {
-                                  selectOwner(index);
+                                  selectOwner(item.owner_id);
                                 }}
                                 className={`${
-                                  selectedIndex == index && "border-l-2 p-1 border-pink-600"
+                                  currentOwnerId === item.owner_id &&
+                                  "border-l-2 p-1 border-pink-600"
                                 }`}
                               >
                                 {item.owner_name}{" "}

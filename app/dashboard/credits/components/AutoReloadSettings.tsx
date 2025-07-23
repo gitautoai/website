@@ -17,7 +17,7 @@ export default function AutoReloadSettings() {
   useEffect(() => {
     const fetchOwnerSettings = async () => {
       if (!ownerId) return;
-      
+
       setLoading(true);
       try {
         const owner = await getOwner(ownerId);
@@ -38,7 +38,7 @@ export default function AutoReloadSettings() {
 
   const handleSave = async (newEnabled?: boolean, newThreshold?: number, newTarget?: number) => {
     if (!ownerId) return;
-    
+
     setSaving(true);
     try {
       await updateAutoReloadSettings({
@@ -57,7 +57,7 @@ export default function AutoReloadSettings() {
 
   const handleToggleChange = async (newEnabled: boolean) => {
     if (!ownerId) return;
-    
+
     setEnabled(newEnabled);
 
     // Save silently in background without showing loading state
@@ -81,11 +81,13 @@ export default function AutoReloadSettings() {
     setTarget(newTarget);
   };
 
-
   return (
     <div
       className="bg-white rounded-lg shadow p-6 flex flex-col"
       data-testid="auto-reload-settings"
+      data-loading={loading}
+      data-owner-id={ownerId}
+      data-enabled={enabled}
     >
       <h2 className="text-lg font-semibold mt-0 mb-4">Auto-Reload Settings</h2>
 
