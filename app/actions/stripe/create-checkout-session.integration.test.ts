@@ -29,11 +29,12 @@ describe("createCheckoutSession integration", () => {
     });
     testCustomers.push(customer.id);
 
+    const testOwnerId = "test-owner-" + Math.random().toString(36).substring(7);
     const result = await createCheckoutSession({
       customerId: customer.id,
       amountUsd: 25, // $25
       metadata: {
-        owner_id: "test-owner-" + Math.random().toString(36).substring(7),
+        owner_id: testOwnerId,
         test: "true",
         purpose: "integration_test",
         amount: "25",
@@ -66,6 +67,7 @@ describe("createCheckoutSession integration", () => {
       test: "true",
       purpose: "integration_test",
       amount: "25",
+      owner_id: testOwnerId,
     });
 
     // Verify fixed success URL and default cancel URL
