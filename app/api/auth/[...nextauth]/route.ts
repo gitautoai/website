@@ -10,6 +10,7 @@ import { generateWelcomeEmail } from "@/app/actions/resend/templates/generate-we
 import { slackUs } from "@/app/actions/slack/slack-us";
 import { getUser } from "@/app/actions/supabase/users/get-user";
 import { upsertUser } from "@/app/actions/supabase/users/upsert-user";
+import { generateRandomDelay } from "@/utils/generate-random-delay";
 import { parseName } from "@/utils/parse-name";
 
 const handler = NextAuth({
@@ -75,9 +76,11 @@ const handler = NextAuth({
             to: [userEmail],
             subject: `Welcome to ${PRODUCT_NAME}, ${firstName}!`,
             text: generateWelcomeEmail(firstName),
+            scheduledAt: generateRandomDelay(),
           });
 
-          if (!emailResult.success) console.error("Failed to send welcome email:", emailResult.error);
+          if (!emailResult.success)
+            console.error("Failed to send welcome email:", emailResult.error);
         }
 
         // Send Slack notification with correct user status
