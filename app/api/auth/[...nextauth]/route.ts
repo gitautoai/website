@@ -2,12 +2,15 @@
 import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
-import { config, isPrd } from "@/config";
 
 // Local imports
+import { config, isPrd, EMAIL_FROM } from "@/config";
+import { sendEmail } from "@/app/actions/resend/send-email";
+import { generateWelcomeEmail } from "@/app/actions/resend/templates/generate-welcome-email";
 import { slackUs } from "@/app/actions/slack/slack-us";
 import { getUser } from "@/app/actions/supabase/users/get-user";
 import { upsertUser } from "@/app/actions/supabase/users/upsert-user";
+import { parseName } from "@/utils/parse-name";
 
 const handler = NextAuth({
   // https://next-auth.js.org/providers/github
@@ -56,12 +59,26 @@ const handler = NextAuth({
         const userEmail = user.email || null;
 
         // Check if user already exists using server action
-        const userResult = await getUser(userId);
-        const isNewUser = !userResult.exists;
+        const existingUser = await getUser(userId);
+        const isNewUser = !existingUser;
+        const hadEmailBefore = existingUser?.email;
 
         // Upsert user in Supabase
         const result = await upsertUser(userId, userName, userEmail);
         if (!result.success) console.error("Failed to upsert user:", result.message);
+
+        // Send welcome email if this is the first time we have their email
+        if (!hadEmailBefore && userEmail) {
+          const { firstName } = parseName(userName);
+          const emailResult = await sendEmail({
+            from: EMAIL_FROM,
+            to: [userEmail],
+            subject: "Quick question about GitAuto",
+            text: generateWelcomeEmail(firstName),
+          });
+
+          if (!emailResult.success) console.error("Failed to send welcome email:", emailResult.error);
+        }
 
         // Send Slack notification with correct user status
         const slackMessage = `${isNewUser ? "🎉 New user" : "👋 Returning user"} signed in: ${userName} ${userEmail ? `(${userEmail})` : ""}`;

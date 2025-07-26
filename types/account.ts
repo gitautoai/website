@@ -6,6 +6,8 @@ export interface AccountContextType {
   userId: number | null;
   userLogin: string | null;
   userName: string;
+  firstName: string;
+  lastName: string;
   email: string | null;
   jwtToken: string | null;
   accessToken: string | undefined;

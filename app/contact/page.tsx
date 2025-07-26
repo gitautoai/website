@@ -5,7 +5,7 @@ import { useActionState, useState, useEffect } from "react";
 
 // Local imports (Absolute imports)
 import { sendEmail } from "@/app/actions/resend/send-email";
-import { generateContactConfirmationText } from "@/app/actions/resend/generate-contact-confirmation-text";
+import { generateContactConfirmation } from "@/app/actions/resend/templates/generate-contact-confirmation";
 import { slackUs } from "@/app/actions/slack/slack-us";
 import { saveContact } from "@/app/actions/supabase/contacts/save-contact";
 import Modal from "@/app/components/Modal";
@@ -71,7 +71,7 @@ export default function ContactPage() {
         to: [saveResult.data.email],
         cc: [EMAIL],
         subject: getRandomItem(subjects),
-        text: generateContactConfirmationText(saveResult.data),
+        text: generateContactConfirmation(saveResult.data),
       });
 
       if (!emailResult.success) {
