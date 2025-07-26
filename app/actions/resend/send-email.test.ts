@@ -1,10 +1,19 @@
+// Mock dependencies before any imports
+jest.mock("crypto");
+jest.mock("@/config/resend", () => ({
+  RESEND_API_KEY: "mock-api-key",
+}));
+jest.mock("./index", () => ({
+  resend: {
+    emails: {
+      send: jest.fn(),
+    },
+  },
+}));
+
 import { randomUUID } from "crypto";
 import { sendEmail } from "./send-email";
 import { resend } from "./index";
-
-// Mock dependencies
-jest.mock("crypto");
-jest.mock("./index");
 
 const mockRandomUUID = randomUUID as jest.MockedFunction<typeof randomUUID>;
 const mockResend = resend as jest.Mocked<typeof resend>;
@@ -21,11 +30,6 @@ describe("sendEmail", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockRandomUUID.mockReturnValue(mockUUID);
-    
-    // Setup default mock for resend.emails.send
-    mockResend.emails = {
-      send: jest.fn(),
-    } as any;
   });
 
   describe("successful email sending", () => {
