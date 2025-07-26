@@ -1,1 +1,1 @@
-export { default } from "../settings/layout";
+export { default, metadata } from "../settings/layout";
