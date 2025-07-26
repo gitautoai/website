@@ -6,8 +6,8 @@ jest.mock("next-auth", () => ({
   })),
 }));
 
-jest.mock("next-auth/providers/github", () => ({
-  default: jest.fn(() => ({
+jest.mock("next-auth/providers/github", () => 
+  jest.fn(() => ({
     id: "github",
     name: "GitHub",
     type: "oauth",
