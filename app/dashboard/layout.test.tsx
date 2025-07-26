@@ -137,9 +137,9 @@ describe("DashboardLayout", () => {
 
 describe("DashboardLayout metadata", () => {
   it("should re-export metadata from settings layout", () => {
-    // Since we're testing a re-export, we verify that the module structure is correct
-    // The actual metadata testing would be done in the settings layout tests
-    expect(typeof DashboardLayout).toBe("function");
-    expect(DashboardLayout.name).toBe("MockSettingsLayout");
+    // Verify that metadata is properly re-exported
+    expect(metadata).toBeDefined();
+    expect(metadata.title).toBe("Test Settings Title");
+    expect(metadata.description).toBe("Test Settings Description");
   });
 });
