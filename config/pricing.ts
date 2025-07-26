@@ -1,4 +1,4 @@
-import { ANTHROPIC_MODEL_CLAUDE_40 } from "./anthropic";
+import { ANTHROPIC_MODEL_CLAUDE_40, ANTHROPIC_MODEL_CLAUDE_40_OPUS } from "./anthropic";
 import { GOOGLE_GEMINI } from "./google";
 import { OPENAI_MODEL_O4_MINI } from "./openai";
 
@@ -53,9 +53,6 @@ export const STANDARD_FEATURES = [
   "Everything in Free plan",
   `Starting at $${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD} for ${Math.floor(CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD / CREDIT_PRICING.PER_PR.AMOUNT_USD)} PRs`,
   "Purchase credits as needed",
-  "Auto-reload when balance is low",
-  "Set spending limits for safety",
-  "Credits expire after 1 year",
   "Unlimited repositories",
   "Unlimited schedule trigger",
   "Unlimited test failure trigger retries",
@@ -68,7 +65,7 @@ export const STANDARD_FEATURES = [
 
 export const ENTERPRISE_FEATURES = [
   "Everything in Standard plan",
-  `${ANTHROPIC_MODEL_CLAUDE_40}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
+  `${ANTHROPIC_MODEL_CLAUDE_40_OPUS}, ${ANTHROPIC_MODEL_CLAUDE_40}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
   "Self LLM API key",
   "Self hosting",
   "SAML / SSO",
@@ -105,6 +102,13 @@ export const PRICE_FEATURES = [
     standard: `Customizable (default: $${CREDIT_PRICING.SPENDING_LIMIT.DEFAULT_AMOUNT_USD}/month)`,
     enterprise: "Custom",
   },
+  {
+    name: "Credit Expiration",
+    description: "How long credits remain valid after purchase.",
+    free: "—",
+    standard: "1 year",
+    enterprise: "Custom",
+  },
 ];
 
 export const TABLE_FEATURES = [
@@ -116,7 +120,7 @@ export const TABLE_FEATURES = [
         description: "AI models used for test generation",
         free: ANTHROPIC_MODEL_CLAUDE_40,
         standard: ANTHROPIC_MODEL_CLAUDE_40,
-        enterprise: `${ANTHROPIC_MODEL_CLAUDE_40}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
+        enterprise: `${ANTHROPIC_MODEL_CLAUDE_40_OPUS}, ${ANTHROPIC_MODEL_CLAUDE_40}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
       },
       {
         name: "Credits",
