@@ -1,3 +1,4 @@
+import React from "react";
 import { render, screen } from "@testing-library/react";
 import DashboardLayout from "./layout";
 import { metadata } from "./layout";
