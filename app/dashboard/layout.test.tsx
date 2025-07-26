@@ -9,9 +9,17 @@ jest.mock("../settings/layout", () => {
     </div>
   );
   MockSettingsLayout.displayName = "MockSettingsLayout";
+  
+  // Mock metadata export
+  const mockMetadata = {
+    title: "Test Settings Title",
+    description: "Test Settings Description",
+  };
+  
   return {
     __esModule: true,
     default: MockSettingsLayout,
+    metadata: mockMetadata,
   };
 });
 
