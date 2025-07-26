@@ -6,6 +6,6 @@ export const parseName = (fullName: string) => {
   
   return {
     firstName: nameParts[0] || fullName,
-    lastName: nameParts[nameParts.length - 1] || ""
+    lastName: nameParts.length > 1 ? nameParts[nameParts.length - 1] : ""
   };
 };
