@@ -10,19 +10,12 @@ import FormField from "@/app/settings/components/FormField";
 import type { BaseSettings } from "@/app/settings/types";
 
 export default function SettingsPage() {
-  const { userId, userName, email } = useAccountContext();
+  const { userId, userName, firstName, lastName, email } = useAccountContext();
 
   const baseSettings = useMemo((): BaseSettings => {
-    // Handle names with parentheses: "Hiroshi (Wes) Nishio" -> ["Hiroshi", "Nishio"]
-    const nameParts =
-      userName
-        ?.replace(/\s*\([^)]*\)\s*/g, " ")
-        .trim()
-        .split(/\s+/) || [];
-
     return {
-      firstName: nameParts[0] || "",
-      lastName: nameParts[nameParts.length - 1] || "",
+      firstName: firstName || "",
+      lastName: lastName || "",
       email: email || "",
       githubUserId: userId?.toString() || "",
       githubUserName: userName || "",
@@ -31,7 +24,7 @@ export default function SettingsPage() {
       jiraUserName: "",
       jiraUserEmail: "",
     };
-  }, [userId, userName, email]);
+  }, [userId, userName, firstName, lastName, email]);
 
   const [settings, setSettings] = useState<BaseSettings>(baseSettings);
   const [isLoading, setIsLoading] = useState(true);

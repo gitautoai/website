@@ -1,7 +1,7 @@
 import { PRODUCT_NAME } from "@/config";
 import { Tables } from "@/types/supabase";
 
-export function generateContactConfirmationText(data: Tables<"contacts">): string {
+export function generateContactConfirmation(data: Tables<"contacts">): string {
   const sections = [
     `Hey ${data.first_name}!`,
     ``,

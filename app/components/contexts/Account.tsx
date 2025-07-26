@@ -15,6 +15,7 @@ import { swrOptions } from "@/config/swr";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { AccountContextType } from "@/types/account";
 import { Installation, Organization } from "@/types/github";
+import { parseName } from "@/utils/parse-name";
 
 const AccountContext = createContext<AccountContextType>({
   installations: undefined,
@@ -22,6 +23,8 @@ const AccountContext = createContext<AccountContextType>({
   userId: null,
   userLogin: null,
   userName: "Unknown User",
+  firstName: "",
+  lastName: "",
   email: null,
   jwtToken: null,
   accessToken: undefined,
@@ -46,6 +49,8 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const [userId, setUserId] = useState<number | null>(null);
   const [userLogin, setUserLogin] = useState<string | null>(null);
   const [userName, setUserName] = useState<string>("Unknown User");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string | null>(null);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
@@ -84,7 +89,11 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
     setUserId(session.user.userId);
     setUserLogin(session.user.login || null);
-    setUserName(session.user.name || "Unknown User");
+    const fullName = session.user.name || "Unknown User";
+    setUserName(fullName);
+    const { firstName, lastName } = parseName(fullName);
+    setFirstName(firstName);
+    setLastName(lastName);
     setEmail(session.user.email || "Unknown Email");
     setJwtToken(session.jwtToken);
     setAccessToken(session.accessToken);
@@ -269,6 +278,8 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         userId,
         userLogin,
         userName,
+        firstName,
+        lastName,
         email,
         jwtToken,
         accessToken,
