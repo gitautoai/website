@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import DashboardLayout from "./layout";
+import { metadata } from "./layout";
 
 // Mock the settings layout since we're testing the re-export
 jest.mock("../settings/layout", () => {
