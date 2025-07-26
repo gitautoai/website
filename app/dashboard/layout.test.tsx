@@ -144,6 +144,7 @@ describe("DashboardLayout metadata", () => {
   });
 });
 describe("DashboardLayout component", () => {
+
   it("should be a function component", () => {
     expect(typeof DashboardLayout).toBe("function");
     expect(DashboardLayout.name).toBe("MockSettingsLayout");
