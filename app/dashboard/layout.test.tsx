@@ -143,6 +143,7 @@ describe("DashboardLayout metadata", () => {
     expect(metadata.description).toBe("Test Settings Description");
   });
 });
+
 describe("DashboardLayout component", () => {
 
   it("should be a function component", () => {
