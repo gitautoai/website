@@ -11,8 +11,8 @@ jest.mock("next-auth/providers/github", () =>
     id: "github",
     name: "GitHub",
     type: "oauth",
-  })),
-}));
+  }))
+);
 
 jest.mock("jsonwebtoken", () => ({
   sign: jest.fn(),
