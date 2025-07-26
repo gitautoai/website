@@ -165,7 +165,7 @@ When the user says "LGTM", execute these commands in order:
 6. `npm run build` - Build the project
 7. **STOP if any test fails** - Fix all failures before proceeding
 8. `git add .` - Stage all changes (only if ALL tests passed)
-9. Create a descriptive commit message based on changes
+9. Create a descriptive commit message based on changes (do NOT include Claude Code attribution)
 10. `git push` - Push to remote
 
 ## TypeScript Error Checking Rule
