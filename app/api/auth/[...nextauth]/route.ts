@@ -4,7 +4,7 @@ import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
 
 // Local imports
-import { config, isPrd, EMAIL_FROM } from "@/config";
+import { config, isPrd, EMAIL_FROM, PRODUCT_NAME } from "@/config";
 import { sendEmail } from "@/app/actions/resend/send-email";
 import { generateWelcomeEmail } from "@/app/actions/resend/templates/generate-welcome-email";
 import { slackUs } from "@/app/actions/slack/slack-us";
@@ -73,7 +73,7 @@ const handler = NextAuth({
           const emailResult = await sendEmail({
             from: EMAIL_FROM,
             to: [userEmail],
-            subject: "Quick question about GitAuto",
+            subject: `Welcome to ${PRODUCT_NAME}, ${firstName}!`,
             text: generateWelcomeEmail(firstName),
           });
 
