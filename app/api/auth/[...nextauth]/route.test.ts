@@ -1,7 +1,4 @@
-import { JWT } from "next-auth/jwt";
-import { sign } from "jsonwebtoken";
-
-// Mock next-auth
+// Mock all dependencies before importing
 jest.mock("next-auth", () => ({
   default: jest.fn(() => ({
     GET: jest.fn(),
@@ -9,59 +6,63 @@ jest.mock("next-auth", () => ({
   })),
 }));
 
-describe("NextAuth jwt callback", () => {
-  it("should set initial token values on first sign in", async () => {
-    const mockAccount = {
-      providerAccountId: "12345",
-      access_token: "mock-access-token",
-      refresh_token: "mock-refresh-token",
-      expires_at: Math.floor(Date.now() / 1000) + 3600,
-      refresh_token_expires_in: 15780000,
-    };
+jest.mock("next-auth/providers/github", () => ({
+  default: jest.fn(),
+}));
 
-    const mockUser = {
-      id: "12345",
-      name: "Test User",
-      email: "test@example.com",
-    };
+jest.mock("jsonwebtoken", () => ({
+  sign: jest.fn(),
+}));
 
-    const mockToken: JWT = {};
+jest.mock("@/config", () => ({
+  config: {
+    GITHUB_CLIENT_ID: "mock-client-id",
+    GITHUB_CLIENT_SECRET: "mock-client-secret",
+    JWT_SECRET: "mock-jwt-secret",
+    NEXTAUTH_SECRET: "mock-nextauth-secret",
+  },
+  isPrd: false,
+  EMAIL_FROM: "test@example.com",
+  PRODUCT_NAME: "TestApp",
+}));
 
-    // Test the NextAuth callback function directly
-    const result = await (async () => {
-      const token = mockToken;
-      if (mockAccount && mockUser) {
-        token.jwtToken = sign(mockUser, "mock-jwt-secret", {
-          algorithm: "HS256",
-          expiresIn: "100d",
-        });
-        token.user_id = mockAccount.providerAccountId;
-        token.accessToken = mockAccount.access_token;
-        token.refreshToken = mockAccount.refresh_token;
-        token.accessTokenExpires = mockAccount.expires_at;
-        token.refreshTokenExpiresIn = mockAccount.refresh_token_expires_in;
-      }
-      return token;
-    })();
+// Mock all action dependencies
+jest.mock("@/app/actions/resend/send-email", () => ({ sendEmail: jest.fn() }));
+jest.mock("@/app/actions/resend/templates/generate-welcome-email", () => ({ generateWelcomeEmail: jest.fn() }));
+jest.mock("@/app/actions/slack/slack-us", () => ({ slackUs: jest.fn() }));
+jest.mock("@/app/actions/supabase/users/get-user", () => ({ getUser: jest.fn() }));
+jest.mock("@/app/actions/supabase/users/upsert-user", () => ({ upsertUser: jest.fn() }));
+jest.mock("@/utils/generate-random-delay", () => ({ generateRandomDelay: jest.fn() }));
+jest.mock("@/utils/parse-name", () => ({ parseName: jest.fn() }));
 
-    expect(result).toMatchObject({
-      user_id: mockAccount.providerAccountId,
-      accessToken: mockAccount.access_token,
-      refreshToken: mockAccount.refresh_token,
-      accessTokenExpires: mockAccount.expires_at,
-      refreshTokenExpiresIn: mockAccount.refresh_token_expires_in,
-    });
-
-    // Check if JWT token exists
-    expect(result.jwtToken).toBeDefined();
-    expect(typeof result.jwtToken).toBe("string");
+describe("NextAuth Route", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it("should refresh token when expired", async () => {
-    // TODO: Implement test for token refresh scenario
+  it("should export GET and POST handlers", () => {
+    const { GET, POST } = require("./route");
+    
+    expect(GET).toBeDefined();
+    expect(POST).toBeDefined();
   });
 
-  it("should return existing token when not expired", async () => {
-    // TODO: Implement test for non-expired token scenario
+  it("should configure NextAuth with correct settings", () => {
+    const NextAuth = require("next-auth").default;
+    
+    // Import the route to trigger NextAuth configuration
+    require("./route");
+    
+    expect(NextAuth).toHaveBeenCalledWith(
+      expect.objectContaining({
+        providers: expect.any(Array),
+        callbacks: expect.objectContaining({
+          jwt: expect.any(Function),
+          session: expect.any(Function),
+        }),
+        debug: false,
+        secret: "mock-nextauth-secret",
+      })
+    );
   });
 });
