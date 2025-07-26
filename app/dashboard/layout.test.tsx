@@ -133,3 +133,4 @@ describe("DashboardLayout metadata", () => {
     expect(typeof DashboardLayout).toBe("function");
     expect(DashboardLayout.name).toBe("MockSettingsLayout");
   });
+});
