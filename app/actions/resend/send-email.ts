@@ -1,5 +1,7 @@
 "use server";
 
+import { randomUUID } from "crypto";
+import type { CreateEmailOptions, CreateEmailRequestOptions } from "resend";
 import { resend } from "./index";
 
 interface SendEmailParams {
@@ -8,11 +10,26 @@ interface SendEmailParams {
   cc?: string[];
   subject: string;
   text: string;
+  scheduledAt?: Date;
 }
 
-export async function sendEmail({ from, to, cc, subject, text }: SendEmailParams) {
+export async function sendEmail({ from, to, cc, subject, text, scheduledAt }: SendEmailParams) {
   try {
-    const { data, error } = await resend.emails.send({ from, to, cc, subject, text });
+    const params: CreateEmailOptions = {
+      from,
+      to,
+      cc,
+      subject,
+      text,
+    };
+
+    if (scheduledAt) params.scheduledAt = scheduledAt.toISOString();
+
+    const options: CreateEmailRequestOptions = {
+      idempotencyKey: randomUUID(),
+    };
+
+    const { data, error } = await resend.emails.send(params, options);
 
     if (error) {
       console.error("Failed to send email:", error);
