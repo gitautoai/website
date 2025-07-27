@@ -22,6 +22,5 @@ export async function getOwners(ownerIds: number[]) {
     throw error;
   }
 
-  console.log(`[DEBUG] Found ${owners.length} owners for ${ownerIds.length} owner IDs`);
   return owners;
 }
