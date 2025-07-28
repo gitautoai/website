@@ -11,7 +11,7 @@ import { createCustomerPortalSession } from "@/app/actions/stripe/create-custome
 import { useAccountContext } from "@/app/components/contexts/Account";
 import OwnerSelector from "@/app/components/home/OwnerSelector";
 import { INTERNAL_LINKS } from "@/config/internal-links";
-import Image from "next/image";
+import { DEFAULT_SIGNIN_REDIRECT } from "@/config/urls";
 
 interface MobileDrawerProps {
   setIsNavOpen: (prev: boolean) => void;
@@ -63,7 +63,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen, posthog }: Mobil
             {status === "unauthenticated" && (
               <li>
                 <button
-                  onClick={() => signIn("github", { callbackUrl: pathname })}
+                  onClick={() => signIn("github", { callbackUrl: pathname.startsWith("/dashboard") || pathname.startsWith("/settings") ? pathname : DEFAULT_SIGNIN_REDIRECT })}
                   className="border border-pink-600 text-black rounded-lg transition-all duration-200 py-1 px-3 whitespace-nowrap shadow-md hover:shadow-lg cursor-pointer hover:scale-105 active:scale-95"
                 >
                   Sign In

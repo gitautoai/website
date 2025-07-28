@@ -1,7 +1,6 @@
 "use client";
 
 import { useSearchParams, usePathname } from "next/navigation";
-import { useSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -9,7 +8,6 @@ export function InstallationSuccessPopup() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-  const { status } = useSession();
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
@@ -25,11 +23,6 @@ export function InstallationSuccessPopup() {
       router.replace(cleanUrl, { scroll: false });
     }
   }, [searchParams, pathname, router]);
-
-  const handleSignIn = () => {
-    signIn("github", { callbackUrl: pathname });
-    setShowPopup(false);
-  };
 
   const handleClose = () => {
     setShowPopup(false);
@@ -66,42 +59,12 @@ export function InstallationSuccessPopup() {
             GitAuto is now installed and ready to create unit tests for your repositories.
           </p>
 
-          {status === "unauthenticated" && (
-            <>
-              <div className="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-4">
-                <p className="text-sm text-pink-800">
-                  <strong>Want to unlock more features?</strong>
-                  <br />
-                  Sign in to access your coverage dashboard, manage settings, and get detailed
-                  insights.
-                </p>
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={handleSignIn}
-                  className="flex-1 bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors"
-                >
-                  Sign In for More Features
-                </button>
-                <button
-                  onClick={handleClose}
-                  className="flex-1 bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors"
-                >
-                  Maybe Later
-                </button>
-              </div>
-            </>
-          )}
-
-          {status === "authenticated" && (
-            <button
-              onClick={handleClose}
-              className="w-full bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors"
-            >
-              Get Started
-            </button>
-          )}
+          <button
+            onClick={handleClose}
+            className="w-full bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors"
+          >
+            Get Started
+          </button>
         </div>
       </div>
     </div>
