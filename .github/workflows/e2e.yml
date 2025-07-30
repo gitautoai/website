@@ -21,17 +21,51 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(node -e "console.log(require('./package-lock.json').packages['node_modules/@playwright/test'].version)")" >> $GITHUB_ENV
+
+      # Cache Playwright browsers to reduce download time
+      # GitHub Actions cache limit: 10GB per repository, 7 days retention
+      # Source: https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/caching-dependencies-to-speed-up-workflows
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+
+      - name: Install Playwright OS dependencies
+        run: npx playwright install-deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+
+      # Cache Stripe CLI binary to avoid repeated downloads
+      # GitHub Actions can cache any directory including system paths like /usr/local/bin
+      # Cache limit: 10GB per repo, 7 days retention for unused caches
+      # Source: https://docs.github.com/en/actions/how-tos/writing-workflows/choosing-what-your-workflow-does/caching-dependencies-to-speed-up-workflows
+      - name: Cache Stripe CLI
+        uses: actions/cache@v4
+        id: stripe-cache
+        with:
+          path: /usr/local/bin/stripe
+          key: ${{ runner.os }}-stripe-cli
 
       # https://docs.stripe.com/stripe-cli?install-method=apt#install
       - name: Install Stripe CLI
+        if: steps.stripe-cache.outputs.cache-hit != 'true'
         run: |
           curl -s https://packages.stripe.dev/api/security/keypair/stripe-cli-gpg/public | gpg --dearmor | sudo tee /usr/share/keyrings/stripe.gpg
           echo "deb [signed-by=/usr/share/keyrings/stripe.gpg] https://packages.stripe.dev/stripe-cli-debian-local stable main" | sudo tee -a /etc/apt/sources.list.d/stripe.list
           sudo apt update
           sudo apt install stripe
-          stripe --version
+          sudo cp $(which stripe) /usr/local/bin/stripe
+          
+      - name: Verify Stripe CLI
+        run: stripe --version
 
       - name: Run E2E tests
         run: npx playwright test
