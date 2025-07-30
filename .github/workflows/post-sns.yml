@@ -1,8 +1,10 @@
 name: Post SNS
 
 on:
-  pull_request:
-    types: [closed]
+  workflow_run:
+    workflows: ["Deploy to Vercel"]
+    types:
+      - completed
     branches:
       - main
 
@@ -12,7 +14,7 @@ permissions:
 
 jobs:
   post-sns:
-    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'sns')
+    if: github.event.workflow_run.conclusion == 'success' && contains(github.event.workflow_run.pull_requests[0].labels.*.name, 'sns')
     runs-on: ubuntu-22.04
     steps:
       # https://github.com/actions/checkout
@@ -32,16 +34,21 @@ jobs:
           npm install playwright
           npx playwright install chromium
 
-      - name: Wait for deployment
-        run: sleep 600 # Wait for 10 minutes (600 seconds)
-
       - name: Check blog post
         id: blog-check
         uses: actions/github-script@v7
         with:
           script: |
             const { getBlogInfo } = require('.github/scripts/utils.js');
-            const { isBlog, postUrl } = await getBlogInfo({ github, context });
+            // Use the triggering workflow run's context instead of current context
+            // workflow_run payload includes pull_requests array per GitHub docs:
+            // https://docs.github.com/en/rest/actions/workflow-runs
+            const triggeringContext = {
+              payload: {
+                pull_request: github.event.workflow_run.pull_requests[0]
+              }
+            };
+            const { isBlog, postUrl } = await getBlogInfo({ github, context: triggeringContext });
             core.setOutput('isBlog', isBlog);
             core.setOutput('postUrl', postUrl);
 
@@ -54,7 +61,13 @@ jobs:
             const postTwitter = require('.github/scripts/post-twitter.js');
             const isBlog = ${{ steps.blog-check.outputs.isBlog }};
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
-            await postTwitter({ context, isBlog, postUrl });
+            // Use the triggering workflow run's context
+            const triggeringContext = {
+              payload: {
+                pull_request: github.event.workflow_run.pull_requests[0]
+              }
+            };
+            await postTwitter({ context: triggeringContext, isBlog, postUrl });
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
@@ -73,7 +86,13 @@ jobs:
             const postLinkedIn = require('.github/scripts/post-linkedin.js');
             const isBlog = ${{ steps.blog-check.outputs.isBlog }};
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
-            await postLinkedIn({ context, isBlog, postUrl });
+            // Use the triggering workflow run's context
+            const triggeringContext = {
+              payload: {
+                pull_request: github.event.workflow_run.pull_requests[0]
+              }
+            };
+            await postLinkedIn({ context: triggeringContext, isBlog, postUrl });
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
 
@@ -85,7 +104,13 @@ jobs:
             const postHackerNews = require('.github/scripts/post-hackernews.js');
             const isBlog = ${{ steps.blog-check.outputs.isBlog }};
             const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
-            await postHackerNews({ context, isBlog, postUrl });
+            // Use the triggering workflow run's context
+            const triggeringContext = {
+              payload: {
+                pull_request: github.event.workflow_run.pull_requests[0]
+              }
+            };
+            await postHackerNews({ context: triggeringContext, isBlog, postUrl });
         env:
           HN_USERNAME: ${{ secrets.HN_USERNAME }}
           HN_PASSWORD: ${{ secrets.HN_PASSWORD }}
