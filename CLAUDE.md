@@ -18,6 +18,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run types:generate` - Generate TypeScript types from Supabase schema
 - `npx tsc --noEmit` - Type-check ALL files including tests (use this to catch TypeScript errors)
 
+### Database Access
+
+```bash
+# Connect to Supabase PostgreSQL database
+source .env.local && psql "postgresql://postgres.dkrxtcbaqzrodvsagwwn:$SUPABASE_DB_PASSWORD@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
+```
+
 ### Stripe CLI Commands (for local development)
 
 - `stripe login` - Login to Stripe account

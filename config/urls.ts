@@ -66,6 +66,9 @@ export const RELATIVE_URLS = {
   TERMS_OF_SERVICE: "/terms-of-service",
 } as const;
 
+// Authentication
+export const DEFAULT_SIGNIN_REDIRECT = RELATIVE_URLS.DASHBOARD.CHARTS;
+
 export const ABSOLUTE_URLS = {
   CALENDLY: "https://calendly.com/gitauto/wes",
   GITAUTO: {
