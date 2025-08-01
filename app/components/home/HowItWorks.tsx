@@ -3,7 +3,6 @@ import Link from "next/link";
 import { FaUpload, FaRobot, FaCodeBranch, FaChartLine } from "react-icons/fa";
 
 // Local imports
-import DemoVideo from "@/app/components/videos/Demo";
 import { RELATIVE_URLS } from "@/config/urls";
 
 const steps = [
@@ -65,9 +64,9 @@ const HowItWorks = () => {
       aria-label="How It Works section"
     >
       <h2 className="text-2xl md:text-4xl font-bold mb-14 text-center">How It Works</h2>
-      <div className="flex flex-col md:flex-row items-center gap-12">
+      <div className="flex flex-col items-center">
         {/* Timeline */}
-        <div className="flex-1 flex flex-col gap-0 md:gap-0 relative">
+        <div className="flex flex-col gap-0 md:gap-0 relative max-w-2xl">
           {steps.map((step, idx) => (
             <div key={idx} className="flex items-start mb-0 md:mb-0">
               <div className="flex flex-col items-center mr-6">
@@ -82,10 +81,6 @@ const HowItWorks = () => {
               </div>
             </div>
           ))}
-        </div>
-        {/* Video (for reference) */}
-        <div className="flex-1 hidden md:block">
-          <DemoVideo />
         </div>
       </div>
     </section>

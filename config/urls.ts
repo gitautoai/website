@@ -140,7 +140,8 @@ export const ABSOLUTE_URLS = {
   TWITTER: "https://twitter.com/gitautoai",
   YOUTUBE: {
     HOME: "https://www.youtube.com/@gitauto",
-    DEMO: "https://www.youtube.com/watch?v=gulhHrKCPxQ",
+    DEMO: "https://www.youtube.com/watch?v=jmTQuuJAs38",
+    DEMO_EMBED: "https://www.youtube.com/embed/jmTQuuJAs38?autoplay=1&mute=1&loop=1&playlist=jmTQuuJAs38&rel=0&cc_load_policy=1",
     INTRO_1MIN: "https://www.youtube.com/watch?v=oOzhH1rnVIk",
     INTRO_3MIN: "https://www.youtube.com/watch?v=QvzEzJ9GJzU&t=6s",
   },
