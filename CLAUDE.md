@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run lint` - Run ESLint
 - `npm test` - Run Jest unit tests
 - `npm run test:watch` - Run tests in watch mode
-- `npm run test:e2e` - Run Playwright E2E tests
+- `npm run test:e2e` - Run Playwright E2E tests (uses port 4001)
 - `npm run types:generate` - Generate TypeScript types from Supabase schema
 - `npx tsc --noEmit` - Type-check ALL files including tests (use this to catch TypeScript errors)
 
@@ -28,7 +28,8 @@ source .env.local && psql "postgresql://postgres.dkrxtcbaqzrodvsagwwn:$SUPABASE_
 ### Stripe CLI Commands (for local development)
 
 - `stripe login` - Login to Stripe account
-- `stripe listen --forward-to localhost:4000/api/stripe/webhook` - Forward webhook events to local server
+- `stripe listen --forward-to localhost:4000/api/stripe/webhook` - Forward webhook events to local server (dev port 4000)
+- For E2E tests: `stripe listen --forward-to localhost:4001/api/stripe/webhook` - Forward to test server (port 4001)
 - `stripe trigger payment_intent.succeeded` - Test webhook events locally
 
 ### Vercel Cron Jobs
@@ -57,6 +58,12 @@ npx playwright test e2e/website-accessibility.spec.ts
 **NEVER accept partial test passes.** All tests must pass 100%. There is no "mostly passed" or "core things passed" - either all tests pass or the implementation is incomplete and must be fixed.
 
 **STRICTLY PROHIBITED:** It is NEVER ALLOWED to skip failed tests or proceed with LGTM when any test is failing. Every single test failure must be investigated and fixed. No exceptions.
+
+### Test Debugging Rule
+
+When tests fail: Don't assume or explain - debug systematically. Check error logs, examine the failing test code, and identify the root cause before making conclusions.
+
+Check screenshots first: When a test failure includes a screenshot, ALWAYS examine it first before proposing solutions. Don't assume API endpoints exist - verify the actual implementation.
 
 ### Unit Test Location
 
