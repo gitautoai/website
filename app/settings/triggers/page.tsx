@@ -71,7 +71,21 @@ export default function TriggersPage() {
         settings.scheduleTimeLocal = "09:00";
       }
 
-      setTriggerSettings(settings);
+      // If this is a first-time user (no UTC time calculated yet) and schedule is enabled,
+      // automatically calculate UTC and save the settings
+      if (!settings.scheduleTimeUTC && settings.triggerOnSchedule && settings.scheduleTimeLocal) {
+        const calculatedUTC = convertLocalToUTC(settings.scheduleTimeLocal);
+        const updatedSettings = {
+          ...settings,
+          scheduleTimeUTC: calculatedUTC,
+        };
+        
+        // Auto-save the default settings with calculated UTC
+        await saveSettings(updatedSettings);
+        setTriggerSettings(updatedSettings);
+      } else {
+        setTriggerSettings(settings);
+      }
     } catch (error) {
       console.error("Failed to fetch trigger settings:", error);
     } finally {
