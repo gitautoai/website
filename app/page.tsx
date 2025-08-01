@@ -7,6 +7,7 @@ import { useEffect } from "react";
 // Local components
 import FAQ from "@/app/components/home/FAQ";
 import Hero from "@/app/components/home/Hero";
+import Demo from "@/app/components/home/Demo";
 import HowItWorks from "@/app/components/home/HowItWorks";
 import HowToGetStarted from "@/app/components/home/HowToGetStarted";
 import Pricing from "@/app/components/home/Pricing";
@@ -39,6 +40,7 @@ export default function Home() {
       <div className="flex flex-col justify-center items-center px-0 md:px-24">
         <ScrollNav />
         <Hero />
+        <Demo />
         <WhyGitAuto />
         <WhatGitAutoDoes />
         <HowItWorks />
