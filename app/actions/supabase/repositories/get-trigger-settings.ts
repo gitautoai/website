@@ -26,7 +26,7 @@ export async function getTriggerSettings(
       triggerOnCommit: false,
       triggerOnPrChange: true,
       triggerOnMerged: false,
-      triggerOnSchedule: false,
+      triggerOnSchedule: true,
       scheduleTimeLocal: "09:00",
       scheduleTimeUTC: "",
       scheduleIncludeWeekends: false,
