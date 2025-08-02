@@ -12,7 +12,6 @@ import { INTERNAL_LINKS } from "@/config/internal-links";
 import { ABSOLUTE_URLS, RELATIVE_URLS, SNS_LINKS } from "@/config/urls";
 
 export default function Footer() {
-  // Analytics
   const posthog = usePostHog();
   const pathname = usePathname();
   const hideFooter = pathname?.startsWith("/settings") || pathname?.startsWith("/dashboard");
@@ -65,12 +64,6 @@ export default function Footer() {
               </Link>
               <Link
                 href={RELATIVE_URLS.CONTACT}
-                onClick={() => {
-                  posthog.capture("$click", {
-                    $event_type: "footer_contact_button",
-                    $current_url: window.location.href,
-                  });
-                }}
                 className="px-8 py-3 bg-transparent border border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-center"
               >
                 Contact Sales
@@ -89,12 +82,6 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    onClick={() => {
-                      posthog.capture("$click", {
-                        $event_type: link.eventType,
-                        $current_url: window.location.href,
-                      });
-                    }}
                     className="text-gray-600 hover:text-gray-900 hover:underline"
                   >
                     {link.text}
@@ -112,12 +99,6 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    onClick={() => {
-                      posthog.capture("$click", {
-                        $event_type: link.eventType,
-                        $current_url: window.location.href,
-                      });
-                    }}
                     className="text-gray-600 hover:text-gray-900 hover:underline"
                   >
                     {link.text}
@@ -135,12 +116,6 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    onClick={() => {
-                      posthog.capture("$click", {
-                        $event_type: link.eventType,
-                        $current_url: window.location.href,
-                      });
-                    }}
                     className="text-gray-600 hover:text-gray-900 hover:underline"
                   >
                     {link.text}

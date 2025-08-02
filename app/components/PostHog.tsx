@@ -1,20 +1,16 @@
 "use client";
-import { config, isPrd } from "@/config";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
+import { isPrd } from "@/config";
+import { NEXT_PUBLIC_POSTHOG_KEY, NEXT_PUBLIC_POSTHOG_HOST } from "@/config/posthog";
 
-// import {
-//   NEXT_PUBLIC_POSTHOG_KEY,
-//   NEXT_PUBLIC_POSTHOG_HOST,
-// } from "@/lib/constants";
-
-if (typeof window !== "undefined" && isPrd) {
-  posthog.init(config.NEXT_PUBLIC_POSTHOG_KEY as string, {
-    api_host: config.NEXT_PUBLIC_POSTHOG_HOST as string,
-    capture_pageview: false, // Disable automatic pageview capture, as we capture manually
+if (typeof window !== "undefined" && isPrd && NEXT_PUBLIC_POSTHOG_KEY && NEXT_PUBLIC_POSTHOG_HOST) {
+  posthog.init(NEXT_PUBLIC_POSTHOG_KEY, {
+    api_host: NEXT_PUBLIC_POSTHOG_HOST,
+    capture_pageview: true,
   });
 }
 
-export function PHProvider({ children }: any) {
+export function PostHogWrapper({ children }: { children: React.ReactNode }) {
   return <PostHogProvider client={posthog}>{children}</PostHogProvider>;
 }

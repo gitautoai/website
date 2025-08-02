@@ -1,7 +1,6 @@
 // Third party imports
 import { usePathname } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
-import { usePostHog } from "posthog-js/react";
 
 // Local imports
 import ProfileIcon from "@/app/components/navigations/ProfileIcon";
@@ -13,7 +12,6 @@ interface AuthControlsProps {
 
 export default function AuthControls({ mobileMenuTrigger = false }: AuthControlsProps) {
   const { data: session, status } = useSession();
-  const posthog = usePostHog();
   const pathname = usePathname();
 
   return (

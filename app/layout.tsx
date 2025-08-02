@@ -12,7 +12,7 @@ import Footer from "@/app/components/Footer";
 import { InstallationSuccessPopup } from "@/app/components/InstallationSuccessPopup";
 // import IntercomMessenger from "@/app/components/Intercom";
 import Navbar from "@/app/components/navigations/Navbar";
-import { PHProvider } from "@/app/components/PostHog";
+import { PostHogWrapper } from "@/app/components/PostHog";
 import SessionProvider from "@/app/components/SessionProvider";
 import { isPrd } from "@/config";
 import { defaultMetadata } from "@/config/metadata";
@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {`function initApollo(){var n=Math.random().toString(36).substring(7),o=document.createElement("script");o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n,o.async=!0,o.defer=!0,o.onload=function(){window.trackingFunctions.onLoad({appId:"6631c123b9befb01c76f5219"})},document.head.appendChild(o)}initApollo();`}
         </Script>
       )}
-      <PHProvider>
+      <PostHogWrapper>
         <body className={`${inter.className} w-full min-h-screen text-base sm:text-sm md:text-xl`}>
           <Suspense>
             <SessionProvider>
@@ -61,7 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </SessionProvider>
           </Suspense>
         </body>
-      </PHProvider>
+      </PostHogWrapper>
     </html>
   );
 }
