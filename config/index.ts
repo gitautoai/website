@@ -38,10 +38,6 @@ export const config = {
   JWT_SECRET: process.env.JWT_SECRET || "",
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "",
 
-  // PostHog
-  NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY || "",
-  NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST || "",
-
   // Environment Specifcs
   NODE_ENV: process.env.NODE_ENV || "",
   NEXT_PUBLIC_GITHUB_APP_URL: process.env.NEXT_PUBLIC_GITHUB_APP_URL || "",

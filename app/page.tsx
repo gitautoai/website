@@ -1,8 +1,6 @@
 "use client";
 // Third party imports
 import { usePathname } from "next/navigation";
-import { usePostHog } from "posthog-js/react";
-import { useEffect } from "react";
 
 // Local components
 import FAQ from "@/app/components/home/FAQ";
@@ -18,19 +16,6 @@ import ScrollNav from "@/app/components/navigations/ScrollNav";
 import { softwareApplicationData } from "@/app/jsonld";
 
 export default function Home() {
-  // Analytics
-  const pathname = usePathname();
-  const posthog = usePostHog();
-
-  useEffect(() => {
-    if (pathname && posthog) {
-      let url = window.origin + pathname;
-      posthog.capture("$pageview", {
-        $current_url: url,
-      });
-    }
-  }, [pathname, posthog]);
-
   return (
     <>
       <script

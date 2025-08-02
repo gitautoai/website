@@ -4,8 +4,7 @@ import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { usePostHog } from "posthog-js/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 // Local imports
 import AuthControls from "@/app/components/AuthControls";
@@ -15,23 +14,12 @@ import { RELATIVE_URLS } from "@/config/urls";
 import HamburgerMenu from "./Hamburger";
 
 export default function Navbar() {
-  // Analytics
   const pathname = usePathname();
-  const posthog = usePostHog();
   const hideNavbar = pathname?.startsWith("/settings") || pathname?.startsWith("/dashboard");
 
   const { data: session, status } = useSession();
 
   const [isNavOpen, setIsNavOpen] = useState(false);
-
-  useEffect(() => {
-    if (pathname && posthog) {
-      let url = window.origin + pathname;
-      posthog.capture("$pageview", {
-        $current_url: url,
-      });
-    }
-  }, [pathname, posthog]);
 
   if (hideNavbar) return null;
   return (
@@ -60,7 +48,7 @@ export default function Navbar() {
             session={session}
             status={status}
           />
-          <MobileDrawer setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} posthog={posthog} />
+          <MobileDrawer setIsNavOpen={setIsNavOpen} isNavOpen={isNavOpen} />
         </nav>
       </div>
     </div>

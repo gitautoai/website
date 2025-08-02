@@ -54,7 +54,7 @@
     "next-auth": "^4.24.11",
     "next-mdx-remote": "^5.0.0",
     "playwright": "^1.49.0",
-    "posthog-js": "^1.194.1",
+    "posthog-js": "^1.258.5",
     "prismjs": "^1.30.0",
     "react": "^19.1.0",
     "react-confetti": "^6.4.0",
