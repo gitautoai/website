@@ -10,7 +10,7 @@
     "kill-port": "lsof -ti:4000 | xargs kill -9 2>/dev/null || true",
     "stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:4000/api/stripe/webhook",
     "stripe:test": "stripe listen --events payment_intent.succeeded --forward-to localhost:4001/api/stripe/webhook",
-    "dev:test": "IS_PLAYWRIGHT=true next dev & npm run stripe:test",
+    "dev:test": "IS_PLAYWRIGHT=true next dev -p 4001 & npm run stripe:test",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
