@@ -1,0 +1,53 @@
+export const metadata = {
+  title: "Why You Need Both Manual and Automated Tests",
+  description:
+    "Manual testing costs are spiraling and teams are drowning in repetitive tasks. Here's how to break the bottleneck without losing coverage.",
+  slug: "manual-testing-bottleneck-solutions",
+  alternates: { canonical: "/blog/manual-testing-bottleneck-solutions" },
+  openGraph: { url: "/blog/manual-testing-bottleneck-solutions" },
+  author: "GitAuto Team",
+  authorUrl: "https://gitauto.ai",
+  tags: ["manual testing", "test automation", "qa efficiency", "bottleneck", "productivity"],
+  createdAt: "2025-08-05",
+  updatedAt: "2025-08-05",
+};
+
+# Why You Need Both Manual and Automated Tests
+
+A recent [Hacker News discussion about QA practices](https://news.ycombinator.com/item?id=41732084) discussed manual vs automated testing. One commenter made a point: "You need _both_ automated and manual testing for a high-quality product" because while automated testing is "an order of magnitude cheaper," manual testing brings value because "humans are a lot more clever."
+
+**I agree, but with one caveat:** most teams get the balance wrong.
+
+## The Problem: Manual Busywork
+
+Most "manual testing" is actually manual busywork: repetitive regression checks that could be automated. When teams spend 70% of QA time on repetitive tasks, they're doing expensive, error-prone automation.
+
+**Automate this:**
+- Regression tests before releases
+- API response validation  
+- Identical user flow checks
+- Database state validation
+
+**Keep manual for this:**
+- Exploring edge cases
+- Evaluating user experience
+- Investigating complex bugs
+- Validating business logic
+
+## The Solution
+
+**Step 1:** Audit your manual testing. Categorize as "busywork" (automate) or "judgment calls" (keep manual).
+
+**Step 2:** Generate tests automatically for every pull request: unit tests, integration tests, and regression tests.
+
+**Step 3:** Reposition manual testers as quality partners who define criteria, conduct exploratory testing, and validate user experience.
+
+## The Bottom Line
+
+The HN commenter was right: you need both approaches. But here's where I disagree with current practice: most teams use manual testing for the wrong things.
+
+**Automated testing should handle:** Repetitive regression checks, API validations, data integrity.
+
+**Manual testing should handle:** Exploratory testing, user experience evaluation, edge case discovery.
+
+Get this balance right, and you get cost-efficient automation plus intelligent human testing. Get it wrong, and you get expensive, unreliable quality assurance.

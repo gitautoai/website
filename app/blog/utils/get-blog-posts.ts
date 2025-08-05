@@ -12,7 +12,6 @@ export async function getBlogPosts() {
     files
       .filter((file) => file.endsWith(".mdx"))
       .map(async (file) => {
-        const slug = file.replace(".mdx", "");
         const filePath = path.join(postsDirectory, file);
         const fileContent = fs.readFileSync(filePath, "utf8");
 
@@ -23,6 +22,9 @@ export async function getBlogPosts() {
 
           if (!metadata?.title || !metadata?.createdAt || !metadata?.description)
             throw new Error(`Required metadata missing in ${file}`);
+
+          // Use slug from metadata if available, otherwise use filename
+          const slug = metadata.slug || file.replace(".mdx", "");
 
           return { slug, ...metadata };
         } catch (error) {
