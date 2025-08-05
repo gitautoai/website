@@ -1,21 +1,22 @@
 export const metadata = {
-  title: "How to Detect Low Test Coverage Files in Jest",
+  title: "How to Detect Low Test Coverage Files in Flutter / Dart",
   description:
-    "A step-by-step guide on setting up test coverage reporting in Jest (JavaScript / TypeScript) projects and using GitAuto to improve coverage automatically.",
-  alternates: { canonical: "/blog/how-to-detect-low-test-coverage-files-in-jest" },
-  openGraph: { url: "/blog/how-to-detect-low-test-coverage-files-in-jest" },
+    "A step-by-step guide on setting up test coverage reporting in Flutter / Dart projects and using GitAuto to improve coverage automatically.",
+  slug: "how-to-detect-low-test-coverage-files-in-flutter",
+  alternates: { canonical: "/blog/how-to-detect-low-test-coverage-files-in-flutter" },
+  openGraph: { url: "/blog/how-to-detect-low-test-coverage-files-in-flutter" },
   author: "Wes Nishio",
   authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
-  tags: ["solution", "Jest", "JavaScript", "TypeScript", "Test Coverage", "GitHub Actions"],
-  createdAt: "2025-03-31",
-  updatedAt: "2025-03-31",
+  tags: ["solution", "Flutter", "Dart", "Test Coverage", "GitHub Actions"],
+  createdAt: "2025-03-30",
+  updatedAt: "2025-03-30",
 };
 
-# How to Detect Low Test Coverage Files in Jest (JavaScript / TypeScript)
+# How to Detect Low Test Coverage Files in Flutter / Dart
 
 Through observing our customers' behavior, we've noticed a common challenge when teams want to improve their test coverage: identifying which files to tackle first. Without a clear overview of low-coverage files, developers often resort to randomly selecting files or relying on gut feelings. This initial hurdle of "where do we even start?" can significantly slow down or even halt test coverage initiatives, often leading teams to abandon the task entirely.
 
-That's why we're introducing this coverage dashboard. It provides an instant, clear view of which files need attention, eliminating the guesswork from test coverage improvement. In this guide, we'll show you how to set up automated test coverage reporting for your Jest (JavaScript / TypeScript) project and use GitAuto to improve coverage systematically.
+That's why we're introducing this coverage dashboard. It provides an instant, clear view of which files need attention, eliminating the guesswork from test coverage improvement. In this guide, we'll show you how to set up automated test coverage reporting for your Flutter / Dart project and use GitAuto to improve coverage systematically.
 
 ## TL;DR - What's the story?
 
@@ -29,21 +30,19 @@ That's why we're introducing this coverage dashboard. It provides an instant, cl
 
 Before we begin, ensure you have:
 
-- A JavaScript / TypeScript project with Jest hosted on GitHub
+- A Flutter project hosted on GitHub
 - GitHub Actions enabled in your repository
 - GitAuto installed in your repository
 
 ## 2. Setting Up GitHub Actions
 
-First, let's set up GitHub Actions to run tests and generate coverage reports. Create a workflow file in your `.github/workflows/` directory (the file name can be anything, but we'll use `jest.yml` in this example):
+First, let's set up GitHub Actions to run tests and generate coverage reports. Create a workflow file in your `.github/workflows/` directory (the file name can be anything, but we'll use `flutter_test.yml` in this example):
 
-![GitHub Actions Workflow Setup](/blog/how-to-detect-low-test-coverage-files-in-jest/step2.png)
+![GitHub Actions Workflow Setup](/blog/how-to-detect-low-test-coverage-files-in-flutter/step2.png)
 
 Key points in this configuration:
 
-- `jest --coverage --coverageReporters="lcov"` generates the coverage report
-  - The `--coverageReporters="text"` flag is optional but useful for seeing coverage summary in the console and GitHub Actions logs
-  - If your `package.json` has `"test": "jest"`, you can also use `npm test -- --coverage --coverageReporters="lcov"`. `--` is used to pass flags to the `jest` command from npm
+- `flutter test --coverage` generates the coverage report
 - The report is uploaded as an artifact named `coverage-report` (any name containing "coverage" is fine)
 - We specify the exact file path `coverage/lcov.info` to upload only this file (don't change the file name or upload the entire directory)
 
@@ -51,13 +50,13 @@ Key points in this configuration:
 
 Once your workflow runs successfully:
 
-![Successful Test Run](/blog/how-to-detect-low-test-coverage-files-in-jest/step3-1.png)
+![Successful Test Run](/blog/how-to-detect-low-test-coverage-files-in-flutter/step3-1.png)
 
-![Successful Artifact Upload](/blog/how-to-detect-low-test-coverage-files-in-jest/step3-2.png)
+![Successful Artifact Upload](/blog/how-to-detect-low-test-coverage-files-in-flutter/step3-2.png)
 
 GitAuto will automatically process the coverage reports [here](/dashboard/coverage):
 
-![Coverage Dashboard](/blog/how-to-detect-low-test-coverage-files-in-jest/step3-3.png)
+![Coverage Dashboard](/blog/how-to-detect-low-test-coverage-files-in-flutter/step3-3.png)
 
 The coverage data updates automatically whenever your GitHub Actions workflow runs. In this example configuration, that happens when:
 
@@ -75,17 +74,17 @@ From the coverage dashboard, you can:
 2. Create GitHub issues for specific files
 3. Assign issues to GitAuto for automated improvement
 
-![Selecting Files for Coverage Improvement](/blog/how-to-detect-low-test-coverage-files-in-jest/step4-1.png)
+![Selecting Files for Coverage Improvement](/blog/how-to-detect-low-test-coverage-files-in-flutter/step4-1.png)
 
-![Creating Issues from Actions Menu](/blog/how-to-detect-low-test-coverage-files-in-jest/step4-2.png)
+![Creating Issues from Actions Menu](/blog/how-to-detect-low-test-coverage-files-in-flutter/step4-2.png)
 
-![Successfully Created Issues](/blog/how-to-detect-low-test-coverage-files-in-jest/step4-3.png)
+![Successfully Created Issues](/blog/how-to-detect-low-test-coverage-files-in-flutter/step4-3.png)
 
 After issues are created, the file names become clickable links. Clicking these links takes you to the corresponding GitHub issues:
 
-![Created Issue Example](/blog/how-to-detect-low-test-coverage-files-in-jest/step4-4.png)
+![Created Issue Example](/blog/how-to-detect-low-test-coverage-files-in-flutter/step4-4.png)
 
-![Issues List View](/blog/how-to-detect-low-test-coverage-files-in-jest/step4-5.png)
+![Issues List View](/blog/how-to-detect-low-test-coverage-files-in-flutter/step4-5.png)
 
 You can create issues either:
 
@@ -120,6 +119,6 @@ For more examples of how GitAuto can help with testing, check out our guides on 
 - **[How to Add a Unit Test](/blog/how-to-add-a-unit-test)** - See a real-world example of GitAuto creating comprehensive unit tests with proper mocking strategies.
 - **[How to Add Integration Tests](/blog/how-to-add-integration-tests)** - Learn how GitAuto handles more complex integration testing scenarios.
 - **[How to Measure ROI](/blog/how-to-measure-roi)** - Calculate the return on investment when using GitAuto for test automation.
-- **[Flutter Coverage Detection](/blog/how-to-detect-low-test-coverage-files-in-flutter)** - Similar coverage setup guide for Flutter/Dart projects.
+- **[Jest Coverage Detection](/blog/how-to-detect-low-test-coverage-files-in-jest)** - Similar coverage setup guide for JavaScript/TypeScript projects.
 
 Questions or feedback? [Contact us](/contact).
