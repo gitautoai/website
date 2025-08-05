@@ -7,9 +7,12 @@ export default async function BlogPost({ params }: { params: Promise<{ slug: str
 
   if (!post) notFound();
 
+  // Use the actual filename (which may include date prefix) when importing
+  const filename = post.filename || slug;
+
   // Avoid React errors by dynamically importing the MDX file
   try {
-    const MDXContent = await import(`../posts/${slug}.mdx`).then((mod) => mod.default);
+    const MDXContent = await import(`../posts/${filename}.mdx`).then((mod) => mod.default);
 
     return (
       <article>
