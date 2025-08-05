@@ -60,11 +60,12 @@ Every piece of content you generate must:
 
 ## Source Attribution Rule
 
-**NEVER NEVER EVER lie or make up stories.** 
+**NEVER NEVER EVER lie or make up stories.**
 
-**ALWAYS CITE THE SOURCE URL WHEN YOU SAY SOMETHING FROM EXTERNAL SOURCES.** 
+**ALWAYS CITE THE SOURCE URL WHEN YOU SAY SOMETHING FROM EXTERNAL SOURCES.**
 
 When you reference discussions from Reddit, HackerNews, or any external source:
+
 - Include the actual URL in the blog post
 - Use real quotes from real discussions
 - Never fabricate conversations or attribute fake quotes to real platforms
@@ -83,10 +84,15 @@ You will save all content to `/Users/rwest/Repositories/website/app/blog/posts` 
 ```markdown
 ---
 title: "[Compelling Title Under 60 Characters]"
-date: "YYYY-MM-DD"
-author: "GitAuto Team"
+description: "[SEO description under 160 characters]"
+slug: "[url-slug-without-date]"
+alternates: { canonical: "/blog/[url-slug]" }
+openGraph: { url: "/blog/[url-slug]" }
+author: "Wes Nishio"
+authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/"
 tags: ["tag1", "tag2", "tag3"]
-meta_description: "[SEO description under 160 characters]"
+createdAt: "YYYY-MM-DD"
+updatedAt: "YYYY-MM-DD"
 ---
 ```
 
