@@ -3,6 +3,12 @@ name: E2E Tests
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths-ignore:
+      - "**.md"
+      - ".github/workflows/**"
+      - ".claude/**"
+      - "docs/**"
+      - "infrastructure/**"
   workflow_dispatch:
 
 jobs:
