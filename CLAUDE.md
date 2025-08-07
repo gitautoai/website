@@ -169,16 +169,18 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;
 
 **CRITICAL**: Never proceed with git add/commit/push unless ALL tests pass 100%. There is no "mostly passed" - either all tests pass or the task is incomplete.
 
+**EXCEPTION**: For blog-only changes (adding/editing blog posts in `app/blog/posts/`), tests can be skipped since blog content doesn't affect application functionality.
+
 When the user says "LGTM", execute these commands in order:
 
 1. `npm run types:generate` - Generate TypeScript types
 2. `npm run lint` - Run linting
 3. `npx tsc --noEmit` - Type-check ALL files including tests (use this to catch TypeScript errors)
-4. `npm test` - Run unit tests (must pass 100%)
-5. `npm run test:e2e` - Run E2E tests (must pass 100%)
+4. `npm test` - Run unit tests (must pass 100%, skip for blog-only changes)
+5. `npm run test:e2e` - Run E2E tests (must pass 100%, skip for blog-only changes)
 6. `npm run build` - Build the project
-7. **STOP if any test fails** - Fix all failures before proceeding
-8. `git add .` - Stage all changes (only if ALL tests passed)
+7. **STOP if any test fails** - Fix all failures before proceeding (unless blog-only)
+8. `git add .` - Stage all changes (only if ALL tests passed or blog-only)
 9. Create a descriptive commit message based on changes (do NOT include Claude Code attribution)
 10. `git push` - Push to remote
 
