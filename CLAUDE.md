@@ -180,9 +180,10 @@ When the user says "LGTM", execute these commands in order:
 5. `npm run test:e2e` - Run E2E tests (must pass 100%, skip for blog-only changes)
 6. `npm run build` - Build the project
 7. **STOP if any test fails** - Fix all failures before proceeding (unless blog-only)
-8. `git add .` - Stage all changes (only if ALL tests passed or blog-only)
-9. Create a descriptive commit message based on changes (do NOT include Claude Code attribution)
-10. `git push` - Push to remote
+8. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes
+9. `git add .` - Stage all changes (only if ALL tests passed or blog-only)
+10. Create a descriptive commit message based on changes (do NOT include Claude Code attribution)
+11. `git push` - Push to remote
 
 ## TypeScript Error Checking Rule
 
