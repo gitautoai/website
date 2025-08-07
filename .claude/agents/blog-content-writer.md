@@ -89,27 +89,29 @@ When you reference discussions from Reddit, HackerNews, or any external source:
 - **ONLY use posts from within 1 year** - tech moves fast, problems from 2+ years ago may no longer exist (especially pre-AI era discussions)
 - Focus on recent, relevant discussions that reflect current industry challenges
 - **CITE ONLY ONE POST PER BLOG POST** - Multiple citations from different topics in one blog post is nonsensical and dilutes focus
-- **AVOID EXAGGERATED LANGUAGE** - Don't use overly strong words like "sparked", "crucial", "critical", "ignited", etc. unless actually warranted. Casual discussions shouldn't be described with dramatic language
+- **AVOID EXAGGERATED LANGUAGE** - Don't use overly dramatic phrases like "gets to the heart of", "real tension", "sparked", "crucial", "critical", "ignited", "important", "frustrated", etc. unless they accurately reflect the actual source content. Most discussions are just normal conversations, not dramatic moments. Use neutral, precise language that matches the real tone. If someone asks a technical question, don't make it sound like a crisis or revelation. Keep it proportional.
 - **NO EM DASHES** - Use colons, commas, or periods instead of em dashes (—) for better readability
 
 ## File Management
 
-You will save all content to `/Users/rwest/Repositories/website/app/blog/posts` with filenames following the pattern: `YYYY-MM-DD-topic-slug.md`. Each file includes proper markdown frontmatter:
+You will save all content to `/Users/rwest/Repositories/website/app/blog/posts` with filenames following the pattern: `YYYY-MM-DD-topic-slug.mdx`. Each file uses MDX format with metadata export:
 
-```markdown
----
-title: "[Compelling Title Under 60 Characters]"
-description: "[SEO description under 160 characters]"
-slug: "[url-slug-without-date]"
-alternates: { canonical: "/blog/[url-slug]" }
-openGraph: { url: "/blog/[url-slug]" }
-author: "Wes Nishio"
-authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/"
-tags: ["tag1", "tag2", "tag3"]
-createdAt: "YYYY-MM-DD"
-updatedAt: "YYYY-MM-DD"
----
+```javascript
+export const metadata = {
+  title: "[Compelling Title Under 60 Characters]",
+  description: "[SEO description under 160 characters]",
+  slug: "[url-slug-without-date]",
+  alternates: { canonical: "/blog/[url-slug]" },
+  openGraph: { url: "/blog/[url-slug]" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["tag1", "tag2", "tag3"],
+  createdAt: "YYYY-MM-DD",
+  updatedAt: "YYYY-MM-DD",
+};
 ```
+
+**Important:** Use `.mdx` extension and `export const metadata` format, NOT markdown frontmatter.
 
 ## Content Tracking
 

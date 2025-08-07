@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - "**.md"
+      - "**.mdx"
       - ".github/workflows/**"
       - ".claude/**"
       - "docs/**"
