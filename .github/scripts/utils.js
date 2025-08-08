@@ -12,9 +12,13 @@ async function getBlogInfo({ github, context }) {
   let postUrl = `https://gitauto.ai`;
 
   for (const file of files.data) {
-    if (file.filename.startsWith("app/blog/") && file.filename.endsWith("page.mdx")) {
+    // Check for blog posts in app/blog/posts/*.mdx
+    if (file.filename.startsWith("app/blog/posts/") && file.filename.endsWith(".mdx")) {
       isBlog = true;
-      const slug = file.filename.split("/")[2];
+      // Extract slug from filename: "2025-08-07-why-developers-think-unit-tests-waste-time.mdx"
+      // Remove date prefix and .mdx extension to get the slug
+      const filename = file.filename.split("/").pop();
+      const slug = filename.replace(/^\d{4}-\d{2}-\d{2}-/, '').replace(/\.mdx$/, '');
       postUrl = `https://gitauto.ai/blog/${slug}`;
       break;
     }
