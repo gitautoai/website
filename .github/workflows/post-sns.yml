@@ -13,8 +13,47 @@ permissions:
   contents: read
 
 jobs:
+  check-should-post:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-22.04
+    outputs:
+      should-post: ${{ steps.check.outputs.should-post }}
+      is-blog: ${{ steps.check.outputs.is-blog }}
+      post-url: ${{ steps.check.outputs.post-url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check if should post to SNS
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { getBlogInfo } = require('.github/scripts/utils.js');
+            const triggeringContext = {
+              payload: {
+                pull_request: github.event.workflow_run.pull_requests[0]
+              }
+            };
+
+            // Check if it's a blog post
+            const { isBlog, postUrl } = await getBlogInfo({ github, context: triggeringContext });
+
+            // Check if has sns label
+            const hasSnsLabel = github.event.workflow_run.pull_requests[0]?.labels?.some(label => label.name === 'sns') || false;
+
+            // Should post if it's a blog post OR has sns label
+            const shouldPost = isBlog || hasSnsLabel;
+
+            core.setOutput('should-post', shouldPost);
+            core.setOutput('is-blog', isBlog);
+            core.setOutput('post-url', postUrl);
+
+            console.log(`Blog post detected: ${isBlog}`);
+            console.log(`SNS label detected: ${hasSnsLabel}`);
+            console.log(`Should post to SNS: ${shouldPost}`);
+
   post-sns:
-    if: github.event.workflow_run.conclusion == 'success' && contains(github.event.workflow_run.pull_requests[0].labels.*.name, 'sns')
+    needs: check-should-post
+    if: needs.check-should-post.outputs.should-post == 'true'
     runs-on: ubuntu-22.04
     steps:
       # https://github.com/actions/checkout
@@ -34,24 +73,6 @@ jobs:
           npm install playwright
           npx playwright install chromium
 
-      - name: Check blog post
-        id: blog-check
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { getBlogInfo } = require('.github/scripts/utils.js');
-            // Use the triggering workflow run's context instead of current context
-            // workflow_run payload includes pull_requests array per GitHub docs:
-            // https://docs.github.com/en/rest/actions/workflow-runs
-            const triggeringContext = {
-              payload: {
-                pull_request: github.event.workflow_run.pull_requests[0]
-              }
-            };
-            const { isBlog, postUrl } = await getBlogInfo({ github, context: triggeringContext });
-            core.setOutput('isBlog', isBlog);
-            core.setOutput('postUrl', postUrl);
-
       # https://github.com/actions/github-script
       - name: Post to X
         uses: actions/github-script@v7
@@ -59,8 +80,8 @@ jobs:
         with:
           script: |
             const postTwitter = require('.github/scripts/post-twitter.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
-            const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
+            const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
+            const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
             // Use the triggering workflow run's context
             const triggeringContext = {
               payload: {
@@ -84,8 +105,8 @@ jobs:
         with:
           script: |
             const postLinkedIn = require('.github/scripts/post-linkedin.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
-            const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
+            const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
+            const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
             // Use the triggering workflow run's context
             const triggeringContext = {
               payload: {
@@ -102,8 +123,8 @@ jobs:
         with:
           script: |
             const postHackerNews = require('.github/scripts/post-hackernews.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
-            const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
+            const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
+            const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
             // Use the triggering workflow run's context
             const triggeringContext = {
               payload: {
