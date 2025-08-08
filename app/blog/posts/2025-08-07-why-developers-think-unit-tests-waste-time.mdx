@@ -1,0 +1,65 @@
+export const metadata = {
+  title: "Why Unit Tests Feel Like a Waste of Time",
+  description: "A developer's controversial take on unit testing sparked debate. Here's what the community really thinks and how AI changes the equation.",
+  slug: "why-developers-think-unit-tests-waste-time",
+  alternates: { canonical: "/blog/why-developers-think-unit-tests-waste-time" },
+  openGraph: { url: "/blog/why-developers-think-unit-tests-waste-time" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["unit testing", "test automation", "code quality", "AI testing"],
+  createdAt: "2025-08-07 PDT",
+  updatedAt: "2025-08-07 PDT",
+};
+
+# Why Unit Tests Feel Like a Waste of Time
+
+Darren Horrocks' provocative post ["Most Unit Tests Are a Waste of Time, but You Need to Write Them Anyway"](https://www.darrenhorrocks.co.uk/most-unit-tests-are-waste-time-but-you-need-to-write-them-anyway/) sparked heated debate on [r/programming](https://www.reddit.com/r/programming/comments/1ma1oir/most_unit_tests_are_a_waste_of_time_but_you_need/) for good reason. His core argument isn't anti-testing – it's about testing smarter, not harder.
+
+## The Real Problem: Testing Mocks Instead of Logic
+
+Horrocks identifies the fundamental flaw in most unit testing approaches: "In a typical C# MVC application, unit testing often devolves into testing the mocks, not the code." When your tests primarily verify that mocks behave as configured, you're not actually testing your application logic.
+
+His litmus test is simple but powerful: **"If a test would still pass after you've broken the app, delete it."**
+
+## Why Unit Tests Still Matter (Despite the Frustrations)
+
+Horrocks doesn't advocate abandoning unit tests. Instead, he argues they serve three critical purposes:
+
+### 1. Executable Documentation
+Good unit tests document system behavior better than comments or wikis. They show exactly how code should behave in different scenarios and stay current with the codebase.
+
+### 2. Refactoring Safety Net  
+While poorly written tests break during refactoring, well-designed tests enable safer code changes by catching regressions.
+
+### 3. Edge Case Discovery
+Tests force you to think through boundary conditions and error scenarios you might overlook during initial development.
+
+## Horrocks' Practical Guidelines
+
+The original post offers concrete advice for writing valuable unit tests:
+
+**Use in-memory dependencies** instead of mocks when possible. This tests real logic while keeping tests fast and reliable.
+
+**Focus on complex business logic**, not trivial code. Controllers, simple DTOs, and basic CRUD operations rarely need unit tests.
+
+**Aim for meaningful coverage**, not 100% coverage. As Horrocks notes, "meaningful coverage" targets the code that actually contains business logic and complexity.
+
+## How AI Changes the Game
+
+Here's where modern tools like GitAuto fundamentally shift the equation. The tedious parts of unit testing that developers hate: writing boilerplate test setup, maintaining mocks, updating tests after refactoring, can now be automated. AI-powered test generation can:
+
+1. **Generate meaningful tests automatically:** Instead of developers writing tests for trivial code, AI can generate comprehensive test suites that focus on edge cases and business logic validation.
+
+2. **Maintain tests during refactoring:** When code structure changes, AI can automatically update affected tests, eliminating the fragile test problem.
+
+3. **Identify what needs testing:** AI can analyze code complexity and change patterns to suggest where tests add the most value, avoiding the "test everything" trap.
+
+4. **Create better test data:** Instead of manually crafting test scenarios, AI can generate diverse, realistic test data that covers edge cases developers might miss.
+
+## Writing Tests Like Your Future Self Depends on Them
+
+Horrocks concludes with a powerful principle: "Write tests like your future self depends on them — because they do." This means being strategic about what deserves testing and ruthless about deleting tests that don't add value.
+
+The key insight isn't that unit tests are worthless – it's that most teams write the wrong kinds of unit tests. When AI can generate comprehensive test coverage for complex business logic while avoiding the trivial tests that waste time, we can finally achieve Horrocks' vision of meaningful testing.
+
+GitAuto's approach aligns perfectly with this philosophy: focus on the logic that matters, avoid testing mocks and trivial code, and ensure tests provide genuine value as both safety nets and documentation. The result is testing that developers actually appreciate rather than endure.

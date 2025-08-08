@@ -194,6 +194,23 @@ When the user says "LGTM", execute these commands in order:
 
 Never rely on `npm run build` alone as it ignores test files. All TypeScript errors must be fixed before considering any task complete.
 
+## Blog Content Guidelines
+
+### Blog Content Agent Configuration
+
+The blog-content-writer agent is configured at: `.claude/agents/blog-content-writer.md`
+
+### Blog Content Agent Requirements
+
+When using the blog-content-writer agent:
+
+- **Always include source URLs** - Every topic must include the original source URL (Reddit post, Hacker News discussion, etc.)
+- **Use curl for Reddit** - Reddit URLs must be accessed with `curl`, NOT WebFetch (Reddit blocks fetch requests)
+- **Focus on unit testing** - GitAuto is focused on automated unit test generation, NOT E2E testing
+- **Verify authenticity** - Read all comments to ensure posts aren't advertisements or fake
+- **Developer audience** - Target developers, not QA testers or manual testing workflows
+- **Dynamic date checking** - Always check current date with `TZ=America/Los_Angeles date +"%Y-%m-%d %Z"` (Pacific timezone) and use in blog post metadata
+
 ## Code Style Preferences
 
 ### General Principles
