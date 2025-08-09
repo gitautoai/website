@@ -90,6 +90,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </ul>
     ),
     li: ({ children }) => <li className="list-item">{children}</li>,
+    img: ({ src, alt, ...props }) => (
+      <img src={src} alt={alt} className="mb-6" {...props} />
+    ),
 
     table: ({ children }) => (
       <div style={{ overflowX: "auto", fontSize: "0.875rem" }} className="my-8 text-sm md:text-lg">
