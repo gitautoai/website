@@ -1,4 +1,5 @@
 import { PRODUCT_NAME, EMAIL, DESCRIPTION, LEGAL_NAME } from "@/config";
+import { CREDIT_PRICING, FREE_CREDITS_AMOUNT_USD, FREE_PRS_LIMIT } from "@/config/pricing";
 import { BASE_URL, ABSOLUTE_URLS } from "@/config/urls";
 
 /**
@@ -65,40 +66,23 @@ export const OFFERS = [
     name: "Free Plan",
     price: "0",
     priceCurrency: "USD",
-    description: "3 PRs per month per GitHub organization",
+    description: `$${FREE_CREDITS_AMOUNT_USD} free credits (~${FREE_PRS_LIMIT} PRs) per GitHub organization`,
     url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
   },
   {
     "@type": "Offer",
-    name: "Standard Plan - Monthly",
-    price: "100",
+    name: "Standard Plan",
+    price: CREDIT_PRICING.PER_PR.AMOUNT_USD.toString(),
     priceCurrency: "USD",
-    description: "20 PRs per month per GitHub organization",
+    description: `$${CREDIT_PRICING.PER_PR.AMOUNT_USD} per PR with $${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD} minimum purchase`,
     url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
   },
   {
     "@type": "Offer",
-    name: "Standard Plan - Yearly",
-    price: "1000",
+    name: "Enterprise Plan",
+    price: "Custom",
     priceCurrency: "USD",
-    description: "240 PRs per year per GitHub organization (Save $200/year)",
-    url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
-  },
-  {
-    "@type": "Offer",
-    name: "Enterprise Plan - Monthly",
-    price: "500+",
-    priceCurrency: "USD",
-    description: "200+ PRs per month per GitHub organization with custom features",
-    url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
-  },
-  {
-    "@type": "Offer",
-    name: "Enterprise Plan - Yearly",
-    price: "5000+",
-    priceCurrency: "USD",
-    description:
-      "2400+ PRs per year per GitHub organization with custom features (Save $1,000/year)",
+    description: "Custom pricing with advanced features and dedicated support",
     url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
   },
 ] as const;
