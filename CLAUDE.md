@@ -196,20 +196,16 @@ Never rely on `npm run build` alone as it ignores test files. All TypeScript err
 
 ## Blog Content Guidelines
 
-### Blog Content Agent Configuration
+### BLOG Command
 
-The blog-content-writer agent is configured at: `.claude/agents/blog-content-writer.md`
+When the user says "BLOG", use these sub-agents in sequence:
 
-### Blog Content Agent Requirements
+1. `source-finder` - Find unique sources
+2. `title-generator` - Generate SEO-optimized titles  
+3. `blog-writer` - Write complete blog posts
+4. `blog-refiner` - Review and refine content quality
 
-When using the blog-content-writer agent:
-
-- **Always include source URLs** - Every topic must include the original source URL (Reddit post, Hacker News discussion, etc.)
-- **Use curl for Reddit** - Reddit URLs must be accessed with `curl`, NOT WebFetch (Reddit blocks fetch requests)
-- **Focus on unit testing** - GitAuto is focused on automated unit test generation, NOT E2E testing
-- **Verify authenticity** - Read all comments to ensure posts aren't advertisements or fake
-- **Developer audience** - Target developers, not QA testers or manual testing workflows
-- **Dynamic date checking** - Always check current date with `TZ=America/Los_Angeles date +"%Y-%m-%d %Z"` (Pacific timezone) and use in blog post metadata
+Show results from each sub-agent before proceeding to the next step.
 
 ## Code Style Preferences
 

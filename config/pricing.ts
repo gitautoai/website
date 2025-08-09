@@ -27,8 +27,8 @@ export const CREDIT_PRICING = {
   },
 };
 
-export const FREE_PRS_LIMIT = 5;
 export const FREE_CREDITS_AMOUNT_USD = 10;
+export const FREE_PRS_LIMIT = Math.floor(FREE_CREDITS_AMOUNT_USD / CREDIT_PRICING.PER_PR.AMOUNT_USD);
 
 export const FREE_FEATURES = [
   ANTHROPIC_MODEL_CLAUDE_40,
