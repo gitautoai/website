@@ -2,6 +2,7 @@
 
 // Local imports
 import { useAccountContext } from "@/app/components/contexts/Account";
+import { ABSOLUTE_URLS } from "@/config/urls";
 
 type RepositorySelectorProps = {
   onRepoChange?: (repo: string) => void;
@@ -45,7 +46,18 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
     <div className="grid grid-cols-2 gap-4">
       {/* Organization Selector */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Organization</label>
+        <div className="flex justify-between items-center mb-2">
+          <label className="text-sm font-medium text-gray-700">Organization</label>
+          <button
+            onClick={() => {
+              window.open(ABSOLUTE_URLS.GITHUB.OAUTH_GRANT, "_blank", "noopener,noreferrer");
+            }}
+            className="text-xs text-gray-500 hover:text-gray-700 underline"
+            title="Can't see your organization? Check OAuth permissions"
+          >
+            Missing org?
+          </button>
+        </div>
         <select
           value={currentOwnerName || ""}
           onChange={(e) => handleOwnerChange(e.target.value)}

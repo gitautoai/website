@@ -1,6 +1,7 @@
 "use client";
 
 import { useAccountContext } from "../contexts/Account";
+import { ABSOLUTE_URLS } from "@/config/urls";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { Installation } from "@/types/github";
 
@@ -62,9 +63,26 @@ export default function OwnerSelector({
           <div className="text-xl my-16 px-6">
             {installations ? (
               <>
+                <div className="mt-8 mb-8">
+                  <div className="text-2xl">Select an organization or account:</div>
+                  <button
+                    onClick={() => {
+                      // Open OAuth grant page in new tab
+                      window.open(
+                        ABSOLUTE_URLS.GITHUB.OAUTH_GRANT,
+                        "_blank",
+                        "noopener,noreferrer"
+                      );
+                    }}
+                    className="text-sm text-gray-500 hover:text-gray-700 underline mt-1"
+                    title="Can't see your organization? Check OAuth permissions"
+                  >
+                    Missing org?
+                  </button>
+                </div>
+
                 {installations.length > 0 && (
                   <div>
-                    <div className="mt-8 mb-8 text-2xl">Select an organization or account:</div>
                     <div className="flex flex-col items-start text-2xl gap-5">
                       {installations.map((item: Installation, index: number) => {
                         return (

@@ -5,6 +5,7 @@ import { sign } from "jsonwebtoken";
 
 // Local imports
 import { config, isPrd, EMAIL_FROM, PRODUCT_NAME } from "@/config";
+import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "@/config/github";
 import { sendEmail } from "@/app/actions/resend/send-email";
 import { generateWelcomeEmail } from "@/app/actions/resend/templates/generate-welcome-email";
 import { slackUs } from "@/app/actions/slack/slack-us";
@@ -19,8 +20,8 @@ const handler = NextAuth({
   // OAuth App (Prd): https://github.com/organizations/gitautoai/settings/applications/2517210
   providers: [
     GithubProvider({
-      clientId: config.GITHUB_CLIENT_ID as string,
-      clientSecret: config.GITHUB_CLIENT_SECRET as string,
+      clientId: GITHUB_CLIENT_ID,
+      clientSecret: GITHUB_CLIENT_SECRET,
       authorization: {
         params: {
           scope: "read:user user:email read:org repo",
