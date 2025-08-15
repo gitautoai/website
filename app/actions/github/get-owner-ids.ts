@@ -4,9 +4,6 @@ import { Octokit } from "@octokit/rest";
 
 /**
  * Get owner IDs (user + organizations) from GitHub API
- * @param userId - GitHub user ID
- * @param accessToken - GitHub access token
- * @returns Array of owner IDs (user ID + organization IDs)
  */
 export async function getOwnerIds(userId: number, accessToken: string) {
   // Handle test environment with mock data

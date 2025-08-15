@@ -33,8 +33,6 @@ export const REL = "noopener noreferrer"; // Prevents the new page from having a
 
 export const config = {
   // Authentication
-  GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID || "",
-  GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET || "",
   JWT_SECRET: process.env.JWT_SECRET || "",
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET || "",
 

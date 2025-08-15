@@ -1,4 +1,5 @@
 import { isPrd } from "@/config";
+import { GITHUB_CLIENT_ID } from "@/config/github";
 
 // URLs
 export const BASE_URL = isPrd ? "https://gitauto.ai" : "http://localhost:4000";
@@ -131,6 +132,7 @@ export const ABSOLUTE_URLS = {
     INSTALL_GITAUTO: "https://github.com/apps/gitauto-ai/installations/new",
     INSTALL_GITAUTO_DEV: "https://github.com/apps/gitauto-for-dev/installations/new",
     INSTALLED_APPS: "https://github.com/settings/installations",
+    OAUTH_GRANT: `https://github.com/settings/connections/applications/${GITHUB_CLIENT_ID}`,
     ORGANIZATION: "https://github.com/gitautoai",
   },
   LINKEDIN: "https://www.linkedin.com/company/gitauto",
@@ -141,7 +143,8 @@ export const ABSOLUTE_URLS = {
   YOUTUBE: {
     HOME: "https://www.youtube.com/@gitauto",
     DEMO: "https://www.youtube.com/watch?v=jmTQuuJAs38",
-    DEMO_EMBED: "https://www.youtube.com/embed/jmTQuuJAs38?autoplay=1&mute=1&loop=1&playlist=jmTQuuJAs38&rel=0&cc_load_policy=1",
+    DEMO_EMBED:
+      "https://www.youtube.com/embed/jmTQuuJAs38?autoplay=1&mute=1&loop=1&playlist=jmTQuuJAs38&rel=0&cc_load_policy=1",
     INTRO_1MIN: "https://www.youtube.com/watch?v=oOzhH1rnVIk",
     INTRO_3MIN: "https://www.youtube.com/watch?v=QvzEzJ9GJzU&t=6s",
   },
