@@ -10,7 +10,7 @@ import { useState, useRef, useEffect } from "react";
 // Local
 import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
 import { useAccountContext } from "@/app/components/contexts/Account";
-import OwnerSelector from "@/app/components/home/OwnerSelector";
+import OwnerSelectorModal from "@/app/components/home/OwnerSelectorModal";
 
 interface ProfileIconProps {
   session: Session | null;
@@ -148,7 +148,10 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
           </div>
         )}
       </div>
-      <OwnerSelector isOpen={isOwnerSelectorOpen} onClose={() => setIsOwnerSelectorOpen(false)} />
+      <OwnerSelectorModal
+        isOpen={isOwnerSelectorOpen}
+        onClose={() => setIsOwnerSelectorOpen(false)}
+      />
     </>
   );
 };

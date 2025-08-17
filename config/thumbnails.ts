@@ -21,6 +21,7 @@ export const THUMBNAILS = {
     SCREENSHOTS: `${BASE_URL}/og/settings-screenshots.png`,
     TRIGGERS: `${BASE_URL}/og/settings-triggers.png`,
     INTEGRATIONS: {
+      CIRCLECI: `${BASE_URL}/og/settings-integrations-circleci.png`,
       JIRA: `${BASE_URL}/og/settings-integrations-jira.png`,
     },
   },

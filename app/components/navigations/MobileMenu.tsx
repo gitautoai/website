@@ -9,7 +9,7 @@ import { useState } from "react";
 // Local Imports
 import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
 import { useAccountContext } from "@/app/components/contexts/Account";
-import OwnerSelector from "@/app/components/home/OwnerSelector";
+import OwnerSelectorModal from "@/app/components/home/OwnerSelectorModal";
 import { INTERNAL_LINKS } from "@/config/internal-links";
 import { DEFAULT_SIGNIN_REDIRECT } from "@/config/urls";
 
@@ -119,7 +119,10 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen }: MobileDrawerPr
           </ol>
         </div>
       </div>
-      <OwnerSelector isOpen={isOwnerSelectorOpen} onClose={() => setIsOwnerSelectorOpen(false)} />
+      <OwnerSelectorModal
+        isOpen={isOwnerSelectorOpen}
+        onClose={() => setIsOwnerSelectorOpen(false)}
+      />
     </>
   );
 }

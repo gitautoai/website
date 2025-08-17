@@ -6,9 +6,13 @@ import { ABSOLUTE_URLS } from "@/config/urls";
 
 type RepositorySelectorProps = {
   onRepoChange?: (repo: string) => void;
+  ownerOnly?: boolean;
 };
 
-export default function RepositorySelector({ onRepoChange }: RepositorySelectorProps) {
+export default function RepositorySelector({
+  onRepoChange,
+  ownerOnly = false,
+}: RepositorySelectorProps) {
   const {
     organizations,
     currentOwnerName,
@@ -21,11 +25,13 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
   const handleOwnerChange = (ownerName: string) => {
     const currentOrg = organizations.find((o) => o.ownerName === ownerName);
 
-    if (currentOrg && currentOrg.repositories.length > 0) {
+    if (currentOrg) {
       setCurrentOwnerName(ownerName);
 
-      const firstRepo = currentOrg.repositories[0];
-      handleRepoChange(firstRepo.repoName);
+      if (!ownerOnly && currentOrg.repositories.length > 0) {
+        const firstRepo = currentOrg.repositories[0];
+        handleRepoChange(firstRepo.repoName);
+      }
     }
   };
 
@@ -73,25 +79,29 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
         </select>
       </div>
 
-      {/* Repository Selector */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Repository</label>
-        <select
-          value={currentRepoName || ""}
-          onChange={(e) => handleRepoChange(e.target.value)}
-          className={`w-full p-2 border rounded-lg ${
-            !currentOrg || isLoading ? "bg-gray-100" : "bg-white"
-          }`}
-          disabled={!currentOrg || isLoading}
-        >
-          <option value="">Select Repository</option>
-          {currentOrg?.repositories.map((repo) => (
-            <option key={repo.repoId} value={repo.repoName}>
-              {repo.repoName}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Repository Selector - only show if not ownerOnly */}
+      {!ownerOnly && (
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-sm font-medium text-gray-700">Repository</label>
+          </div>
+          <select
+            value={currentRepoName || ""}
+            onChange={(e) => handleRepoChange(e.target.value)}
+            className={`w-full p-2 border rounded-lg ${
+              !currentOrg || isLoading ? "bg-gray-100" : "bg-white"
+            }`}
+            disabled={!currentOrg || isLoading}
+          >
+            <option value="">Select Repository</option>
+            {currentOrg?.repositories.map((repo) => (
+              <option key={repo.repoId} value={repo.repoName}>
+                {repo.repoName}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
     </div>
   );
 }
