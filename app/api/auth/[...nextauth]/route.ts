@@ -18,6 +18,9 @@ const handler = NextAuth({
   // https://next-auth.js.org/providers/github
   // OAuth App (Dev): https://github.com/organizations/gitautoai/settings/applications/2952819
   // OAuth App (Prd): https://github.com/organizations/gitautoai/settings/applications/2517210
+  // pages: {
+  //   error: undefined, // Disables error page redirects - https://next-auth.js.org/configuration/pages
+  // },
   providers: [
     GithubProvider({
       clientId: GITHUB_CLIENT_ID,
@@ -108,7 +111,7 @@ const handler = NextAuth({
       return session;
     },
   },
-  debug: isPrd, // https://next-auth.js.org/warnings#debug_enabled
+  debug: false, // https://next-auth.js.org/warnings#debug_enabled
   secret: config.NEXTAUTH_SECRET,
 });
 

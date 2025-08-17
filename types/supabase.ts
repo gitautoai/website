@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      circleci_tokens: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          owner_id: number
+          token: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          owner_id: number
+          token: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          owner_id?: number
+          token?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: []
+      }
       contacts: {
         Row: {
           additional_info: string | null

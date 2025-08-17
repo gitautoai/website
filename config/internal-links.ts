@@ -123,6 +123,14 @@ export const INTERNAL_LINKS = [
     showInHeader: false,
     showInMobile: false,
   },
+  {
+    href: RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI,
+    eventType: "circleci_integration",
+    text: "CircleCI Integration",
+    category: "resources",
+    showInHeader: false,
+    showInMobile: false,
+  },
 
   // Documentation
   {

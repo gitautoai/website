@@ -5,7 +5,7 @@ import { ABSOLUTE_URLS } from "@/config/urls";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { Installation } from "@/types/github";
 
-export default function OwnerSelector({
+export default function OwnerSelectorModal({
   isOpen,
   onClose,
 }: {

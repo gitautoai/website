@@ -16,6 +16,13 @@ export const menuItems = [
     href: RELATIVE_URLS.SETTINGS.REFERENCES,
     isHeader: false,
   },
+  { id: "integrations-header", label: "Integrations", href: "#", isHeader: true },
+  {
+    id: "circleci",
+    label: "CircleCI",
+    href: RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI,
+    isHeader: false,
+  },
   // {
   //   id: "screenshots",
   //   label: "Screenshots",

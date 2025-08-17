@@ -26,6 +26,7 @@ export const RELATIVE_URLS = {
     SCREENSHOTS: "/settings/screenshots",
     TRIGGERS: "/settings/triggers",
     INTEGRATIONS: {
+      CIRCLECI: "/settings/integrations/circleci",
       JIRA: "/settings/integrations/jira",
     },
   },
@@ -122,6 +123,7 @@ export const ABSOLUTE_URLS = {
       SCREENSHOTS: `${BASE_URL}${RELATIVE_URLS.SETTINGS.SCREENSHOTS}`,
       TRIGGERS: `${BASE_URL}${RELATIVE_URLS.SETTINGS.TRIGGERS}`,
       INTEGRATIONS: {
+        CIRCLECI: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI}`,
         JIRA: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.JIRA}`,
       },
     },

@@ -231,6 +231,13 @@ Show results from each sub-agent before proceeding to the next step.
 - **Components**: `PascalCase` (e.g., `UserProfile.tsx`)
 - **Constants**: `SCREAMING_SNAKE_CASE` (e.g., `API_BASE_URL`)
 
+### Color System
+
+- **Primary color**: `pink-600` for buttons, links, and primary actions
+- **Hover states**: `pink-700` for button hovers, `hover:underline` for links
+- **Secondary colors**: `gray-600` for text, `red-600` for errors, `green-600` for success
+- **Never use**: `blue-600` or other blue colors - always use pink for primary actions
+
 ### Quality Priorities (in order of importance)
 
 1. **Performance** - Most critical consideration
