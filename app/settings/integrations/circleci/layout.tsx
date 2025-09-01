@@ -7,8 +7,8 @@ import { createPageMetadata } from "@/utils/metadata";
 import { circleCIJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `CircleCI Integration - ${PRODUCT_NAME} Settings`,
-  description: `Connect CircleCI with GitAuto to automatically read build logs and error messages when tests fail. Configure Personal Access Tokens for seamless CI/CD integration.`,
+  title: `Configure CircleCI Integration for ${PRODUCT_NAME} Testing`,
+  description: `Connect CircleCI with GitAuto to automatically read build logs and error messages when tests fail. Configure Personal Access Tokens for CI/CD integration.`,
   url: ABSOLUTE_URLS.GITAUTO.SETTINGS.INTEGRATIONS.CIRCLECI,
   images: [
     { url: THUMBNAILS.SETTINGS.INTEGRATIONS.CIRCLECI, alt: `${PRODUCT_NAME} CircleCI Integration` },
