@@ -21,8 +21,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Database Access
 
 ```bash
-# Connect to Supabase PostgreSQL database
-source .env.local && psql "postgresql://postgres.dkrxtcbaqzrodvsagwwn:$SUPABASE_DB_PASSWORD@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
+# Connect to Supabase PostgreSQL database (Development)
+source .env && psql "postgresql://postgres.dkrxtcbaqzrodvsagwwn:$SUPABASE_DB_PASSWORD_DEV@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
+
+# Connect to Supabase PostgreSQL database (Production)
+# READ-ONLY access
+source .env && psql "postgresql://postgres.awegqusxzsmlgxaxyyrq:$SUPABASE_DB_PASSWORD_PRD@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
 ```
 
 ### Stripe CLI Commands (for local development)
@@ -40,6 +44,42 @@ Credit expiration is handled automatically via Vercel cron jobs:
 - **Endpoint**: `/api/cron/expire-credits`
 - **Authentication**: Vercel's built-in headers (`x-vercel-cron: 1`)
 - **Monitoring**: View execution logs in Vercel dashboard
+
+### Accessing Vercel Production Logs
+
+**IMPORTANT**: Vercel CLI logs are NOT useful for debugging runtime errors:
+
+- `vercel logs` only shows real-time logs (waits for new logs, doesn't show historical)
+- Runtime logs are only stored for ~1 hour maximum
+- Build logs are available but don't contain runtime errors like 500s
+
+**For debugging production runtime errors:**
+
+1. **Use Vercel Dashboard Logs**: <https://vercel.com/gitauto/gitauto-website/logs> (manually search for errors)
+2. **Use Sentry CLI** (see below for commands)
+3. **Reproduce the error** to capture fresh logs
+4. **Set up log drains** for persistent logging (external services)
+5. **Add better error logging** to server actions/API routes
+
+### Sentry CLI for Error Tracking
+
+```bash
+# Install Sentry CLI if not already installed
+brew install getsentry/tools/sentry-cli
+
+# List recent issues (requires SENTRY_PERSONAL_TOKEN in .env.local)
+source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --max-rows 10
+
+# List unresolved issues
+source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --status unresolved --max-rows 20
+
+# Search for specific errors (e.g., sync errors, 500 errors)
+source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --query "is:unresolved level:error sync" --max-rows 10
+
+# Get full event details for a specific issue (replace WEBSITE-XXX with actual issue ID)
+source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" \
+  "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | python -m json.tool
+```
 
 ### Running Individual Tests
 
@@ -181,7 +221,7 @@ When the user says "LGTM", execute these commands in order:
 6. `npm run build` - Build the project
 7. **STOP if any test fails** - Fix all failures before proceeding (unless blog-only)
 8. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes
-9. `git add .` - Stage all changes (only if ALL tests passed or blog-only)
+9. `git add <specific-file-paths>` - Stage specific changed files (NEVER use `git add .`, always specify exact file paths)
 10. Create a descriptive commit message based on changes (do NOT include Claude Code attribution)
 11. `git push` - Push to remote
 
@@ -201,7 +241,7 @@ Never rely on `npm run build` alone as it ignores test files. All TypeScript err
 When the user says "BLOG", use these sub-agents in sequence:
 
 1. `source-finder` - Find unique sources
-2. `title-generator` - Generate SEO-optimized titles  
+2. `title-generator` - Generate SEO-optimized titles
 3. `blog-writer` - Write complete blog posts
 4. `blog-refiner` - Review and refine content quality
 

@@ -128,12 +128,12 @@ export type Database = {
           github_issue_url: string | null
           id: number
           is_excluded_from_testing: boolean | null
+          language: string | null
           level: string
           line_coverage: number | null
           owner_id: number
           package_name: string | null
           path_coverage: number | null
-          primary_language: string | null
           repo_id: number
           statement_coverage: number | null
           uncovered_branches: string | null
@@ -153,12 +153,12 @@ export type Database = {
           github_issue_url?: string | null
           id?: number
           is_excluded_from_testing?: boolean | null
+          language?: string | null
           level: string
           line_coverage?: number | null
           owner_id: number
           package_name?: string | null
           path_coverage?: number | null
-          primary_language?: string | null
           repo_id: number
           statement_coverage?: number | null
           uncovered_branches?: string | null
@@ -178,12 +178,12 @@ export type Database = {
           github_issue_url?: string | null
           id?: number
           is_excluded_from_testing?: boolean | null
+          language?: string | null
           level?: string
           line_coverage?: number | null
           owner_id?: number
           package_name?: string | null
           path_coverage?: number | null
-          primary_language?: string | null
           repo_id?: number
           statement_coverage?: number | null
           uncovered_branches?: string | null
@@ -500,10 +500,10 @@ export type Database = {
           created_by: string
           function_coverage: number
           id: number
+          language: string
           line_coverage: number
           owner_id: number
           owner_name: string
-          primary_language: string | null
           repo_id: number
           repo_name: string
           statement_coverage: number
@@ -515,10 +515,10 @@ export type Database = {
           created_by: string
           function_coverage?: number
           id?: number
+          language: string
           line_coverage?: number
           owner_id: number
           owner_name: string
-          primary_language?: string | null
           repo_id: number
           repo_name: string
           statement_coverage?: number
@@ -530,10 +530,10 @@ export type Database = {
           created_by?: string
           function_coverage?: number
           id?: number
+          language?: string
           line_coverage?: number
           owner_id?: number
           owner_name?: string
-          primary_language?: string | null
           repo_id?: number
           repo_name?: string
           statement_coverage?: number
