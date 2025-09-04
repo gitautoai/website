@@ -31,7 +31,7 @@ export async function insertCoverage(
     uncovered_functions: null,
     branch_coverage: 0,
     uncovered_branches: null,
-    primary_language: null,
+    language: null,
     github_issue_url: null,
     is_excluded_from_testing: false,
     file_size: file.size,

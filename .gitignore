@@ -2,9 +2,6 @@
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
 
 # testing
 /coverage
@@ -37,8 +34,9 @@ next-env.d.ts
 # prisma
 prisma/.env
 
-/utils/nikita*
-
 # storybook
 *storybook.log
 storybook-static
+
+# Supabase
+supabase/.temp/

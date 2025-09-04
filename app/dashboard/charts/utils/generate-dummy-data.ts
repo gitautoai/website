@@ -46,7 +46,7 @@ export function generateDummyData(): Tables<"repo_coverage">[] {
       line_coverage: Math.round(statementCoverage * 100) / 100,
       function_coverage: Math.round(functionCoverage * 100) / 100,
       branch_coverage: Math.round(branchCoverage * 100) / 100,
-      primary_language: "TypeScript",
+      language: "TypeScript",
       created_at: date.toISOString(),
       created_by: "demo-system",
     });
