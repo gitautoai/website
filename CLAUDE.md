@@ -76,9 +76,17 @@ source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN
 # Search for specific errors (e.g., sync errors, 500 errors)
 source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --query "is:unresolved level:error sync" --max-rows 10
 
+# Get full issue details for a specific issue (replace WEBSITE-XXX with actual issue ID)
+source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/" | jq
+
 # Get full event details for a specific issue (replace WEBSITE-XXX with actual issue ID)
-source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" \
-  "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | python -m json.tool
+source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq
+
+# Get error message and type from latest event
+source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq '.exception.values[0] | {type, value}'
+
+# Get exception details from event entries
+source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq '.entries[] | select(.type == "exception") | .data.values[0]'
 ```
 
 ### Running Individual Tests
