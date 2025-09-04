@@ -13,6 +13,8 @@ export function filterAndSortData(
   sortField: SortField,
   sortDirection: SortDirection
 ): Tables<"coverages">[] {
+  if (!data) return [];
+  
   let filtered = data;
 
   // Package filter
