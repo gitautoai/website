@@ -42,7 +42,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "IS_PLAYWRIGHT=true npm run dev",
+    command: process.env.CI ? "IS_PLAYWRIGHT=true npm run dev:ci" : "IS_PLAYWRIGHT=true npm run dev",
     url: process.env.PORT ? `http://localhost:${process.env.PORT}` : "http://localhost:4000",
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
