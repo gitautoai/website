@@ -24,13 +24,16 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check if should post to SNS
         id: check
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
+            console.log('Context payload keys:', Object.keys(context.payload));
+            console.log('Workflow run pull_requests:', context.payload.workflow_run.pull_requests);
+            
             const { getBlogInfo } = require('.github/scripts/utils.js');
             const triggeringContext = {
               payload: {
-                pull_request: github.event.workflow_run.pull_requests[0]
+                pull_request: context.payload.workflow_run.pull_requests[0]
               }
             };
 
@@ -38,7 +41,7 @@ jobs:
             const { isBlog, postUrl } = await getBlogInfo({ github, context: triggeringContext });
 
             // Check if has sns label
-            const hasSnsLabel = github.event.workflow_run.pull_requests[0]?.labels?.some(label => label.name === 'sns') || false;
+            const hasSnsLabel = context.payload.workflow_run.pull_requests[0]?.labels?.some(label => label.name === 'sns') || false;
 
             // Should post if it's a blog post OR has sns label
             const shouldPost = isBlog || hasSnsLabel;
@@ -75,7 +78,7 @@ jobs:
 
       # https://github.com/actions/github-script
       - name: Post to X
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         continue-on-error: true
         with:
           script: |
@@ -85,7 +88,7 @@ jobs:
             // Use the triggering workflow run's context
             const triggeringContext = {
               payload: {
-                pull_request: github.event.workflow_run.pull_requests[0]
+                pull_request: context.payload.workflow_run.pull_requests[0]
               }
             };
             await postTwitter({ context: triggeringContext, isBlog, postUrl });
@@ -100,7 +103,7 @@ jobs:
           TWITTER_ACCESS_TOKEN_SECRET_WES: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET_WES }}
 
       - name: Post to LinkedIn
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         continue-on-error: true
         with:
           script: |
@@ -110,7 +113,7 @@ jobs:
             // Use the triggering workflow run's context
             const triggeringContext = {
               payload: {
-                pull_request: github.event.workflow_run.pull_requests[0]
+                pull_request: context.payload.workflow_run.pull_requests[0]
               }
             };
             await postLinkedIn({ context: triggeringContext, isBlog, postUrl });
@@ -118,7 +121,7 @@ jobs:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
 
       - name: Post to Hacker News
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         continue-on-error: true
         with:
           script: |
@@ -128,7 +131,7 @@ jobs:
             // Use the triggering workflow run's context
             const triggeringContext = {
               payload: {
-                pull_request: github.event.workflow_run.pull_requests[0]
+                pull_request: context.payload.workflow_run.pull_requests[0]
               }
             };
             await postHackerNews({ context: triggeringContext, isBlog, postUrl });
