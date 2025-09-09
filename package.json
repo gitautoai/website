@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "npm run kill-port && npm run types:generate && next dev -p 4000 & npm run stripe",
+    "dev:ci": "next dev -p 4000 & npm run stripe",
     "kill-port": "lsof -ti:4000 | xargs kill -9 2>/dev/null || true",
     "stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:4000/api/stripe/webhook",
     "build": "next build",
