@@ -88,6 +88,11 @@ jobs:
           # GitHub OAuth credentials for E2E tests
           GITHUB_CLIENT_ID: ${{ secrets.GH_CLIENT_ID }}
           GITHUB_CLIENT_SECRET: ${{ secrets.GH_CLIENT_SECRET }}
+          
+          # GitHub login credentials for E2E tests
+          GITHUB_USERNAME: ${{ secrets.GH_USERNAME }}
+          GITHUB_PASSWORD: ${{ secrets.GH_PASSWORD }}
+          GITHUB_OTP_SECRET: ${{ secrets.GH_OTP_SECRET }}
 
           # Stripe credentials for E2E tests
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
