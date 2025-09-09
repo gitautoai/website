@@ -6,18 +6,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Development Commands
 
-### Essential Commands
-
-- `npm install` - Install dependencies (requires Node.js 22.x)
-- `npm run dev` - Start development server on port 4000
-- `npm run build` - Production build
-- `npm run lint` - Run ESLint
-- `npm test` - Run Jest unit tests
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:e2e` - Run Playwright E2E tests (uses port 4001)
-- `npm run types:generate` - Generate TypeScript types from Supabase schema
-- `npx tsc --noEmit` - Type-check ALL files including tests (use this to catch TypeScript errors)
-
 ### Database Access
 
 ```bash
@@ -225,7 +213,7 @@ When the user says "LGTM", execute these commands in order:
 2. `npm run lint` - Run linting
 3. `npx tsc --noEmit` - Type-check ALL files including tests (use this to catch TypeScript errors)
 4. `npm test` - Run unit tests (must pass 100%, skip for blog-only changes)
-5. `npm run test:e2e` - Run E2E tests (must pass 100%, skip for blog-only changes)
+5. `npx playwright test` - Run E2E tests (must pass 100%, skip for blog-only changes)
 6. `npm run build` - Build the project
 7. **STOP if any test fails** - Fix all failures before proceeding (unless blog-only)
 8. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes

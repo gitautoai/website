@@ -20,7 +20,7 @@ export default defineConfig({
   globalSetup: require.resolve("./e2e/setup/stripe.setup.ts"),
   globalTeardown: require.resolve("./e2e/setup/stripe.teardown.ts"),
   use: {
-    baseURL: process.env.PORT ? `http://localhost:${process.env.PORT}` : "http://localhost:4001",
+    baseURL: process.env.PORT ? `http://localhost:${process.env.PORT}` : "http://localhost:4000",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     headless: !!process.env.CI,
@@ -42,8 +42,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev:test -- -p 4001",
-    url: process.env.PORT ? `http://localhost:${process.env.PORT}` : "http://localhost:4001",
+    command: "IS_PLAYWRIGHT=true npm run dev",
+    url: process.env.PORT ? `http://localhost:${process.env.PORT}` : "http://localhost:4000",
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
   },
