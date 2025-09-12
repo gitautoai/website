@@ -669,6 +669,8 @@ export type Database = {
           is_merged: boolean
           is_test_passed: boolean
           issue_number: number
+          minimized_error_log: string | null
+          original_error_log: string | null
           owner_id: number
           owner_name: string
           owner_type: string
@@ -692,6 +694,8 @@ export type Database = {
           is_merged?: boolean
           is_test_passed?: boolean
           issue_number?: number
+          minimized_error_log?: string | null
+          original_error_log?: string | null
           owner_id?: number
           owner_name?: string
           owner_type?: string
@@ -715,6 +719,8 @@ export type Database = {
           is_merged?: boolean
           is_test_passed?: boolean
           issue_number?: number
+          minimized_error_log?: string | null
+          original_error_log?: string | null
           owner_id?: number
           owner_name?: string
           owner_type?: string
