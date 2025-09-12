@@ -4,6 +4,7 @@ import fs from "fs/promises";
 import path from "path";
 import { createTestOwner, cleanupTestOwner } from "../helpers/create-test-owner";
 import { triggerStripeWebhook } from "../helpers/stripe-trigger";
+import stripe from "@/lib/stripe";
 
 test.describe("Manual Credit Purchase", () => {
   // Use auth state for regular user with credits
@@ -85,7 +86,9 @@ test.describe("Manual Credit Purchase", () => {
     expect(page.url()).not.toContain("success=false");
   });
 
-  test("should update database after successful payment", async ({ page }) => {
+  test("should update database and set default payment method after successful payment", async ({
+    page,
+  }) => {
     // Create test owner with initial credits
     const ownerResult = await createTestOwner({
       initialCredits: 50,
@@ -106,7 +109,7 @@ test.describe("Manual Credit Purchase", () => {
 
       const initialBalance = initialOwner?.credit_balance_usd || 0;
 
-      // Trigger Stripe webhook using CLI to simulate successful payment
+      // Trigger Stripe webhook using CLI to simulate successful payment with payment method
       await triggerStripeWebhook({
         event: "payment_intent.succeeded",
         metadata: {
@@ -114,10 +117,14 @@ test.describe("Manual Credit Purchase", () => {
           credit_amount: 100,
           auto_reload: false,
         },
+        params: {
+          "payment_intent:customer": testCustomerId,
+          "payment_intent:payment_method": "pm_card_visa", // Mock payment method
+        },
       });
 
       // Wait for webhook processing
-      await page.waitForTimeout(2000);
+      await page.waitForTimeout(3000);
 
       // Simulate successful payment page
       await page.goto("/dashboard/credits?success=true");
@@ -147,6 +154,16 @@ test.describe("Manual Credit Purchase", () => {
 
       expect(recentTransaction).toBeTruthy();
       expect(recentTransaction?.amount_usd).toBe(100);
+
+      // Verify that the payment method was set as default for invoices
+      // This is tested by checking that auto-reload would work (no "No default payment method" error)
+      const customer = await stripe.customers.retrieve(testCustomerId);
+      if (customer && !customer.deleted) {
+        expect(customer.invoice_settings?.default_payment_method).toBeTruthy();
+        console.log(
+          `✅ Default payment method set: ${customer.invoice_settings?.default_payment_method}`
+        );
+      }
     } finally {
       // Cleanup test data
       await cleanupTestOwner(testOwnerId, testCustomerId);
