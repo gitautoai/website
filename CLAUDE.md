@@ -21,7 +21,7 @@ source .env && psql "postgresql://postgres.awegqusxzsmlgxaxyyrq:$SUPABASE_DB_PAS
 
 - `stripe login` - Login to Stripe account
 - `stripe listen --forward-to localhost:4000/api/stripe/webhook` - Forward webhook events to local server (dev port 4000)
-- For E2E tests: `stripe listen --forward-to localhost:4001/api/stripe/webhook` - Forward to test server (port 4001)
+- For E2E tests: `stripe listen --forward-to localhost:4000/api/stripe/webhook` - Forward to test server (port 4000)
 - `stripe trigger payment_intent.succeeded` - Test webhook events locally
 
 ### Vercel Cron Jobs

@@ -4,6 +4,8 @@ import path from "path";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { insertCredits } from "@/app/actions/supabase/credits/insert-credits";
 import { cleanupTestOwner, createTestOwner } from "../helpers/create-test-owner";
+import { triggerStripeWebhook } from "../helpers/stripe-trigger";
+import stripe from "@/lib/stripe";
 
 // Helper function to call Vercel cron endpoints properly
 const callVercelCronEndpoint = async (page: any, endpoint: string) => {
@@ -450,6 +452,76 @@ test.describe("Auto-reload workflow", () => {
       await expect(balanceElement).toContainText("$15");
     } finally {
       // No cleanup needed since we're using the shared test user
+    }
+  });
+
+  test("should set default payment method via webhook for future auto-reload", async ({ page }) => {
+    // Create a fresh test owner to simulate a new customer
+    const newCustomerResult = await createTestOwner({
+      initialCredits: 10, // Start with low balance to trigger auto-reload
+      ownerName: "test-webhook-default-payment",
+      autoReloadEnabled: true,
+      autoReloadThreshold: 15,
+      autoReloadTarget: 50,
+    });
+
+    expect(newCustomerResult.success).toBe(true);
+    const newTestOwnerId = newCustomerResult.testOwnerId!;
+    const newTestCustomerId = newCustomerResult.testCustomerId!;
+
+    try {
+      // Get current default payment method state
+      let customer = await stripe.customers.retrieve(newTestCustomerId);
+      const initialDefaultPaymentMethod =
+        customer && !customer.deleted ? customer.invoice_settings?.default_payment_method : null;
+
+      console.log(`Initial default payment method: ${initialDefaultPaymentMethod}`);
+
+      // Simulate a successful payment that should set the default payment method
+      await triggerStripeWebhook({
+        event: "payment_intent.succeeded",
+        metadata: {
+          owner_id: newTestOwnerId,
+          credit_amount: 25,
+          auto_reload: false,
+        },
+        params: {
+          "payment_intent:customer": newTestCustomerId,
+          "payment_intent:payment_method": "pm_test_webhook_card", // Unique test payment method ID
+        },
+      });
+
+      // Wait for webhook processing
+      await page.waitForTimeout(3000);
+
+      // Verify the payment method was updated to our test payment method
+      customer = await stripe.customers.retrieve(newTestCustomerId);
+      if (customer && !customer.deleted) {
+        expect(customer.invoice_settings?.default_payment_method).toBe("pm_test_webhook_card");
+        console.log(
+          `✅ Webhook set default payment method: ${customer.invoice_settings?.default_payment_method}`
+        );
+      }
+
+      // Trigger auto-reload cron job to verify it works now
+      const response = await callVercelCronEndpoint(page, "/api/cron/auto-reload");
+      expect(response.ok()).toBeTruthy();
+      const data = await response.json();
+      expect(data.success).toBe(true);
+
+      // Find our owner in the results - should succeed now that default payment method is set
+      const ourResult = data.results?.find((result: any) => result.ownerId === newTestOwnerId);
+      expect(ourResult).toBeDefined();
+      expect(ourResult.success).toBe(true);
+      expect(ourResult.amountCharged).toBe(40); // $50 target - $10 current = $40
+      expect(ourResult.paymentIntentId).toBeDefined();
+
+      console.log(
+        `✅ Auto-reload successful after webhook fix: charged $${ourResult.amountCharged}`
+      );
+    } finally {
+      // Cleanup test data
+      await cleanupTestOwner(newTestOwnerId, newTestCustomerId);
     }
   });
 });

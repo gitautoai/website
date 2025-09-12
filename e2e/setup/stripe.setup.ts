@@ -43,7 +43,7 @@ async function globalSetup() {
       "--events",
       "payment_intent.succeeded",
       "--forward-to",
-      "localhost:4001/api/stripe/webhook",
+      "localhost:4000/api/stripe/webhook",
       "--api-key",
       apiKey,
     ],

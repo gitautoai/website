@@ -65,6 +65,24 @@ export async function POST(req: NextRequest) {
       expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(), // 1 year from now
     });
 
+    // Set the payment method as default for future auto-reload charges
+    // This ensures auto-reload will work without "No default payment method found" errors
+    if (paymentIntent.customer && paymentIntent.payment_method) {
+      try {
+        await stripe.customers.update(paymentIntent.customer as string, {
+          invoice_settings: {
+            default_payment_method: paymentIntent.payment_method as string,
+          },
+        });
+        console.log(
+          `Set payment method ${paymentIntent.payment_method} as default for customer ${paymentIntent.customer}`
+        );
+      } catch (error) {
+        console.error("Failed to set default payment method:", error);
+        // Don't fail the webhook - credits are still added, just auto-reload might not work
+      }
+    }
+
     // Send Slack notification for successful payment
     const isAutoReload = metadata.auto_reload === "true";
     const paymentType = isAutoReload ? "Auto-reload" : "Manual purchase";
