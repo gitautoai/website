@@ -78,13 +78,13 @@ describe('getRandomItem', () => {
   });
 
   describe('edge cases', () => {
-    it('should handle empty array gracefully and return undefined', () => {
+    it('should handle empty array gracefully', () => {
       mockMathRandom.mockReturnValue(0);
       const items: string[] = [];
 
       const result = getRandomItem(items);
 
-      expect(result).toBeUndefined();
+      expect(result).toBeUndefined(); // Runtime behavior: items[0] on empty array returns undefined
     });
 
     it('should handle very large arrays', () => {
