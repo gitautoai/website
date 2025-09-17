@@ -113,6 +113,16 @@ describe('getRandomItem', () => {
 
       expect(result).toBeNull();
     });
+
+    it('should not mutate the input array', () => {
+      mockMathRandom.mockReturnValue(0.5);
+      const items = ['a', 'b', 'c'];
+      const originalItems = [...items];
+
+      getRandomItem(items);
+
+      expect(items).toEqual(originalItems);
+    });
   });
 
   describe('boundary conditions', () => {
