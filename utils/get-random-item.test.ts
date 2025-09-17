@@ -123,6 +123,15 @@ describe('getRandomItem', () => {
 
       expect(items).toEqual(originalItems);
     });
+
+    it('should handle arrays with duplicate values correctly', () => {
+      mockMathRandom.mockReturnValue(0.5);
+      const items = ['duplicate', 'duplicate', 'unique'];
+
+      const result = getRandomItem(items);
+
+      expect(result).toBe('duplicate'); // Math.floor(0.5 * 3) = 1, items[1] = 'duplicate'
+    });
   });
 
   describe('boundary conditions', () => {
