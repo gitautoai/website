@@ -211,6 +211,17 @@ describe('getRandomItem', () => {
       expect(result.id).toBe(1);
       expect(result.name).toBe('first');
     });
+
+    it('should return exact object reference without altering identity', () => {
+      mockMathRandom.mockReturnValue(0);
+      const obj1 = { id: 1 };
+      const obj2 = { id: 2 };
+      const items = [obj1, obj2];
+
+      const result = getRandomItem(items);
+
+      expect(result).toBe(obj1); // Same reference, not just equal
+    });
   });
 
   describe('mathematical correctness', () => {
