@@ -36,15 +36,6 @@ export async function fetchRepositoryFiles(
     for (const item of data.tree) {
       if (!item.path || item.type !== "blob") continue;
 
-      // Only include code files
-      if (!isCodeFile(item.path)) continue;
-
-      // Skip test files
-      if (isTestFile(item.path)) continue;
-
-      // Skip type files
-      if (isTypeFile(item.path)) continue;
-
       allFiles.push({
         path: item.path,
         sha: item.sha!,

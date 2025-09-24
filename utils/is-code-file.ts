@@ -1,98 +1,86 @@
 /**
- * Code file extensions (whitelist approach)
- * Only includes files that typically contain testable logic
+ * Check if a file is a code file based on extension whitelist (same logic as gitauto schedule handler)
  */
-const CODE_EXTENSIONS = [
-  // Web technologies (except HTML and CSS)
-  "js",
-  "jsx",
-  "ts",
-  "tsx",
-  "vue", // Vue SFC contains logic
-  "svelte", // Svelte components contain logic
+export function isCodeFile(filename: string): boolean {
+  if (!filename || typeof filename !== "string") return false;
 
-  // Backend languages
-  "py",
-  "java",
-  "kt",
-  "scala",
-  "groovy",
-  "cs",
-  "vb",
-  "fs",
-  "php",
-  "rb",
-  "go",
-  "rs",
-  "swift",
-  "c",
-  "cpp",
-  "cc",
-  "cxx",
-  "h",
-  "hpp",
+  if (!filename.includes(".")) return false;
 
-  // Mobile development
-  "dart", // Flutter
-  "m", // Objective-C
-  "mm", // Objective-C++
-  "kts", // Kotlin script (Android)
+  const extension = filename.split(".").pop()?.toLowerCase();
+  if (!extension) return false;
 
-  // Functional languages
-  "hs",
-  "elm",
-  "clj",
-  "cljs",
-  "ml",
-  "fs",
-  "ex", // Elixir
-  "exs", // Elixir script
-  "erl", // Erlang
-  "hrl", // Erlang header
+  const codeExtensions = new Set([
+    // Web technologies
+    "js",
+    "jsx",
+    "ts",
+    "tsx",
+    "vue",
+    "svelte",
+    // Backend languages
+    "py",
+    "java",
+    "kt",
+    "scala",
+    "groovy",
+    "cs",
+    "vb",
+    "fs",
+    "php",
+    "rb",
+    "go",
+    "rs",
+    "swift",
+    "c",
+    "cpp",
+    "cc",
+    "cxx",
+    "h",
+    "hpp",
+    // Mobile development
+    "dart",
+    "m",
+    "mm",
+    "kts",
+    // Functional languages
+    "hs",
+    "elm",
+    "clj",
+    "cljs",
+    "ml",
+    "ex",
+    "exs",
+    "erl",
+    "hrl",
+    // Other languages
+    "r",
+    "jl",
+    "lua",
+    "pl",
+    "pm",
+    "sql",
+    "graphql",
+    "proto",
+    "vim",
+    "asm",
+    "s",
+    "pas",
+    "pp",
+    "f",
+    "f90",
+    "f95",
+    "cobol",
+    "cob",
+    "cbl",
+    "ada",
+    "adb",
+    "ads",
+    "tcl",
+    "vhdl",
+    "vhd",
+    "v",
+    "sv",
+  ]);
 
-  // Shell and scripts
-  "sh",
-  "bash",
-  "zsh",
-  "fish",
-  "ps1",
-  "bat",
-  "cmd",
-
-  // Other languages
-  "r",
-  "jl", // Julia
-  "lua",
-  "pl", // Perl
-  "pm", // Perl module
-  "sql", // SQL can have testable logic
-  "graphql",
-  "proto",
-  "vim", // Vim script
-  "asm", // Assembly
-  "s", // Assembly
-  "pas", // Pascal
-  "pp", // Pascal
-  "f", // Fortran
-  "f90", // Fortran 90
-  "f95", // Fortran 95
-  "cobol", // COBOL
-  "cob", // COBOL
-  "cbl", // COBOL
-  "ada", // Ada
-  "adb", // Ada body
-  "ads", // Ada spec
-  "tcl", // Tcl
-  "vhdl", // VHDL
-  "vhd", // VHDL
-  "v", // Verilog
-  "sv", // SystemVerilog
-];
-
-/**
- * Check if a file is a code file based on extension
- */
-export function isCodeFile(filePath: string): boolean {
-  const extension = filePath.split(".").pop()?.toLowerCase();
-  return extension ? CODE_EXTENSIONS.includes(extension) : false;
+  return codeExtensions.has(extension);
 }

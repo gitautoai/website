@@ -4,6 +4,7 @@ import { insertCredits } from "../credits/insert-credits";
 
 describe("validateAutoReloadSpendingLimit integration", () => {
   const testOwnerId = Math.floor(Math.random() * 1000000) + 300000;
+  let testCounter = 0;
 
   beforeEach(async () => {
     // Clean up any existing data
@@ -24,7 +25,7 @@ describe("validateAutoReloadSpendingLimit integration", () => {
         owner_id: testOwnerId,
         owner_name: "test-owner",
         owner_type: "User", 
-        stripe_customer_id: "test_customer",
+        stripe_customer_id: `test_customer_${++testCounter}`,
         max_spending_limit_usd: null, // No limit set
       });
 
@@ -40,13 +41,14 @@ describe("validateAutoReloadSpendingLimit integration", () => {
 
     it("should allow full amount when within spending limit", async () => {
       // Create owner with $5000 spending limit
-      await supabaseAdmin.from("owners").insert({
+      const { error: ownerError } = await supabaseAdmin.from("owners").insert({
         owner_id: testOwnerId,
         owner_name: "test-owner",
         owner_type: "User",
-        stripe_customer_id: "test_customer",
+        stripe_customer_id: `test_customer_${++testCounter}`,
         max_spending_limit_usd: 5000,
       });
+      expect(ownerError).toBeNull();
 
       // Add $1000 worth of spending this month
       await insertCredits({
@@ -71,13 +73,14 @@ describe("validateAutoReloadSpendingLimit integration", () => {
 
     it("should adjust amount when requested exceeds remaining limit", async () => {
       // Create owner with $5000 spending limit
-      await supabaseAdmin.from("owners").insert({
+      const { error: ownerError } = await supabaseAdmin.from("owners").insert({
         owner_id: testOwnerId,
         owner_name: "test-owner",
         owner_type: "User",
-        stripe_customer_id: "test_customer", 
+        stripe_customer_id: `test_customer_${++testCounter}`, 
         max_spending_limit_usd: 5000,
       });
+      expect(ownerError).toBeNull();
 
       // Add $4980 worth of spending this month
       await insertCredits({
@@ -103,13 +106,14 @@ describe("validateAutoReloadSpendingLimit integration", () => {
 
     it("should skip auto-reload when spending limit is already reached", async () => {
       // Create owner with $5000 spending limit
-      await supabaseAdmin.from("owners").insert({
+      const { error: ownerError } = await supabaseAdmin.from("owners").insert({
         owner_id: testOwnerId,
         owner_name: "test-owner",
         owner_type: "User",
-        stripe_customer_id: "test_customer",
+        stripe_customer_id: `test_customer_${++testCounter}`,
         max_spending_limit_usd: 5000,
       });
+      expect(ownerError).toBeNull();
 
       // Add exactly $5000 worth of spending this month
       await insertCredits({
@@ -134,13 +138,14 @@ describe("validateAutoReloadSpendingLimit integration", () => {
 
     it("should skip auto-reload when spending already exceeds limit", async () => {
       // Create owner with $5000 spending limit
-      await supabaseAdmin.from("owners").insert({
+      const { error: ownerError } = await supabaseAdmin.from("owners").insert({
         owner_id: testOwnerId,
         owner_name: "test-owner",
         owner_type: "User",
-        stripe_customer_id: "test_customer",
+        stripe_customer_id: `test_customer_${++testCounter}`,
         max_spending_limit_usd: 5000,
       });
+      expect(ownerError).toBeNull();
 
       // Add $6000 worth of spending this month (already over limit)
       await insertCredits({
@@ -165,13 +170,14 @@ describe("validateAutoReloadSpendingLimit integration", () => {
 
     it("should include auto_reload transactions in monthly spending calculation", async () => {
       // Create owner with $5000 spending limit
-      await supabaseAdmin.from("owners").insert({
+      const { error: ownerError } = await supabaseAdmin.from("owners").insert({
         owner_id: testOwnerId,
         owner_name: "test-owner",
         owner_type: "User",
-        stripe_customer_id: "test_customer",
+        stripe_customer_id: `test_customer_${++testCounter}`,
         max_spending_limit_usd: 5000,
       });
+      expect(ownerError).toBeNull();
 
       // Add mix of purchase and auto_reload transactions
       await insertCredits({
@@ -201,13 +207,14 @@ describe("validateAutoReloadSpendingLimit integration", () => {
 
     it("should not include usage (negative) transactions in spending calculation", async () => {
       // Create owner with $5000 spending limit
-      await supabaseAdmin.from("owners").insert({
+      const { error: ownerError } = await supabaseAdmin.from("owners").insert({
         owner_id: testOwnerId,
         owner_name: "test-owner",
         owner_type: "User",
-        stripe_customer_id: "test_customer",
+        stripe_customer_id: `test_customer_${++testCounter}`,
         max_spending_limit_usd: 5000,
       });
+      expect(ownerError).toBeNull();
 
       // Add purchase and usage transactions
       await insertCredits({

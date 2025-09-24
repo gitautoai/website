@@ -1,48 +1,56 @@
 /**
- * Type file patterns with real examples
+ * Check if a file is a type definition file (same logic as gitauto schedule handler)
  */
-const TYPE_FILE_PATTERNS = [
-  // TypeScript declaration files
-  /\.d\.ts$/, // next-auth.d.ts, css.d.ts, prismjs.d.ts
+export function isTypeFile(filename: string): boolean {
+  if (!filename || typeof filename !== "string") return false;
 
-  // Type-only directories
-  /\/types\//, // types/supabase.ts, types/github.ts
-  /^types\//, // types/account.ts (root level types directory)
+  const filenameLower = filename.toLowerCase();
 
-  // Common type file names
-  /\/types\.ts$/, // app/settings/types.ts, app/dashboard/coverage/types.ts
-  /\/type\.ts$/, // single type definition files
-  /Types\.ts$/, // TypeScript convention
-  /Type\.ts$/, // singular type files
+  const typePatterns = [
+    /\/types?\//,
+    /^types?\//,
+    /\.types?\./,
+    /\.d\.ts$/,
+    /types?\./,
+    /_types?\./,
+    /^types?_/,
+    /\/schemas?\//,
+    /^schemas?\//,
+    /\.schema\./,
+    /schemas?\./,
+    /\/interfaces?\//,
+    /^interfaces?\//,
+    /\.interface\./,
+    /interfaces?\./,
+    /\/models?\/.*\.py$/,
+    /^models?\/.*\.py$/,
+    /\/constants?\//,
+    /^constants?\//,
+    /\.constants?\./,
+    /constants?\./,
+    /_constants?\./,
+    /\/enums?\//,
+    /^enums?\//,
+    /\.enums?\./,
+    /enums?\./,
+  ];
 
-  // Interface files
-  /\/interfaces\//, // interfaces directory
-  /^interfaces\//, // root level interfaces directory
-  /\/interface\.ts$/, // interface.ts files
-  /Interface\.ts$/, // Interface.ts files
+  // Check if any pattern matches
+  const matches = typePatterns.some((pattern) => pattern.test(filenameLower));
 
-  // Schema files (often contain only type definitions)
-  /\/schema\.ts$/, // schema.ts files
-  /Schema\.ts$/, // Schema.ts files
-  /\/schemas\//, // schemas directory
-  /^schemas\//, // root level schemas directory
+  if (!matches) return false;
 
-  // GraphQL type files
-  /\.graphql$/, // GraphQL schema files
-  /\.gql$/, // GraphQL files
-  /\/graphql\/.*\.ts$/, // TypeScript files in graphql directories
+  // Additional filtering to prevent false positives
+  // Patterns that should NOT be considered type files even if they match broad patterns
+  const excludePatterns = [
+    /get_.*_type/, // get_billing_type.py - business logic, not type definition
+    /.*_type_.*\./, // files with type in the middle like some_type_handler.py
+  ];
 
-  // Protocol buffer files
-  /\.proto$/, // Protocol buffer definition files
+  // If any exclude pattern matches, it's not a type file
+  if (excludePatterns.some((pattern) => pattern.test(filenameLower))) {
+    return false;
+  }
 
-  // Other type definition patterns
-  /\.types\.ts$/, // api.types.ts, user.types.ts
-  /\.type\.ts$/, // user.type.ts, api.type.ts
-];
-
-/**
- * Check if a file path matches type file patterns
- */
-export function isTypeFile(filePath: string): boolean {
-  return TYPE_FILE_PATTERNS.some((pattern) => pattern.test(filePath));
+  return true;
 }
