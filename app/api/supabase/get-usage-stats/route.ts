@@ -5,10 +5,12 @@ import { supabaseAdmin } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   try {
-    const { ownerName, userId, periodStart, periodEnd } = await request.json();
-    console.log({ ownerName, userId, periodStart, periodEnd });
+    const { ownerName, repoName, userId, periodStart, periodEnd } = await request.json();
+    console.log({ ownerName, repoName, userId, periodStart, periodEnd });
 
     if (!ownerName) return NextResponse.json({ error: "Owner name is required" }, { status: 400 });
+    if (!repoName)
+      return NextResponse.json({ error: "Repository name is required" }, { status: 400 });
     if (!userId) return NextResponse.json({ error: "User ID is required" }, { status: 400 });
     if (!periodStart || !periodEnd)
       return NextResponse.json({ error: "Period is required" }, { status: 400 });
@@ -17,7 +19,8 @@ export async function POST(request: Request) {
     const { data: allTimeData, error: allTimeError } = await supabaseAdmin
       .from("usage_with_issues")
       .select("*")
-      .eq("owner_name", ownerName);
+      .eq("owner_name", ownerName)
+      .eq("repo_name", repoName);
 
     if (allTimeError)
       return NextResponse.json({ error: "Failed to fetch all-time data" }, { status: 500 });
@@ -29,6 +32,7 @@ export async function POST(request: Request) {
       .from("usage_with_issues")
       .select("*")
       .eq("owner_name", ownerName)
+      .eq("repo_name", repoName)
       .gte("created_at", periodStart)
       .lte("created_at", periodEnd);
 
