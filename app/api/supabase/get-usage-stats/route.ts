@@ -42,10 +42,19 @@ export async function POST(request: Request) {
     console.log("thisMonthData.length: ", thisMonthData.length);
 
     const calculateStats = (data: any[]): PullRequestStats => {
-      // PR count is the number of records in the usage table
-      const totalPRs = data.length;
-      const userPRs = data.filter((record) => record.user_id === userId).length;
-      console.log({ totalPRs, userPRs });
+      // Count unique PRs (deduplicate by PR number)
+      const uniquePRs = new Set(
+        data
+          .filter((record) => record.pr_number)
+          .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
+      );
+      const userUniquePRs = new Set(
+        data
+          .filter((record) => record.pr_number && record.user_id === userId)
+          .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
+      );
+      console.log("uniquePRs.size: ", uniquePRs.size);
+      console.log("userUniquePRs.size: ", userUniquePRs.size);
 
       // Unique issue count is owner_name + repo_name + issue_number combination
       const uniqueIssues = new Set(
@@ -74,8 +83,8 @@ export async function POST(request: Request) {
       console.log("userUniqueMergedPRs.size: ", userUniqueMergedPRs.size);
 
       return {
-        total_prs: totalPRs,
-        user_prs: userPRs,
+        total_prs: uniquePRs.size,
+        user_prs: userUniquePRs.size,
         total_issues: uniqueIssues.size,
         user_issues: userUniqueIssues.size,
         total_merges: uniqueMergedPRs.size,
