@@ -399,6 +399,87 @@ export type Database = {
         }
         Relationships: []
       }
+      llm_requests: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          error_message: string | null
+          id: number
+          input_content: string
+          input_cost_usd: number
+          input_length: number
+          input_tokens: number
+          model_id: string
+          output_content: string
+          output_cost_usd: number
+          output_length: number
+          output_tokens: number
+          provider: string
+          response_time_ms: number | null
+          total_cost_usd: number
+          updated_at: string
+          updated_by: string | null
+          usage_id: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          id?: number
+          input_content: string
+          input_cost_usd: number
+          input_length: number
+          input_tokens: number
+          model_id: string
+          output_content: string
+          output_cost_usd: number
+          output_length: number
+          output_tokens: number
+          provider: string
+          response_time_ms?: number | null
+          total_cost_usd: number
+          updated_at?: string
+          updated_by?: string | null
+          usage_id?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          id?: number
+          input_content?: string
+          input_cost_usd?: number
+          input_length?: number
+          input_tokens?: number
+          model_id?: string
+          output_content?: string
+          output_cost_usd?: number
+          output_length?: number
+          output_tokens?: number
+          provider?: string
+          response_time_ms?: number | null
+          total_cost_usd?: number
+          updated_at?: string
+          updated_by?: string | null
+          usage_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "llm_requests_usage_id_fkey"
+            columns: ["usage_id"]
+            isOneToOne: false
+            referencedRelation: "usage"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "llm_requests_usage_id_fkey"
+            columns: ["usage_id"]
+            isOneToOne: false
+            referencedRelation: "usage_with_issues"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       oauth_tokens: {
         Row: {
           access_token: string
@@ -669,6 +750,9 @@ export type Database = {
           is_merged: boolean
           is_test_passed: boolean
           issue_number: number
+          lambda_log_group: string | null
+          lambda_log_stream: string | null
+          lambda_request_id: string | null
           minimized_error_log: string | null
           original_error_log: string | null
           owner_id: number
@@ -694,6 +778,9 @@ export type Database = {
           is_merged?: boolean
           is_test_passed?: boolean
           issue_number?: number
+          lambda_log_group?: string | null
+          lambda_log_stream?: string | null
+          lambda_request_id?: string | null
           minimized_error_log?: string | null
           original_error_log?: string | null
           owner_id?: number
@@ -719,6 +806,9 @@ export type Database = {
           is_merged?: boolean
           is_test_passed?: boolean
           issue_number?: number
+          lambda_log_group?: string | null
+          lambda_log_stream?: string | null
+          lambda_request_id?: string | null
           minimized_error_log?: string | null
           original_error_log?: string | null
           owner_id?: number

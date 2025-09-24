@@ -1,4 +1,8 @@
 import { Tables } from "@/types/supabase";
+import { isCodeFile } from "@/utils/is-code-file";
+import { isTestFile } from "@/utils/is-test-file";
+import { isTypeFile } from "@/utils/is-type-file";
+import { isMigrationFile } from "@/utils/is-migration-file";
 import { SortField, SortDirection } from "../types";
 
 /**
@@ -14,7 +18,7 @@ export function filterAndSortData(
   sortDirection: SortDirection
 ): Tables<"coverages">[] {
   if (!data) return [];
-  
+
   let filtered = data;
 
   // Package filter
@@ -22,6 +26,22 @@ export function filterAndSortData(
 
   // Level filter
   if (selectedLevel) filtered = filtered.filter((item) => item.level === selectedLevel);
+
+  // File type filtering (same logic as schedule handler) - only apply to file-level entries
+  filtered = filtered.filter((item) => {
+    // Always include non-file entries (repository, directory level)
+    if (item.level !== "file" || !item.full_path) return true;
+
+    const filePath = item.full_path;
+
+    // Apply same filtering logic as schedule handler
+    if (!isCodeFile(filePath)) return false;
+    if (isTestFile(filePath)) return false;
+    if (isTypeFile(filePath)) return false;
+    if (isMigrationFile(filePath)) return false;
+
+    return true;
+  });
 
   // Coverage filter
   if (hideFullCoverage === "hide")
