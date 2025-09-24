@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
     // Get all-time stats
     const { data: allTimeData, error: allTimeError } = await supabaseAdmin
-      .from("usage_with_issues")
+      .from("usage")
       .select("*")
       .eq("owner_name", ownerName)
       .eq("repo_name", repoName);
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
 
     // Get this month stats
     const { data: thisMonthData, error: thisMonthError } = await supabaseAdmin
-      .from("usage_with_issues")
+      .from("usage")
       .select("*")
       .eq("owner_name", ownerName)
       .eq("repo_name", repoName)
@@ -59,27 +59,27 @@ export async function POST(request: Request) {
       console.log("uniqueIssues.size: ", uniqueIssues.size);
       console.log("userUniqueIssues.size: ", userUniqueIssues.size);
 
-      // Track merged issues
-      const mergedIssues = new Set(
+      // Track unique merged PRs (deduplicate by PR number)
+      const uniqueMergedPRs = new Set(
         data
-          .filter((record) => record.merged)
-          .map((record) => `${record.owner_name}/${record.repo_name}#${record.issue_number}`)
+          .filter((record) => record.is_merged && record.pr_number)
+          .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
       );
-      const userMergedIssues = new Set(
+      const userUniqueMergedPRs = new Set(
         data
-          .filter((record) => record.merged && record.user_id === userId)
-          .map((record) => `${record.owner_name}/${record.repo_name}#${record.issue_number}`)
+          .filter((record) => record.is_merged && record.pr_number && record.user_id === userId)
+          .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
       );
-      console.log("mergedIssues.size: ", mergedIssues.size);
-      console.log("userMergedIssues.size: ", userMergedIssues.size);
+      console.log("uniqueMergedPRs.size: ", uniqueMergedPRs.size);
+      console.log("userUniqueMergedPRs.size: ", userUniqueMergedPRs.size);
 
       return {
         total_prs: totalPRs,
         user_prs: userPRs,
         total_issues: uniqueIssues.size,
         user_issues: userUniqueIssues.size,
-        total_merges: mergedIssues.size,
-        user_merges: userMergedIssues.size,
+        total_merges: uniqueMergedPRs.size,
+        user_merges: userUniqueMergedPRs.size,
       };
     };
 
