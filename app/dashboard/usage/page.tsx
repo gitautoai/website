@@ -17,13 +17,14 @@ import { fetchWithTiming } from "@/utils/fetch";
 export default function UsagePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { userId, currentOwnerName, currentStripeCustomerId } = useAccountContext();
+  const { userId, currentOwnerName, currentRepoName, currentStripeCustomerId } =
+    useAccountContext();
   const [usageStats, setUsageStats] = useState<UsageStats | null>(null);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!currentStripeCustomerId) {
+      if (!currentStripeCustomerId || !currentRepoName) {
         setIsLoading(false);
         return;
       }
@@ -43,6 +44,7 @@ export default function UsagePage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             ownerName: currentOwnerName,
+            repoName: currentRepoName,
             userId: userId,
             periodStart: thisMonthStart,
             periodEnd: nextMonthStart,
@@ -59,7 +61,7 @@ export default function UsagePage() {
     };
 
     fetchData();
-  }, [currentStripeCustomerId, currentOwnerName, userId]);
+  }, [currentStripeCustomerId, currentOwnerName, currentRepoName, userId]);
 
   const formatNumber = (value?: number) => {
     if (!value) return "-";
