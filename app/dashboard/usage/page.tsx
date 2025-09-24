@@ -9,10 +9,10 @@ import { UsageStats } from "./types";
 
 // Local imports
 import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
+import { getUsageStats } from "@/app/actions/supabase/get-usage-stats";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
-import { fetchWithTiming } from "@/utils/fetch";
 
 export default function UsagePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -24,7 +24,7 @@ export default function UsagePage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!currentStripeCustomerId || !currentRepoName) {
+      if (!currentStripeCustomerId || !currentRepoName || !currentOwnerName || !userId) {
         setIsLoading(false);
         return;
       }
@@ -39,16 +39,12 @@ export default function UsagePage() {
         const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
 
         // Fetch stats for this month
-        const statsData = await fetchWithTiming<UsageStats>(`/api/supabase/get-usage-stats`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ownerName: currentOwnerName,
-            repoName: currentRepoName,
-            userId: userId,
-            periodStart: thisMonthStart,
-            periodEnd: nextMonthStart,
-          }),
+        const statsData = await getUsageStats({
+          ownerName: currentOwnerName,
+          repoName: currentRepoName,
+          userId: userId,
+          periodStart: thisMonthStart,
+          periodEnd: nextMonthStart,
         });
 
         setUsageStats(statsData);
