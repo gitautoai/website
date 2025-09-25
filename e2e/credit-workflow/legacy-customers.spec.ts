@@ -236,7 +236,7 @@ test.describe("Credits - Legacy subscription owners", () => {
     await page.goto("/dashboard/credits");
 
     // Should show credit pricing information
-    await expect(page.locator("text=$2")).toBeVisible();
+    await expect(page.locator("text=$3")).toBeVisible();
     await expect(page.locator("text=per PR")).toBeVisible();
     await expect(page.locator("text=Credits expire after 1 year")).toBeVisible();
   });
