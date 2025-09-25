@@ -94,6 +94,12 @@ export default function UsagePage() {
     return value.toLocaleString();
   };
 
+  const calculateMergeRate = (merges: number, totalPRs: number): string => {
+    if (!totalPRs || totalPRs === 0) return "0%";
+    const rate = (merges / totalPRs) * 100;
+    return `${rate.toFixed(1)}%`;
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -151,6 +157,9 @@ export default function UsagePage() {
     selectedPeriodLabel,
     showManageCredits,
     tooltip,
+    showMergeRate,
+    allTimeTotalPRs,
+    selectedPeriodTotalPRs,
   }: {
     title: string;
     allTime: number;
@@ -158,6 +167,9 @@ export default function UsagePage() {
     selectedPeriodLabel: string;
     showManageCredits?: boolean;
     tooltip?: string;
+    showMergeRate?: boolean;
+    allTimeTotalPRs?: number;
+    selectedPeriodTotalPRs?: number;
   }) => (
     <div className="bg-white p-6 rounded-lg shadow-sm border">
       <h3 className="text-lg font-semibold mb-4 flex items-center">
@@ -167,11 +179,25 @@ export default function UsagePage() {
       <div className="space-y-2">
         <div>
           <p className="text-sm text-gray-600">All Time</p>
-          <p className="text-2xl font-bold">{formatNumber(allTime)}</p>
+          <p className="text-2xl font-bold">
+            {formatNumber(allTime)}
+            {showMergeRate && allTimeTotalPRs !== undefined && (
+              <span className="text-lg text-gray-600 ml-2">
+                ({calculateMergeRate(allTime, allTimeTotalPRs)})
+              </span>
+            )}
+          </p>
         </div>
         <div>
           <p className="text-sm text-gray-600">{selectedPeriodLabel}</p>
-          <p className="text-2xl font-bold">{formatNumber(selectedPeriodValue)}</p>
+          <p className="text-2xl font-bold">
+            {formatNumber(selectedPeriodValue)}
+            {showMergeRate && selectedPeriodTotalPRs !== undefined && (
+              <span className="text-lg text-gray-600 ml-2">
+                ({calculateMergeRate(selectedPeriodValue, selectedPeriodTotalPRs)})
+              </span>
+            )}
+          </p>
           {showManageCredits && (
             <button
               onClick={handleManageCredits}
@@ -235,7 +261,10 @@ export default function UsagePage() {
             allTime={usageStats?.all_time.total_merges || 0}
             selectedPeriodValue={usageStats?.selected_period.total_merges || 0}
             selectedPeriodLabel={selectedPeriod.label}
-            tooltip="Number of pull requests that were successfully merged into the repository."
+            tooltip="Number of pull requests that were successfully merged into the repository. Merge rate percentage is calculated as (merged PRs / total PRs) × 100."
+            showMergeRate={true}
+            allTimeTotalPRs={usageStats?.all_time.total_prs || 0}
+            selectedPeriodTotalPRs={usageStats?.selected_period.total_prs || 0}
           />
           <StatBlock
             title="Your Pull Requests"
@@ -256,7 +285,10 @@ export default function UsagePage() {
             allTime={usageStats?.all_time.user_merges || 0}
             selectedPeriodValue={usageStats?.selected_period.user_merges || 0}
             selectedPeriodLabel={selectedPeriod.label}
-            tooltip="Number of pull requests that you created and were successfully merged into the repository."
+            tooltip="Number of pull requests that you created and were successfully merged into the repository. Your merge rate percentage is calculated as (your merged PRs / your total PRs) × 100."
+            showMergeRate={true}
+            allTimeTotalPRs={usageStats?.all_time.user_prs || 0}
+            selectedPeriodTotalPRs={usageStats?.selected_period.user_prs || 0}
           />
         </div>
 
