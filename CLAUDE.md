@@ -183,7 +183,7 @@ This is a Next.js 15 application using App Router for GitAuto - a SaaS platform 
 
 - **Dual system in operation**: Both subscription-based (legacy) and credit-based (new) payment systems are active
 - **Legacy customers**: Existing paying customers still have monthly/yearly Stripe subscriptions
-- **New system**: New customers use credit-based system ($2 per PR, auto-reload, etc.)
+- **New system**: New customers use credit-based system ($3 per PR, auto-reload, etc.)
 - **Do not remove subscription code**: Billing period and subscription functionality must be maintained for existing customers
 
 ### Database Design Rules

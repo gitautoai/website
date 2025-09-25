@@ -11,7 +11,7 @@ export const TEST_LEGACY_CUSTOMER_ID = "cus_QO4R5vh6FJuN7t";
 
 export const CREDIT_PRICING = {
   PER_PR: {
-    AMOUNT_USD: 2,
+    AMOUNT_USD: 3,
   },
   PURCHASE_LIMITS: {
     MIN_AMOUNT_USD: 10,
@@ -28,7 +28,9 @@ export const CREDIT_PRICING = {
 };
 
 export const FREE_CREDITS_AMOUNT_USD = 10;
-export const FREE_PRS_LIMIT = Math.floor(FREE_CREDITS_AMOUNT_USD / CREDIT_PRICING.PER_PR.AMOUNT_USD);
+export const FREE_PRS_LIMIT = Math.floor(
+  FREE_CREDITS_AMOUNT_USD / CREDIT_PRICING.PER_PR.AMOUNT_USD
+);
 
 export const FREE_FEATURES = [
   ANTHROPIC_MODEL_CLAUDE_40,
