@@ -16,11 +16,6 @@ export async function getUsageStats({
   periodStart: string;
   periodEnd: string;
 }) {
-  if (!ownerName) throw new Error("Owner name is required");
-  if (!repoName) throw new Error("Repository name is required");
-  if (!userId) throw new Error("User ID is required");
-  if (!periodStart || !periodEnd) throw new Error("Period is required");
-
   // Get all usage data in a single query
   const { data: allTimeData, error } = await supabaseAdmin
     .from("usage")
@@ -30,8 +25,8 @@ export async function getUsageStats({
 
   if (error) throw new Error("Failed to fetch usage data");
 
-  // Filter for this month's data in memory
-  const thisMonthData = allTimeData.filter((record) => {
+  // Filter for selected period's data in memory
+  const selectedPeriodData = allTimeData.filter((record) => {
     const createdAt = new Date(record.created_at);
     const start = new Date(periodStart);
     const end = new Date(periodEnd);
@@ -85,6 +80,6 @@ export async function getUsageStats({
 
   return {
     all_time: calculateStats(allTimeData || []),
-    this_month: calculateStats(thisMonthData),
+    selected_period: calculateStats(selectedPeriodData),
   };
 }
