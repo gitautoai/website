@@ -263,8 +263,8 @@ export default function UsagePage() {
             selectedPeriodLabel={selectedPeriod.label}
             tooltip="Number of pull requests that were successfully merged into the repository. Merge rate percentage is calculated as (merged PRs / total PRs) × 100."
             showMergeRate={true}
-            allTimeTotalPRs={usageStats?.all_time.total_prs || 0}
-            selectedPeriodTotalPRs={usageStats?.selected_period.total_prs || 0}
+            allTimeTotalPRs={usageStats?.all_time?.total_prs || 0}
+            selectedPeriodTotalPRs={usageStats?.selected_period?.total_prs || 0}
           />
           <StatBlock
             title="Your Pull Requests"
@@ -287,8 +287,8 @@ export default function UsagePage() {
             selectedPeriodLabel={selectedPeriod.label}
             tooltip="Number of pull requests that you created and were successfully merged into the repository. Your merge rate percentage is calculated as (your merged PRs / your total PRs) × 100."
             showMergeRate={true}
-            allTimeTotalPRs={usageStats?.all_time.user_prs || 0}
-            selectedPeriodTotalPRs={usageStats?.selected_period.user_prs || 0}
+            allTimeTotalPRs={usageStats?.all_time?.user_prs || 0}
+            selectedPeriodTotalPRs={usageStats?.selected_period?.user_prs || 0}
           />
         </div>
 
