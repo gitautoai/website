@@ -1,37 +1,97 @@
 "use client";
 
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer 
-} from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { Tables } from "@/types/supabase";
 
 interface CoverageChartProps {
   data: Tables<"repo_coverage">[];
   isDummyData?: boolean;
+  dateRange?: {
+    startDate: string | null;
+    endDate: string | null;
+  };
 }
 
-export default function CoverageChart({ data, isDummyData = false }: CoverageChartProps) {
-  if (data.length === 0) return null;
+export default function CoverageChart({
+  data,
+  isDummyData = false,
+  dateRange,
+}: CoverageChartProps) {
+  const chartData = data.map((item) => ({
+    timestamp: new Date(item.created_at).getTime(),
+    statement: Math.round(item.statement_coverage * 100) / 100,
+    function: Math.round(item.function_coverage * 100) / 100,
+    branch: Math.round(item.branch_coverage * 100) / 100,
+    branch_name: item.branch_name,
+  }));
 
-  const chartData = data.map((item) => {
-    const date = new Date(item.created_at);
-    const dateOnly = `${date.getMonth() + 1}/${date.getDate()}`;
-    
-    return {
-      date: dateOnly,
-      statement: Math.round(item.statement_coverage * 100) / 100,
-      function: Math.round(item.function_coverage * 100) / 100,
-      branch: Math.round(item.branch_coverage * 100) / 100,
-      branch_name: item.branch_name,
-    };
-  });
+  const xAxisDomain =
+    dateRange?.startDate && dateRange?.endDate
+      ? [new Date(dateRange.startDate).getTime(), new Date(dateRange.endDate).getTime()]
+      : ["dataMin", "dataMax"];
+
+  const formatXAxis = (timestamp: number) => {
+    const date = new Date(timestamp);
+    return `${date.getMonth() + 1}/${date.getDate()}`;
+  };
+
+  // Generate tick marks dynamically based on range
+  const generateTicks = () => {
+    if (!dateRange?.startDate || !dateRange?.endDate) return undefined;
+
+    const start = new Date(dateRange.startDate);
+    const end = new Date(dateRange.endDate);
+    const daysDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
+    const ticks = [];
+    const current = new Date(start);
+
+    // Add first date
+    ticks.push(current.getTime());
+
+    // Add intermediate dates based on range
+    if (daysDiff <= 7) {
+      // Daily
+      while (current < end) {
+        current.setDate(current.getDate() + 1);
+        if (current < end) ticks.push(current.getTime());
+      }
+    } else if (daysDiff <= 30) {
+      // Weekly
+      while (current < end) {
+        current.setDate(current.getDate() + 7);
+        if (current < end) ticks.push(current.getTime());
+      }
+    } else if (daysDiff <= 90) {
+      // Bi-weekly
+      while (current < end) {
+        current.setDate(current.getDate() + 14);
+        if (current < end) ticks.push(current.getTime());
+      }
+    } else {
+      // Monthly
+      while (current < end) {
+        current.setMonth(current.getMonth() + 1);
+        if (current < end) ticks.push(current.getTime());
+      }
+    }
+
+    // Add last date
+    ticks.push(end.getTime());
+
+    return ticks;
+  };
+
+  const xAxisTicks = generateTicks();
 
   return (
     <div className="bg-white p-6 rounded-lg">
@@ -47,13 +107,40 @@ export default function CoverageChart({ data, isDummyData = false }: CoverageCha
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+          <XAxis
+            dataKey="timestamp"
+            type="number"
+            scale="time"
+            domain={xAxisDomain}
+            ticks={xAxisTicks}
+            tickFormatter={formatXAxis}
+            tick={{ fontSize: 12 }}
+            allowDataOverflow={true}
+          />
           <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
-          <Tooltip formatter={(value: number) => [`${value}%`, '']} />
+          <Tooltip formatter={(value: number) => [`${value}%`, ""]} labelFormatter={formatXAxis} />
           <Legend />
-          <Line type="monotone" dataKey="statement" stroke="#8884d8" strokeWidth={2} name="Statement Coverage" />
-          <Line type="monotone" dataKey="function" stroke="#82ca9d" strokeWidth={2} name="Function Coverage" />
-          <Line type="monotone" dataKey="branch" stroke="#ffc658" strokeWidth={2} name="Branch Coverage" />
+          <Line
+            type="monotone"
+            dataKey="statement"
+            stroke="#8884d8"
+            strokeWidth={2}
+            name="Statement Coverage"
+          />
+          <Line
+            type="monotone"
+            dataKey="function"
+            stroke="#82ca9d"
+            strokeWidth={2}
+            name="Function Coverage"
+          />
+          <Line
+            type="monotone"
+            dataKey="branch"
+            stroke="#ffc658"
+            strokeWidth={2}
+            name="Branch Coverage"
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
