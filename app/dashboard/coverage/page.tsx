@@ -140,7 +140,7 @@ export default function CoveragePage() {
         if (hasNoData) setGitHubSyncStatus("success");
 
         // If there are changes, refetch the data
-        if (result.inserted > 0 || result.updated > 0 || result.deleted > 0) {
+        if (result && (result.inserted > 0 || result.updated > 0 || result.deleted > 0)) {
           await fetchCoverageData(
             currentOwnerId,
             currentRepoId,
