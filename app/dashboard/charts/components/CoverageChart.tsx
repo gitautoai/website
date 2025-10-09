@@ -46,10 +46,15 @@ export default function CoverageChart({
 
   // Generate tick marks dynamically based on range
   const generateTicks = () => {
-    if (!dateRange?.startDate || !dateRange?.endDate) return undefined;
+    if (chartData.length === 0) return undefined;
 
-    const start = new Date(dateRange.startDate);
-    const end = new Date(dateRange.endDate);
+    // Use dateRange if provided, otherwise use data boundaries
+    const start = dateRange?.startDate
+      ? new Date(dateRange.startDate)
+      : new Date(chartData[0].timestamp);
+    const end = dateRange?.endDate
+      ? new Date(dateRange.endDate)
+      : new Date(chartData[chartData.length - 1].timestamp);
     const daysDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 
     const ticks = [];

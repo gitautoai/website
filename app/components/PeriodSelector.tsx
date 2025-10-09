@@ -8,6 +8,7 @@ export type PeriodType =
   | "last-3-months"
   | "last-6-months"
   | "this-year"
+  | "all-time"
   | "custom";
 
 export interface Period {
@@ -28,6 +29,7 @@ const PREDEFINED_PERIODS: Period[] = [
   { type: "last-3-months", label: "Last 3 Months" },
   { type: "last-6-months", label: "Last 6 Months" },
   { type: "this-year", label: "This Year" },
+  { type: "all-time", label: "All Time" },
   { type: "custom", label: "Custom Range" },
 ];
 
@@ -74,6 +76,12 @@ export function calculatePeriodDates(period: Period): {
       return {
         startDate: yearStart.toISOString(),
         endDate: nextYearStart.toISOString(),
+      };
+
+    case "all-time":
+      return {
+        startDate: null,
+        endDate: null,
       };
 
     case "custom":
