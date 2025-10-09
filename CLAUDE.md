@@ -75,6 +75,15 @@ source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" 
 
 # Get exception details from event entries
 source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq '.entries[] | select(.type == "exception") | .data.values[0]'
+
+# Get breadcrumbs (request/response details) from latest event
+source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq '.entries[] | select(.type == "breadcrumbs") | .data.values[]'
+
+# Get request context from latest event
+source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq '.entries[] | select(.type == "request")'
+
+# Search for specific issue by ID
+source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --query "WEBSITE-XXX" --max-rows 1
 ```
 
 ### Running Individual Tests
