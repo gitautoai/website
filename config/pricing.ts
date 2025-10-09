@@ -1,4 +1,4 @@
-import { ANTHROPIC_MODEL_CLAUDE_40, ANTHROPIC_MODEL_CLAUDE_40_OPUS } from "./anthropic";
+import { ANTHROPIC_MODEL_CLAUDE_OPUS, ANTHROPIC_MODEL_CLAUDE_SONNET } from "./anthropic";
 import { GOOGLE_GEMINI } from "./google";
 import { OPENAI_MODEL_O4_MINI } from "./openai";
 
@@ -33,7 +33,7 @@ export const FREE_PRS_LIMIT = Math.floor(
 );
 
 export const FREE_FEATURES = [
-  ANTHROPIC_MODEL_CLAUDE_40,
+  ANTHROPIC_MODEL_CLAUDE_SONNET,
   `$${FREE_CREDITS_AMOUNT_USD} free credits`,
   "1 repository",
   "Unlimited users",
@@ -67,7 +67,7 @@ export const STANDARD_FEATURES = [
 
 export const ENTERPRISE_FEATURES = [
   "Everything in Standard plan",
-  `${ANTHROPIC_MODEL_CLAUDE_40_OPUS}, ${ANTHROPIC_MODEL_CLAUDE_40}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
+  `${ANTHROPIC_MODEL_CLAUDE_OPUS}, ${ANTHROPIC_MODEL_CLAUDE_SONNET}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
   "Self LLM API key",
   "Self hosting",
   "SAML / SSO",
@@ -120,9 +120,9 @@ export const TABLE_FEATURES = [
       {
         name: "AI Models",
         description: "AI models used for test generation",
-        free: ANTHROPIC_MODEL_CLAUDE_40,
-        standard: ANTHROPIC_MODEL_CLAUDE_40,
-        enterprise: `${ANTHROPIC_MODEL_CLAUDE_40_OPUS}, ${ANTHROPIC_MODEL_CLAUDE_40}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
+        free: ANTHROPIC_MODEL_CLAUDE_SONNET,
+        standard: ANTHROPIC_MODEL_CLAUDE_SONNET,
+        enterprise: `${ANTHROPIC_MODEL_CLAUDE_OPUS}, ${ANTHROPIC_MODEL_CLAUDE_SONNET}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
       },
       {
         name: "Credits",
