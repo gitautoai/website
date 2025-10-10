@@ -20,6 +20,7 @@ jobs:
       should-post: ${{ steps.check.outputs.should-post }}
       is-blog: ${{ steps.check.outputs.is-blog }}
       post-url: ${{ steps.check.outputs.post-url }}
+      pr-number: ${{ steps.check.outputs.pr-number }}
     steps:
       - uses: actions/checkout@v4
       - name: Check if should post to SNS
@@ -27,21 +28,47 @@ jobs:
         uses: actions/github-script@v8
         with:
           script: |
-            console.log('Context payload keys:', Object.keys(context.payload));
-            console.log('Workflow run pull_requests:', context.payload.workflow_run.pull_requests);
-            
+            const { workflow_run, repository } = context.payload;
+            const owner = repository.owner.login;
+            const repo = repository.name;
+            const headSha = workflow_run.head_sha;
+
+            console.log('Owner:', owner);
+            console.log('Repo:', repo);
+            console.log('Head SHA:', headSha);
+            console.log('Workflow run pull_requests:', workflow_run.pull_requests);
+
+            // Get PRs associated with this commit
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner,
+              repo,
+              commit_sha: headSha
+            });
+
+            console.log(`Found ${prs.length} PR(s) for commit`);
+
+            if (prs.length === 0) {
+              console.log('No PR found for commit, skipping SNS post');
+              core.setOutput('should-post', false);
+              core.setOutput('is-blog', false);
+              core.setOutput('post-url', 'https://gitauto.ai');
+              return;
+            }
+
+            const pullRequest = prs[0];
+            console.log(`Using PR #${pullRequest.number}: ${pullRequest.title}`);
+
             const { getBlogInfo } = require('.github/scripts/utils.js');
             const triggeringContext = {
-              payload: {
-                pull_request: context.payload.workflow_run.pull_requests[0]
-              }
+              repo: { owner, repo },
+              payload: { pull_request: pullRequest }
             };
 
             // Check if it's a blog post
             const { isBlog, postUrl } = await getBlogInfo({ github, context: triggeringContext });
 
             // Check if has sns label
-            const hasSnsLabel = context.payload.workflow_run.pull_requests[0]?.labels?.some(label => label.name === 'sns') || false;
+            const hasSnsLabel = pullRequest.labels?.some(label => label.name === 'sns') || false;
 
             // Should post if it's a blog post OR has sns label
             const shouldPost = isBlog || hasSnsLabel;
@@ -49,6 +76,7 @@ jobs:
             core.setOutput('should-post', shouldPost);
             core.setOutput('is-blog', isBlog);
             core.setOutput('post-url', postUrl);
+            core.setOutput('pr-number', pullRequest.number);
 
             console.log(`Blog post detected: ${isBlog}`);
             console.log(`SNS label detected: ${hasSnsLabel}`);
@@ -85,11 +113,17 @@ jobs:
             const postTwitter = require('.github/scripts/post-twitter.js');
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
             const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
-            // Use the triggering workflow run's context
+            const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
+
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
             const triggeringContext = {
-              payload: {
-                pull_request: context.payload.workflow_run.pull_requests[0]
-              }
+              repo: context.repo,
+              payload: { pull_request: pullRequest }
             };
             await postTwitter({ context: triggeringContext, isBlog, postUrl });
         env:
@@ -110,11 +144,17 @@ jobs:
             const postLinkedIn = require('.github/scripts/post-linkedin.js');
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
             const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
-            // Use the triggering workflow run's context
+            const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
+
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
             const triggeringContext = {
-              payload: {
-                pull_request: context.payload.workflow_run.pull_requests[0]
-              }
+              repo: context.repo,
+              payload: { pull_request: pullRequest }
             };
             await postLinkedIn({ context: triggeringContext, isBlog, postUrl });
         env:
@@ -128,11 +168,17 @@ jobs:
             const postHackerNews = require('.github/scripts/post-hackernews.js');
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
             const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
-            // Use the triggering workflow run's context
+            const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
+
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
             const triggeringContext = {
-              payload: {
-                pull_request: context.payload.workflow_run.pull_requests[0]
-              }
+              repo: context.repo,
+              payload: { pull_request: pullRequest }
             };
             await postHackerNews({ context: triggeringContext, isBlog, postUrl });
         env:
