@@ -1,13 +1,13 @@
 name: Jest Coverage
 
 on:
-  push:
-    branches-ignore:
-      - "main"
+  pull_request:
+    types: [opened, synchronize]
+    branches: [main]
     paths-ignore:
       - "**.md"
       - "**.mdx"
-      - ".github/**"
+      - ".github/workflows/**"
       - "docs/**"
       - "infrastructure/**"
       - "public/**"
