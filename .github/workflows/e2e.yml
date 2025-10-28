@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - "**.md"
       - "**.mdx"
+      - "**.test.ts"
+      - "**.test.tsx"
       - ".github/workflows/**"
       - ".claude/**"
       - "docs/**"
