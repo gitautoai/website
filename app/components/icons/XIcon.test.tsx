@@ -1,4 +1,3 @@
-@@ -0,0 +1,42 @@
 import { render } from '@testing-library/react';
 import XIcon from './XIcon';
 
@@ -10,14 +9,14 @@ describe('XIcon', () => {
     expect(svg).toBeInTheDocument();
   });
 
-  it('has correct CSS classes', () => {
+  it('renders with correct CSS classes', () => {
     const { container } = render(<XIcon />);
     const svg = container.querySelector('svg');
 
     expect(svg).toHaveClass('w-4', 'h-4', 'text-white');
   });
 
-  it('has correct SVG attributes', () => {
+  it('renders with correct SVG attributes', () => {
     const { container } = render(<XIcon />);
     const svg = container.querySelector('svg');
 
@@ -26,18 +25,32 @@ describe('XIcon', () => {
     expect(svg).toHaveAttribute('viewBox', '0 0 24 24');
   });
 
-  it('renders the X path element with correct attributes', () => {
+  it('renders the X path element', () => {
     const { container } = render(<XIcon />);
     const path = container.querySelector('path');
 
     expect(path).toBeInTheDocument();
+  });
+
+  it('renders path with correct attributes', () => {
+    const { container } = render(<XIcon />);
+    const path = container.querySelector('path');
+
     expect(path).toHaveAttribute('strokeLinecap', 'round');
     expect(path).toHaveAttribute('strokeLinejoin', 'round');
     expect(path).toHaveAttribute('strokeWidth', '2');
     expect(path).toHaveAttribute('d', 'M6 18L18 6M6 6l12 12');
   });
 
-  it('renders without crashing', () => {
-    expect(() => render(<XIcon />)).not.toThrow();
+  it('renders the complete icon structure', () => {
+    const { container } = render(<XIcon />);
+
+    // Verify the structure: svg > path
+    const svg = container.querySelector('svg');
+    const path = svg?.querySelector('path');
+
+    expect(svg).toBeInTheDocument();
+    expect(path).toBeInTheDocument();
+    expect(svg?.children.length).toBe(1);
   });
 });
