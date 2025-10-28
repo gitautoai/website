@@ -14,7 +14,7 @@ describe("formatPercentage", () => {
 
     it("should return '0%' for values that result in NaN", () => {
       expect(formatPercentage(Number("invalid"))).toBe("0%");
-      expect(formatPercentage(0 / 0)).toBe("0%");
+      expect(formatPercentage(Number(undefined))).toBe("0%");
     });
   });
 
@@ -36,7 +36,7 @@ describe("formatPercentage", () => {
     });
   });
 
-  describe("positive decimals", () => {
+  describe("positive decimals with floor rounding", () => {
     it("should floor positive decimal values", () => {
       expect(formatPercentage(0.1)).toBe("0%");
       expect(formatPercentage(0.9)).toBe("0%");
@@ -49,7 +49,7 @@ describe("formatPercentage", () => {
     });
   });
 
-  describe("negative decimals", () => {
+  describe("negative decimals with floor rounding", () => {
     it("should floor negative decimal values", () => {
       expect(formatPercentage(-0.1)).toBe("-1%");
       expect(formatPercentage(-0.9)).toBe("-1%");
@@ -62,21 +62,36 @@ describe("formatPercentage", () => {
     });
   });
 
-  describe("edge cases", () => {
-    it("should handle very small positive numbers", () => {
+  describe("very small values", () => {
+    it("should handle very small positive values", () => {
+      expect(formatPercentage(0.001)).toBe("0%");
       expect(formatPercentage(0.0001)).toBe("0%");
-      expect(formatPercentage(0.00001)).toBe("0%");
+      expect(formatPercentage(Number.MIN_VALUE)).toBe("0%");
     });
 
-    it("should handle very small negative numbers", () => {
+    it("should handle very small negative values", () => {
+      expect(formatPercentage(-0.001)).toBe("-1%");
       expect(formatPercentage(-0.0001)).toBe("-1%");
-      expect(formatPercentage(-0.00001)).toBe("-1%");
+    });
+  });
+
+  describe("very large values", () => {
+    it("should handle very large values", () => {
+      expect(formatPercentage(1000)).toBe("1000%");
+      expect(formatPercentage(10000)).toBe("10000%");
+      expect(formatPercentage(999999.99)).toBe("999999%");
+    });
+  });
+
+  describe("edge cases", () => {
+    it("should handle zero correctly", () => {
+      expect(formatPercentage(0)).toBe("0%");
+      expect(formatPercentage(-0)).toBe("0%");
     });
 
-    it("should handle very large numbers", () => {
-      expect(formatPercentage(1000000)).toBe("1000000%");
-      expect(formatPercentage(-1000000)).toBe("-1000000%");
-      expect(formatPercentage(Number.MAX_SAFE_INTEGER)).toBe("9007199254740991%");
+    it("should handle Infinity values", () => {
+      expect(formatPercentage(Infinity)).toBe("Infinity%");
+      expect(formatPercentage(-Infinity)).toBe("-Infinity%");
     });
   });
 });
