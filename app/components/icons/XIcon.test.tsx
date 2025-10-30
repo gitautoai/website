@@ -3,14 +3,14 @@ import { render } from '@testing-library/react';
 
 describe('XIcon', () => {
   it('renders an SVG element', () => {
-    const { container } = render(<XIcon />);
+    const { container } = render(<XIcon />)
     const svg = container.querySelector('svg');
 
-    expect(svg).toBeInTheDocument();
-  });
+    expect(svg).toBeInTheDocument()
+  })
 
   it('renders with correct CSS classes', () => {
-    const { container } = render(<XIcon />);
+    const { container }=render(<XIcon />);
     const svg = container.querySelector('svg');
 
     expect(svg).toHaveClass('w-4', 'h-4', 'text-white');
