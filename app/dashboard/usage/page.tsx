@@ -11,7 +11,8 @@ import { PullRequestStats } from "./types";
 import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
 import { getOpenPRNumbers } from "@/app/actions/github/get-open-pr-numbers";
 import { updatePRBranches } from "@/app/actions/github/update-pr-branches";
-import { getUsageStats } from "@/app/actions/supabase/get-usage-stats";
+import { getPassingPRNumbers } from "@/app/actions/supabase/usage/get-passing-pr-numbers";
+import { getUsageStats } from "@/app/actions/supabase/usage/get-usage-stats";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import InfoIcon from "@/app/components/InfoIcon";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
@@ -91,6 +92,33 @@ export default function UsagePage() {
           periodStart: startDate,
           periodEnd: endDate,
         });
+
+        // Get actual open PR numbers from GitHub, then stats from Supabase
+        if (currentInstallationId) {
+          const openPRNumbers = await getOpenPRNumbers({
+            ownerName: currentOwnerName,
+            repoName: currentRepoName,
+            installationId: currentInstallationId,
+          });
+
+          const passingPRNumbers = await getPassingPRNumbers({
+            ownerName: currentOwnerName,
+            repoName: currentRepoName,
+            openPRNumbers,
+            userId,
+          });
+
+          // Override counts with actual data from GitHub + Supabase
+          statsData.all_time.total_open_prs = openPRNumbers.length;
+          statsData.all_time.total_passing_prs = passingPRNumbers.totalPassing;
+          statsData.all_time.user_open_prs = passingPRNumbers.userOpen;
+          statsData.all_time.user_passing_prs = passingPRNumbers.userPassing;
+
+          statsData.selected_period.total_open_prs = openPRNumbers.length;
+          statsData.selected_period.total_passing_prs = passingPRNumbers.totalPassing;
+          statsData.selected_period.user_open_prs = passingPRNumbers.userOpen;
+          statsData.selected_period.user_passing_prs = passingPRNumbers.userPassing;
+        }
 
         setUsageStats(statsData);
       } catch (error) {
