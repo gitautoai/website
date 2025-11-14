@@ -9,10 +9,13 @@ import { PullRequestStats } from "./types";
 
 // Local imports
 import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
+import { getOpenPRNumbers } from "@/app/actions/github/get-open-pr-numbers";
+import { updatePRBranches } from "@/app/actions/github/update-pr-branches";
 import { getUsageStats } from "@/app/actions/supabase/get-usage-stats";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import InfoIcon from "@/app/components/InfoIcon";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
+import Modal from "@/app/components/Modal";
 import PeriodSelector, { Period, calculatePeriodDates } from "@/app/components/PeriodSelector";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
 
@@ -21,14 +24,26 @@ const DEFAULT_PERIOD: Period = { type: "this-month", label: "This Month" };
 export default function UsagePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { userId, currentOwnerName, currentRepoName, currentStripeCustomerId } =
-    useAccountContext();
+  const {
+    userId,
+    currentOwnerName,
+    currentRepoName,
+    currentStripeCustomerId,
+    currentInstallationId,
+  } = useAccountContext();
   const [usageStats, setUsageStats] = useState<{
     all_time: PullRequestStats;
     selected_period: PullRequestStats;
   } | null>(null);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
+  const [isUpdatingPRs, setIsUpdatingPRs] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<Period>(DEFAULT_PERIOD);
+  const [updateResult, setUpdateResult] = useState<{
+    total: number;
+    successful: number;
+    skipped: number;
+    failed: number;
+  } | null>(null);
 
   // Load saved period from localStorage on mount
   useEffect(() => {
@@ -150,12 +165,39 @@ export default function UsagePage() {
     }
   };
 
+  const handleUpdatePRBranches = async () => {
+    if (!currentOwnerName || !currentRepoName || !currentInstallationId) return;
+
+    setIsUpdatingPRs(true);
+    try {
+      const prNumbers = await getOpenPRNumbers({
+        ownerName: currentOwnerName,
+        repoName: currentRepoName,
+        installationId: currentInstallationId,
+      });
+      const result = await updatePRBranches({
+        ownerName: currentOwnerName,
+        repoName: currentRepoName,
+        installationId: currentInstallationId,
+        prNumbers,
+      });
+
+      setUpdateResult(result);
+    } catch (error) {
+      console.error("Error updating PR branches:", error);
+      setUpdateResult({ total: 0, successful: 0, skipped: 0, failed: -1 });
+    } finally {
+      setIsUpdatingPRs(false);
+    }
+  };
+
   const StatBlock = ({
     title,
     allTime,
     selectedPeriodValue,
     selectedPeriodLabel,
     showManageCredits,
+    showUpdatePRs,
     tooltip,
     showMergeRate,
     allTimeTotalPRs,
@@ -166,6 +208,7 @@ export default function UsagePage() {
     selectedPeriodValue: number;
     selectedPeriodLabel: string;
     showManageCredits?: boolean;
+    showUpdatePRs?: boolean;
     tooltip?: string;
     showMergeRate?: boolean;
     allTimeTotalPRs?: number;
@@ -211,6 +254,22 @@ export default function UsagePage() {
                 </>
               ) : (
                 "Add Credits"
+              )}
+            </button>
+          )}
+          {showUpdatePRs && (
+            <button
+              onClick={handleUpdatePRBranches}
+              disabled={isUpdatingPRs}
+              className="text-left text-sm text-pink-600 hover:text-pink-700 mt-2 flex items-center gap-1 hover:underline"
+            >
+              {isUpdatingPRs ? (
+                <>
+                  <SpinnerIcon />
+                  Updating branches...
+                </>
+              ) : (
+                "Update All PR Branches"
               )}
             </button>
           )}
@@ -264,6 +323,7 @@ export default function UsagePage() {
                 allTime={usageStats?.all_time.total_open_prs || 0}
                 selectedPeriodValue={usageStats?.selected_period.total_open_prs || 0}
                 selectedPeriodLabel={selectedPeriod.label}
+                showUpdatePRs={true}
                 tooltip="Number of pull requests that are currently open (not merged)."
               />
               <StatBlock
@@ -332,6 +392,19 @@ export default function UsagePage() {
         </div>
 
         {isLoading && <LoadingSpinner />}
+
+        {updateResult && (
+          <Modal
+            title={updateResult.failed === -1 ? "Update Failed" : "PR Branches Updated"}
+            type={updateResult.failed === -1 ? "error" : "success"}
+            message={
+              updateResult.failed === -1
+                ? "Failed to update PR branches. Please try again."
+                : `Updated ${updateResult.successful} out of ${updateResult.total} PR branches.${updateResult.skipped > 0 ? ` ${updateResult.skipped} already up to date.` : ""}${updateResult.failed > 0 ? ` ${updateResult.failed} failed.` : ""}`
+            }
+            onClose={() => setUpdateResult(null)}
+          />
+        )}
       </div>
     </>
   );
