@@ -15,6 +15,9 @@ import { createTestCustomer } from "../helpers/create-test-customer";
 
 const authDir = path.join(process.cwd(), "e2e", ".auth");
 
+// Store customer IDs for cleanup
+const customerIds: string[] = [];
+
 // Ensure auth directory exists
 setup.beforeAll(async () => {
   await fs.mkdir(authDir, { recursive: true });
@@ -39,6 +42,8 @@ setup.beforeAll(async () => {
   if (!customerResult.success || !customerResult.customerId) {
     throw new Error("Failed to create test customer in setup");
   }
+
+  customerIds.push(customerResult.customerId);
 
   // Create owner record - User type with real Stripe customer ID
   await supabaseAdmin.from("owners").upsert({
@@ -88,6 +93,8 @@ setup.beforeAll(async () => {
     throw new Error("Failed to create legacy test customer with subscription");
   }
 
+  customerIds.push(legacyCustomerResult.customerId);
+
   // Create owner record for legacy user
   await supabaseAdmin.from("owners").upsert({
     owner_id: legacyUserId,
@@ -109,6 +116,27 @@ setup.beforeAll(async () => {
     owner_name: "legacy-test-org",
     uninstalled_at: null,
   });
+});
+
+// Cleanup after all tests are done
+setup.afterAll(async () => {
+  const userId = TEST_IDS.regularWithCredits.userId;
+  const legacyUserId = TEST_IDS.legacyWithSubscription.userId;
+
+  // Clean up database records
+  await supabaseAdmin.from("credits").delete().in("owner_id", [userId, legacyUserId]);
+  await supabaseAdmin.from("installations").delete().in("owner_id", [userId, legacyUserId]);
+  await supabaseAdmin.from("owners").delete().in("owner_id", [userId, legacyUserId]);
+
+  // Clean up Stripe customers
+  const stripe = (await import("@/lib/stripe")).default;
+  for (const customerId of customerIds) {
+    try {
+      await stripe.customers.del(customerId);
+    } catch (error) {
+      console.error(`Failed to delete Stripe customer ${customerId}:`, error);
+    }
+  }
 });
 
 // Helper function to create NextAuth session cookies
