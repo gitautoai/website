@@ -75,11 +75,11 @@ describe("expireCredits integration", () => {
       .select("*")
       .eq("owner_id", testOwnerId1)
       .eq("transaction_type", "expiration")
-      .eq("amount_usd", -8)
+      .eq("amount_usd", -9)
       .single();
 
     expect(expirationTransaction).toBeTruthy();
-    expect(expirationTransaction?.amount_usd).toBe(-8); // Negative $8
+    expect(expirationTransaction?.amount_usd).toBe(-9); // Negative $9 ($5 + $4)
     expect(expirationTransaction?.expires_at).toBeNull();
 
     // Verify original credits were marked as expired
@@ -88,14 +88,14 @@ describe("expireCredits integration", () => {
       .select("*")
       .eq("owner_id", testOwnerId1)
       .eq("transaction_type", "expiration")
-      .neq("amount_usd", -8); // Not the expiration transaction itself
+      .neq("amount_usd", -9); // Not the expiration transaction itself
 
     expect(expiredCredits).toHaveLength(2);
     expiredCredits?.forEach((credit) => {
       expect(credit.transaction_type).toBe("expiration");
     });
 
-    // Verify owner's credit balance was updated to 0 (8 - 8 = 0)
+    // Verify owner's credit balance was updated to 0 (9 - 9 = 0)
     const { data: owner } = await supabaseAdmin
       .from("owners")
       .select("credit_balance_usd")
