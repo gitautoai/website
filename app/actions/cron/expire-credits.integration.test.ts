@@ -49,7 +49,7 @@ describe("expireCredits integration", () => {
       },
       {
         owner_id: testOwnerId1,
-        amount_usd: 3, // $3 (whole dollars)
+        amount_usd: 4, // $4 (whole dollars)
         transaction_type: "purchase",
         expires_at: yesterday.toISOString(),
       },
@@ -65,7 +65,7 @@ describe("expireCredits integration", () => {
     const ownerResult = result.owners.find((o) => o.ownerId === testOwnerId1);
 
     if (ownerResult) {
-      expect(ownerResult.expiredAmount).toBe(8); // $8
+      expect(ownerResult.expiredAmount).toBe(9); // $5 + $4
       expect(ownerResult.creditCount).toBe(2);
     }
 
@@ -205,10 +205,10 @@ describe("expireCredits integration", () => {
 
     // Both owners have yesterday (expired) and tomorrow (non-expired) credits with unique amounts
     const { error: insertError } = await supabaseAdmin.from("credits").insert([
-      // Owner 1: $11 expired, $14 non-expired
+      // Owner 1: $12 expired, $14 non-expired
       {
         owner_id: testOwnerId1,
-        amount_usd: 4, // Expired
+        amount_usd: 5, // Expired
         transaction_type: "purchase",
         expires_at: yesterday.toISOString(),
       },
@@ -266,13 +266,13 @@ describe("expireCredits integration", () => {
     const owner1Result = result.owners.find((o) => o.ownerId === testOwnerId1);
     const owner2Result = result.owners.find((o) => o.ownerId === testOwnerId2);
 
-    expect(owner1Result?.expiredAmount).toBe(11); // $4 + $7
+    expect(owner1Result?.expiredAmount).toBe(12); // $5 + $7
     expect(owner1Result?.creditCount).toBe(2);
 
     expect(owner2Result?.expiredAmount).toBe(19); // $9 + $10
     expect(owner2Result?.creditCount).toBe(2);
 
-    expect(result.totalExpired).toBe(30); // Exactly $30 from our test data (11 + 19)
+    expect(result.totalExpired).toBe(31); // Exactly $31 from our test data (12 + 19)
 
     // Verify non-expired credits remain unchanged
     const { data: nonExpiredCredits } = await supabaseAdmin

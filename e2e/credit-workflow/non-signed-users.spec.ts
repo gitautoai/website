@@ -22,7 +22,7 @@ test.describe("Credits - Non-signed in users", () => {
     await page.goto("/pricing");
 
     // Should see credit pricing information
-    await expect(page.getByText("$3").first()).toBeVisible();
+    await expect(page.getByText("$4").first()).toBeVisible();
     await expect(page.getByText("per PR").first()).toBeVisible();
 
     // Buy Credits button should show modal when clicked
