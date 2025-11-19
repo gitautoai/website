@@ -10,11 +10,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Connect to Supabase PostgreSQL database (Development)
-source .env && psql "postgresql://postgres.dkrxtcbaqzrodvsagwwn:$SUPABASE_DB_PASSWORD_DEV@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
+source .env.local && psql "postgresql://postgres.dkrxtcbaqzrodvsagwwn:$SUPABASE_DB_PASSWORD_DEV@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
 
 # Connect to Supabase PostgreSQL database (Production)
 # READ-ONLY access
-source .env && psql "postgresql://postgres.awegqusxzsmlgxaxyyrq:$SUPABASE_DB_PASSWORD_PRD@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
+source .env.local && psql "postgresql://postgres.awegqusxzsmlgxaxyyrq:$SUPABASE_DB_PASSWORD_PRD@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
 ```
 
 ### Stripe CLI Commands (for local development)
