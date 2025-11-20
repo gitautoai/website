@@ -66,7 +66,17 @@ export default function UsagePage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log("fetchData called with context:", {
+        currentStripeCustomerId,
+        currentOwnerName,
+        currentRepoName,
+        userId,
+        currentInstallationId,
+        selectedPeriod: selectedPeriod.type,
+      });
+
       if (!currentStripeCustomerId || !currentRepoName || !currentOwnerName || !userId) {
+        console.log("fetchData early return - missing required values");
         setIsLoading(false);
         return;
       }
@@ -78,13 +88,21 @@ export default function UsagePage() {
         // Calculate selected period dates
         const { startDate, endDate } = calculatePeriodDates(selectedPeriod);
 
+        console.log("Calculated period dates:", {
+          startDate,
+          endDate,
+          periodType: selectedPeriod.type,
+        });
+
         // Both dates must be present
         if (!startDate || !endDate) {
+          console.log("fetchData early return - null dates for all-time period");
           setIsLoading(false);
           return;
         }
 
         // Fetch historical stats
+        console.log("Calling getUsageStats...");
         const historicalStats = await getUsageStats({
           ownerName: currentOwnerName,
           repoName: currentRepoName,
@@ -92,6 +110,7 @@ export default function UsagePage() {
           periodStart: startDate,
           periodEnd: endDate,
         });
+        console.log("getUsageStats succeeded");
 
         // Get live PR stats from GitHub
         let livePRStats = {
@@ -102,25 +121,31 @@ export default function UsagePage() {
         };
 
         if (currentInstallationId) {
-          const openPRNumbers = await getOpenPRNumbers({
-            ownerName: currentOwnerName,
-            repoName: currentRepoName,
-            installationId: currentInstallationId,
-          });
+          console.log("Fetching live GitHub PR stats...");
+          try {
+            const openPRNumbers = await getOpenPRNumbers({
+              ownerName: currentOwnerName,
+              repoName: currentRepoName,
+              installationId: currentInstallationId,
+            });
 
-          const passingPRNumbers = await getPassingPRNumbers({
-            ownerName: currentOwnerName,
-            repoName: currentRepoName,
-            openPRNumbers,
-            userId,
-          });
+            const passingPRNumbers = await getPassingPRNumbers({
+              ownerName: currentOwnerName,
+              repoName: currentRepoName,
+              openPRNumbers,
+              userId,
+            });
 
-          livePRStats = {
-            total_open_prs: openPRNumbers.length,
-            total_passing_prs: passingPRNumbers.totalPassing,
-            user_open_prs: passingPRNumbers.userOpen,
-            user_passing_prs: passingPRNumbers.userPassing,
-          };
+            livePRStats = {
+              total_open_prs: openPRNumbers.length,
+              total_passing_prs: passingPRNumbers.totalPassing,
+              user_open_prs: passingPRNumbers.userOpen,
+              user_passing_prs: passingPRNumbers.userPassing,
+            };
+            console.log("GitHub PR stats succeeded:", livePRStats);
+          } catch (githubError: any) {
+            console.error("GitHub PR stats failed:", githubError.message, githubError.status);
+          }
         }
 
         // Combine historical and live stats
@@ -130,16 +155,27 @@ export default function UsagePage() {
         };
 
         setUsageStats(statsData);
-      } catch (error) {
+      } catch (error: any) {
         setError("Failed to load usage statistics");
-        console.error("Error loading usage statistics:", error);
+        console.error("Error loading usage statistics:", {
+          message: error.message,
+          stack: error.stack,
+          name: error.name,
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [currentStripeCustomerId, currentOwnerName, currentRepoName, userId, selectedPeriod]);
+  }, [
+    currentStripeCustomerId,
+    currentOwnerName,
+    currentRepoName,
+    userId,
+    selectedPeriod,
+    currentInstallationId,
+  ]);
 
   const formatNumber = (value?: number) => {
     if (!value) return "-";

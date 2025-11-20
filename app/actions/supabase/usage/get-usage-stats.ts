@@ -16,6 +16,8 @@ export async function getUsageStats({
   periodStart: string;
   periodEnd: string;
 }) {
+  console.log("getUsageStats params:", { ownerName, repoName, userId, periodStart, periodEnd });
+
   // Get all usage data in a single query
   const { data: allTimeData, error } = await supabaseAdmin
     .from("usage")
@@ -23,7 +25,12 @@ export async function getUsageStats({
     .eq("owner_name", ownerName)
     .eq("repo_name", repoName);
 
-  if (error) throw new Error("Failed to fetch usage data");
+  console.log("Supabase query result:", { dataLength: allTimeData?.length, error });
+
+  if (error) {
+    console.error("Supabase error fetching usage data:", error);
+    throw new Error(`Failed to fetch usage data: ${error.message}`);
+  }
 
   // Filter for selected period's data in memory
   const selectedPeriodData = allTimeData.filter((record) => {

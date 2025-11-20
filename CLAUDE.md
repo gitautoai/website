@@ -51,40 +51,50 @@ Credit expiration is handled automatically via Vercel cron jobs:
 
 ### Sentry CLI for Error Tracking
 
+Sentry CLI is available for accessing error logs and issues.
+
+#### Installation
+
 ```bash
 # Install Sentry CLI if not already installed
 brew install getsentry/tools/sentry-cli
+```
 
+#### Accessing Sentry Issues
+
+Sentry issues are identified by IDs like `WEBSITE-2X`. Use these commands to investigate specific issues:
+
+```bash
 # List recent issues (requires SENTRY_PERSONAL_TOKEN in .env.local)
 source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --max-rows 10
 
-# List unresolved issues
+# List issues with specific status
 source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --status unresolved --max-rows 20
 
-# Search for specific errors (e.g., sync errors, 500 errors)
-source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --query "is:unresolved level:error sync" --max-rows 10
+# Get details for a specific issue by ID (replace WEBSITE-2X with actual issue ID)
+source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --id WEBSITE-2X
 
-# Get full issue details for a specific issue (replace WEBSITE-XXX with actual issue ID)
-source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/" | jq
+# Search issues with query
+source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --query "is:unresolved level:error" --max-rows 10
 
-# Get full event details for a specific issue (replace WEBSITE-XXX with actual issue ID)
-source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq
-
-# Get error message and type from latest event
-source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq '.exception.values[0] | {type, value}'
-
-# Get exception details from event entries
-source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq '.entries[] | select(.type == "exception") | .data.values[0]'
-
-# Get breadcrumbs (request/response details) from latest event
-source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq '.entries[] | select(.type == "breadcrumbs") | .data.values[]'
-
-# Get request context from latest event
-source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-XXX/events/latest/" | jq '.entries[] | select(.type == "request")'
-
-# Search for specific issue by ID
-source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --query "WEBSITE-XXX" --max-rows 1
+# Get full event details for a specific issue (replace WEBSITE-2X with actual issue ID)
+source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" \
+  "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-2X/events/latest/" | python -m json.tool
 ```
+
+#### Issue ID Format
+
+- Issues are identified with IDs like `WEBSITE-2X`
+- Use the exact issue ID in commands (e.g., `--id WEBSITE-2X` or in API URLs)
+- Issue IDs can be found in Sentry dashboard or error notifications
+
+#### Required Environment Variables
+
+The following variables must be set in .env.local file:
+
+- `SENTRY_PERSONAL_TOKEN`: Personal auth token with project:read permissions (get from https://gitauto-ai.sentry.io/settings/auth-tokens/)
+- `SENTRY_ORG_SLUG`: Organization slug (gitauto-ai)
+- `SENTRY_PROJECT_ID`: Project ID (4506827829346304)
 
 ### Running Individual Tests
 
