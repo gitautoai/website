@@ -1,11 +1,11 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import LoadingSpinner from './LoadingSpinner';
 
 describe('LoadingSpinner', () => {
   it('renders loading spinner with correct styles', () => {
-    render(<LoadingSpinner />);
-    
-    const container = screen.getByTestId('loading-spinner');
+    const { getByTestId } = render(<LoadingSpinner />);
+
+    const container = getByTestId('loading-spinner');
     expect(container).toHaveClass(
       'fixed',
       'inset-0',
