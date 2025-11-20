@@ -84,8 +84,8 @@ export default function UsagePage() {
           return;
         }
 
-        // Fetch stats for selected period
-        const statsData = await getUsageStats({
+        // Fetch historical stats
+        const historicalStats = await getUsageStats({
           ownerName: currentOwnerName,
           repoName: currentRepoName,
           userId: userId,
@@ -93,7 +93,14 @@ export default function UsagePage() {
           periodEnd: endDate,
         });
 
-        // Get actual open PR numbers from GitHub, then stats from Supabase
+        // Get live PR stats from GitHub
+        let livePRStats = {
+          total_open_prs: 0,
+          total_passing_prs: 0,
+          user_open_prs: 0,
+          user_passing_prs: 0,
+        };
+
         if (currentInstallationId) {
           const openPRNumbers = await getOpenPRNumbers({
             ownerName: currentOwnerName,
@@ -108,17 +115,19 @@ export default function UsagePage() {
             userId,
           });
 
-          // Override counts with actual data from GitHub + Supabase
-          statsData.all_time.total_open_prs = openPRNumbers.length;
-          statsData.all_time.total_passing_prs = passingPRNumbers.totalPassing;
-          statsData.all_time.user_open_prs = passingPRNumbers.userOpen;
-          statsData.all_time.user_passing_prs = passingPRNumbers.userPassing;
-
-          statsData.selected_period.total_open_prs = openPRNumbers.length;
-          statsData.selected_period.total_passing_prs = passingPRNumbers.totalPassing;
-          statsData.selected_period.user_open_prs = passingPRNumbers.userOpen;
-          statsData.selected_period.user_passing_prs = passingPRNumbers.userPassing;
+          livePRStats = {
+            total_open_prs: openPRNumbers.length,
+            total_passing_prs: passingPRNumbers.totalPassing,
+            user_open_prs: passingPRNumbers.userOpen,
+            user_passing_prs: passingPRNumbers.userPassing,
+          };
         }
+
+        // Combine historical and live stats
+        const statsData = {
+          all_time: { ...historicalStats.all_time, ...livePRStats },
+          selected_period: { ...historicalStats.selected_period, ...livePRStats },
+        };
 
         setUsageStats(statsData);
       } catch (error) {

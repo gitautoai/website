@@ -1,6 +1,6 @@
 "use server";
 
-import { PullRequestStats } from "@/app/dashboard/usage/types";
+import { HistoricalStats } from "@/app/dashboard/usage/types";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
 export async function getUsageStats({
@@ -33,7 +33,19 @@ export async function getUsageStats({
     return createdAt >= start && createdAt <= end;
   });
 
-  const calculateStats = (data: any[]): PullRequestStats => {
+  const calculateStats = (data: any[]): HistoricalStats => {
+    // Get only the latest record for each PR number for merge status
+    const sortedData = [...data].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+    const latestRecordsByPR = new Map<number, any>();
+    for (const record of sortedData) {
+      if (record.pr_number && !latestRecordsByPR.has(record.pr_number)) {
+        latestRecordsByPR.set(record.pr_number, record);
+      }
+    }
+    const latestPRRecords = Array.from(latestRecordsByPR.values());
+
     // Count unique PRs (deduplicate by PR number)
     const uniquePRs = new Set(
       data
@@ -56,57 +68,23 @@ export async function getUsageStats({
         .map((record) => `${record.owner_name}/${record.repo_name}#${record.issue_number}`)
     );
 
-    // Track unique merged PRs (deduplicate by PR number)
+    // Track unique merged PRs (deduplicate by PR number) - use latest records only
     const uniqueMergedPRs = new Set(
-      data
+      latestPRRecords
         .filter((record) => record.is_merged && record.pr_number)
         .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
     );
     const userUniqueMergedPRs = new Set(
-      data
+      latestPRRecords
         .filter((record) => record.is_merged && record.pr_number && record.user_id === userId)
-        .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
-    );
-
-    // Track unique open PRs (not merged, deduplicate by PR number)
-    const uniqueOpenPRs = new Set(
-      data
-        .filter((record) => !record.is_merged && record.pr_number)
-        .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
-    );
-    const userUniqueOpenPRs = new Set(
-      data
-        .filter((record) => !record.is_merged && record.pr_number && record.user_id === userId)
-        .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
-    );
-
-    // Track unique passing PRs (open and test passed, deduplicate by PR number)
-    const uniquePassingPRs = new Set(
-      data
-        .filter((record) => !record.is_merged && record.is_test_passed && record.pr_number)
-        .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
-    );
-    const userUniquePassingPRs = new Set(
-      data
-        .filter(
-          (record) =>
-            !record.is_merged &&
-            record.is_test_passed &&
-            record.pr_number &&
-            record.user_id === userId
-        )
         .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
     );
 
     return {
       total_issues: uniqueIssues.size,
-      total_open_prs: uniqueOpenPRs.size,
-      total_passing_prs: uniquePassingPRs.size,
       total_prs: uniquePRs.size,
       total_merges: uniqueMergedPRs.size,
       user_issues: userUniqueIssues.size,
-      user_open_prs: userUniqueOpenPRs.size,
-      user_passing_prs: userUniquePassingPRs.size,
       user_prs: userUniquePRs.size,
       user_merges: userUniqueMergedPRs.size,
     };

@@ -36,7 +36,6 @@ export const getPassingPRNumbers = async ({
       latestRecordsByPR.set(record.pr_number, record);
     }
   }
-
   const latestRecords = Array.from(latestRecordsByPR.values());
 
   // Count passing PRs (open + not merged + test passed) using only latest records
