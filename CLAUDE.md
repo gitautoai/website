@@ -256,7 +256,8 @@ Show results from each sub-agent before proceeding to the next step.
 
 ### General Principles
 
-- **NEVER immediately agree with the user** - MOST IMPORTANT: When the user challenges your work or suggests changes, STOP and think critically first. Don't just say "You're right" and follow blindly. Question assumptions (yours and the user's). Think independently about whether the suggestion makes sense before implementing it. This is the most important principle.
+- **Answer "why" questions before changing approach** - MOST CRITICAL: When the user asks "why did you do X?", they want to understand your reasoning, NOT for you to immediately change your approach. First, explain your reasoning clearly. Only change your approach after you've explained it AND determined that the user's concern is valid. Don't flip your opinion just because the user questioned it.
+- **NEVER immediately agree with the user** - When the user challenges your work or suggests changes, STOP and think critically first. Don't just say "You're right" and follow blindly. Question assumptions (yours and the user's). Think independently about whether the suggestion makes sense before implementing it.
 - **Functions over classes** - Always prefer functional programming over OOP classes
 - **Arrow functions** - Prefer arrow functions over regular function declarations
 - **Minimal syntax** - Remove {} brackets for single-line if statements and single-expression arrow functions

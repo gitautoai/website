@@ -477,6 +477,18 @@ test.describe("Auto-reload workflow", () => {
 
       console.log(`Initial default payment method: ${initialDefaultPaymentMethod}`);
 
+      // Create and attach a real payment method to the customer
+      // Note: stripe trigger generates unattached payment methods, but in production
+      // Stripe Checkout automatically attaches payment methods. We manually attach
+      // here to simulate real production behavior.
+      const paymentMethod = await stripe.paymentMethods.create({
+        type: "card",
+        card: { token: "tok_visa" },
+      });
+      await stripe.paymentMethods.attach(paymentMethod.id, {
+        customer: newTestCustomerId,
+      });
+
       // Simulate a successful payment that should set the default payment method
       await triggerStripeWebhook({
         event: "payment_intent.succeeded",
@@ -487,23 +499,55 @@ test.describe("Auto-reload workflow", () => {
         },
         params: {
           "payment_intent:customer": newTestCustomerId,
-          "payment_intent:payment_method": "pm_test_webhook_card", // Unique test payment method ID
+          "payment_intent:payment_method": paymentMethod.id,
         },
       });
 
       // Wait for webhook processing
       await page.waitForTimeout(3000);
 
-      // Verify the payment method was updated to our test payment method
+      // Verify that a default payment method was set by the webhook
+      // Note: We don't check for the exact payment method ID we created because
+      // stripe trigger generates its own payment method IDs that we can't control.
+      // We just verify that any default payment method exists and is attached.
       customer = await stripe.customers.retrieve(newTestCustomerId);
       if (customer && !customer.deleted) {
-        expect(customer.invoice_settings?.default_payment_method).toBe("pm_test_webhook_card");
+        expect(customer.invoice_settings?.default_payment_method).toBeTruthy();
+        const defaultPmId = customer.invoice_settings?.default_payment_method;
+
+        // Verify the payment method is actually attached to this customer
+        if (typeof defaultPmId === 'string') {
+          const pm = await stripe.paymentMethods.retrieve(defaultPmId);
+          expect(pm.customer).toBe(newTestCustomerId);
+        }
+
         console.log(
           `✅ Webhook set default payment method: ${customer.invoice_settings?.default_payment_method}`
         );
       }
 
-      // Trigger auto-reload cron job to verify it works now
+      // Now deplete credits to trigger auto-reload and verify it works with the default payment method
+      // Current balance is $35 (10 initial + 25 from webhook), need to get below $15 threshold
+      const { data: currentOwner } = await supabaseAdmin
+        .from("owners")
+        .select("credit_balance_usd")
+        .eq("owner_id", newTestOwnerId)
+        .single();
+
+      const currentBalance = currentOwner?.credit_balance_usd || 0;
+      const targetBalance = 10; // Below threshold of $15
+      const amountToSubtract = currentBalance - targetBalance;
+
+      if (amountToSubtract > 0) {
+        await insertCredits({
+          owner_id: newTestOwnerId,
+          amount_usd: -amountToSubtract,
+          transaction_type: "usage",
+          expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+        });
+      }
+
+      // Trigger auto-reload cron job to verify it works with the default payment method
       const response = await callVercelCronEndpoint(page, "/api/cron/auto-reload");
       expect(response.ok()).toBeTruthy();
       const data = await response.json();

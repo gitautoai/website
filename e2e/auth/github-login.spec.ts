@@ -24,8 +24,8 @@ test.use({ baseURL: "http://localhost:4000" });
 
 test.describe("GitHub OAuth Login", () => {
   test.skip(
-    !process.env.GITHUB_USERNAME || !process.env.GITHUB_PASSWORD,
-    "Skipping real login test - GITHUB_USERNAME and GITHUB_PASSWORD not provided"
+    !process.env.CI && (!process.env.GITHUB_USERNAME || !process.env.GITHUB_PASSWORD),
+    "Skipping real login test locally - GITHUB_USERNAME and GITHUB_PASSWORD not provided"
   );
 
   test("should complete full GitHub OAuth login flow", async ({ page, context }) => {

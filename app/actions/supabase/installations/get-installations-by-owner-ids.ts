@@ -8,9 +8,7 @@ import { supabaseAdmin } from "@/lib/supabase/server";
  * @returns Array of installations
  */
 export async function getInstallationsByOwnerIds(ownerIds: number[]) {
-  if (!ownerIds.length) {
-    return [];
-  }
+  if (!ownerIds.length) return [];
 
   const { data: installations, error } = await supabaseAdmin
     .from("installations")
