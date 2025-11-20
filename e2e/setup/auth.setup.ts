@@ -59,13 +59,16 @@ setup.beforeAll(async () => {
   });
 
   // Create installation record - User type
-  await supabaseAdmin.from("installations").upsert({
+  const { error: installError } = await supabaseAdmin.from("installations").upsert({
     installation_id: TEST_IDS.regularWithCredits.installationId,
     owner_id: userId,
     owner_type: "User",
     owner_name: "regular-test-user",
     uninstalled_at: null,
   });
+  if (installError) {
+    console.error("[AUTH SETUP] Error creating installation:", installError);
+  }
 
   // Add initial credits
   await insertCredits({
@@ -116,27 +119,6 @@ setup.beforeAll(async () => {
     owner_name: "legacy-test-org",
     uninstalled_at: null,
   });
-});
-
-// Cleanup after all tests are done
-setup.afterAll(async () => {
-  const userId = TEST_IDS.regularWithCredits.userId;
-  const legacyUserId = TEST_IDS.legacyWithSubscription.userId;
-
-  // Clean up database records
-  await supabaseAdmin.from("credits").delete().in("owner_id", [userId, legacyUserId]);
-  await supabaseAdmin.from("installations").delete().in("owner_id", [userId, legacyUserId]);
-  await supabaseAdmin.from("owners").delete().in("owner_id", [userId, legacyUserId]);
-
-  // Clean up Stripe customers
-  const stripe = (await import("@/lib/stripe")).default;
-  for (const customerId of customerIds) {
-    try {
-      await stripe.customers.del(customerId);
-    } catch (error) {
-      console.error(`Failed to delete Stripe customer ${customerId}:`, error);
-    }
-  }
 });
 
 // Helper function to create NextAuth session cookies
