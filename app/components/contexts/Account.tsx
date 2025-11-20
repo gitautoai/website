@@ -215,16 +215,6 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       setCurrentOwnerId(org.ownerId);
       setCurrentOwnerType(org.ownerType);
 
-      // Auto-select first repository when owner changes
-      if (org.repositories.length > 0) {
-        const firstRepo = org.repositories[0];
-        setCurrentRepoName(firstRepo.repoName);
-        setCurrentRepoId(firstRepo.repoId);
-      } else {
-        setCurrentRepoName(null);
-        setCurrentRepoId(null);
-      }
-
       // Also update installation ID
       const installation = installations?.find((inst) => inst.owner_name === currentOwnerName);
       if (installation) {
