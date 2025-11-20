@@ -10,8 +10,8 @@ import { PullRequestStats } from "./types";
 // Local imports
 import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
 import { getOpenPRNumbers } from "@/app/actions/github/get-open-pr-numbers";
+import { getPRCheckStatuses } from "@/app/actions/github/get-pr-check-statuses";
 import { updatePRBranches } from "@/app/actions/github/update-pr-branches";
-import { getPassingPRNumbers } from "@/app/actions/supabase/usage/get-passing-pr-numbers";
 import { getUsageStats } from "@/app/actions/supabase/usage/get-usage-stats";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import InfoIcon from "@/app/components/InfoIcon";
@@ -106,7 +106,6 @@ export default function UsagePage() {
         const historicalStats = await getUsageStats({
           ownerName: currentOwnerName,
           repoName: currentRepoName,
-          userId: userId,
           periodStart: startDate,
           periodEnd: endDate,
         });
@@ -116,8 +115,6 @@ export default function UsagePage() {
         let livePRStats = {
           total_open_prs: 0,
           total_passing_prs: 0,
-          user_open_prs: 0,
-          user_passing_prs: 0,
         };
 
         if (currentInstallationId) {
@@ -129,18 +126,19 @@ export default function UsagePage() {
               installationId: currentInstallationId,
             });
 
-            const passingPRNumbers = await getPassingPRNumbers({
+            // Get live check statuses from GitHub
+            const checkStatuses = await getPRCheckStatuses({
               ownerName: currentOwnerName,
               repoName: currentRepoName,
-              openPRNumbers,
-              userId,
+              installationId: currentInstallationId,
+              prNumbers: openPRNumbers,
             });
+
+            const totalPassingPRs = checkStatuses.filter((status) => status.isTestPassed).length;
 
             livePRStats = {
               total_open_prs: openPRNumbers.length,
-              total_passing_prs: passingPRNumbers.totalPassing,
-              user_open_prs: passingPRNumbers.userOpen,
-              user_passing_prs: passingPRNumbers.userPassing,
+              total_passing_prs: totalPassingPRs,
             };
             console.log("GitHub PR stats succeeded:", livePRStats);
           } catch (githubError: any) {
@@ -415,50 +413,6 @@ export default function UsagePage() {
                 showMergeRate={true}
                 allTimeTotalPRs={usageStats?.all_time?.total_prs || 0}
                 selectedPeriodTotalPRs={usageStats?.selected_period?.total_prs || 0}
-              />
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-xl font-semibold mt-2 mb-4">Your Statistics</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-              <StatBlock
-                title="Your Issues"
-                allTime={usageStats?.all_time.user_issues || 0}
-                selectedPeriodValue={usageStats?.selected_period.user_issues || 0}
-                selectedPeriodLabel={selectedPeriod.label}
-                tooltip="Number of issues that you created using GitAuto on this repository."
-              />
-              <StatBlock
-                title="Your Pull Requests"
-                allTime={usageStats?.all_time.user_prs || 0}
-                selectedPeriodValue={usageStats?.selected_period.user_prs || 0}
-                selectedPeriodLabel={selectedPeriod.label}
-                tooltip="Number of pull requests that you created using GitAuto on this repository."
-              />
-              <StatBlock
-                title="Your Open PRs"
-                allTime={usageStats?.all_time.user_open_prs || 0}
-                selectedPeriodValue={usageStats?.selected_period.user_open_prs || 0}
-                selectedPeriodLabel={selectedPeriod.label}
-                tooltip="Number of your pull requests that are currently open (not merged)."
-              />
-              <StatBlock
-                title="Your Passing PRs"
-                allTime={usageStats?.all_time.user_passing_prs || 0}
-                selectedPeriodValue={usageStats?.selected_period.user_passing_prs || 0}
-                selectedPeriodLabel={selectedPeriod.label}
-                tooltip="Number of your open pull requests where all tests are passing."
-              />
-              <StatBlock
-                title="Your Merged PRs"
-                allTime={usageStats?.all_time.user_merges || 0}
-                selectedPeriodValue={usageStats?.selected_period.user_merges || 0}
-                selectedPeriodLabel={selectedPeriod.label}
-                tooltip="Number of pull requests that you created and were successfully merged into the repository. Your merge rate percentage is calculated as (your merged PRs / your total PRs) × 100."
-                showMergeRate={true}
-                allTimeTotalPRs={usageStats?.all_time?.user_prs || 0}
-                selectedPeriodTotalPRs={usageStats?.selected_period?.user_prs || 0}
               />
             </div>
           </div>

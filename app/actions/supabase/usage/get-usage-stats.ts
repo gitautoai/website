@@ -6,17 +6,15 @@ import { supabaseAdmin } from "@/lib/supabase/server";
 export async function getUsageStats({
   ownerName,
   repoName,
-  userId,
   periodStart,
   periodEnd,
 }: {
   ownerName: string;
   repoName: string;
-  userId: number;
   periodStart: string;
   periodEnd: string;
 }) {
-  console.log("getUsageStats params:", { ownerName, repoName, userId, periodStart, periodEnd });
+  console.log("getUsageStats params:", { ownerName, repoName, periodStart, periodEnd });
 
   // Get all usage data in a single query
   const { data: allTimeData, error } = await supabaseAdmin
@@ -59,20 +57,10 @@ export async function getUsageStats({
         .filter((record) => record.pr_number)
         .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
     );
-    const userUniquePRs = new Set(
-      data
-        .filter((record) => record.pr_number && record.user_id === userId)
-        .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
-    );
 
     // Unique issue count is owner_name + repo_name + issue_number combination
     const uniqueIssues = new Set(
       data.map((record) => `${record.owner_name}/${record.repo_name}#${record.issue_number}`)
-    );
-    const userUniqueIssues = new Set(
-      data
-        .filter((record) => record.user_id === userId)
-        .map((record) => `${record.owner_name}/${record.repo_name}#${record.issue_number}`)
     );
 
     // Track unique merged PRs (deduplicate by PR number) - use latest records only
@@ -81,19 +69,11 @@ export async function getUsageStats({
         .filter((record) => record.is_merged && record.pr_number)
         .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
     );
-    const userUniqueMergedPRs = new Set(
-      latestPRRecords
-        .filter((record) => record.is_merged && record.pr_number && record.user_id === userId)
-        .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
-    );
 
     return {
       total_issues: uniqueIssues.size,
       total_prs: uniquePRs.size,
       total_merges: uniqueMergedPRs.size,
-      user_issues: userUniqueIssues.size,
-      user_prs: userUniquePRs.size,
-      user_merges: userUniqueMergedPRs.size,
     };
   };
 
