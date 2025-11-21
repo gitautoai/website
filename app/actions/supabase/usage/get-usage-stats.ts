@@ -17,9 +17,10 @@ export async function getUsageStats({
   console.log("getUsageStats params:", { ownerName, repoName, periodStart, periodEnd });
 
   // Get all usage data in a single query
+  // Only select necessary columns to avoid transferring huge log fields
   const { data: allTimeData, error } = await supabaseAdmin
     .from("usage")
-    .select("*")
+    .select("created_at, pr_number, owner_name, repo_name, issue_number, is_merged")
     .eq("owner_name", ownerName)
     .eq("repo_name", repoName);
 
