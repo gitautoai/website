@@ -50,10 +50,22 @@ export default function CoveragePage() {
     currentOwnerName,
     currentRepoId,
     currentRepoName,
+    setCurrentRepoName,
+    organizations,
     accessToken,
     userId,
     userName,
   } = useAccountContext();
+
+  // Auto-select first repo if "__ALL__" is selected (coverage page doesn't support all repos)
+  useEffect(() => {
+    if (currentRepoName === "__ALL__" && currentOwnerName && organizations.length > 0) {
+      const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+      if (currentOrg && currentOrg.repositories.length > 0) {
+        setCurrentRepoName(currentOrg.repositories[0].repoName);
+      }
+    }
+  }, [currentRepoName, currentOwnerName, organizations, setCurrentRepoName]);
 
   // Loading states
   const [isLoadingDB, setIsLoadingDB] = useState(true);
@@ -120,6 +132,7 @@ export default function CoveragePage() {
 
       // After data is fetched, perform sync
       if (!currentOwnerName || !currentRepoName || !accessToken || !userId) return;
+      if (currentRepoName === "__ALL__") return; // Skip sync if "All Repositories" is selected
 
       const hasNoData = coverageData.length === 0;
 
@@ -175,6 +188,7 @@ export default function CoveragePage() {
   // When repository changes, update parent issue list
   useEffect(() => {
     if (!currentOwnerName || !currentRepoName || !accessToken) return;
+    if (currentRepoName === "__ALL__") return; // Skip if "All Repositories" is selected
 
     fetchOpenIssues(
       currentOwnerName,
@@ -256,7 +270,7 @@ export default function CoveragePage() {
       </div>
 
       <ErrorBanner error={error} />
-      <RepositorySelector />
+      <RepositorySelector disableAllRepos={true} />
 
       {/* Filters */}
       <div className="mt-4 md:mt-6 grid grid-cols-2 gap-4 md:flex md:flex-wrap md:gap-4 md:items-end">

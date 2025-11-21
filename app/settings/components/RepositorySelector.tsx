@@ -7,11 +7,13 @@ import { ABSOLUTE_URLS } from "@/config/urls";
 type RepositorySelectorProps = {
   onRepoChange?: (repo: string) => void;
   ownerOnly?: boolean;
+  disableAllRepos?: boolean;
 };
 
 export default function RepositorySelector({
   onRepoChange,
   ownerOnly = false,
+  disableAllRepos = false,
 }: RepositorySelectorProps) {
   const {
     organizations,
@@ -44,9 +46,12 @@ export default function RepositorySelector({
   };
 
   // Find current org based on selected repo
-  const currentOrg = organizations.find((org) =>
-    org.repositories.some((repo) => repo.repoName === currentRepoName)
-  );
+  const currentOrg = organizations.find((org) => {
+    if (currentRepoName === "__ALL__") {
+      return org.ownerName === currentOwnerName;
+    }
+    return org.repositories.some((repo) => repo.repoName === currentRepoName);
+  });
 
   return (
     <div className="grid grid-cols-2 gap-4">
@@ -86,14 +91,14 @@ export default function RepositorySelector({
             <label className="text-sm font-medium text-gray-700">Repository</label>
           </div>
           <select
-            value={currentRepoName || ""}
+            value={currentRepoName || "__ALL__"}
             onChange={(e) => handleRepoChange(e.target.value)}
             className={`w-full p-2 border rounded-lg ${
               !currentOrg || isLoading ? "bg-gray-100" : "bg-white"
             }`}
             disabled={!currentOrg || isLoading}
           >
-            <option value="">Select Repository</option>
+            {!disableAllRepos && <option value="__ALL__">All Repositories</option>}
             {currentOrg?.repositories.map((repo) => (
               <option key={repo.repoId} value={repo.repoName}>
                 {repo.repoName}

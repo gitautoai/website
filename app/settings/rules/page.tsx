@@ -27,10 +27,22 @@ export default function RulesPage() {
     currentOwnerName,
     currentRepoId,
     currentRepoName,
+    setCurrentRepoName,
+    organizations,
     userId,
     userName,
     accessToken,
   } = useAccountContext();
+
+  // Auto-select first repo if "__ALL__" is selected (rules page doesn't support all repos)
+  useEffect(() => {
+    if (currentRepoName === "__ALL__" && currentOwnerName && organizations.length > 0) {
+      const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+      if (currentOrg && currentOrg.repositories.length > 0) {
+        setCurrentRepoName(currentOrg.repositories[0].repoName);
+      }
+    }
+  }, [currentRepoName, currentOwnerName, organizations, setCurrentRepoName]);
 
   // UI states
   const [isLoading, setIsLoading] = useState(false);
@@ -267,7 +279,7 @@ export default function RulesPage() {
           {error}
         </div>
       )}
-      <RepositorySelector />
+      <RepositorySelector disableAllRepos={true} />
 
       {/* Branch selector */}
       <div className="mt-4 mb-6 md:mb-0 w-48">

@@ -19,11 +19,15 @@ import { generateDummyData } from "./utils/generate-dummy-data";
 const DEFAULT_PERIOD: Period = { type: "last-6-months", label: "Last 6 Months" };
 
 export default function ChartsPage() {
-  const { currentOwnerId, currentRepoId } = useAccountContext();
+  const { currentOwnerId, currentRepoId, currentRepoName, organizations, currentOwnerName } =
+    useAccountContext();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [allRepoCoverageData, setAllRepoCoverageData] = useState<Tables<"repo_coverage">[]>([]);
+  const [allReposData, setAllReposData] = useState<
+    Record<string, { data: Tables<"repo_coverage">[]; isDummy: boolean }>
+  >({});
   const [isDummyData, setIsDummyData] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<Period>(DEFAULT_PERIOD);
 
@@ -45,60 +49,106 @@ export default function ChartsPage() {
     localStorage.setItem("charts-period", JSON.stringify(selectedPeriod));
   }, [selectedPeriod]);
 
-  // Fetch all data once when repo changes
+  // Fetch data when repo changes
   useEffect(() => {
     const fetchData = async () => {
-      if (!currentOwnerId || !currentRepoId) {
+      if (!currentOwnerId) {
         setIsLoading(false);
         return;
       }
 
-      try {
-        setError(null);
-        setIsLoading(true);
+      const isAllRepos = currentRepoName === "__ALL__";
 
-        // Fetch all data without date filtering
-        const data = await getRepoCoverage(currentOwnerId, currentRepoId);
-
-        if (data.length === 0) {
-          // No real data available, use dummy data
-          const dummyData = generateDummyData();
-          setAllRepoCoverageData(dummyData);
-          setIsDummyData(true);
-        } else {
-          setAllRepoCoverageData(data);
-          setIsDummyData(false);
+      // For "All Repositories", we need to fetch data for each repo
+      if (isAllRepos) {
+        const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+        if (!currentOrg || currentOrg.repositories.length === 0) {
+          setIsLoading(false);
+          return;
         }
-      } catch (error) {
-        setError("Failed to load coverage history");
-        console.error("Error loading coverage history:", error);
 
-        // On error, also show dummy data
-        const dummyData = generateDummyData();
-        setAllRepoCoverageData(dummyData);
-        setIsDummyData(true);
-      } finally {
-        setIsLoading(false);
+        try {
+          setError(null);
+          setIsLoading(true);
+
+          const reposData: Record<string, { data: Tables<"repo_coverage">[]; isDummy: boolean }> =
+            {};
+
+          await Promise.all(
+            currentOrg.repositories.map(async (repo) => {
+              try {
+                const data = await getRepoCoverage(currentOwnerId, repo.repoId);
+                if (data.length === 0) {
+                  reposData[repo.repoName] = { data: generateDummyData(), isDummy: true };
+                } else {
+                  reposData[repo.repoName] = { data, isDummy: false };
+                }
+              } catch (error) {
+                console.error(`Error loading coverage for ${repo.repoName}:`, error);
+                reposData[repo.repoName] = { data: generateDummyData(), isDummy: true };
+              }
+            })
+          );
+
+          setAllReposData(reposData);
+        } catch (error) {
+          setError("Failed to load coverage history");
+          console.error("Error loading coverage history:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        // Single repo mode
+        if (!currentRepoId) {
+          setIsLoading(false);
+          return;
+        }
+
+        try {
+          setError(null);
+          setIsLoading(true);
+
+          const data = await getRepoCoverage(currentOwnerId, currentRepoId);
+
+          if (data.length === 0) {
+            setAllRepoCoverageData(generateDummyData());
+            setIsDummyData(true);
+          } else {
+            setAllRepoCoverageData(data);
+            setIsDummyData(false);
+          }
+        } catch (error) {
+          setError("Failed to load coverage history");
+          console.error("Error loading coverage history:", error);
+          setAllRepoCoverageData(generateDummyData());
+          setIsDummyData(true);
+        } finally {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchData();
-  }, [currentOwnerId, currentRepoId]);
+  }, [currentOwnerId, currentRepoId, currentRepoName, organizations, currentOwnerName]);
+
+  const isAllRepos = currentRepoName === "__ALL__";
 
   // Filter data based on selected period (client-side)
-  const filteredData = (() => {
+  const filterDataByPeriod = (data: Tables<"repo_coverage">[]) => {
     const { startDate, endDate } = calculatePeriodDates(selectedPeriod);
 
-    if (!startDate || !endDate) return allRepoCoverageData;
+    if (!startDate || !endDate) return data;
 
     const start = new Date(startDate);
     const end = new Date(endDate);
 
-    return allRepoCoverageData.filter((item) => {
+    return data.filter((item) => {
       const itemDate = new Date(item.created_at);
       return itemDate >= start && itemDate <= end;
     });
-  })();
+  };
+
+  const filteredData = filterDataByPeriod(allRepoCoverageData);
 
   return (
     <div className="relative min-h-screen flex flex-col gap-6">
@@ -113,7 +163,35 @@ export default function ChartsPage() {
 
       {isLoading && <LoadingSpinner />}
 
-      {!isLoading && allRepoCoverageData.length > 0 && (
+      {!isLoading && isAllRepos && Object.keys(allReposData).length > 0 && (
+        <div className="space-y-8">
+          {Object.entries(allReposData).map(([repoName, { data, isDummy }]) => {
+            const repoFilteredData = filterDataByPeriod(data);
+            return (
+              <div key={repoName}>
+                <h2 className="text-xl font-semibold mt-2 mb-4">{repoName}</h2>
+                <div className="space-y-6">
+                  <CoverageStats data={repoFilteredData} isDummyData={isDummy} />
+                  <CoverageChart
+                    data={repoFilteredData}
+                    isDummyData={isDummy}
+                    dateRange={calculatePeriodDates(selectedPeriod)}
+                  />
+                  <div className="text-sm text-gray-500 text-center">
+                    {isDummy ? (
+                      <p>Showing demo data with {repoFilteredData.length} sample points</p>
+                    ) : (
+                      <p>Showing {repoFilteredData.length} actual data points</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {!isLoading && !isAllRepos && allRepoCoverageData.length > 0 && (
         <div className="mt-6 space-y-6">
           <CoverageStats data={filteredData} isDummyData={isDummyData} />
           <CoverageChart

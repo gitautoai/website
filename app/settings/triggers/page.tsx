@@ -31,11 +31,23 @@ export default function TriggersPage() {
     currentOwnerName,
     currentRepoId,
     currentRepoName,
+    setCurrentRepoName,
+    organizations,
     userId,
     userLogin,
     userName,
     currentInstallationId,
   } = useAccountContext();
+
+  // Auto-select first repo if "__ALL__" is selected (triggers page doesn't support all repos)
+  useEffect(() => {
+    if (currentRepoName === "__ALL__" && currentOwnerName && organizations.length > 0) {
+      const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+      if (currentOrg && currentOrg.repositories.length > 0) {
+        setCurrentRepoName(currentOrg.repositories[0].repoName);
+      }
+    }
+  }, [currentRepoName, currentOwnerName, organizations, setCurrentRepoName]);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -286,7 +298,7 @@ export default function TriggersPage() {
       <h1 className="text-3xl font-bold mb-6 text-left">Trigger settings</h1>
 
       <div className="mb-6">
-        <RepositorySelector onRepoChange={fetchAndSetTriggerSettings} />
+        <RepositorySelector onRepoChange={fetchAndSetTriggerSettings} disableAllRepos={true} />
       </div>
 
       <p className="mb-6 text-gray-600">

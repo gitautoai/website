@@ -178,12 +178,18 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         const selectedOrg = organizations.find((org) => org.ownerName === selectedOwnerName);
         if (selectedOrg) {
           const savedRepo = localStorage.getItem(STORAGE_KEYS.CURRENT_REPO_NAME);
-          if (savedRepo && selectedOrg.repositories.some((repo) => repo.repoName === savedRepo)) {
+          if (
+            savedRepo &&
+            (savedRepo === "__ALL__" ||
+              selectedOrg.repositories.some((repo) => repo.repoName === savedRepo))
+          ) {
             setCurrentRepoName(savedRepo);
-            const currentRepo = selectedOrg.repositories.find(
-              (repo) => repo.repoName === savedRepo
-            );
-            if (currentRepo) setCurrentRepoId(currentRepo.repoId);
+            if (savedRepo !== "__ALL__") {
+              const currentRepo = selectedOrg.repositories.find(
+                (repo) => repo.repoName === savedRepo
+              );
+              if (currentRepo) setCurrentRepoId(currentRepo.repoId);
+            }
           } else if (selectedOrg.repositories.length > 0) {
             const firstRepo = selectedOrg.repositories[0];
             setCurrentRepoName(firstRepo.repoName);

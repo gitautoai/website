@@ -17,8 +17,26 @@ import { ReferenceSettings } from "../types";
 export default function ReferencesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { currentOwnerId, currentOwnerName, currentRepoId, currentRepoName, userId, userName } =
-    useAccountContext();
+  const {
+    currentOwnerId,
+    currentOwnerName,
+    currentRepoId,
+    currentRepoName,
+    setCurrentRepoName,
+    organizations,
+    userId,
+    userName,
+  } = useAccountContext();
+
+  // Auto-select first repo if "__ALL__" is selected (references page doesn't support all repos)
+  useEffect(() => {
+    if (currentRepoName === "__ALL__" && currentOwnerName && organizations.length > 0) {
+      const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+      if (currentOrg && currentOrg.repositories.length > 0) {
+        setCurrentRepoName(currentOrg.repositories[0].repoName);
+      }
+    }
+  }, [currentRepoName, currentOwnerName, organizations, setCurrentRepoName]);
   const [settings, setSettings] = useState<ReferenceSettings>({
     webUrls: [""],
     filePaths: [""],
@@ -211,7 +229,7 @@ export default function ReferencesPage() {
         </div>
       )}
 
-      <RepositorySelector />
+      <RepositorySelector disableAllRepos={true} />
 
       <div className="space-y-8">
         <div>

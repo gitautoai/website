@@ -11,8 +11,8 @@ export async function getUsageStats({
 }: {
   ownerName: string;
   repoName: string;
-  periodStart: string;
-  periodEnd: string;
+  periodStart: string | null;
+  periodEnd: string | null;
 }) {
   console.log("getUsageStats params:", { ownerName, repoName, periodStart, periodEnd });
 
@@ -31,12 +31,16 @@ export async function getUsageStats({
   }
 
   // Filter for selected period's data in memory
-  const selectedPeriodData = allTimeData.filter((record) => {
-    const createdAt = new Date(record.created_at);
-    const start = new Date(periodStart);
-    const end = new Date(periodEnd);
-    return createdAt >= start && createdAt <= end;
-  });
+  // If periodStart and periodEnd are null, use all-time data
+  const selectedPeriodData =
+    periodStart && periodEnd
+      ? allTimeData.filter((record) => {
+          const createdAt = new Date(record.created_at);
+          const start = new Date(periodStart);
+          const end = new Date(periodEnd);
+          return createdAt >= start && createdAt <= end;
+        })
+      : allTimeData;
 
   const calculateStats = (data: any[]): HistoricalStats => {
     // Get only the latest record for each PR number for merge status

@@ -83,7 +83,7 @@ export default function CreditsPage() {
     <div className="container mx-auto max-w-6xl">
       <div className="min-h-screen flex flex-col gap-6">
         <h1 className="text-3xl font-bold">Credits Management</h1>
-        <RepositorySelector />
+        <RepositorySelector ownerOnly={true} />
 
         {loading && <LoadingSpinner />}
         {error && <p className="text-red-600">{error}</p>}
