@@ -17,6 +17,29 @@ source .env.local && psql "postgresql://postgres.dkrxtcbaqzrodvsagwwn:$SUPABASE_
 source .env.local && psql "postgresql://postgres.awegqusxzsmlgxaxyyrq:$SUPABASE_DB_PASSWORD_PRD@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
 ```
 
+**CRITICAL: Always test queries on production database before making changes**
+
+When investigating performance issues or timeouts:
+1. **Test the actual query on production database first** using psql with `\timing` enabled
+2. **Measure the actual execution time** - don't guess or assume what the problem is
+3. **Only after confirming the root cause** should you make code changes
+4. **Never make blind fixes** based on assumptions - always verify the problem first
+
+Example workflow for investigating slow queries:
+```bash
+# Connect to production database
+source .env.local && psql "postgresql://postgres.awegqusxzsmlgxaxyyrq:$SUPABASE_DB_PASSWORD_PRD@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
+
+# Enable timing
+\timing
+
+# Test the actual query
+SELECT * FROM usage WHERE owner_name = 'Foxquilt' AND repo_name = 'foxden-policy-document-backend';
+
+# Check row count
+SELECT COUNT(*) FROM usage WHERE owner_name = 'Foxquilt' AND repo_name = 'foxden-policy-document-backend';
+```
+
 ### Stripe CLI Commands (for local development)
 
 - `stripe login` - Login to Stripe account
