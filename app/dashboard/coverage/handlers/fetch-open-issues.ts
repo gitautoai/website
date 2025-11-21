@@ -31,7 +31,7 @@ export async function fetchOpenIssues(
     }
   } catch (error) {
     console.error("Error fetching open issues:", error);
-    setError("Failed to fetch open issues");
+    // Don't set error - open issues are optional for parent issue linking
   } finally {
     setIsLoadingIssues(false);
   }

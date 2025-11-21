@@ -22,6 +22,13 @@ import SpinnerIcon from "@/app/components/SpinnerIcon";
 
 const DEFAULT_PERIOD: Period = { type: "this-month", label: "This Month" };
 
+type RepoStats = {
+  all_time: PullRequestStats;
+  selected_period: PullRequestStats;
+};
+
+type AllRepoStatsCache = Record<string, RepoStats>; // key: repoName
+
 export default function UsagePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,11 +38,10 @@ export default function UsagePage() {
     currentRepoName,
     currentStripeCustomerId,
     currentInstallationId,
+    organizations,
   } = useAccountContext();
-  const [usageStats, setUsageStats] = useState<{
-    all_time: PullRequestStats;
-    selected_period: PullRequestStats;
-  } | null>(null);
+  const [allRepoStats, setAllRepoStats] = useState<AllRepoStatsCache>({});
+  const [totalStats, setTotalStats] = useState<RepoStats | null>(null);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
   const [isUpdatingPRs, setIsUpdatingPRs] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<Period>(DEFAULT_PERIOD);
@@ -64,19 +70,33 @@ export default function UsagePage() {
     localStorage.setItem("usage-period", JSON.stringify(selectedPeriod));
   }, [selectedPeriod]);
 
+  // Load cached data from localStorage on mount
   useEffect(() => {
-    const fetchData = async () => {
-      console.log("fetchData called with context:", {
-        currentStripeCustomerId,
-        currentOwnerName,
-        currentRepoName,
-        userId,
-        currentInstallationId,
-        selectedPeriod: selectedPeriod.type,
-      });
+    if (!currentOwnerName) return;
 
-      if (!currentStripeCustomerId || !currentRepoName || !currentOwnerName || !userId) {
-        console.log("fetchData early return - missing required values");
+    const cacheKey = `usage-stats-${currentOwnerName}-${selectedPeriod.type}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        const parsedCache = JSON.parse(cached);
+        setAllRepoStats(parsedCache.allRepoStats || {});
+        setTotalStats(parsedCache.totalStats || null);
+      } catch (error) {
+        console.error("Failed to parse cached stats:", error);
+      }
+    }
+  }, [currentOwnerName, selectedPeriod.type]);
+
+  // Fetch ALL repos stats when owner or period changes
+  useEffect(() => {
+    const fetchAllReposStats = async () => {
+      if (!currentStripeCustomerId || !currentOwnerName || !userId || !currentInstallationId) {
+        setIsLoading(false);
+        return;
+      }
+
+      const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+      if (!currentOrg || currentOrg.repositories.length === 0) {
         setIsLoading(false);
         return;
       }
@@ -85,94 +105,134 @@ export default function UsagePage() {
         setError(null);
         setIsLoading(true);
 
-        // Calculate selected period dates
         const { startDate, endDate } = calculatePeriodDates(selectedPeriod);
 
-        console.log("Calculated period dates:", {
-          startDate,
-          endDate,
-          periodType: selectedPeriod.type,
-        });
-
-        // Both dates must be present
-        if (!startDate || !endDate) {
-          console.log("fetchData early return - null dates for all-time period");
-          setIsLoading(false);
-          return;
-        }
-
-        // Fetch historical stats
-        console.log("Calling getUsageStats...");
-        const historicalStats = await getUsageStats({
-          ownerName: currentOwnerName,
-          repoName: currentRepoName,
-          periodStart: startDate,
-          periodEnd: endDate,
-        });
-        console.log("getUsageStats succeeded");
-
-        // Get live PR stats from GitHub
-        let livePRStats = {
-          total_open_prs: 0,
-          total_passing_prs: 0,
-        };
-
-        if (currentInstallationId) {
-          console.log("Fetching live GitHub PR stats...");
-          try {
-            const openPRNumbers = await getOpenPRNumbers({
+        // Fetch stats for ALL repositories in parallel
+        const allStats = await Promise.all(
+          currentOrg.repositories.map(async (repo) => {
+            // Fetch historical stats from Supabase
+            const historicalStats = await getUsageStats({
               ownerName: currentOwnerName,
-              repoName: currentRepoName,
-              installationId: currentInstallationId,
+              repoName: repo.repoName,
+              periodStart: startDate,
+              periodEnd: endDate,
             });
 
-            // Get live check statuses from GitHub
-            const checkStatuses = await getPRCheckStatuses({
-              ownerName: currentOwnerName,
-              repoName: currentRepoName,
-              installationId: currentInstallationId,
-              prNumbers: openPRNumbers,
-            });
-
-            const totalPassingPRs = checkStatuses.filter((status) => status.isTestPassed).length;
-
-            livePRStats = {
-              total_open_prs: openPRNumbers.length,
-              total_passing_prs: totalPassingPRs,
+            // Fetch live PR stats from GitHub
+            let livePRStats = {
+              total_open_prs: 0,
+              total_passing_prs: 0,
             };
-            console.log("GitHub PR stats succeeded:", livePRStats);
-          } catch (githubError: any) {
-            console.error("GitHub PR stats failed:", githubError.message, githubError.status);
+
+            try {
+              const openPRNumbers = await getOpenPRNumbers({
+                ownerName: currentOwnerName,
+                repoName: repo.repoName,
+                installationId: currentInstallationId,
+              });
+
+              const checkStatuses = await getPRCheckStatuses({
+                ownerName: currentOwnerName,
+                repoName: repo.repoName,
+                installationId: currentInstallationId,
+                prNumbers: openPRNumbers,
+              });
+
+              livePRStats = {
+                total_open_prs: openPRNumbers.length,
+                total_passing_prs: checkStatuses.filter((status) => status.isTestPassed).length,
+              };
+            } catch (githubError: any) {
+              console.error(`GitHub PR stats failed for ${repo.repoName}:`, githubError.message);
+            }
+
+            return {
+              repoName: repo.repoName,
+              stats: {
+                all_time: { ...historicalStats.all_time, ...livePRStats },
+                selected_period: { ...historicalStats.selected_period, ...livePRStats },
+              },
+            };
+          })
+        );
+
+        // Build stats cache
+        const statsCache: AllRepoStatsCache = {};
+        allStats.forEach((item) => {
+          statsCache[item.repoName] = item.stats;
+        });
+
+        // Calculate total stats
+        const total = allStats.reduce(
+          (acc, item) => ({
+            all_time: {
+              total_issues: acc.all_time.total_issues + item.stats.all_time.total_issues,
+              total_prs: acc.all_time.total_prs + item.stats.all_time.total_prs,
+              total_merges: acc.all_time.total_merges + item.stats.all_time.total_merges,
+              total_open_prs: acc.all_time.total_open_prs + item.stats.all_time.total_open_prs,
+              total_passing_prs:
+                acc.all_time.total_passing_prs + item.stats.all_time.total_passing_prs,
+            },
+            selected_period: {
+              total_issues:
+                acc.selected_period.total_issues + item.stats.selected_period.total_issues,
+              total_prs: acc.selected_period.total_prs + item.stats.selected_period.total_prs,
+              total_merges:
+                acc.selected_period.total_merges + item.stats.selected_period.total_merges,
+              total_open_prs:
+                acc.selected_period.total_open_prs + item.stats.selected_period.total_open_prs,
+              total_passing_prs:
+                acc.selected_period.total_passing_prs +
+                item.stats.selected_period.total_passing_prs,
+            },
+          }),
+          {
+            all_time: {
+              total_issues: 0,
+              total_prs: 0,
+              total_merges: 0,
+              total_open_prs: 0,
+              total_passing_prs: 0,
+            },
+            selected_period: {
+              total_issues: 0,
+              total_prs: 0,
+              total_merges: 0,
+              total_open_prs: 0,
+              total_passing_prs: 0,
+            },
           }
-        }
+        );
 
-        // Combine historical and live stats
-        const statsData = {
-          all_time: { ...historicalStats.all_time, ...livePRStats },
-          selected_period: { ...historicalStats.selected_period, ...livePRStats },
-        };
+        setAllRepoStats(statsCache);
+        setTotalStats(total);
 
-        setUsageStats(statsData);
+        // Save to localStorage
+        const cacheKey = `usage-stats-${currentOwnerName}-${selectedPeriod.type}`;
+        localStorage.setItem(
+          cacheKey,
+          JSON.stringify({
+            allRepoStats: statsCache,
+            totalStats: total,
+            timestamp: Date.now(),
+          })
+        );
       } catch (error: any) {
         setError("Failed to load usage statistics");
-        console.error("Error loading usage statistics:", {
-          message: error.message,
-          stack: error.stack,
-          name: error.name,
-        });
+        console.error("Error loading usage statistics:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchData();
+    fetchAllReposStats();
   }, [
     currentStripeCustomerId,
     currentOwnerName,
-    currentRepoName,
     userId,
     selectedPeriod,
     currentInstallationId,
+    organizations,
   ]);
 
   const formatNumber = (value?: number) => {
@@ -236,19 +296,58 @@ export default function UsagePage() {
     }
   };
 
-  const handleUpdatePRBranches = async () => {
-    if (!currentOwnerName || !currentRepoName || !currentInstallationId) return;
+  const handleUpdatePRBranches = async (repoName?: string) => {
+    const targetRepo = repoName || currentRepoName;
+    if (!currentOwnerName || !targetRepo || !currentInstallationId) return;
 
+    // When "All" is selected, update all repos
+    if (targetRepo === "__ALL__") {
+      if (!currentOrg2) return;
+
+      setIsUpdatingPRs(true);
+      try {
+        let totalResult = { total: 0, successful: 0, skipped: 0, failed: 0 };
+
+        for (const repo of currentOrg2.repositories) {
+          const prNumbers = await getOpenPRNumbers({
+            ownerName: currentOwnerName,
+            repoName: repo.repoName,
+            installationId: currentInstallationId,
+          });
+          const result = await updatePRBranches({
+            ownerName: currentOwnerName,
+            repoName: repo.repoName,
+            installationId: currentInstallationId,
+            prNumbers,
+          });
+
+          totalResult.total += result.total;
+          totalResult.successful += result.successful;
+          totalResult.skipped += result.skipped;
+          totalResult.failed += result.failed;
+        }
+
+        setUpdateResult(totalResult);
+      } catch (error) {
+        console.error("Error updating PR branches:", error);
+        setUpdateResult({ total: 0, successful: 0, skipped: 0, failed: -1 });
+      } finally {
+        setIsUpdatingPRs(false);
+      }
+      return;
+    }
+
+    // Update single repo
     setIsUpdatingPRs(true);
     try {
       const prNumbers = await getOpenPRNumbers({
         ownerName: currentOwnerName,
-        repoName: currentRepoName,
+        repoName: targetRepo,
         installationId: currentInstallationId,
       });
       const result = await updatePRBranches({
         ownerName: currentOwnerName,
-        repoName: currentRepoName,
+        repoName: targetRepo,
         installationId: currentInstallationId,
         prNumbers,
       });
@@ -264,25 +363,21 @@ export default function UsagePage() {
 
   const StatBlock = ({
     title,
-    allTime,
     selectedPeriodValue,
-    selectedPeriodLabel,
     showManageCredits,
     showUpdatePRs,
+    repoName,
     tooltip,
     showMergeRate,
-    allTimeTotalPRs,
     selectedPeriodTotalPRs,
   }: {
     title: string;
-    allTime: number;
     selectedPeriodValue: number;
-    selectedPeriodLabel: string;
     showManageCredits?: boolean;
     showUpdatePRs?: boolean;
+    repoName?: string;
     tooltip?: string;
     showMergeRate?: boolean;
-    allTimeTotalPRs?: number;
     selectedPeriodTotalPRs?: number;
   }) => (
     <div className="bg-white p-6 rounded-lg shadow-sm border">
@@ -292,18 +387,6 @@ export default function UsagePage() {
       </h3>
       <div className="space-y-2">
         <div>
-          <p className="text-sm text-gray-600">All Time</p>
-          <p className="text-2xl font-bold">
-            {formatNumber(allTime)}
-            {showMergeRate && allTimeTotalPRs !== undefined && (
-              <span className="text-lg text-gray-600 ml-2">
-                ({calculateMergeRate(allTime, allTimeTotalPRs)})
-              </span>
-            )}
-          </p>
-        </div>
-        <div>
-          <p className="text-sm text-gray-600">{selectedPeriodLabel}</p>
           <p className="text-2xl font-bold">
             {formatNumber(selectedPeriodValue)}
             {showMergeRate && selectedPeriodTotalPRs !== undefined && (
@@ -330,7 +413,7 @@ export default function UsagePage() {
           )}
           {showUpdatePRs && (
             <button
-              onClick={handleUpdatePRBranches}
+              onClick={() => handleUpdatePRBranches(repoName)}
               disabled={isUpdatingPRs}
               className="text-left text-sm text-pink-600 hover:text-pink-700 mt-2 flex items-center gap-1 hover:underline"
             >
@@ -349,6 +432,12 @@ export default function UsagePage() {
     </div>
   );
 
+  // Determine what to display based on selection
+  const isAllRepos = currentRepoName === "__ALL__";
+  const displayStats = isAllRepos ? totalStats : allRepoStats[currentRepoName || ""];
+  const currentOrg2 = organizations.find((org) => org.ownerName === currentOwnerName);
+  const reposToDisplay = isAllRepos ? currentOrg2?.repositories.map((r) => r.repoName) || [] : [];
+
   return (
     <>
       <script
@@ -366,59 +455,139 @@ export default function UsagePage() {
           </div>
         )}
 
-        <p className="text-gray-600">
-          {selectedPeriod.label}: {formatPeriodRange(selectedPeriod)}
-        </p>
-
-        <div className="space-y-8">
-          <div>
-            <h2 className="text-xl font-semibold mt-2 mb-4">Repository-wide Statistics</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-              <StatBlock
-                title="Total Issues"
-                allTime={usageStats?.all_time.total_issues || 0}
-                selectedPeriodValue={usageStats?.selected_period.total_issues || 0}
-                selectedPeriodLabel={selectedPeriod.label}
-                showManageCredits={true}
-                tooltip="Number of issues created by GitAuto for test generation requests."
-              />
-              <StatBlock
-                title="Total Pull Requests"
-                allTime={usageStats?.all_time.total_prs || 0}
-                selectedPeriodValue={usageStats?.selected_period.total_prs || 0}
-                selectedPeriodLabel={selectedPeriod.label}
-                tooltip="Number of pull requests generated by GitAuto for this repository."
-              />
-              <StatBlock
-                title="Total Open PRs"
-                allTime={usageStats?.all_time.total_open_prs || 0}
-                selectedPeriodValue={usageStats?.selected_period.total_open_prs || 0}
-                selectedPeriodLabel={selectedPeriod.label}
-                showUpdatePRs={true}
-                tooltip="Number of pull requests that are currently open (not merged)."
-              />
-              <StatBlock
-                title="Total Passing PRs"
-                allTime={usageStats?.all_time.total_passing_prs || 0}
-                selectedPeriodValue={usageStats?.selected_period.total_passing_prs || 0}
-                selectedPeriodLabel={selectedPeriod.label}
-                tooltip="Number of open pull requests where all tests are passing."
-              />
-              <StatBlock
-                title="Total Merged PRs"
-                allTime={usageStats?.all_time.total_merges || 0}
-                selectedPeriodValue={usageStats?.selected_period.total_merges || 0}
-                selectedPeriodLabel={selectedPeriod.label}
-                tooltip="Number of pull requests that were successfully merged into the repository. Merge rate percentage is calculated as (merged PRs / total PRs) × 100."
-                showMergeRate={true}
-                allTimeTotalPRs={usageStats?.all_time?.total_prs || 0}
-                selectedPeriodTotalPRs={usageStats?.selected_period?.total_prs || 0}
-              />
-            </div>
-          </div>
-        </div>
+        {selectedPeriod.type !== "all-time" && (
+          <p className="text-gray-600">
+            {selectedPeriod.label}: {formatPeriodRange(selectedPeriod)}
+          </p>
+        )}
 
         {isLoading && <LoadingSpinner />}
+
+        {/* Display total + each repo when "All" is selected */}
+        {isAllRepos && displayStats && (
+          <div className="space-y-8">
+            {/* Total stats */}
+            <div>
+              <h2 className="text-xl font-semibold mt-2 mb-4">Total (All Repositories)</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                <StatBlock
+                  title="Total Issues"
+                  selectedPeriodValue={displayStats.selected_period.total_issues}
+                  showManageCredits={true}
+                  tooltip="Number of issues created by GitAuto across all repositories."
+                />
+                <StatBlock
+                  title="Total Pull Requests"
+                  selectedPeriodValue={displayStats.selected_period.total_prs}
+                  tooltip="Number of pull requests generated by GitAuto across all repositories."
+                />
+                <StatBlock
+                  title="Total Open PRs"
+                  selectedPeriodValue={displayStats.selected_period.total_open_prs}
+                  showUpdatePRs={true}
+                  repoName="__ALL__"
+                  tooltip="Number of pull requests that are currently open across all repositories."
+                />
+                <StatBlock
+                  title="Total Passing PRs"
+                  selectedPeriodValue={displayStats.selected_period.total_passing_prs}
+                  tooltip="Number of open pull requests where all tests are passing across all repositories."
+                />
+                <StatBlock
+                  title="Total Merged PRs"
+                  selectedPeriodValue={displayStats.selected_period.total_merges}
+                  tooltip="Number of pull requests that were successfully merged across all repositories."
+                  showMergeRate={true}
+                  selectedPeriodTotalPRs={displayStats.selected_period.total_prs}
+                />
+              </div>
+            </div>
+
+            {/* Each repo stats */}
+            {reposToDisplay.map((repoName) => {
+              const repoStat = allRepoStats[repoName];
+              if (!repoStat) return null;
+
+              return (
+                <div key={repoName}>
+                  <h2 className="text-xl font-semibold mt-2 mb-4">{repoName}</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                    <StatBlock
+                      title="Total Issues"
+                      selectedPeriodValue={repoStat.selected_period.total_issues}
+                      tooltip="Number of issues created by GitAuto for this repository."
+                    />
+                    <StatBlock
+                      title="Total Pull Requests"
+                      selectedPeriodValue={repoStat.selected_period.total_prs}
+                      tooltip="Number of pull requests generated by GitAuto for this repository."
+                    />
+                    <StatBlock
+                      title="Total Open PRs"
+                      selectedPeriodValue={repoStat.selected_period.total_open_prs}
+                      showUpdatePRs={true}
+                      repoName={repoName}
+                      tooltip="Number of pull requests that are currently open."
+                    />
+                    <StatBlock
+                      title="Total Passing PRs"
+                      selectedPeriodValue={repoStat.selected_period.total_passing_prs}
+                      tooltip="Number of open pull requests where all tests are passing."
+                    />
+                    <StatBlock
+                      title="Total Merged PRs"
+                      selectedPeriodValue={repoStat.selected_period.total_merges}
+                      tooltip="Number of pull requests that were successfully merged."
+                      showMergeRate={true}
+                      selectedPeriodTotalPRs={repoStat.selected_period.total_prs}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Display single repo stats */}
+        {!isAllRepos && displayStats && (
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-xl font-semibold mt-2 mb-4">{currentRepoName}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                <StatBlock
+                  title="Total Issues"
+                  selectedPeriodValue={displayStats.selected_period.total_issues}
+                  showManageCredits={true}
+                  tooltip="Number of issues created by GitAuto for this repository."
+                />
+                <StatBlock
+                  title="Total Pull Requests"
+                  selectedPeriodValue={displayStats.selected_period.total_prs}
+                  tooltip="Number of pull requests generated by GitAuto for this repository."
+                />
+                <StatBlock
+                  title="Total Open PRs"
+                  selectedPeriodValue={displayStats.selected_period.total_open_prs}
+                  showUpdatePRs={true}
+                  repoName={currentRepoName || undefined}
+                  tooltip="Number of pull requests that are currently open (not merged)."
+                />
+                <StatBlock
+                  title="Total Passing PRs"
+                  selectedPeriodValue={displayStats.selected_period.total_passing_prs}
+                  tooltip="Number of open pull requests where all tests are passing."
+                />
+                <StatBlock
+                  title="Total Merged PRs"
+                  selectedPeriodValue={displayStats.selected_period.total_merges}
+                  tooltip="Number of pull requests that were successfully merged into the repository. Merge rate percentage is calculated as (merged PRs / total PRs) × 100."
+                  showMergeRate={true}
+                  selectedPeriodTotalPRs={displayStats.selected_period.total_prs}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {updateResult && (
           <Modal
