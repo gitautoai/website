@@ -31,8 +31,14 @@ export default function RepositorySelector({
       setCurrentOwnerName(ownerName);
 
       if (!ownerOnly && currentOrg.repositories.length > 0) {
-        const firstRepo = currentOrg.repositories[0];
-        handleRepoChange(firstRepo.repoName);
+        // If "All Repositories" is currently selected and not disabled, keep it selected
+        if (currentRepoName === "__ALL__" && !disableAllRepos) {
+          handleRepoChange("__ALL__");
+        } else {
+          // Otherwise, select the first repo
+          const firstRepo = currentOrg.repositories[0];
+          handleRepoChange(firstRepo.repoName);
+        }
       }
     }
   };
