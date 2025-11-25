@@ -43,7 +43,7 @@ export default function UsagePage() {
   const [allRepoStats, setAllRepoStats] = useState<AllRepoStatsCache>({});
   const [totalStats, setTotalStats] = useState<RepoStats | null>(null);
   const [isPortalLoading, setIsPortalLoading] = useState(false);
-  const [isUpdatingPRs, setIsUpdatingPRs] = useState(false);
+  const [updatingRepo, setUpdatingRepo] = useState<string | null>(null);
   const [selectedPeriod, setSelectedPeriod] = useState<Period>(DEFAULT_PERIOD);
   const [updateResult, setUpdateResult] = useState<{
     total: number;
@@ -304,7 +304,7 @@ export default function UsagePage() {
     if (targetRepo === "__ALL__") {
       if (!currentOrg2) return;
 
-      setIsUpdatingPRs(true);
+      setUpdatingRepo("__ALL__");
       try {
         let totalResult = { total: 0, successful: 0, skipped: 0, failed: 0 };
 
@@ -332,13 +332,13 @@ export default function UsagePage() {
         console.error("Error updating PR branches:", error);
         setUpdateResult({ total: 0, successful: 0, skipped: 0, failed: -1 });
       } finally {
-        setIsUpdatingPRs(false);
+        setUpdatingRepo(null);
       }
       return;
     }
 
     // Update single repo
-    setIsUpdatingPRs(true);
+    setUpdatingRepo(targetRepo);
     try {
       const prNumbers = await getOpenPRNumbers({
         ownerName: currentOwnerName,
@@ -357,7 +357,7 @@ export default function UsagePage() {
       console.error("Error updating PR branches:", error);
       setUpdateResult({ total: 0, successful: 0, skipped: 0, failed: -1 });
     } finally {
-      setIsUpdatingPRs(false);
+      setUpdatingRepo(null);
     }
   };
 
@@ -414,10 +414,10 @@ export default function UsagePage() {
           {showUpdatePRs && (
             <button
               onClick={() => handleUpdatePRBranches(repoName)}
-              disabled={isUpdatingPRs}
+              disabled={updatingRepo === repoName}
               className="text-left text-sm text-pink-600 hover:text-pink-700 mt-2 flex items-center gap-1 hover:underline"
             >
-              {isUpdatingPRs ? (
+              {updatingRepo === repoName ? (
                 <>
                   <SpinnerIcon />
                   Updating branches...
