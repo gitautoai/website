@@ -24,8 +24,11 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
+      # For generic PHP: runs 'phpunit' which reads phpunit.xml
+      # For Laravel: runs 'php artisan test' which internally calls PHPUnit
+      # Both generate coverage because phpunit.xml configures it
       - name: Run tests with coverage
-        run: composer run test:coverage
+        run: composer test
 
       # Most popular Clover-to-LCOV conversion tool
       - name: Convert Clover to LCOV format

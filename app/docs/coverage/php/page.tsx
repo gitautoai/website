@@ -4,7 +4,7 @@ import { RELATIVE_URLS } from "@/config/urls";
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
-import { composerJson, phpunitConfig } from "./code/phpunit-config";
+import { composerJson, composerJsonLaravel, phpunitConfig } from "./code/phpunit-config";
 import { workflow } from "./code/workflow";
 
 export default function PHPConfigurationPage() {
@@ -25,6 +25,12 @@ export default function PHPConfigurationPage() {
           <div className="space-y-4">
             <h3 className="text-xl font-semibold mt-6 mb-3">Installation</h3>
             <CodeBlock code={composerJson} language="json" filename="composer.json" />
+
+            <h3 className="text-xl font-semibold mt-6 mb-3">Laravel Projects</h3>
+            <p className="text-gray-600 mb-4">
+              If you're using Laravel, use this composer.json configuration instead:
+            </p>
+            <CodeBlock code={composerJsonLaravel} language="json" filename="composer.json" />
 
             <h3 className="text-xl font-semibold mt-6 mb-3">PHPUnit Configuration</h3>
             <CodeBlock code={phpunitConfig} language="xml" filename="phpunit.xml" />

@@ -22,7 +22,18 @@ export const composerJson = `{
     "phpunit/phpunit": "^12.0"
   },
   "scripts": {
-    "test": "phpunit",
-    "test:coverage": "phpunit --coverage-clover coverage/clover.xml"
+    "test": "phpunit"
+  }
+}`;
+
+export const composerJsonLaravel = `{
+  "require-dev": {
+    "phpunit/phpunit": "^12.0"
+  },
+  "scripts": {
+    "test": [
+      "@php artisan config:clear --ansi",
+      "@php artisan test"
+    ]
   }
 }`;
