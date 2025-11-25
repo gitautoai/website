@@ -36,10 +36,12 @@ export default function DocsPage() {
           <ul className="list-disc list-outside space-y-2 text-gray-600 mb-6 ml-5">
             <li>Coverage report must be in LCOV format</li>
             <li>
-              Report file must be named <code>lcov.info</code>
+              Report file must be named{" "}
+              <code className="bg-gray-100 px-2 py-1 rounded">lcov.info</code>
             </li>
             <li>
-              Report must be uploaded as GitHub Actions artifact named <code>coverage-report</code>
+              Report must be uploaded as GitHub Actions artifact named{" "}
+              <code className="bg-gray-100 px-2 py-1 rounded">coverage-report</code>
             </li>
             <li>Your project uses GitHub (GitAuto is a GitHub App)</li>
           </ul>
@@ -53,9 +55,9 @@ export default function DocsPage() {
           </p>
 
           <p className="text-gray-600 mb-4">
-            This means GitAuto works with any language or framework including JavaScript, Python,
-            Java, C#, Go, Ruby, PHP, Rust, and many more. Any testing framework that generates LCOV
-            reports is supported - Jest, pytest, JUnit, xUnit, Go test, RSpec, PHPUnit, Cargo test,
+            This means GitAuto works with any language or framework including Python, JavaScript,
+            Java, Go, PHP, Ruby, C#, Rust, and many more. Any testing framework that generates LCOV
+            reports is supported - pytest, Jest, JaCoCo, go test, PHPUnit, RSpec, xUnit, Cargo test,
             and others.
           </p>
 
@@ -65,6 +67,14 @@ export default function DocsPage() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Link
+              href="/docs/coverage/python"
+              className="block p-6 border rounded-lg hover:border-pink-600"
+            >
+              <h3 className="text-xl font-semibold mb-2">Python</h3>
+              <p className="text-gray-600">pytest and other Python test frameworks</p>
+            </Link>
+
             <Link
               href="/docs/coverage/javascript"
               className="block p-6 border rounded-lg hover:border-pink-600"
@@ -76,11 +86,35 @@ export default function DocsPage() {
             </Link>
 
             <Link
-              href="/docs/coverage/python"
+              href="/docs/coverage/java"
               className="block p-6 border rounded-lg hover:border-pink-600"
             >
-              <h3 className="text-xl font-semibold mb-2">Python</h3>
-              <p className="text-gray-600">pytest and other Python test frameworks</p>
+              <h3 className="text-xl font-semibold mb-2">Java</h3>
+              <p className="text-gray-600">JaCoCo with Maven or Gradle</p>
+            </Link>
+
+            <Link
+              href="/docs/coverage/go"
+              className="block p-6 border rounded-lg hover:border-pink-600"
+            >
+              <h3 className="text-xl font-semibold mb-2">Go</h3>
+              <p className="text-gray-600">Go&apos;s built-in test coverage tools</p>
+            </Link>
+
+            <Link
+              href="/docs/coverage/php"
+              className="block p-6 border rounded-lg hover:border-pink-600"
+            >
+              <h3 className="text-xl font-semibold mb-2">PHP</h3>
+              <p className="text-gray-600">PHPUnit with Xdebug or PCOV</p>
+            </Link>
+
+            <Link
+              href="/docs/coverage/ruby"
+              className="block p-6 border rounded-lg hover:border-pink-600"
+            >
+              <h3 className="text-xl font-semibold mb-2">Ruby</h3>
+              <p className="text-gray-600">RSpec with SimpleCov</p>
             </Link>
 
             <Link

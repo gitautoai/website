@@ -17,9 +17,31 @@ export function CodeBlock({ code, language, filename }: CodeBlockProps) {
     const initPrism = async () => {
       const Prism = (await import("prismjs")).default;
       await import("prismjs/components/prism-bash");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-dart");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-go");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-groovy");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-java");
       await import("prismjs/components/prism-javascript");
       await import("prismjs/components/prism-json");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-makefile");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-markup");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-markup-templating");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-php");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-python");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-ruby");
       await import("prismjs/components/prism-typescript");
+      // @ts-expect-error - No type declarations
+      await import("prismjs/components/prism-xml-doc");
       await import("prismjs/components/prism-yaml");
       await import("prismjs/themes/prism-tomorrow.css");
 

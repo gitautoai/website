@@ -28,9 +28,17 @@ export default function FlutterConfigurationPage() {
           workflowCode={workflow}
           workflowFilename="flutter-coverage.yml"
           configPoints={[
-            "Run tests with <code>--coverage</code> flag",
-            "Upload the report as an artifact named <code>coverage-report</code>",
-            "Ensure the report is saved as <code>coverage/lcov.info</code>",
+            <span key="1">
+              Run tests with <code className="bg-yellow-100 px-1">--coverage</code> flag
+            </span>,
+            <span key="2">
+              Upload the report as an artifact named{" "}
+              <code className="bg-yellow-100 px-1">coverage-report</code>
+            </span>,
+            <span key="3">
+              Ensure the report is saved as{" "}
+              <code className="bg-yellow-100 px-1">coverage/lcov.info</code>
+            </span>,
           ]}
         />
       </div>
@@ -48,8 +56,8 @@ export default function FlutterConfigurationPage() {
           title: "Coverage Overview",
         }}
         nextLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD,
-          title: "Dashboard Trigger",
+          href: RELATIVE_URLS.DOCS.COVERAGE.CHARTS,
+          title: "Coverage Charts",
         }}
       />
     </>

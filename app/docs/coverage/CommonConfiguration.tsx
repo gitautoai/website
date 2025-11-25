@@ -6,7 +6,7 @@ interface CommonConfiguration {
   framework: string;
   workflowCode: string;
   workflowFilename: string;
-  configPoints: string[];
+  configPoints: React.ReactNode[];
   setupCode?: {
     filename: string;
     language: string;
@@ -54,7 +54,7 @@ export function CommonConfiguration({
           <h3 className="text-lg font-medium text-yellow-950 mb-2">Key Configuration Points</h3>
           <ul className="list-disc list-outside space-y-1 text-yellow-800 ml-5">
             {configPoints.map((point, index) => (
-              <li key={index} dangerouslySetInnerHTML={{ __html: point }} />
+              <li key={index}>{point}</li>
             ))}
           </ul>
         </div>
@@ -67,8 +67,7 @@ export function CommonConfiguration({
           reports and displays them in the Coverage Dashboard. The data updates whenever:
         </p>
         <ul className="list-disc list-outside space-y-2 text-gray-600 mb-6 ml-5">
-          <li>You push to any branch (except master)</li>
-          <li>You push additional commits to a pull request</li>
+          <li>You push to your target branch (as configured in the workflow)</li>
           <li>You manually trigger the workflow</li>
         </ul>
       </section>

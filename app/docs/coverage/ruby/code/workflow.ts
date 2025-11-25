@@ -1,4 +1,4 @@
-export const workflow = `name: Flutter Coverage
+export const workflow = `name: RSpec Coverage
 
 # Run on target branch (probably default branch like main) to track coverage history
 on:
@@ -13,19 +13,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          channel: "stable"
+          ruby-version: '3.2'
+          bundler-cache: true
 
       - name: Install dependencies
-        run: flutter pub get
+        run: bundle install
 
       - name: Run tests with coverage
-        run: flutter test --coverage
+        run: bundle exec rspec
+        env:
+          COVERAGE: true
 
-      - name: Upload coverage report
-        if: always()
+      - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
