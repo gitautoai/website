@@ -37,12 +37,13 @@ export default function PythonConfigurationPage() {
               <code className="bg-yellow-100 px-1">--cov-report=lcov</code> flags
             </span>,
             <span key="2">
-              Upload the report as an artifact named{" "}
-              <code className="bg-yellow-100 px-1">coverage-report</code>
+              Upload the report as an artifact - name must be either{" "}
+              <code className="bg-yellow-100 px-1">coverage-report</code> or end with{" "}
+              <code className="bg-yellow-100 px-1">lcov.info</code>
             </span>,
             <span key="3">
-              Ensure the report is saved as{" "}
-              <code className="bg-yellow-100 px-1">coverage/lcov.info</code>
+              Ensure the artifact contains{" "}
+              <code className="bg-yellow-100 px-1">coverage/lcov.info</code> file
             </span>,
           ]}
         />

@@ -48,12 +48,13 @@ export default function PHPConfigurationPage() {
             <span key="1">Configure PHPUnit to generate Clover XML coverage reports (All Projects)</span>,
             <span key="2">Set up Xdebug or PCOV for code coverage (All Projects)</span>,
             <span key="3">
-              Upload the report as an artifact named{" "}
-              <code className="bg-yellow-100 px-1">coverage-report</code> (All Projects)
+              Upload the report as an artifact - name must be either{" "}
+              <code className="bg-yellow-100 px-1">coverage-report</code> or end with{" "}
+              <code className="bg-yellow-100 px-1">lcov.info</code> (All Projects)
             </span>,
             <span key="4">
-              Ensure the report is saved as{" "}
-              <code className="bg-yellow-100 px-1">coverage/lcov.info</code> (All Projects)
+              Ensure the artifact contains{" "}
+              <code className="bg-yellow-100 px-1">coverage/lcov.info</code> file (All Projects)
             </span>,
           ]}
         />

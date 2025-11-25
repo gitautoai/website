@@ -32,10 +32,10 @@ jobs:
 
       # Most popular Clover-to-LCOV conversion tool
       - name: Convert Clover to LCOV format
-        uses: andstor/clover2lcov@v1
+        uses: andstor/clover2lcov-action@v1
         with:
-          clover-file: coverage/clover.xml
-          lcov-file: coverage/lcov.info
+          src: coverage/clover.xml
+          dst: coverage/lcov.info
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v4
