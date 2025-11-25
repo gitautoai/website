@@ -26,8 +26,12 @@ const sidebarItems = [
     title: "Coverage Dashboard",
     items: [
       { href: RELATIVE_URLS.DOCS.COVERAGE.OVERVIEW, label: "Overview" },
-      { href: RELATIVE_URLS.DOCS.COVERAGE.JAVASCRIPT, label: "JavaScript Testing" },
       { href: RELATIVE_URLS.DOCS.COVERAGE.PYTHON, label: "Python Testing" },
+      { href: RELATIVE_URLS.DOCS.COVERAGE.JAVASCRIPT, label: "JavaScript Testing" },
+      { href: RELATIVE_URLS.DOCS.COVERAGE.JAVA, label: "Java Testing" },
+      { href: RELATIVE_URLS.DOCS.COVERAGE.GO, label: "Go Testing" },
+      { href: RELATIVE_URLS.DOCS.COVERAGE.PHP, label: "PHP Testing" },
+      { href: RELATIVE_URLS.DOCS.COVERAGE.RUBY, label: "Ruby Testing" },
       { href: RELATIVE_URLS.DOCS.COVERAGE.FLUTTER, label: "Flutter Testing" },
       { href: RELATIVE_URLS.DOCS.COVERAGE.CHARTS, label: "Coverage Charts" },
     ],
@@ -52,7 +56,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
 
         {/* Sidebar - Desktop */}
         <div className="hidden lg:block w-56 relative">
-          <div className="sticky top-8">
+          <div className="sticky top-8 max-h-[calc(100vh-4rem)] overflow-y-auto">
             <nav className="space-y-1">
               {sidebarItems.map((section, idx) => (
                 <div key={idx}>

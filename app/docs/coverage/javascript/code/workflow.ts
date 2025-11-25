@@ -1,7 +1,10 @@
 export const workflow = `name: Test Coverage
 
+# Run on target branch (probably default branch like main) to track coverage history
 on:
   push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
