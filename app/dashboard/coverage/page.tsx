@@ -188,19 +188,19 @@ export default function CoveragePage() {
 
   // When repository changes, update parent issue list
   useEffect(() => {
-    if (!currentOwnerName || !currentRepoName || !accessToken) return;
+    if (!currentOwnerName || !currentRepoName || !currentInstallationId) return;
     if (currentRepoName === "__ALL__") return; // Skip if "All Repositories" is selected
 
     fetchOpenIssues(
       currentOwnerName,
       currentRepoName,
-      accessToken,
+      currentInstallationId,
       setOpenIssues,
       setSelectedParentIssue,
       setIsLoadingIssues,
       setError
     );
-  }, [currentOwnerName, currentRepoName, accessToken]);
+  }, [currentOwnerName, currentRepoName, currentInstallationId]);
 
   // Apply filters and sorting
   const filteredData = filterAndSortData(

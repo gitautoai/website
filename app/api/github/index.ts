@@ -43,3 +43,8 @@ export const getGraphQL = (accessToken: string) => {
     },
   });
 };
+
+export const getGraphQLForInstallation = async (installationId: number) => {
+  const octokit = await getOctokitForInstallation(installationId);
+  return octokit.graphql;
+};

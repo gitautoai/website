@@ -8,7 +8,7 @@ import { STORAGE_KEYS } from "@/lib/constants";
 export async function fetchOpenIssues(
   currentOwnerName: string,
   currentRepoName: string,
-  accessToken: string,
+  installationId: number,
   setOpenIssues: (issues: ParentIssue[]) => void,
   setSelectedParentIssue: (issue: ParentIssue | null) => void,
   setIsLoadingIssues: (loading: boolean) => void,
@@ -16,7 +16,7 @@ export async function fetchOpenIssues(
 ) {
   setIsLoadingIssues(true);
   try {
-    const issues = await getOpenIssues(currentOwnerName, currentRepoName, accessToken);
+    const issues = await getOpenIssues(currentOwnerName, currentRepoName, installationId);
     setOpenIssues(issues);
 
     // Get saved parent issue number
