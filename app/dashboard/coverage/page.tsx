@@ -53,6 +53,7 @@ export default function CoveragePage() {
     setCurrentRepoName,
     organizations,
     accessToken,
+    currentInstallationId,
     userId,
     userName,
   } = useAccountContext();
@@ -131,7 +132,7 @@ export default function CoveragePage() {
       );
 
       // After data is fetched, perform sync
-      if (!currentOwnerName || !currentRepoName || !accessToken || !userId) return;
+      if (!currentOwnerName || !currentRepoName || !currentInstallationId || !userId) return;
       if (currentRepoName === "__ALL__") return; // Skip sync if "All Repositories" is selected
 
       const hasNoData = coverageData.length === 0;
@@ -144,7 +145,7 @@ export default function CoveragePage() {
           currentRepoName,
           currentOwnerId,
           currentRepoId,
-          accessToken,
+          currentInstallationId,
           userId,
           userName,
           coverageData
@@ -180,7 +181,7 @@ export default function CoveragePage() {
     currentRepoId,
     currentOwnerName,
     currentRepoName,
-    accessToken,
+    currentInstallationId,
     userId,
     userName,
   ]);

@@ -1,9 +1,6 @@
 "use server";
 
-import { getOctokitForUser } from "@/app/api/github";
-import { isCodeFile } from "@/utils/is-code-file";
-import { isTestFile } from "@/utils/is-test-file";
-import { isTypeFile } from "@/utils/is-type-file";
+import { getOctokitForInstallation } from "@/app/api/github";
 
 export interface RepositoryFile {
   path: string;
@@ -17,10 +14,10 @@ export interface RepositoryFile {
 export async function fetchRepositoryFiles(
   ownerName: string,
   repoName: string,
-  accessToken: string,
+  installationId: number,
   branch = "main"
 ) {
-  const octokit = getOctokitForUser(accessToken);
+  const octokit = await getOctokitForInstallation(installationId);
 
   try {
     // Get all files recursively in one API call

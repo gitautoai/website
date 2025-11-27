@@ -15,7 +15,7 @@ export async function syncRepositoryFiles(
   repoName: string,
   ownerId: number,
   repoId: number,
-  accessToken: string,
+  installationId: number,
   userId: number,
   userName: string,
   coverageData: Tables<"coverages">[]
@@ -24,10 +24,10 @@ export async function syncRepositoryFiles(
 
   try {
     // Get default branch
-    const targetBranch = await getDefaultBranch(ownerName, repoName, accessToken);
+    const targetBranch = await getDefaultBranch(ownerName, repoName, installationId);
 
     // Fetch repository files (only source files)
-    const files = await fetchRepositoryFiles(ownerName, repoName, accessToken, targetBranch);
+    const files = await fetchRepositoryFiles(ownerName, repoName, installationId, targetBranch);
 
     // Create maps for efficient lookup
     const existingFileMap = new Map(coverageData.map((file) => [file.full_path, file]));

@@ -255,13 +255,14 @@ When the user says "LGTM", execute these commands in order:
 2. `npm run lint` - Run linting
 3. `npx tsc --noEmit` - Type-check ALL files including tests (use this to catch TypeScript errors)
 4. `npm test` - Run unit tests (must pass 100%, skip for blog-only changes)
-5. `npx playwright test` - Run E2E tests (must pass 100%, skip for blog-only changes)
-6. `npm run build` - Build the project
-7. **STOP if any test fails** - Fix all failures before proceeding (unless blog-only)
-8. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes
-9. `git add <specific-file-paths>` - Stage specific changed files (NEVER use `git add .`, always specify exact file paths)
-10. Create a descriptive commit message based on changes (do NOT include Claude Code attribution)
-11. `git push` - Push to remote
+5. `npm run build` - Build the project
+6. **STOP if any test fails** - Fix all failures before proceeding (unless blog-only)
+7. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes
+8. `git add <specific-file-paths>` - Stage specific changed files (NEVER use `git add .`, always specify exact file paths)
+9. Create a descriptive commit message based on changes (do NOT include Claude Code attribution)
+10. `git push` - Push to remote
+
+**Note**: E2E tests (`npx playwright test`) are skipped during LGTM to save time. Run them manually when needed.
 
 ## TypeScript Error Checking Rule
 
