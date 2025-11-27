@@ -1,6 +1,6 @@
 "use server";
 
-import { getGraphQL } from "@/app/api/github";
+import { getGraphQLForInstallation } from "@/app/api/github";
 import { ParentIssue } from "@/app/dashboard/coverage/types";
 
 type GetOpenIssuesResponse = {
@@ -21,9 +21,9 @@ type GetOpenIssuesResponse = {
 export async function getOpenIssues(
   ownerName: string,
   repoName: string,
-  accessToken: string
+  installationId: number
 ): Promise<ParentIssue[]> {
-  const graphqlClient = getGraphQL(accessToken);
+  const graphqlClient = await getGraphQLForInstallation(installationId);
   const allIssues: ParentIssue[] = [];
   let hasNextPage = true;
   let cursor: string | null = null;
