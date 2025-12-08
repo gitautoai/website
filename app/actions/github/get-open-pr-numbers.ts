@@ -2,6 +2,13 @@
 
 import { getOctokitForInstallation } from "@/app/api/github";
 
+export type GitAutoPR = {
+  number: number;
+  title: string;
+  url: string;
+  headSha: string;
+};
+
 export const getOpenPRNumbers = async ({
   ownerName,
   repoName,
@@ -10,7 +17,7 @@ export const getOpenPRNumbers = async ({
   ownerName: string;
   repoName: string;
   installationId: number;
-}) => {
+}): Promise<GitAutoPR[]> => {
   console.log("getOpenPRNumbers called:", { ownerName, repoName, installationId });
 
   try {
@@ -27,8 +34,12 @@ export const getOpenPRNumbers = async ({
     const gitautoBotUsername = process.env.GITHUB_APP_USER_NAME;
     const gitautoPRs = pullRequests.filter((pr) => pr.user?.login === gitautoBotUsername);
 
-    console.log("getOpenPRNumbers succeeded:", { totalPRs: pullRequests.length, gitautoPRs: gitautoPRs.length });
-    return gitautoPRs.map((pr) => pr.number);
+    return gitautoPRs.map((pr) => ({
+      number: pr.number,
+      title: pr.title,
+      url: pr.html_url,
+      headSha: pr.head.sha,
+    }));
   } catch (error: any) {
     console.error("getOpenPRNumbers failed:", {
       error: error.message,

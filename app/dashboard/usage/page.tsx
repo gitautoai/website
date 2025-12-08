@@ -51,6 +51,12 @@ export default function UsagePage() {
     skipped: number;
     failed: number;
   } | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Prevent hydration mismatch
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Load saved period from localStorage on mount
   useEffect(() => {
@@ -125,21 +131,23 @@ export default function UsagePage() {
             };
 
             try {
-              const openPRNumbers = await getOpenPRNumbers({
+              const openPRs = await getOpenPRNumbers({
                 ownerName: currentOwnerName,
                 repoName: repo.repoName,
                 installationId: currentInstallationId,
               });
+
+              const prNumbers = openPRs.map((pr) => pr.number);
 
               const checkStatuses = await getPRCheckStatuses({
                 ownerName: currentOwnerName,
                 repoName: repo.repoName,
                 installationId: currentInstallationId,
-                prNumbers: openPRNumbers,
+                prNumbers,
               });
 
               livePRStats = {
-                total_open_prs: openPRNumbers.length,
+                total_open_prs: openPRs.length,
                 total_passing_prs: checkStatuses.filter((status) => status.isTestPassed).length,
               };
             } catch (githubError: any) {
@@ -309,11 +317,12 @@ export default function UsagePage() {
         let totalResult = { total: 0, successful: 0, skipped: 0, failed: 0 };
 
         for (const repo of currentOrg2.repositories) {
-          const prNumbers = await getOpenPRNumbers({
+          const openPRs = await getOpenPRNumbers({
             ownerName: currentOwnerName,
             repoName: repo.repoName,
             installationId: currentInstallationId,
           });
+          const prNumbers = openPRs.map((pr) => pr.number);
           const result = await updatePRBranches({
             ownerName: currentOwnerName,
             repoName: repo.repoName,
@@ -340,11 +349,12 @@ export default function UsagePage() {
     // Update single repo
     setUpdatingRepo(targetRepo);
     try {
-      const prNumbers = await getOpenPRNumbers({
+      const openPRs = await getOpenPRNumbers({
         ownerName: currentOwnerName,
         repoName: targetRepo,
         installationId: currentInstallationId,
       });
+      const prNumbers = openPRs.map((pr) => pr.number);
       const result = await updatePRBranches({
         ownerName: currentOwnerName,
         repoName: targetRepo,
@@ -436,7 +446,8 @@ export default function UsagePage() {
   const isAllRepos = currentRepoName === "__ALL__";
   const displayStats = isAllRepos ? totalStats : allRepoStats[currentRepoName || ""];
   const currentOrg2 = organizations.find((org) => org.ownerName === currentOwnerName);
-  const reposToDisplay = isAllRepos ? currentOrg2?.repositories.map((r) => r.repoName) || [] : [];
+  const reposToDisplay =
+    isMounted && isAllRepos ? currentOrg2?.repositories.map((r) => r.repoName) || [] : [];
 
   return (
     <>
