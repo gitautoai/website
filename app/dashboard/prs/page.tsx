@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { getCheckStatusBySHA } from "@/app/actions/github/get-check-status-by-sha";
 import { getPRFiles } from "@/app/actions/github/get-pr-files";
 import { getOpenPRNumbers, GitAutoPR } from "@/app/actions/github/get-open-pr-numbers";
 import { useAccountContext } from "@/app/components/contexts/Account";
@@ -82,14 +83,22 @@ export default function PRsPage() {
                 installationId: currentInstallationId,
               });
 
-              // Fetch files for each PR
+              // Fetch files and check status for each PR
               const prDetailsPromises = prs.map(async (pr) => {
-                const files = await getPRFiles({
-                  ownerName: currentOwnerName,
-                  repoName,
-                  installationId: currentInstallationId,
-                  prNumber: pr.number,
-                });
+                const [files, checkStatus] = await Promise.all([
+                  getPRFiles({
+                    ownerName: currentOwnerName,
+                    repoName,
+                    installationId: currentInstallationId,
+                    prNumber: pr.number,
+                  }),
+                  getCheckStatusBySHA({
+                    ownerName: currentOwnerName,
+                    repoName,
+                    installationId: currentInstallationId,
+                    sha: pr.headSha,
+                  }),
+                ]);
 
                 return {
                   number: pr.number,
@@ -97,7 +106,7 @@ export default function PRsPage() {
                   url: pr.url,
                   headSha: pr.headSha,
                   files,
-                  checkStatus: "none" as PRData["checkStatus"],
+                  checkStatus,
                   repoName,
                 };
               });
