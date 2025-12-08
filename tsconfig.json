@@ -13,8 +13,14 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "plugins": [{ "name": "next" }],
-    "paths": { "@/*": ["./*"] }
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": [
     "next-env.d.ts",
@@ -22,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "next.config.mjs",
-    "scripts/take-screenshots.mjs"
+    "scripts/take-screenshots.mjs",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }
