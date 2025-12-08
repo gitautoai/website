@@ -34,6 +34,7 @@ export const RELATIVE_URLS = {
     CHARTS: "/dashboard/charts",
     COVERAGE: "/dashboard/coverage",
     CREDITS: "/dashboard/credits",
+    PRS: "/dashboard/prs",
     USAGE: "/dashboard/usage",
   },
   BLOG: "/blog",
@@ -86,6 +87,7 @@ export const ABSOLUTE_URLS = {
       COVERAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE}`,
       CREDITS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.CREDITS}`,
       CREDITS_SUCCESS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.CREDITS}?success=true`,
+      PRS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.PRS}`,
       USAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.USAGE}`,
     },
     DOCS: {
