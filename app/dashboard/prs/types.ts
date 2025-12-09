@@ -9,4 +9,5 @@ export type PRData = {
   checkStatus: "success" | "failure" | "pending" | "none";
   repoName: string;
   lastFetched: string;
+  hasConflicts: boolean;
 };
