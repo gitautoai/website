@@ -71,70 +71,71 @@ export default function PRsPage() {
             : [currentRepoName];
 
         // Fetch PRs for each repo
-        const allPRs = await Promise.all(
+        const allPRsResults = await Promise.allSettled(
           reposToFetch.map(async (repoName) => {
-            try {
-              const prs: GitAutoPR[] = await getOpenPRNumbers({
-                ownerName: currentOwnerName,
-                repoName,
-                installationId: currentInstallationId,
-              });
+            const prs: GitAutoPR[] = await getOpenPRNumbers({
+              ownerName: currentOwnerName,
+              repoName,
+              installationId: currentInstallationId,
+            });
 
-              // Fetch files and check status for each PR
-              const prDetailsPromises = prs.map(async (pr) => {
-                const results = await Promise.allSettled([
-                  getPRFiles({
-                    ownerName: currentOwnerName,
-                    repoName,
-                    installationId: currentInstallationId,
-                    prNumber: pr.number,
-                  }),
-                  getCheckStatusBySHA({
-                    ownerName: currentOwnerName,
-                    repoName,
-                    installationId: currentInstallationId,
-                    sha: pr.headSha,
-                  }),
-                ]);
-
-                const files = results[0].status === "fulfilled" ? results[0].value : [];
-                const checkStatus = results[1].status === "fulfilled" ? results[1].value : "none";
-
-                if (results[0].status === "rejected") {
-                  console.error(`Failed to fetch files for PR ${pr.number}:`, results[0].reason);
-                }
-                if (results[1].status === "rejected") {
-                  console.error(
-                    `Failed to fetch check status for PR ${pr.number}:`,
-                    results[1].reason
-                  );
-                }
-
-                return {
-                  number: pr.number,
-                  title: pr.title,
-                  url: pr.url,
-                  headSha: pr.headSha,
-                  files,
-                  checkStatus,
+            // Fetch files and check status for each PR
+            const prDetailsPromises = prs.map(async (pr) => {
+              const results = await Promise.allSettled([
+                getPRFiles({
+                  ownerName: currentOwnerName,
                   repoName,
-                  lastFetched: new Date().toISOString(),
-                  hasConflicts: pr.hasConflicts,
-                };
-              });
+                  installationId: currentInstallationId,
+                  prNumber: pr.number,
+                }),
+                getCheckStatusBySHA({
+                  ownerName: currentOwnerName,
+                  repoName,
+                  installationId: currentInstallationId,
+                  sha: pr.headSha,
+                }),
+              ]);
 
-              return Promise.all(prDetailsPromises);
-            } catch (err) {
-              console.error(`Failed to fetch PRs for ${repoName}:`, err);
-              return [];
-            }
+              const files = results[0].status === "fulfilled" ? results[0].value : [];
+              const checkStatus = results[1].status === "fulfilled" ? results[1].value : "none";
+
+              if (results[0].status === "rejected") {
+                console.error(`Failed to fetch files for PR ${pr.number}:`, results[0].reason);
+              }
+              if (results[1].status === "rejected") {
+                console.error(
+                  `Failed to fetch check status for PR ${pr.number}:`,
+                  results[1].reason
+                );
+              }
+
+              return {
+                number: pr.number,
+                title: pr.title,
+                url: pr.url,
+                headSha: pr.headSha,
+                files,
+                checkStatus,
+                repoName,
+                lastFetched: new Date().toISOString(),
+                hasConflicts: pr.hasConflicts,
+              };
+            });
+
+            return Promise.all(prDetailsPromises);
           })
         );
 
         // Group PRs by repo
         const prsByRepo: Record<string, PRData[]> = {};
         reposToFetch.forEach((repoName, index) => {
-          prsByRepo[repoName] = allPRs[index];
+          const result = allPRsResults[index];
+          if (result.status === "fulfilled") {
+            prsByRepo[repoName] = result.value;
+          } else {
+            console.error(`Failed to fetch PRs for ${repoName}:`, result.reason);
+            prsByRepo[repoName] = [];
+          }
         });
 
         // Update state
