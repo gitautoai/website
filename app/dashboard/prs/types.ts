@@ -8,4 +8,5 @@ export type PRData = {
   files: PRFileChange[];
   checkStatus: "success" | "failure" | "pending" | "none";
   repoName: string;
+  lastFetched: string;
 };

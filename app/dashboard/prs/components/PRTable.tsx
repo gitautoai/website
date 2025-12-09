@@ -66,12 +66,13 @@ export default function PRTable({ prs }: PRTableProps) {
               <th className="py-3 px-4 text-left border font-normal w-24">PR #</th>
               <th className="py-3 px-4 text-left border font-normal">Title / Files</th>
               <th className="py-3 px-4 text-left border font-normal w-32">Status</th>
+              <th className="py-3 px-4 text-left border font-normal w-40">Last Fetched</th>
             </tr>
           </thead>
           <tbody>
             {prs.length === 0 ? (
               <tr>
-                <td colSpan={3} className="py-4 px-4 text-center border">
+                <td colSpan={4} className="py-4 px-4 text-center border">
                   No open GitAuto PRs
                 </td>
               </tr>
@@ -94,6 +95,9 @@ export default function PRTable({ prs }: PRTableProps) {
                     <td className="pt-3 pb-1 px-4 border-r">
                       {getCheckStatusBadge(pr.checkStatus)}
                     </td>
+                    <td className="pt-3 pb-1 px-4 border-r text-xs text-gray-600">
+                      {new Date(pr.lastFetched).toLocaleString()}
+                    </td>
                   </tr>
 
                   {/* File Rows */}
@@ -111,6 +115,9 @@ export default function PRTable({ prs }: PRTableProps) {
                           {getDiffBadge(file.additions, file.deletions)}
                         </div>
                       </td>
+                      <td
+                        className={`py-1 px-4 border-r ${index === pr.files.length - 1 ? "pb-3" : ""}`}
+                      ></td>
                       <td
                         className={`py-1 px-4 border-r ${index === pr.files.length - 1 ? "pb-3" : ""}`}
                       ></td>
