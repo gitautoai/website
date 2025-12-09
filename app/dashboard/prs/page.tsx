@@ -14,12 +14,8 @@ import PRTable from "./components/PRTable";
 import { PRData } from "./types";
 
 export default function PRsPage() {
-  const {
-    currentOwnerName,
-    currentRepoName,
-    currentInstallationId,
-    organizations,
-  } = useAccountContext();
+  const { currentOwnerName, currentRepoName, currentInstallationId, organizations } =
+    useAccountContext();
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,9 +65,10 @@ export default function PRsPage() {
         setIsLoading(true);
 
         // Determine which repos to fetch
-        const reposToFetch = currentRepoName === "__ALL__"
-          ? currentOrg.repositories.map((r) => r.repoName)
-          : [currentRepoName];
+        const reposToFetch =
+          currentRepoName === "__ALL__"
+            ? currentOrg.repositories.map((r) => r.repoName)
+            : [currentRepoName];
 
         // Fetch PRs for each repo
         const allPRs = await Promise.all(
@@ -85,7 +82,7 @@ export default function PRsPage() {
 
               // Fetch files and check status for each PR
               const prDetailsPromises = prs.map(async (pr) => {
-                const [files, checkStatus] = await Promise.all([
+                const results = await Promise.allSettled([
                   getPRFiles({
                     ownerName: currentOwnerName,
                     repoName,
@@ -100,6 +97,19 @@ export default function PRsPage() {
                   }),
                 ]);
 
+                const files = results[0].status === "fulfilled" ? results[0].value : [];
+                const checkStatus = results[1].status === "fulfilled" ? results[1].value : "none";
+
+                if (results[0].status === "rejected") {
+                  console.error(`Failed to fetch files for PR ${pr.number}:`, results[0].reason);
+                }
+                if (results[1].status === "rejected") {
+                  console.error(
+                    `Failed to fetch check status for PR ${pr.number}:`,
+                    results[1].reason
+                  );
+                }
+
                 return {
                   number: pr.number,
                   title: pr.title,
@@ -108,6 +118,7 @@ export default function PRsPage() {
                   files,
                   checkStatus,
                   repoName,
+                  lastFetched: new Date().toISOString(),
                 };
               });
 
@@ -148,7 +159,7 @@ export default function PRsPage() {
   const reposToDisplay = isMounted
     ? isAllRepos
       ? currentOrg?.repositories.map((r) => r.repoName) || []
-      : [currentRepoName].filter(Boolean) as string[]
+      : ([currentRepoName].filter(Boolean) as string[])
     : [];
 
   return (
