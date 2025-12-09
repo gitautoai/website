@@ -1,12 +1,13 @@
 "use server";
 
-import { getOctokitForInstallation } from "@/app/api/github";
+import { getGraphQLForInstallation } from "@/app/api/github";
 
 export type GitAutoPR = {
   number: number;
   title: string;
   url: string;
   headSha: string;
+  hasConflicts: boolean;
 };
 
 export const getOpenPRNumbers = async ({
@@ -21,24 +22,61 @@ export const getOpenPRNumbers = async ({
   console.log("getOpenPRNumbers called:", { ownerName, repoName, installationId });
 
   try {
-    const octokit = await getOctokitForInstallation(installationId);
+    const graphql = await getGraphQLForInstallation(installationId);
+    // GraphQL returns author.login without [bot] suffix, so remove it for comparison
+    const gitautoBotUsername = process.env.GITHUB_APP_USER_NAME?.replace("[bot]", "");
 
-    const { data: pullRequests } = await octokit.pulls.list({
-      owner: ownerName,
-      repo: repoName,
-      state: "open",
-      per_page: 100,
-    });
+    const { repository } = await graphql<{
+      repository: {
+        pullRequests: {
+          nodes: Array<{
+            number: number;
+            title: string;
+            url: string;
+            headRefOid: string;
+            mergeable: string;
+            author: {
+              login: string;
+            } | null;
+          }>;
+        };
+      };
+    }>(
+      `
+      query($owner: String!, $repo: String!) {
+        repository(owner: $owner, name: $repo) {
+          pullRequests(first: 100, states: OPEN) {
+            nodes {
+              number
+              title
+              url
+              headRefOid
+              mergeable
+              author {
+                login
+              }
+            }
+          }
+        }
+      }
+      `,
+      {
+        owner: ownerName,
+        repo: repoName,
+      }
+    );
 
     // Filter only PRs created by GitAuto bot
-    const gitautoBotUsername = process.env.GITHUB_APP_USER_NAME;
-    const gitautoPRs = pullRequests.filter((pr) => pr.user?.login === gitautoBotUsername);
+    const gitautoPRs = repository.pullRequests.nodes.filter(
+      (pr) => pr.author?.login === gitautoBotUsername
+    );
 
     return gitautoPRs.map((pr) => ({
       number: pr.number,
       title: pr.title,
-      url: pr.html_url,
-      headSha: pr.head.sha,
+      url: pr.url,
+      headSha: pr.headRefOid,
+      hasConflicts: pr.mergeable === "CONFLICTING",
     }));
   } catch (error: any) {
     console.error("getOpenPRNumbers failed:", {

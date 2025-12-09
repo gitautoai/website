@@ -93,7 +93,12 @@ export default function PRTable({ prs }: PRTableProps) {
                       </a>
                     </td>
                     <td className="pt-3 pb-1 px-4 border-r">
-                      {getCheckStatusBadge(pr.checkStatus)}
+                      <div>
+                        {getCheckStatusBadge(pr.checkStatus)}
+                        {pr.hasConflicts && (
+                          <div className="mt-1 text-xs text-red-600">⚠ Has conflicts</div>
+                        )}
+                      </div>
                     </td>
                     <td className="pt-3 pb-1 px-4 border-r text-xs text-gray-600">
                       {new Date(pr.lastFetched).toLocaleString()}
