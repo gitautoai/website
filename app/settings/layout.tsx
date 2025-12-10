@@ -1,6 +1,7 @@
 // Local imports
 import JsonLdScript from "@/app/components/JsonLdScript";
 import SettingsLayoutClient from "@/app/settings/components/SettingsLayoutClient";
+import SettingsMenu from "@/app/settings/components/SettingsMenu";
 import { PRODUCT_NAME } from "@/config";
 import { THUMBNAILS } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
@@ -26,7 +27,15 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   return (
     <>
       <JsonLdScript data={settingsJsonLd} />
-      <SettingsLayoutClient>{children}</SettingsLayoutClient>
+      <div className="min-h-screen flex">
+        {/* Desktop Menu - Server-rendered for SEO */}
+        <div className="hidden lg:block lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-56 lg:bg-gray-50 lg:border-r">
+          <SettingsMenu />
+        </div>
+
+        {/* Client-side wrapper for auth, mobile menu, and main content */}
+        <SettingsLayoutClient>{children}</SettingsLayoutClient>
+      </div>
     </>
   );
 }

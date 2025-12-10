@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 // Local imports
 import AuthControls from "@/app/components/AuthControls";
 import MobileSettingsMenu from "@/app/settings/components/MobileSettingsMenu";
-import SettingsMenu from "@/app/settings/components/SettingsMenu";
 
 export default function SettingsLayoutClient({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -27,12 +26,7 @@ export default function SettingsLayoutClient({ children }: { children: React.Rea
   }, [status, pathname, isOgGeneration]);
 
   return (
-    <div className="min-h-screen flex">
-      {/* Desktop Menu - Server Component with pathname prop */}
-      <div className="hidden lg:block lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-56 lg:bg-gray-50 lg:border-r">
-        <SettingsMenu currentPath={pathname} />
-      </div>
-
+    <>
       {/* Auth Controls - Top Right */}
       <div className="fixed top-6 right-6 z-40 flex items-center gap-2">
         {/* Desktop Menu */}
@@ -59,6 +53,6 @@ export default function SettingsLayoutClient({ children }: { children: React.Rea
       <main className="flex-1 lg:ml-48">
         <div className="max-w-7xl mx-auto px-0 py-8 lg:p-8">{children}</div>
       </main>
-    </div>
+    </>
   );
 }
