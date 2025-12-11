@@ -10,4 +10,5 @@ export type PRData = {
   repoName: string;
   lastFetched: string;
   hasConflicts: boolean;
+  createdAt: string;
 };
