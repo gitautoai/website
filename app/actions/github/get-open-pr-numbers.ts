@@ -8,6 +8,7 @@ export type GitAutoPR = {
   url: string;
   headSha: string;
   hasConflicts: boolean;
+  createdAt: string;
 };
 
 export const getOpenPRNumbers = async ({
@@ -35,6 +36,7 @@ export const getOpenPRNumbers = async ({
             url: string;
             headRefOid: string;
             mergeable: string;
+            createdAt: string;
             author: {
               login: string;
             } | null;
@@ -43,22 +45,23 @@ export const getOpenPRNumbers = async ({
       };
     }>(
       `
-      query($owner: String!, $repo: String!) {
-        repository(owner: $owner, name: $repo) {
-          pullRequests(first: 100, states: OPEN) {
-            nodes {
-              number
-              title
-              url
-              headRefOid
-              mergeable
-              author {
-                login
+        query ($owner: String!, $repo: String!) {
+          repository(owner: $owner, name: $repo) {
+            pullRequests(first: 100, states: OPEN) {
+              nodes {
+                number
+                title
+                url
+                headRefOid
+                mergeable
+                createdAt
+                author {
+                  login
+                }
               }
             }
           }
         }
-      }
       `,
       {
         owner: ownerName,
@@ -77,6 +80,7 @@ export const getOpenPRNumbers = async ({
       url: pr.url,
       headSha: pr.headRefOid,
       hasConflicts: pr.mergeable === "CONFLICTING",
+      createdAt: pr.createdAt,
     }));
   } catch (error: any) {
     console.error("getOpenPRNumbers failed:", {

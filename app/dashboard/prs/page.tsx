@@ -119,6 +119,7 @@ export default function PRsPage() {
                 repoName,
                 lastFetched: new Date().toISOString(),
                 hasConflicts: pr.hasConflicts,
+                createdAt: pr.createdAt,
               };
             });
 

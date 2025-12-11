@@ -66,7 +66,7 @@ export default function PRTable({ prs }: PRTableProps) {
               <th className="py-3 px-4 text-left border font-normal w-24">PR #</th>
               <th className="py-3 px-4 text-left border font-normal">Title / Files</th>
               <th className="py-3 px-4 text-left border font-normal w-32">Status</th>
-              <th className="py-3 px-4 text-left border font-normal w-40">Last Fetched</th>
+              <th className="py-3 px-4 text-left border font-normal w-40">Timestamps</th>
             </tr>
           </thead>
           <tbody>
@@ -101,7 +101,8 @@ export default function PRTable({ prs }: PRTableProps) {
                       </div>
                     </td>
                     <td className="pt-3 pb-1 px-4 border-r text-xs text-gray-600">
-                      {new Date(pr.lastFetched).toLocaleString()}
+                      <div>Created: {new Date(pr.createdAt).toLocaleString()}</div>
+                      <div>Fetched: {new Date(pr.lastFetched).toLocaleString()}</div>
                     </td>
                   </tr>
 
