@@ -1,4 +1,5 @@
 import type { MDXComponents } from "mdx/types";
+import Image from "next/image";
 import Link from "next/link";
 
 // Helper function to convert text to URL-safe slug
@@ -91,7 +92,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     li: ({ children }) => <li className="list-item">{children}</li>,
     img: ({ src, alt, ...props }) => (
-      <img src={src} alt={alt} className="mb-6" {...props} />
+      <Image src={src || ""} alt={alt || ""} className="mb-6" width={800} height={400} {...props} />
     ),
 
     table: ({ children }) => (

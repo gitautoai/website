@@ -12,7 +12,7 @@
     "stripe": "stripe listen --events payment_intent.succeeded --forward-to localhost:4000/api/stripe/webhook",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "types:generate": "supabase gen types typescript --project-id dkrxtcbaqzrodvsagwwn > types/supabase.ts",
     "test": "jest",
     "test:watch": "jest --watch",
