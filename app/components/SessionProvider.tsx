@@ -7,7 +7,7 @@ type Props = {};
 
 const SessionProvider = ({ children }: { children: React.ReactNode }) => {
   return (
-    <AuthSessionProvider refetchWhenOffline={false}>
+    <AuthSessionProvider refetchWhenOffline={false} refetchOnWindowFocus={false}>
       {children}
     </AuthSessionProvider>
   );
