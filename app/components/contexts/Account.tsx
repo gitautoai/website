@@ -74,8 +74,31 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     }
     return null;
   });
-  const [currentInstallationId, setCurrentInstallationId] = useState<number | null>(null);
-  const [currentStripeCustomerId, setCurrentStripeCustomerId] = useState<string | null>(null);
+  const [currentInstallationId, setCurrentInstallationId] = useState<number | null>(() => {
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem(STORAGE_KEYS.CURRENT_INSTALLATION_ID);
+      return cached ? parseInt(cached, 10) : null;
+    }
+    return null;
+  });
+  const [currentStripeCustomerId, setCurrentStripeCustomerId] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(STORAGE_KEYS.CURRENT_STRIPE_CUSTOMER_ID);
+    }
+    return null;
+  });
+
+  // Load cached organizations on mount (before API call completes)
+  useEffect(() => {
+    const cached = localStorage.getItem(STORAGE_KEYS.ORGANIZATIONS);
+    if (cached) {
+      try {
+        setOrganizations(JSON.parse(cached));
+      } catch (error) {
+        console.error("Failed to parse cached organizations:", error);
+      }
+    }
+  }, []);
 
   // Process session information
   useEffect(() => {
@@ -140,6 +163,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
     // Update all states while we're at it
     setOrganizations(organizations);
+    localStorage.setItem(STORAGE_KEYS.ORGANIZATIONS, JSON.stringify(organizations));
 
     // Handle installation selection and set current values
     const savedOwnerName = localStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
@@ -200,6 +224,14 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
         setCurrentInstallationId(selectedInstallation.installation_id);
         setCurrentStripeCustomerId(selectedInstallation.stripe_customer_id);
+        localStorage.setItem(
+          STORAGE_KEYS.CURRENT_INSTALLATION_ID,
+          selectedInstallation.installation_id.toString()
+        );
+        localStorage.setItem(
+          STORAGE_KEYS.CURRENT_STRIPE_CUSTOMER_ID,
+          selectedInstallation.stripe_customer_id
+        );
       }
     }
 
@@ -226,6 +258,14 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       if (installation) {
         setCurrentInstallationId(installation.installation_id);
         setCurrentStripeCustomerId(installation.stripe_customer_id);
+        localStorage.setItem(
+          STORAGE_KEYS.CURRENT_INSTALLATION_ID,
+          installation.installation_id.toString()
+        );
+        localStorage.setItem(
+          STORAGE_KEYS.CURRENT_STRIPE_CUSTOMER_ID,
+          installation.stripe_customer_id
+        );
       }
     }
   }, [currentOwnerName, organizations, installations]);
@@ -252,6 +292,8 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     } else {
       localStorage.removeItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
       localStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_INSTALLATION_ID);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_STRIPE_CUSTOMER_ID);
     }
   };
 
