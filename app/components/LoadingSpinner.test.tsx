@@ -8,12 +8,11 @@ describe('LoadingSpinner', () => {
     const container = getByTestId('loading-spinner');
     expect(container).toHaveClass(
       'fixed',
-      'inset-0',
-      'flex',
-      'items-center',
-      'justify-center',
-      'bg-white/50',
-      'z-50'
+      'top-1/2',
+      'left-1/2',
+      '-translate-x-1/2',
+      '-translate-y-1/2',
+      'pointer-events-none'
     );
 
     const spinner = container.firstChild as HTMLElement;

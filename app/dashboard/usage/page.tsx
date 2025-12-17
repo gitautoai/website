@@ -15,9 +15,9 @@ import { updatePRBranches } from "@/app/actions/github/update-pr-branches";
 import { getUsageStats } from "@/app/actions/supabase/usage/get-usage-stats";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import InfoIcon from "@/app/components/InfoIcon";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
 import Modal from "@/app/components/Modal";
 import PeriodSelector, { Period, calculatePeriodDates } from "@/app/components/PeriodSelector";
+import ReloadButton from "@/app/components/ReloadButton";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
 
 const DEFAULT_PERIOD: Period = { type: "this-month", label: "This Month" };
@@ -30,7 +30,6 @@ type RepoStats = {
 type AllRepoStatsCache = Record<string, RepoStats>; // key: repoName
 
 export default function UsagePage() {
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const {
     userId,
@@ -52,6 +51,7 @@ export default function UsagePage() {
     failed: number;
   } | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [reloadingRepos, setReloadingRepos] = useState<Set<string>>(new Set());
 
   // Prevent hydration mismatch
   useEffect(() => {
@@ -93,107 +93,110 @@ export default function UsagePage() {
     }
   }, [currentOwnerName, selectedPeriod.type]);
 
+  // Fetch stats for a single repo
+  const fetchRepoStats = async (repoName: string) => {
+    if (!currentOwnerName || !currentInstallationId) return null;
+
+    const { startDate, endDate } = calculatePeriodDates(selectedPeriod);
+
+    const historicalStats = await getUsageStats({
+      ownerName: currentOwnerName,
+      repoName,
+      periodStart: startDate,
+      periodEnd: endDate,
+    });
+
+    let livePRStats = {
+      total_open_prs: 0,
+      total_passing_prs: 0,
+    };
+
+    try {
+      const openPRs = await getOpenPRNumbers({
+        ownerName: currentOwnerName,
+        repoName,
+        installationId: currentInstallationId,
+      });
+
+      const prNumbers = openPRs.map((pr) => pr.number);
+
+      const checkStatuses = await getPRCheckStatuses({
+        ownerName: currentOwnerName,
+        repoName,
+        installationId: currentInstallationId,
+        prNumbers,
+      });
+
+      livePRStats = {
+        total_open_prs: openPRs.length,
+        total_passing_prs: checkStatuses.filter((status) => status.isTestPassed).length,
+      };
+    } catch (githubError: any) {
+      console.error(`GitHub PR stats failed for ${repoName}:`, githubError.message);
+    }
+
+    return {
+      repoName,
+      stats: {
+        all_time: { ...historicalStats.all_time, ...livePRStats },
+        selected_period: { ...historicalStats.selected_period, ...livePRStats },
+      },
+    };
+  };
+
   // Fetch ALL repos stats when owner or period changes
   useEffect(() => {
     const fetchAllReposStats = async () => {
-      if (!currentStripeCustomerId || !currentOwnerName || !userId || !currentInstallationId) {
-        setIsLoading(false);
+      if (!currentStripeCustomerId || !currentOwnerName || !userId || !currentInstallationId)
         return;
-      }
 
       const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
-      if (!currentOrg || currentOrg.repositories.length === 0) {
-        setIsLoading(false);
-        return;
-      }
+      if (!currentOrg || currentOrg.repositories.length === 0) return;
 
       try {
         setError(null);
-        setIsLoading(true);
 
-        const { startDate, endDate } = calculatePeriodDates(selectedPeriod);
+        // Mark all repos as loading
+        const repoNames = currentOrg.repositories.map((r) => r.repoName);
+        setReloadingRepos(new Set(repoNames));
 
-        // Fetch stats for ALL repositories in parallel
         const allStats = await Promise.all(
-          currentOrg.repositories.map(async (repo) => {
-            // Fetch historical stats from Supabase
-            const historicalStats = await getUsageStats({
-              ownerName: currentOwnerName,
-              repoName: repo.repoName,
-              periodStart: startDate,
-              periodEnd: endDate,
-            });
-
-            // Fetch live PR stats from GitHub
-            let livePRStats = {
-              total_open_prs: 0,
-              total_passing_prs: 0,
-            };
-
-            try {
-              const openPRs = await getOpenPRNumbers({
-                ownerName: currentOwnerName,
-                repoName: repo.repoName,
-                installationId: currentInstallationId,
-              });
-
-              const prNumbers = openPRs.map((pr) => pr.number);
-
-              const checkStatuses = await getPRCheckStatuses({
-                ownerName: currentOwnerName,
-                repoName: repo.repoName,
-                installationId: currentInstallationId,
-                prNumbers,
-              });
-
-              livePRStats = {
-                total_open_prs: openPRs.length,
-                total_passing_prs: checkStatuses.filter((status) => status.isTestPassed).length,
-              };
-            } catch (githubError: any) {
-              console.error(`GitHub PR stats failed for ${repo.repoName}:`, githubError.message);
-            }
-
-            return {
-              repoName: repo.repoName,
-              stats: {
-                all_time: { ...historicalStats.all_time, ...livePRStats },
-                selected_period: { ...historicalStats.selected_period, ...livePRStats },
-              },
-            };
-          })
+          currentOrg.repositories.map((repo) => fetchRepoStats(repo.repoName))
         );
 
         // Build stats cache
         const statsCache: AllRepoStatsCache = {};
         allStats.forEach((item) => {
-          statsCache[item.repoName] = item.stats;
+          if (item) statsCache[item.repoName] = item.stats;
         });
 
         // Calculate total stats
         const total = allStats.reduce(
-          (acc, item) => ({
-            all_time: {
-              total_issues: acc.all_time.total_issues + item.stats.all_time.total_issues,
-              total_prs: acc.all_time.total_prs + item.stats.all_time.total_prs,
-              total_merges: acc.all_time.total_merges + item.stats.all_time.total_merges,
-              total_open_prs: acc.all_time.total_open_prs + item.stats.all_time.total_open_prs,
-              total_passing_prs:
-                acc.all_time.total_passing_prs + item.stats.all_time.total_passing_prs,
-            },
-            selected_period: {
-              total_issues:
-                acc.selected_period.total_issues + item.stats.selected_period.total_issues,
-              total_prs: acc.selected_period.total_prs + item.stats.selected_period.total_prs,
-              total_merges:
-                acc.selected_period.total_merges + item.stats.selected_period.total_merges,
-              total_open_prs:
-                acc.selected_period.total_open_prs + item.stats.selected_period.total_open_prs,
-              total_passing_prs:
-                acc.selected_period.total_passing_prs +
-                item.stats.selected_period.total_passing_prs,
-            },
-          }),
+          (acc, item) => {
+            if (!item) return acc;
+            return {
+              all_time: {
+                total_issues: acc.all_time.total_issues + item.stats.all_time.total_issues,
+                total_prs: acc.all_time.total_prs + item.stats.all_time.total_prs,
+                total_merges: acc.all_time.total_merges + item.stats.all_time.total_merges,
+                total_open_prs: acc.all_time.total_open_prs + item.stats.all_time.total_open_prs,
+                total_passing_prs:
+                  acc.all_time.total_passing_prs + item.stats.all_time.total_passing_prs,
+              },
+              selected_period: {
+                total_issues:
+                  acc.selected_period.total_issues + item.stats.selected_period.total_issues,
+                total_prs: acc.selected_period.total_prs + item.stats.selected_period.total_prs,
+                total_merges:
+                  acc.selected_period.total_merges + item.stats.selected_period.total_merges,
+                total_open_prs:
+                  acc.selected_period.total_open_prs + item.stats.selected_period.total_open_prs,
+                total_passing_prs:
+                  acc.selected_period.total_passing_prs +
+                  item.stats.selected_period.total_passing_prs,
+              },
+            };
+          },
           {
             all_time: {
               total_issues: 0,
@@ -229,7 +232,7 @@ export default function UsagePage() {
         setError("Failed to load usage statistics");
         console.error("Error loading usage statistics:", error);
       } finally {
-        setIsLoading(false);
+        setReloadingRepos(new Set());
       }
     };
 
@@ -301,6 +304,70 @@ export default function UsagePage() {
       console.error("Error opening portal:", error);
     } finally {
       setIsPortalLoading(false);
+    }
+  };
+
+  const handleReloadRepo = async (repoName: string) => {
+    setReloadingRepos((prev) => new Set(prev).add(repoName));
+    try {
+      const result = await fetchRepoStats(repoName);
+      if (!result) return;
+
+      setAllRepoStats((prev) => ({ ...prev, [result.repoName]: result.stats }));
+
+      // Recalculate totals if in "All" view
+      if (currentRepoName === "__ALL__") {
+        const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+        if (currentOrg) {
+          const updatedStats = { ...allRepoStats, [result.repoName]: result.stats };
+          const total = Object.values(updatedStats).reduce(
+            (acc, stats) => ({
+              all_time: {
+                total_issues: acc.all_time.total_issues + stats.all_time.total_issues,
+                total_prs: acc.all_time.total_prs + stats.all_time.total_prs,
+                total_merges: acc.all_time.total_merges + stats.all_time.total_merges,
+                total_open_prs: acc.all_time.total_open_prs + stats.all_time.total_open_prs,
+                total_passing_prs:
+                  acc.all_time.total_passing_prs + stats.all_time.total_passing_prs,
+              },
+              selected_period: {
+                total_issues: acc.selected_period.total_issues + stats.selected_period.total_issues,
+                total_prs: acc.selected_period.total_prs + stats.selected_period.total_prs,
+                total_merges: acc.selected_period.total_merges + stats.selected_period.total_merges,
+                total_open_prs:
+                  acc.selected_period.total_open_prs + stats.selected_period.total_open_prs,
+                total_passing_prs:
+                  acc.selected_period.total_passing_prs + stats.selected_period.total_passing_prs,
+              },
+            }),
+            {
+              all_time: {
+                total_issues: 0,
+                total_prs: 0,
+                total_merges: 0,
+                total_open_prs: 0,
+                total_passing_prs: 0,
+              },
+              selected_period: {
+                total_issues: 0,
+                total_prs: 0,
+                total_merges: 0,
+                total_open_prs: 0,
+                total_passing_prs: 0,
+              },
+            }
+          );
+          setTotalStats(total);
+        }
+      }
+    } catch (error) {
+      console.error(`Error reloading repo ${repoName}:`, error);
+    } finally {
+      setReloadingRepos((prev) => {
+        const next = new Set(prev);
+        next.delete(repoName);
+        return next;
+      });
     }
   };
 
@@ -472,8 +539,6 @@ export default function UsagePage() {
           </p>
         )}
 
-        {isLoading && <LoadingSpinner />}
-
         {/* Display total + each repo when "All" is selected */}
         {isAllRepos && displayStats && (
           <div className="space-y-8">
@@ -521,7 +586,13 @@ export default function UsagePage() {
 
               return (
                 <div key={repoName}>
-                  <h2 className="text-xl font-semibold mt-2 mb-4">{repoName}</h2>
+                  <h2 className="text-xl font-semibold mt-2 mb-4 flex items-center gap-2">
+                    {repoName}
+                    <ReloadButton
+                      onClick={() => handleReloadRepo(repoName)}
+                      isLoading={reloadingRepos.has(repoName)}
+                    />
+                  </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                     <StatBlock
                       title="Total Issues"
@@ -563,7 +634,13 @@ export default function UsagePage() {
         {!isAllRepos && displayStats && (
           <div className="space-y-8">
             <div>
-              <h2 className="text-xl font-semibold mt-2 mb-4">{currentRepoName}</h2>
+              <h2 className="text-xl font-semibold mt-2 mb-4 flex items-center gap-2">
+                {currentRepoName}
+                <ReloadButton
+                  onClick={() => currentRepoName && handleReloadRepo(currentRepoName)}
+                  isLoading={currentRepoName ? reloadingRepos.has(currentRepoName) : false}
+                />
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 <StatBlock
                   title="Total Issues"

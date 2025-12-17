@@ -7,7 +7,8 @@ import { getPRFiles } from "@/app/actions/github/get-pr-files";
 import { getOpenPRNumbers, GitAutoPR } from "@/app/actions/github/get-open-pr-numbers";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import ErrorBanner from "@/app/components/ErrorBanner";
-import LoadingSpinner from "@/app/components/LoadingSpinner";
+import FilterSelect from "@/app/components/FilterSelect";
+import ReloadButton from "@/app/components/ReloadButton";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 
 import PRTable from "./components/PRTable";
@@ -17,14 +18,20 @@ export default function PRsPage() {
   const { currentOwnerName, currentRepoName, currentInstallationId, organizations } =
     useAccountContext();
 
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [prDataByRepo, setPRDataByRepo] = useState<Record<string, PRData[]>>({});
   const [isMounted, setIsMounted] = useState(false);
+  const [reloadingRepos, setReloadingRepos] = useState<Set<string>>(new Set());
+  const [statusFilter, setStatusFilter] = useState<"all" | "failed-or-conflicts">("all");
 
   // Prevent hydration mismatch
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  // Load saved filter from localStorage on mount
+  useEffect(() => {
+    setStatusFilter((localStorage.getItem("pr-status-filter") as typeof statusFilter) || "all");
   }, []);
 
   // Load from localStorage on mount
@@ -46,85 +53,80 @@ export default function PRsPage() {
     loadFromCache();
   }, [currentOwnerName, currentRepoName]);
 
+  // Fetch PRs for a single repo
+  const fetchRepoPRs = async (repoName: string): Promise<PRData[]> => {
+    if (!currentOwnerName || !currentInstallationId) return [];
+
+    const prs: GitAutoPR[] = await getOpenPRNumbers({
+      ownerName: currentOwnerName,
+      repoName,
+      installationId: currentInstallationId,
+    });
+
+    const prDetailsPromises = prs.map(async (pr) => {
+      const results = await Promise.allSettled([
+        getPRFiles({
+          ownerName: currentOwnerName,
+          repoName,
+          installationId: currentInstallationId,
+          prNumber: pr.number,
+        }),
+        getCheckStatusBySHA({
+          ownerName: currentOwnerName,
+          repoName,
+          installationId: currentInstallationId,
+          sha: pr.headSha,
+        }),
+      ]);
+
+      const files = results[0].status === "fulfilled" ? results[0].value : [];
+      const checkStatus = results[1].status === "fulfilled" ? results[1].value : "none";
+
+      if (results[0].status === "rejected") {
+        console.error(`Failed to fetch files for PR ${pr.number}:`, results[0].reason);
+      }
+      if (results[1].status === "rejected") {
+        console.error(`Failed to fetch check status for PR ${pr.number}:`, results[1].reason);
+      }
+
+      return {
+        number: pr.number,
+        title: pr.title,
+        url: pr.url,
+        headSha: pr.headSha,
+        files,
+        checkStatus,
+        repoName,
+        lastFetched: new Date().toISOString(),
+        hasConflicts: pr.hasConflicts,
+        createdAt: pr.createdAt,
+      };
+    });
+
+    return Promise.all(prDetailsPromises);
+  };
+
   // Fetch fresh data from GitHub
   useEffect(() => {
     const fetchPRData = async () => {
-      if (!currentOwnerName || !currentRepoName || !currentInstallationId) {
-        setIsLoading(false);
-        return;
-      }
+      if (!currentOwnerName || !currentRepoName || !currentInstallationId) return;
 
       const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
-      if (!currentOrg || currentOrg.repositories.length === 0) {
-        setIsLoading(false);
-        return;
-      }
+      if (!currentOrg || currentOrg.repositories.length === 0) return;
 
       try {
         setError(null);
-        setIsLoading(true);
 
-        // Determine which repos to fetch
         const reposToFetch =
           currentRepoName === "__ALL__"
             ? currentOrg.repositories.map((r) => r.repoName)
             : [currentRepoName];
 
-        // Fetch PRs for each repo
+        // Mark all repos as loading
+        setReloadingRepos(new Set(reposToFetch));
+
         const allPRsResults = await Promise.allSettled(
-          reposToFetch.map(async (repoName) => {
-            const prs: GitAutoPR[] = await getOpenPRNumbers({
-              ownerName: currentOwnerName,
-              repoName,
-              installationId: currentInstallationId,
-            });
-
-            // Fetch files and check status for each PR
-            const prDetailsPromises = prs.map(async (pr) => {
-              const results = await Promise.allSettled([
-                getPRFiles({
-                  ownerName: currentOwnerName,
-                  repoName,
-                  installationId: currentInstallationId,
-                  prNumber: pr.number,
-                }),
-                getCheckStatusBySHA({
-                  ownerName: currentOwnerName,
-                  repoName,
-                  installationId: currentInstallationId,
-                  sha: pr.headSha,
-                }),
-              ]);
-
-              const files = results[0].status === "fulfilled" ? results[0].value : [];
-              const checkStatus = results[1].status === "fulfilled" ? results[1].value : "none";
-
-              if (results[0].status === "rejected") {
-                console.error(`Failed to fetch files for PR ${pr.number}:`, results[0].reason);
-              }
-              if (results[1].status === "rejected") {
-                console.error(
-                  `Failed to fetch check status for PR ${pr.number}:`,
-                  results[1].reason
-                );
-              }
-
-              return {
-                number: pr.number,
-                title: pr.title,
-                url: pr.url,
-                headSha: pr.headSha,
-                files,
-                checkStatus,
-                repoName,
-                lastFetched: new Date().toISOString(),
-                hasConflicts: pr.hasConflicts,
-                createdAt: pr.createdAt,
-              };
-            });
-
-            return Promise.all(prDetailsPromises);
-          })
+          reposToFetch.map((repoName) => fetchRepoPRs(repoName))
         );
 
         // Group PRs by repo
@@ -149,12 +151,28 @@ export default function PRsPage() {
         console.error("Failed to fetch PR data:", err);
         setError("Failed to load PR data. Please try again.");
       } finally {
-        setIsLoading(false);
+        setReloadingRepos(new Set());
       }
     };
 
     fetchPRData();
   }, [currentOwnerName, currentRepoName, currentInstallationId, organizations]);
+
+  const handleReloadRepo = async (repoName: string) => {
+    setReloadingRepos((prev) => new Set(prev).add(repoName));
+    try {
+      const prData = await fetchRepoPRs(repoName);
+      setPRDataByRepo((prev) => ({ ...prev, [repoName]: prData }));
+    } catch (error) {
+      console.error(`Error reloading repo ${repoName}:`, error);
+    } finally {
+      setReloadingRepos((prev) => {
+        const next = new Set(prev);
+        next.delete(repoName);
+        return next;
+      });
+    }
+  };
 
   // Determine what to display
   const isAllRepos = currentRepoName === "__ALL__";
@@ -165,6 +183,17 @@ export default function PRsPage() {
       : ([currentRepoName].filter(Boolean) as string[])
     : [];
 
+  const handleStatusFilterChange = (value: string) => {
+    const filterValue = value as typeof statusFilter;
+    setStatusFilter(filterValue);
+    localStorage.setItem("pr-status-filter", filterValue);
+  };
+
+  const filterPRs = (prs: PRData[]) => {
+    if (statusFilter === "all") return prs;
+    return prs.filter((pr) => pr.checkStatus === "failure" || pr.hasConflicts);
+  };
+
   return (
     <div className="relative min-h-screen">
       <h1 className="text-3xl font-bold mb-6">Open Pull Requests</h1>
@@ -172,20 +201,38 @@ export default function PRsPage() {
       <ErrorBanner error={error} />
       <RepositorySelector />
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 mb-4">
+        <FilterSelect
+          label="Status Filter"
+          value={statusFilter}
+          onChange={handleStatusFilterChange}
+          options={[
+            { value: "all", label: "All PRs" },
+            { value: "failed-or-conflicts", label: "Failed or Conflicts" },
+          ]}
+        />
+      </div>
+
+      <div className="space-y-4">
         {reposToDisplay.map((repoName) => {
           const repoPRs = prDataByRepo[repoName] || [];
+          const filteredPRs = filterPRs(repoPRs);
 
           return (
             <div key={repoName}>
-              {isAllRepos && <h2 className="text-xl font-semibold mb-4">{repoName}</h2>}
-              <PRTable prs={repoPRs} />
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                {isAllRepos && repoName}
+                {!isAllRepos && currentRepoName}
+                <ReloadButton
+                  onClick={() => handleReloadRepo(repoName)}
+                  isLoading={reloadingRepos.has(repoName)}
+                />
+              </h2>
+              <PRTable prs={filteredPRs} />
             </div>
           );
         })}
       </div>
-
-      {isLoading && <LoadingSpinner />}
     </div>
   );
 }
