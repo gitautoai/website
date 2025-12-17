@@ -8,6 +8,7 @@ import { usageJsonLd } from "./jsonld";
 import { PullRequestStats } from "./types";
 
 // Local imports
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { createCustomerPortalSession } from "@/app/actions/stripe/create-customer-portal-session";
 import { getOpenPRNumbers } from "@/app/actions/github/get-open-pr-numbers";
 import { getPRCheckStatuses } from "@/app/actions/github/get-pr-check-statuses";
@@ -33,6 +34,7 @@ export default function UsagePage() {
   const [error, setError] = useState<string | null>(null);
   const {
     userId,
+    userName,
     currentOwnerName,
     currentRepoName,
     currentStripeCustomerId,
@@ -57,6 +59,14 @@ export default function UsagePage() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Send Slack notification on page visit
+  useEffect(() => {
+    if (!userId || !userName || !currentOwnerName || !currentRepoName) return;
+
+    const message = `${userName} (${userId}) visited Usage page for ${currentOwnerName}/${currentRepoName === "__ALL__" ? "All Repositories" : currentRepoName}`;
+    slackUs(message);
+  }, [userId, userName, currentOwnerName, currentRepoName]);
 
   // Load saved period from localStorage on mount
   useEffect(() => {
@@ -309,6 +319,13 @@ export default function UsagePage() {
 
   const handleReloadRepo = async (repoName: string) => {
     setReloadingRepos((prev) => new Set(prev).add(repoName));
+
+    // Send Slack notification
+    if (userId && userName && currentOwnerName) {
+      const message = `${userName} (${userId}) reloaded ${currentOwnerName}/${repoName} on Usage page`;
+      slackUs(message);
+    }
+
     try {
       const result = await fetchRepoStats(repoName);
       if (!result) return;
