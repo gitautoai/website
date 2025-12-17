@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { getCheckStatusBySHA } from "@/app/actions/github/get-check-status-by-sha";
 import { getPRFiles } from "@/app/actions/github/get-pr-files";
 import { getOpenPRNumbers, GitAutoPR } from "@/app/actions/github/get-open-pr-numbers";
@@ -15,8 +16,14 @@ import PRTable from "./components/PRTable";
 import { PRData } from "./types";
 
 export default function PRsPage() {
-  const { currentOwnerName, currentRepoName, currentInstallationId, organizations } =
-    useAccountContext();
+  const {
+    userId,
+    userName,
+    currentOwnerName,
+    currentRepoName,
+    currentInstallationId,
+    organizations,
+  } = useAccountContext();
 
   const [error, setError] = useState<string | null>(null);
   const [prDataByRepo, setPRDataByRepo] = useState<Record<string, PRData[]>>({});
@@ -28,6 +35,14 @@ export default function PRsPage() {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Send Slack notification on page visit
+  useEffect(() => {
+    if (!userId || !userName || !currentOwnerName || !currentRepoName) return;
+
+    const message = `${userName} (${userId}) visited PRs page for ${currentOwnerName}/${currentRepoName === "__ALL__" ? "All Repositories" : currentRepoName}`;
+    slackUs(message);
+  }, [userId, userName, currentOwnerName, currentRepoName]);
 
   // Load saved filter from localStorage on mount
   useEffect(() => {
@@ -160,6 +175,13 @@ export default function PRsPage() {
 
   const handleReloadRepo = async (repoName: string) => {
     setReloadingRepos((prev) => new Set(prev).add(repoName));
+
+    // Send Slack notification
+    if (userId && userName && currentOwnerName) {
+      const message = `${userName} (${userId}) reloaded ${currentOwnerName}/${repoName} on PRs page`;
+      slackUs(message);
+    }
+
     try {
       const prData = await fetchRepoPRs(repoName);
       setPRDataByRepo((prev) => ({ ...prev, [repoName]: prData }));
