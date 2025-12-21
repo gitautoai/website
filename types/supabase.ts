@@ -14,6 +14,21 @@ export type Database = {
   }
   public: {
     Tables: {
+      check_suites: {
+        Row: {
+          check_suite_id: number
+          created_at: string | null
+        }
+        Insert: {
+          check_suite_id: number
+          created_at?: string | null
+        }
+        Update: {
+          check_suite_id?: number
+          created_at?: string | null
+        }
+        Relationships: []
+      }
       circleci_tokens: {
         Row: {
           created_at: string
@@ -740,6 +755,59 @@ export type Database = {
           },
         ]
       }
+      repository_features: {
+        Row: {
+          auto_merge: boolean
+          auto_merge_only_test_files: boolean
+          created_at: string
+          created_by: string
+          id: number
+          merge_method: string
+          owner_id: number
+          owner_name: string
+          repo_id: number
+          repo_name: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          auto_merge?: boolean
+          auto_merge_only_test_files?: boolean
+          created_at?: string
+          created_by: string
+          id?: number
+          merge_method?: string
+          owner_id: number
+          owner_name: string
+          repo_id: number
+          repo_name: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          auto_merge?: boolean
+          auto_merge_only_test_files?: boolean
+          created_at?: string
+          created_by?: string
+          id?: number
+          merge_method?: string
+          owner_id?: number
+          owner_name?: string
+          repo_id?: number
+          repo_name?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "repository_features_owner_id_repo_id_fkey"
+            columns: ["owner_id", "repo_id"]
+            isOneToOne: true
+            referencedRelation: "repositories"
+            referencedColumns: ["owner_id", "repo_id"]
+          },
+        ]
+      }
       usage: {
         Row: {
           created_at: string
@@ -854,6 +922,27 @@ export type Database = {
           user_id?: number
           user_name?: string
           user_rules?: string
+        }
+        Relationships: []
+      }
+      webhook_deliveries: {
+        Row: {
+          created_at: string | null
+          delivery_id: string
+          event_name: string
+          id: number
+        }
+        Insert: {
+          created_at?: string | null
+          delivery_id: string
+          event_name: string
+          id?: number
+        }
+        Update: {
+          created_at?: string | null
+          delivery_id?: string
+          event_name?: string
+          id?: number
         }
         Relationships: []
       }
