@@ -25,7 +25,7 @@ const customJestConfig: Config = {
   testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[jt]s?(x)"],
   transformIgnorePatterns: [
     // Transform all necessary ES modules
-    "/node_modules/(?!(next-auth|@next-auth|jose|openid-client|@supabase|supabase-js|isows))/",
+    "/node_modules/(?!(next-auth|@next-auth|jose|openid-client|@supabase|supabase-js|isows|@octokit))/",
   ],
   collectCoverage: true,
   collectCoverageFrom: [

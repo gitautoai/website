@@ -74,21 +74,28 @@ export default function ChartsPage() {
           const reposData: Record<string, { data: Tables<"repo_coverage">[]; isDummy: boolean }> =
             {};
 
+          // First pass: fetch all data
           await Promise.all(
             currentOrg.repositories.map(async (repo) => {
               try {
                 const data = await getRepoCoverage(currentOwnerId, repo.repoId);
-                if (data.length === 0) {
-                  reposData[repo.repoName] = { data: generateDummyData(), isDummy: true };
-                } else {
-                  reposData[repo.repoName] = { data, isDummy: false };
-                }
+                reposData[repo.repoName] = { data, isDummy: false };
               } catch (error) {
                 console.error(`Error loading coverage for ${repo.repoName}:`, error);
-                reposData[repo.repoName] = { data: generateDummyData(), isDummy: true };
+                reposData[repo.repoName] = { data: [], isDummy: false };
               }
             })
           );
+
+          // Second pass: check if any repo has real data
+          const hasAnyRealData = Object.values(reposData).some(({ data }) => data.length > 0);
+
+          // If no real data exists, show dummy data for all repos
+          if (!hasAnyRealData) {
+            Object.keys(reposData).forEach((repoName) => {
+              reposData[repoName] = { data: generateDummyData(), isDummy: true };
+            });
+          }
 
           setAllReposData(reposData);
         } catch (error) {
@@ -167,6 +174,19 @@ export default function ChartsPage() {
         <div className="space-y-8">
           {Object.entries(allReposData).map(([repoName, { data, isDummy }]) => {
             const repoFilteredData = filterDataByPeriod(data);
+
+            // If no data and not showing dummy data, show "no data" message
+            if (repoFilteredData.length === 0 && !isDummy) {
+              return (
+                <div key={repoName}>
+                  <h2 className="text-xl font-semibold mt-2 mb-4">{repoName}</h2>
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No coverage data available for this repository yet.</p>
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <div key={repoName}>
                 <h2 className="text-xl font-semibold mt-2 mb-4">{repoName}</h2>
