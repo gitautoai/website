@@ -1,19 +1,19 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
-import { deleteCircleCIToken } from "@/app/actions/supabase/circleci-tokens/delete-token";
-import { getCircleCIToken } from "@/app/actions/supabase/circleci-tokens/get-token";
-import { saveCircleCIToken } from "@/app/actions/supabase/circleci-tokens/save-token";
+import { deleteNpmToken } from "@/app/actions/supabase/npm-tokens/delete-token";
+import { getNpmToken } from "@/app/actions/supabase/npm-tokens/get-token";
+import { saveNpmToken } from "@/app/actions/supabase/npm-tokens/save-token";
 import ConfirmationModal from "@/app/components/ConfirmationModal";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import { EyeIcon, EyeSlashIcon } from "@/app/components/icons/EyeIcon";
 import { TrashIcon } from "@/app/components/icons/TrashIcon";
 import { RELATIVE_URLS } from "@/config/urls";
+import Link from "next/link";
 import RepositorySelector from "../../components/RepositorySelector";
 import SaveButton from "../../components/SaveButton";
 
-export default function CircleCIPage() {
+export default function NpmPage() {
   const { currentOwnerId, currentOwnerName, userId, userName } = useAccountContext();
   const [token, setToken] = useState("");
   const [hasExistingToken, setHasExistingToken] = useState(false);
@@ -25,7 +25,7 @@ export default function CircleCIPage() {
   useEffect(() => {
     if (!currentOwnerId) return;
 
-    getCircleCIToken(currentOwnerId)
+    getNpmToken(currentOwnerId)
       .then((data) => setHasExistingToken(!!data))
       .catch(console.error);
   }, [currentOwnerId]);
@@ -37,7 +37,7 @@ export default function CircleCIPage() {
     }
 
     if (!token.trim()) {
-      setMessage({ type: "error", text: "Please enter a CircleCI token" });
+      setMessage({ type: "error", text: "Please enter an npm token" });
       return;
     }
 
@@ -45,13 +45,14 @@ export default function CircleCIPage() {
     setMessage(null);
 
     try {
-      await saveCircleCIToken(currentOwnerId, token.trim(), userId, userName);
+      await saveNpmToken(currentOwnerId, token.trim(), userId, userName);
 
-      setMessage({ type: "success", text: "CircleCI token saved" });
+      setMessage({ type: "success", text: "npm token saved" });
       setHasExistingToken(true);
       setToken("");
     } catch (error) {
-      setMessage({ type: "error", text: "Failed to save token" });
+      const errorMessage = error instanceof Error ? error.message : "Failed to save token";
+      setMessage({ type: "error", text: errorMessage });
     } finally {
       setIsSaving(false);
     }
@@ -63,7 +64,7 @@ export default function CircleCIPage() {
     setIsSaving(true);
     setShowDeleteModal(false);
     try {
-      await deleteCircleCIToken(currentOwnerId);
+      await deleteNpmToken(currentOwnerId);
       setMessage({ type: "success", text: "Token deleted" });
       setHasExistingToken(false);
     } catch (error) {
@@ -77,11 +78,11 @@ export default function CircleCIPage() {
     <>
       <div className="max-w-2xl space-y-6">
         <div>
-          <h1 className="text-3xl font-bold mb-6">CircleCI Integration</h1>
+          <h1 className="text-3xl font-bold mb-6">npm Integration</h1>
           <p className="text-gray-600 mt-2">
-            Connect CircleCI to automatically read build logs when tests fail.{" "}
+            Connect npm to access private packages during test generation.{" "}
             <Link
-              href={RELATIVE_URLS.DOCS.INTEGRATIONS.CIRCLECI}
+              href={RELATIVE_URLS.DOCS.INTEGRATIONS.NPM}
               className="text-pink-600 hover:underline"
             >
               Learn more →
@@ -95,12 +96,12 @@ export default function CircleCIPage() {
           {hasExistingToken ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-green-50 rounded">
-                <span className="text-green-800">✓ CircleCI connected for {currentOwnerName}</span>
+                <span className="text-green-800">✓ npm connected for {currentOwnerName}</span>
                 <button
                   onClick={() => setShowDeleteModal(true)}
                   disabled={isSaving}
                   className="text-gray-500 hover:text-gray-700 p-1"
-                  title="Remove CircleCI token"
+                  title="Remove npm token"
                 >
                   <TrashIcon className="w-5 h-5" />
                 </button>
@@ -114,7 +115,7 @@ export default function CircleCIPage() {
                       type={showToken ? "text" : "password"}
                       value={token}
                       onChange={(e) => setToken(e.target.value)}
-                      placeholder="Enter new CircleCI token"
+                      placeholder="Enter new npm token"
                       className="w-full px-3 py-2 pr-10 border rounded"
                     />
                     <button
@@ -133,13 +134,13 @@ export default function CircleCIPage() {
           ) : (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Personal Access Token</label>
+                <label className="block text-sm font-medium mb-2">Access Token</label>
                 <div className="relative">
                   <input
                     type={showToken ? "text" : "password"}
                     value={token}
                     onChange={(e) => setToken(e.target.value)}
-                    placeholder="Enter your CircleCI token"
+                    placeholder="Enter your npm token"
                     className="w-full px-3 py-2 pr-10 border rounded"
                   />
                   <button
@@ -151,7 +152,7 @@ export default function CircleCIPage() {
                   </button>
                 </div>
                 <a
-                  href="https://app.circleci.com/settings/user/tokens"
+                  href="https://www.npmjs.com/settings/~/tokens"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-pink-600 hover:underline mt-1 inline-block"
@@ -178,8 +179,8 @@ export default function CircleCIPage() {
 
       <ConfirmationModal
         isOpen={showDeleteModal}
-        title="Remove CircleCI Token"
-        message={`Are you sure you want to remove the CircleCI token for ${currentOwnerName}? This action cannot be undone.`}
+        title="Remove npm Token"
+        message={`Are you sure you want to remove the npm token for ${currentOwnerName}? This action cannot be undone.`}
         confirmText="Remove"
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteModal(false)}

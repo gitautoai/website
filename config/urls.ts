@@ -28,6 +28,7 @@ export const RELATIVE_URLS = {
     INTEGRATIONS: {
       CIRCLECI: "/settings/integrations/circleci",
       JIRA: "/settings/integrations/jira",
+      NPM: "/settings/integrations/npm",
     },
   },
   DASHBOARD: {
@@ -67,6 +68,10 @@ export const RELATIVE_URLS = {
     CUSTOMIZATION: {
       PARENT_ISSUE_RULES: "/docs/customization/parent-issue-rules",
       REPOSITORY_RULES: "/docs/customization/repository-rules",
+    },
+    INTEGRATIONS: {
+      CIRCLECI: "/docs/integrations/circleci",
+      NPM: "/docs/integrations/npm",
     },
   },
   PRIVACY_POLICY: "/privacy-policy",
@@ -120,6 +125,10 @@ export const ABSOLUTE_URLS = {
         PARENT_ISSUE_RULES: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES}`,
         REPOSITORY_RULES: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES}`,
       },
+      INTEGRATIONS: {
+        CIRCLECI: `${BASE_URL}${RELATIVE_URLS.DOCS.INTEGRATIONS.CIRCLECI}`,
+        NPM: `${BASE_URL}${RELATIVE_URLS.DOCS.INTEGRATIONS.NPM}`,
+      },
     },
     LOGO: `${BASE_URL}/logo.png`,
     PRICING: `${BASE_URL}${RELATIVE_URLS.PRICING}`,
@@ -135,6 +144,7 @@ export const ABSOLUTE_URLS = {
       INTEGRATIONS: {
         CIRCLECI: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI}`,
         JIRA: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.JIRA}`,
+        NPM: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.NPM}`,
       },
     },
   },

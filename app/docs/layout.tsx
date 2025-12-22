@@ -43,6 +43,13 @@ const sidebarItems = [
       { href: RELATIVE_URLS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES, label: "Parent Issue Rules" },
     ],
   },
+  {
+    title: "Integrations",
+    items: [
+      { href: RELATIVE_URLS.DOCS.INTEGRATIONS.CIRCLECI, label: "CircleCI Integration" },
+      { href: RELATIVE_URLS.DOCS.INTEGRATIONS.NPM, label: "npm Integration" },
+    ],
+  },
 ];
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
