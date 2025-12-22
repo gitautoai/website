@@ -125,8 +125,16 @@ export const INTERNAL_LINKS = [
   },
   {
     href: RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI,
-    eventType: "circleci_integration",
-    text: "CircleCI Integration",
+    eventType: "circleci_integration_settings",
+    text: "CircleCI Integration Settings",
+    category: "resources",
+    showInHeader: false,
+    showInMobile: false,
+  },
+  {
+    href: RELATIVE_URLS.SETTINGS.INTEGRATIONS.NPM,
+    eventType: "npm_integration_settings",
+    text: "npm Integration Settings",
     category: "resources",
     showInHeader: false,
     showInMobile: false,

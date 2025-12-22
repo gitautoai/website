@@ -24,6 +24,7 @@ export const THUMBNAILS = {
     INTEGRATIONS: {
       CIRCLECI: `${BASE_URL}/og/settings-integrations-circleci.png`,
       JIRA: `${BASE_URL}/og/settings-integrations-jira.png`,
+      NPM: `${BASE_URL}/og/settings-integrations-npm.png`,
     },
   },
 
@@ -57,6 +58,10 @@ export const THUMBNAILS = {
     CUSTOMIZATION: {
       PARENT_ISSUE_RULES: `${BASE_URL}/og/docs-customization-parent-issue-rules.png`,
       REPOSITORY_RULES: `${BASE_URL}/og/docs-customization-repository-rules.png`,
+    },
+    INTEGRATIONS: {
+      CIRCLECI: `${BASE_URL}/og/docs-integrations-circleci.png`,
+      NPM: `${BASE_URL}/og/docs-integrations-npm.png`,
     },
   },
 

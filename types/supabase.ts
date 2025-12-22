@@ -495,6 +495,44 @@ export type Database = {
           },
         ]
       }
+      npm_tokens: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          owner_id: number
+          token: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          owner_id: number
+          token: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          owner_id?: number
+          token?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "npm_tokens_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: true
+            referencedRelation: "owners"
+            referencedColumns: ["owner_id"]
+          },
+        ]
+      }
       oauth_tokens: {
         Row: {
           access_token: string

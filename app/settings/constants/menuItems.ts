@@ -24,6 +24,12 @@ export const menuItems = [
     href: RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI,
     isHeader: false,
   },
+  {
+    id: "npm",
+    label: "npm",
+    href: RELATIVE_URLS.SETTINGS.INTEGRATIONS.NPM,
+    isHeader: false,
+  },
   // {
   //   id: "screenshots",
   //   label: "Screenshots",
