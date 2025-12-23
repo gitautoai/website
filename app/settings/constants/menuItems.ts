@@ -17,6 +17,7 @@ export const menuItems = [
     href: RELATIVE_URLS.SETTINGS.REFERENCES,
     isHeader: false,
   },
+  { id: "actions", label: "Actions", href: RELATIVE_URLS.SETTINGS.ACTIONS, isHeader: false },
   { id: "integrations-header", label: "Integrations", href: "#", isHeader: true },
   {
     id: "circleci",

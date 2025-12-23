@@ -22,7 +22,7 @@ export default function SettingsMenu({ onItemClick, currentPath }: SettingsMenuP
         {menuItems.map((item) => (
           <li key={item.id}>
             {item.isHeader ? (
-              <div className="text-sm font-semibold text-gray-500 px-3 py-1.5 mt-2.5">{item.label}</div>
+              <div className="text-sm font-semibold text-gray-500 px-3 py-1 mt-2">{item.label}</div>
             ) : (
               <Link
                 href={item.href}

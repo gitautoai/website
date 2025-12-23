@@ -17,6 +17,7 @@ export const THUMBNAILS = {
   // Settings
   SETTINGS: {
     INDEX: `${BASE_URL}/og/settings.png`,
+    ACTIONS: `${BASE_URL}/og/settings-actions.png`,
     REFERENCES: `${BASE_URL}/og/settings-references.png`,
     RULES: `${BASE_URL}/og/settings-rules.png`,
     SCREENSHOTS: `${BASE_URL}/og/settings-screenshots.png`,
