@@ -21,6 +21,7 @@ export const RELATIVE_URLS = {
   PRICING_DETAILS: "/pricing",
   SETTINGS: {
     INDEX: "/settings",
+    ACTIONS: "/settings/actions",
     REFERENCES: "/settings/references",
     RULES: "/settings/rules",
     SCREENSHOTS: "/settings/screenshots",
@@ -137,6 +138,7 @@ export const ABSOLUTE_URLS = {
     TERMS_OF_SERVICE: `${BASE_URL}${RELATIVE_URLS.TERMS_OF_SERVICE}`,
     SETTINGS: {
       INDEX: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INDEX}`,
+      ACTIONS: `${BASE_URL}${RELATIVE_URLS.SETTINGS.ACTIONS}`,
       REFERENCES: `${BASE_URL}${RELATIVE_URLS.SETTINGS.REFERENCES}`,
       RULES: `${BASE_URL}${RELATIVE_URLS.SETTINGS.RULES}`,
       SCREENSHOTS: `${BASE_URL}${RELATIVE_URLS.SETTINGS.SCREENSHOTS}`,
