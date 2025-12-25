@@ -18,8 +18,6 @@ const sidebarItems = [
       { href: RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT, label: "Review Comment Trigger" },
       { href: RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE, label: "Test Failure Trigger" },
       { href: RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE, label: "Schedule Trigger" },
-      { href: RELATIVE_URLS.DOCS.TRIGGERS.PR_CHANGE, label: "PR Change Trigger" },
-      { href: RELATIVE_URLS.DOCS.TRIGGERS.PR_MERGE, label: "PR Merge Trigger" },
     ],
   },
   {

@@ -50,8 +50,6 @@ export const THUMBNAILS = {
       DASHBOARD: `${BASE_URL}/og/docs-triggers-dashboard.png`,
       ISSUE_CHECKBOX: `${BASE_URL}/og/docs-triggers-issue-checkbox.png`,
       ISSUE_LABEL: `${BASE_URL}/og/docs-triggers-issue-label.png`,
-      PR_CHANGE: `${BASE_URL}/og/docs-triggers-pr-change.png`,
-      PR_MERGE: `${BASE_URL}/og/docs-triggers-pr-merge.png`,
       REVIEW_COMMENT: `${BASE_URL}/og/docs-triggers-review-comment.png`,
       SCHEDULE: `${BASE_URL}/og/docs-triggers-schedule.png`,
       TEST_FAILURE: `${BASE_URL}/og/docs-triggers-test-failure.png`,

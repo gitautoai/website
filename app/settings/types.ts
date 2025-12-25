@@ -33,9 +33,6 @@ export type ScreenshotSettings = {
 export type TriggerSettings = {
   triggerOnReviewComment: boolean;
   triggerOnTestFailure: boolean;
-  triggerOnCommit: boolean;
-  triggerOnPrChange: boolean;
-  triggerOnMerged: boolean;
   triggerOnSchedule: boolean;
   scheduleTimeLocal: string; // Format: "HH:MM" (24-hour format)
   scheduleTimeUTC: string; // Format: "HH:MM" (24-hour format)
