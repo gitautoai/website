@@ -86,7 +86,8 @@ export default function ActionsPage() {
     };
 
     loadAllSettings();
-  }, [currentOwnerId, currentOwnerName, organizations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentOwnerId, currentOwnerName]);
 
   const updateSetting = async (
     repoId: number,
