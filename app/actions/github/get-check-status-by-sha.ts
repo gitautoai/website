@@ -1,5 +1,6 @@
 "use server";
 
+import { checkCommitHasSkipCI } from "./check-commit-has-skip-ci";
 import { getOctokitForInstallation } from "@/app/api/github";
 
 export const getCheckStatusBySHA = async ({
@@ -15,6 +16,15 @@ export const getCheckStatusBySHA = async ({
 }): Promise<"success" | "failure" | "pending" | "none"> => {
   try {
     const octokit = await getOctokitForInstallation(installationId);
+
+    // Check if last commit has [skip ci] - if yes, tests never ran, NOT passing
+    const hasSkipCI = await checkCommitHasSkipCI({
+      ownerName,
+      repoName,
+      installationId,
+      sha,
+    });
+    if (hasSkipCI) return "failure";
 
     // Get check runs for the commit SHA
     const { data: checkRuns } = await octokit.checks.listForRef({
