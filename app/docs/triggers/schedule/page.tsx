@@ -176,10 +176,6 @@ export default function ScheduleTriggerPage() {
           href: RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE,
           title: "Test Failure Trigger",
         }}
-        nextLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.PR_CHANGE,
-          title: "PR Change Trigger",
-        }}
       />
     </div>
   );

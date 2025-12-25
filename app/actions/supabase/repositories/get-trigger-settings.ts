@@ -23,9 +23,6 @@ export async function getTriggerSettings(
     return {
       triggerOnReviewComment: true,
       triggerOnTestFailure: true,
-      triggerOnCommit: false,
-      triggerOnPrChange: true,
-      triggerOnMerged: false,
       triggerOnSchedule: true,
       scheduleTimeLocal: "09:00",
       scheduleTimeUTC: "",
@@ -49,9 +46,6 @@ export async function getTriggerSettings(
   return {
     triggerOnReviewComment: repo.trigger_on_review_comment,
     triggerOnTestFailure: repo.trigger_on_test_failure,
-    triggerOnCommit: repo.trigger_on_commit,
-    triggerOnPrChange: repo.trigger_on_pr_change,
-    triggerOnMerged: repo.trigger_on_merged,
     triggerOnSchedule: repo.trigger_on_schedule,
     scheduleTimeLocal: "",
     scheduleTimeUTC,

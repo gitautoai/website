@@ -105,34 +105,6 @@ export default function TriggersOverviewPage() {
               </Link>
             </p>
           </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold mt-0 mb-4">PR Change Trigger</h2>
-            <p className="text-gray-700">
-              Automatically adds unit tests when pull requests are opened, updated, or synchronized.
-              Ideal for repositories with strict coverage requirements.{" "}
-              <Link
-                href={RELATIVE_URLS.DOCS.TRIGGERS.PR_CHANGE}
-                className="text-pink-600 hover:text-pink-700"
-              >
-                Learn more →
-              </Link>
-            </p>
-          </div>
-
-          <div>
-            <h2 className="text-2xl font-semibold mt-0 mb-4">PR Merge Trigger</h2>
-            <p className="text-gray-700">
-              Creates separate pull requests with unit tests after code is merged. Provides a safer
-              approach by keeping test additions separate from feature development.{" "}
-              <Link
-                href={RELATIVE_URLS.DOCS.TRIGGERS.PR_MERGE}
-                className="text-pink-600 hover:text-pink-700"
-              >
-                Learn more →
-              </Link>
-            </p>
-          </div>
         </div>
 
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 my-8">
@@ -156,7 +128,7 @@ export default function TriggersOverviewPage() {
 
       <DocsContact
         title="Trigger Overload?"
-        description="With 8 different triggers, it's easy to feel overwhelmed! Each team's workflow is unique, and what works for one project might not work for another. Let's find your perfect trigger combination."
+        description="With 6 different triggers, it's easy to feel overwhelmed! Each team's workflow is unique, and what works for one project might not work for another. Let's find your perfect trigger combination."
         callToAction="Contact us"
         linkText="and we'll design your ideal workflow!"
       />

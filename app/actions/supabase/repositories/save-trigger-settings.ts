@@ -31,9 +31,6 @@ export async function saveTriggerSettings(
   const updateData: TablesUpdate<"repositories"> = {
     trigger_on_review_comment: settings.triggerOnReviewComment,
     trigger_on_test_failure: settings.triggerOnTestFailure,
-    trigger_on_commit: settings.triggerOnCommit,
-    trigger_on_pr_change: settings.triggerOnPrChange,
-    trigger_on_merged: settings.triggerOnMerged,
     trigger_on_schedule: settings.triggerOnSchedule,
     schedule_frequency: settings.triggerOnSchedule ? "daily" : null,
     schedule_time:

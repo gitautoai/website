@@ -5,33 +5,36 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 // Local imports (Actions)
-import { slackUs } from "@/app/actions/slack/slack-us";
-import { getTriggerSettings } from "@/app/actions/supabase/repositories/get-trigger-settings";
-import { saveTriggerSettings } from "@/app/actions/supabase/repositories/save-trigger-settings";
 import { createOrUpdateSchedule } from "@/app/actions/aws/create-or-update-schedule";
 import { deleteSchedules } from "@/app/actions/aws/delete-schedules";
+import { getAllTriggerSettings } from "@/app/actions/supabase/repositories/get-all-trigger-settings";
+import type { TriggerSettingsForRepo } from "@/app/actions/supabase/repositories/get-all-trigger-settings";
+import { saveTriggerSettings } from "@/app/actions/supabase/repositories/save-trigger-settings";
+import { slackUs } from "@/app/actions/slack/slack-us";
 
-// Local imports (Components and etc.)
+// Local imports (Components)
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
-import TriggerToggle from "@/app/settings/components/TriggerToggle";
 import type { TriggerSettings } from "@/app/settings/types";
 
 // Local imports (Others)
-import { PRODUCT_NAME } from "@/config";
 import { RELATIVE_URLS } from "@/config/urls";
+import { ALLOWED_INTERVALS, DEFAULT_SCHEDULE_CONFIG, MAX_EXECUTIONS } from "@/config/schedule";
 import { convertLocalToUTC } from "@/utils/convert-local-to-utc";
 import { convertUTCToLocal } from "@/utils/convert-utc-to-local";
+
+type RepoWithSettings = {
+  repoId: number;
+  repoName: string;
+  settings: TriggerSettingsForRepo | null;
+};
 
 export default function TriggersPage() {
   const {
     currentOwnerId,
     currentOwnerType,
     currentOwnerName,
-    currentRepoId,
-    currentRepoName,
-    setCurrentRepoName,
     organizations,
     userId,
     userLogin,
@@ -39,247 +42,270 @@ export default function TriggersPage() {
     currentInstallationId,
   } = useAccountContext();
 
-  // Auto-select first repo if "__ALL__" is selected (triggers page doesn't support all repos)
-  useEffect(() => {
-    if (currentRepoName === "__ALL__" && currentOwnerName && organizations.length > 0) {
-      const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
-      if (currentOrg && currentOrg.repositories.length > 0) {
-        setCurrentRepoName(currentOrg.repositories[0].repoName);
-      }
-    }
-  }, [currentRepoName, currentOwnerName, organizations, setCurrentRepoName]);
-
   const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [triggerSettings, setTriggerSettings] = useState<TriggerSettings>({
-    triggerOnReviewComment: true,
-    triggerOnTestFailure: true,
-    triggerOnCommit: false,
-    triggerOnPrChange: true,
-    triggerOnMerged: false,
-    triggerOnSchedule: false,
-    scheduleTimeLocal: "09:00",
-    scheduleTimeUTC: "",
-    scheduleIncludeWeekends: false,
-    scheduleExecutionCount: 1,
-    scheduleIntervalMinutes: 15,
-  });
-  const [originalScheduleTime, setOriginalScheduleTime] = useState<string>("");
-
-  const MAX_EXECUTIONS = 12; // Up to 12 times per day
-  const ALLOWED_INTERVALS = [5, 10, 15, 20, 30, 60]; // minutes
-
-  // Common function to fetch and set trigger settings
-  const fetchAndSetTriggerSettings = async () => {
-    if (!currentOwnerId || !currentRepoId) return;
-
-    try {
-      setIsLoading(true);
-      const settings = await getTriggerSettings(currentOwnerId, currentRepoId);
-
-      if (settings.scheduleTimeUTC && !settings.scheduleTimeLocal) {
-        settings.scheduleTimeLocal = convertUTCToLocal(settings.scheduleTimeUTC);
-      } else if (!settings.scheduleTimeUTC && !settings.scheduleTimeLocal) {
-        settings.scheduleTimeLocal = "09:00";
-      }
-
-      // If this is a first-time user (no UTC time calculated yet) and schedule is enabled,
-      // automatically calculate UTC and save the settings
-      if (!settings.scheduleTimeUTC && settings.triggerOnSchedule && settings.scheduleTimeLocal) {
-        const calculatedUTC = convertLocalToUTC(settings.scheduleTimeLocal);
-        const updatedSettings = {
-          ...settings,
-          scheduleTimeUTC: calculatedUTC,
-        };
-        
-        // Auto-save the default settings with calculated UTC
-        await saveSettings(updatedSettings);
-        setTriggerSettings(updatedSettings);
-      } else {
-        setTriggerSettings(settings);
-      }
-    } catch (error) {
-      console.error("Failed to fetch trigger settings:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [repoSettings, setRepoSettings] = useState<RepoWithSettings[]>([]);
+  const [scheduleConfigs, setScheduleConfigs] = useState<
+    Record<number, { time: string; executions: number; interval: number; weekends: boolean }>
+  >({});
 
   useEffect(() => {
-    if (!currentOwnerId || !currentRepoId) {
-      setIsLoading(false);
-      return;
-    }
-    fetchAndSetTriggerSettings();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentOwnerId, currentRepoId]);
+    const loadAllSettings = async () => {
+      if (!currentOwnerId || !currentOwnerName) {
+        setIsLoading(false);
+        return;
+      }
 
-  const saveSettings = async (updatedSettings: TriggerSettings) => {
+      try {
+        setIsLoading(true);
+
+        const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+        if (!currentOrg) {
+          setIsLoading(false);
+          return;
+        }
+
+        const allSettings = await getAllTriggerSettings(currentOwnerId);
+        const settingsMap = new Map(allSettings.map((s) => [s.repo_id, s]));
+        const reposToShow = currentOrg.repositories;
+
+        const combined: RepoWithSettings[] = reposToShow.map((repo) => ({
+          repoId: repo.repoId,
+          repoName: repo.repoName,
+          settings: settingsMap.has(repo.repoId) ? settingsMap.get(repo.repoId)! : null,
+        }));
+
+        setRepoSettings(combined);
+
+        // Initialize schedule configs from loaded settings
+        const configs: Record<
+          number,
+          { time: string; executions: number; interval: number; weekends: boolean }
+        > = {};
+        combined.forEach((repo) => {
+          if (repo.settings?.schedule_time) {
+            const timeParts = repo.settings.schedule_time.split(":");
+            const utcHours = parseInt(timeParts[0], 10);
+            const utcMinutes = parseInt(timeParts[1], 10);
+            const scheduleTimeUTC = `${utcHours.toString().padStart(2, "0")}:${utcMinutes.toString().padStart(2, "0")}`;
+            const scheduleTimeLocal = convertUTCToLocal(scheduleTimeUTC);
+            configs[repo.repoId] = {
+              time: scheduleTimeLocal,
+              executions: repo.settings.schedule_execution_count,
+              interval: repo.settings.schedule_interval_minutes,
+              weekends: repo.settings.schedule_include_weekends,
+            };
+          } else {
+            configs[repo.repoId] = DEFAULT_SCHEDULE_CONFIG;
+          }
+        });
+        setScheduleConfigs(configs);
+      } catch (error) {
+        console.error("Failed to load trigger settings:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadAllSettings();
+  }, [currentOwnerId, currentOwnerName, organizations]);
+
+  const updateSetting = async (
+    repoId: number,
+    repoName: string,
+    field: keyof Pick<
+      TriggerSettings,
+      "triggerOnReviewComment" | "triggerOnTestFailure" | "triggerOnSchedule"
+    >,
+    value: boolean
+  ) => {
     if (
       !currentOwnerId ||
       !currentOwnerType ||
       !currentOwnerName ||
-      !currentRepoId ||
-      !currentRepoName ||
       !userId ||
       !userLogin ||
       !currentInstallationId
     )
       return;
 
-    try {
-      setIsSaving(true);
+    const repoData = repoSettings.find((r) => r.repoId === repoId);
+    const currentDbSettings = repoData?.settings;
+    const scheduleConfig = scheduleConfigs[repoId] || DEFAULT_SCHEDULE_CONFIG;
 
-      // Save to Supabase first
-      await saveTriggerSettings(
-        currentOwnerId,
-        currentRepoId,
-        currentRepoName,
-        userId,
-        userLogin,
-        updatedSettings
-      );
+    const scheduleTimeUTC = convertLocalToUTC(scheduleConfig.time);
 
-      // Handle AWS scheduling separately
-      if (updatedSettings.triggerOnSchedule) {
-        await createOrUpdateSchedule({
-          ownerId: currentOwnerId,
-          ownerType: currentOwnerType,
-          ownerName: currentOwnerName,
-          repoId: currentRepoId,
-          repoName: currentRepoName,
-          userId: userId,
-          userName: userLogin,
-          installationId: currentInstallationId,
-          scheduleTimeUTC: updatedSettings.scheduleTimeUTC,
-          includeWeekends: updatedSettings.scheduleIncludeWeekends,
-          scheduleExecutionCount: updatedSettings.scheduleExecutionCount,
-          scheduleIntervalMinutes: updatedSettings.scheduleIntervalMinutes,
-        });
-      } else {
-        await deleteSchedules(currentOwnerId, currentRepoId);
-      }
-    } catch (error) {
-      console.error("Error saving trigger settings:", error);
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const notifyChange = async (key: string, oldValue: any, newValue: any) => {
-    // Convert setting name to a readable format
-    const settingLabels: Record<string, string> = {
-      triggerOnReviewComment: "Review Comment trigger",
-      triggerOnTestFailure: "Test Failure trigger",
-      triggerOnCommit: "Commit trigger",
-      triggerOnPrChange: "PR Change trigger",
-      triggerOnMerged: "Merged trigger",
-      triggerOnSchedule: "Schedule trigger",
-      scheduleTimeLocal: "Schedule time",
-      scheduleIncludeWeekends: "Include weekends",
-      scheduleExecutionCount: "Executions per day",
-      scheduleIntervalMinutes: "Interval",
+    const currentSettings: TriggerSettings = {
+      triggerOnReviewComment: currentDbSettings?.trigger_on_review_comment ?? true,
+      triggerOnTestFailure: currentDbSettings?.trigger_on_test_failure ?? true,
+      triggerOnSchedule: currentDbSettings?.trigger_on_schedule ?? false,
+      scheduleTimeLocal: scheduleConfig.time,
+      scheduleTimeUTC,
+      scheduleIncludeWeekends: scheduleConfig.weekends,
+      scheduleExecutionCount: scheduleConfig.executions,
+      scheduleIntervalMinutes: scheduleConfig.interval,
     };
 
-    const readableSetting = settingLabels[key] || key;
-
-    // Build the message
-    const message = `${userName} (${userId}) updated ${readableSetting} from ${oldValue} to ${newValue} for ${currentOwnerName}/${currentRepoName}`;
-
-    // Call the server action
-    await slackUs(message);
-  };
-
-  const handleToggle = (key: keyof TriggerSettings) => {
-    const oldValue = triggerSettings[key];
-    const newValue = !oldValue;
-
-    let updatedSettings = {
-      ...triggerSettings,
-      [key]: newValue,
-    };
-
-    // When enabling triggerOnSchedule, calculate UTC if it's not calculated yet
-    if (key === "triggerOnSchedule" && newValue) {
-      if (!updatedSettings.scheduleTimeLocal) updatedSettings.scheduleTimeLocal = "09:00";
-
-      if (!updatedSettings.scheduleTimeUTC)
-        updatedSettings.scheduleTimeUTC = convertLocalToUTC(updatedSettings.scheduleTimeLocal);
-    }
-
-    // When enabling triggerOnMerged, disable triggerOnPrChange
-    if (key === "triggerOnMerged" && newValue) updatedSettings.triggerOnPrChange = false;
-
-    // When enabling triggerOnPrChange, disable triggerOnMerged
-    if (key === "triggerOnPrChange" && newValue) updatedSettings.triggerOnMerged = false;
-
-    setTriggerSettings(updatedSettings);
-    saveSettings(updatedSettings);
-    notifyChange(key, oldValue, newValue);
-  };
-
-  const handleScheduleChange = (
-    field:
-      | "scheduleTimeLocal"
-      | "scheduleIncludeWeekends"
-      | "scheduleExecutionCount"
-      | "scheduleIntervalMinutes",
-    value: string | boolean | number
-  ) => {
-    let updatedSettings = {
-      ...triggerSettings,
+    const updatedSettings = {
+      ...currentSettings,
       [field]: value,
     };
 
-    if (field === "scheduleTimeLocal" && typeof value === "string") {
-      updatedSettings.scheduleTimeUTC = convertLocalToUTC(value);
-    }
+    const updatedDbSettings: TriggerSettingsForRepo = {
+      repo_id: repoId,
+      trigger_on_review_comment: updatedSettings.triggerOnReviewComment,
+      trigger_on_test_failure: updatedSettings.triggerOnTestFailure,
+      trigger_on_schedule: updatedSettings.triggerOnSchedule,
+      schedule_time: updatedSettings.triggerOnSchedule
+        ? `${updatedSettings.scheduleTimeUTC}:00+00`
+        : null,
+      schedule_include_weekends: updatedSettings.scheduleIncludeWeekends,
+      schedule_execution_count: updatedSettings.scheduleExecutionCount,
+      schedule_interval_minutes: updatedSettings.scheduleIntervalMinutes,
+      updated_by: `${userId}:${userLogin}`,
+      updated_at: new Date().toISOString(),
+    };
 
-    setTriggerSettings(updatedSettings);
+    setRepoSettings((prev) =>
+      prev.map((r) => (r.repoId === repoId ? { ...r, settings: updatedDbSettings } : r))
+    );
 
-    // For checkbox changes and execution count changes, save immediately
-    if (field === "scheduleIncludeWeekends" || field === "scheduleExecutionCount") {
-      saveSettings(updatedSettings);
-      notifyChange(field, triggerSettings[field], value);
-    }
+    // Save to database
+    saveTriggerSettings(currentOwnerId, repoId, repoName, userId, userLogin, updatedSettings)
+      .then(async () => {
+        // Handle AWS scheduling
+        if (updatedSettings.triggerOnSchedule) {
+          await createOrUpdateSchedule({
+            ownerId: currentOwnerId,
+            ownerType: currentOwnerType,
+            ownerName: currentOwnerName,
+            repoId: repoId,
+            repoName: repoName,
+            userId: userId,
+            userName: userLogin,
+            installationId: currentInstallationId,
+            scheduleTimeUTC: updatedSettings.scheduleTimeUTC,
+            includeWeekends: updatedSettings.scheduleIncludeWeekends,
+            scheduleExecutionCount: updatedSettings.scheduleExecutionCount,
+            scheduleIntervalMinutes: updatedSettings.scheduleIntervalMinutes,
+          });
+        } else {
+          await deleteSchedules(currentOwnerId, repoId);
+        }
+      })
+      .catch((error) => {
+        console.error("Error saving trigger settings:", error);
+        setRepoSettings((prev) =>
+          prev.map((r) => (r.repoId === repoId ? { ...r, settings: currentDbSettings || null } : r))
+        );
+      });
+
+    // Notify via Slack
+    const settingLabels: Record<string, string> = {
+      triggerOnReviewComment: "Review Comment trigger",
+      triggerOnTestFailure: "Test Failure trigger",
+      triggerOnSchedule: "Schedule trigger",
+    };
+    const message = `${userName} (${userId}) updated ${settingLabels[field]} to ${value} for ${currentOwnerName}/${repoName}`;
+    slackUs(message).catch((error) => console.error("Error sending Slack notification:", error));
   };
 
-  const handleTimeBlur = () => {
-    // Only save if the time actually changed
-    if (triggerSettings.scheduleTimeLocal !== originalScheduleTime) {
-      saveSettings(triggerSettings);
-      notifyChange("scheduleTimeLocal", originalScheduleTime, triggerSettings.scheduleTimeLocal);
-    }
+  const updateScheduleConfig = async (
+    repoId: number,
+    repoName: string,
+    field: "time" | "executions" | "interval" | "weekends",
+    value: string | number | boolean
+  ) => {
+    if (
+      !currentOwnerId ||
+      !currentOwnerType ||
+      !currentOwnerName ||
+      !userId ||
+      !userLogin ||
+      !currentInstallationId
+    )
+      return;
+
+    const repoData = repoSettings.find((r) => r.repoId === repoId);
+    const currentDbSettings = repoData?.settings;
+    const currentConfig = scheduleConfigs[repoId] || DEFAULT_SCHEDULE_CONFIG;
+
+    const updatedConfig = {
+      ...currentConfig,
+      [field]: value,
+    };
+
+    setScheduleConfigs((prev) => ({
+      ...prev,
+      [repoId]: updatedConfig,
+    }));
+
+    const scheduleTimeUTC = convertLocalToUTC(updatedConfig.time);
+
+    const updatedSettings: TriggerSettings = {
+      triggerOnReviewComment: currentDbSettings?.trigger_on_review_comment ?? true,
+      triggerOnTestFailure: currentDbSettings?.trigger_on_test_failure ?? true,
+      triggerOnSchedule: currentDbSettings?.trigger_on_schedule ?? false,
+      scheduleTimeLocal: updatedConfig.time,
+      scheduleTimeUTC,
+      scheduleIncludeWeekends: updatedConfig.weekends,
+      scheduleExecutionCount: updatedConfig.executions,
+      scheduleIntervalMinutes: updatedConfig.interval,
+    };
+
+    // Save to database and AWS
+    saveTriggerSettings(currentOwnerId, repoId, repoName, userId, userLogin, updatedSettings)
+      .then(async () => {
+        if (updatedSettings.triggerOnSchedule) {
+          await createOrUpdateSchedule({
+            ownerId: currentOwnerId,
+            ownerType: currentOwnerType,
+            ownerName: currentOwnerName,
+            repoId: repoId,
+            repoName: repoName,
+            userId: userId,
+            userName: userLogin,
+            installationId: currentInstallationId,
+            scheduleTimeUTC: updatedSettings.scheduleTimeUTC,
+            includeWeekends: updatedSettings.scheduleIncludeWeekends,
+            scheduleExecutionCount: updatedSettings.scheduleExecutionCount,
+            scheduleIntervalMinutes: updatedSettings.scheduleIntervalMinutes,
+          });
+        }
+      })
+      .catch((error) => console.error("Error saving schedule settings:", error));
+
+    // Notify via Slack
+    const fieldLabels: Record<string, string> = {
+      time: "Schedule time",
+      executions: "Executions per day",
+      interval: "Interval",
+      weekends: "Include weekends",
+    };
+    const message = `${userName} (${userId}) updated ${fieldLabels[field]} to ${value} for ${currentOwnerName}/${repoName}`;
+    slackUs(message).catch((error) => console.error("Error sending Slack notification:", error));
   };
 
-  const handleTimeFocus = () => {
-    setOriginalScheduleTime(triggerSettings.scheduleTimeLocal);
-  };
-
-  // Function to get timezone information
   const getTimezoneInfo = () => {
     try {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-      // Calculate offset from UTC (e.g., UTC+9)
       const now = new Date();
       const offset = -now.getTimezoneOffset() / 60;
       const offsetStr = offset >= 0 ? `UTC+${offset}` : `UTC${offset}`;
-
       return `${timezone} (${offsetStr})`;
     } catch (e) {
       return "your local timezone";
     }
   };
 
-  const calculateExecutionTimes = () => {
-    if (!triggerSettings.scheduleExecutionCount) return [];
+  const calculateExecutionTimes = (repoId: number) => {
+    const config = scheduleConfigs[repoId];
+    if (!config) return [];
 
-    const intervalMinutes = triggerSettings.scheduleIntervalMinutes;
+    const intervalMinutes = config.interval;
     const executionTimes = [];
-    const [startHour, startMinute] = triggerSettings.scheduleTimeLocal.split(":").map(Number);
+    const [startHour, startMinute] = config.time.split(":").map(Number);
 
-    for (let i = 0; i < triggerSettings.scheduleExecutionCount; i++) {
+    for (let i = 0; i < config.executions; i++) {
       const totalMinutes = startMinute + i * intervalMinutes;
       const hour = startHour + Math.floor(totalMinutes / 60);
       const minute = totalMinutes % 60;
@@ -293,248 +319,282 @@ export default function TriggersPage() {
     return executionTimes;
   };
 
+  const ColumnHeader = ({
+    title,
+    description,
+    learnMoreUrl,
+  }: {
+    title: string;
+    description: string;
+    learnMoreUrl?: string;
+  }) => (
+    <div className="flex items-center gap-2">
+      <span>{title}</span>
+      <div className="group relative">
+        <svg className="w-4 h-4 text-gray-400 cursor-help" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            fillRule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+            clipRule="evenodd"
+          />
+        </svg>
+        <div className="invisible group-hover:visible absolute z-10 w-64 p-2 mt-1 text-sm text-white bg-gray-900 rounded-md shadow-lg -left-24">
+          {description}
+          {learnMoreUrl && (
+            <>
+              {" "}
+              <Link
+                href={learnMoreUrl}
+                className="text-pink-300 hover:text-pink-200 underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Learn more →
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="relative min-h-screen">
       <h1 className="text-3xl font-bold mb-6 text-left">Trigger settings</h1>
 
       <div className="mb-6">
-        <RepositorySelector onRepoChange={fetchAndSetTriggerSettings} disableAllRepos={true} />
+        <RepositorySelector ownerOnly={true} />
       </div>
 
       <p className="mb-6 text-gray-600">
         These settings control when GitAuto will automatically analyze your code and generate tests.
-        Each trigger can be enabled independently.
+        Each trigger can be enabled independently. Changes are saved automatically.
       </p>
 
-      <div className="relative rounded-lg">
-        <div className="space-y-4">
-          <h2 className="text-xl font-medium mt-10 mb-2 text-left">Trigger type</h2>
-
-          <div className="space-y-3">
-            <TriggerToggle
-              title="On review comment"
-              description={
-                <>
-                  Triggers GitAuto to respond to review comments on GitAuto-created PRs by
-                  automatically creating fix commits. Not triggered by comments on PRs created by
-                  others.{" "}
-                  <Link
-                    href={RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT}
-                    className="text-pink-600 hover:text-pink-700 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Learn more →
-                  </Link>
-                </>
-              }
-              isEnabled={triggerSettings.triggerOnReviewComment}
-              isDisabled={isSaving}
-              onToggle={() => handleToggle("triggerOnReviewComment")}
-            />
-
-            <TriggerToggle
-              title="On test failure"
-              description={
-                <>
-                  Triggers GitAuto to automatically create a fix commit when a CI test fails on a
-                  GitAuto-created PR. Not triggered by test failures on PRs created by others.{" "}
-                  <Link
-                    href={RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE}
-                    className="text-pink-600 hover:text-pink-700 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Learn more →
-                  </Link>
-                </>
-              }
-              isEnabled={triggerSettings.triggerOnTestFailure}
-              isDisabled={isSaving}
-              onToggle={() => handleToggle("triggerOnTestFailure")}
-            />
-
-            <TriggerToggle
-              title="On PR change"
-              description={
-                <>
-                  Triggers {PRODUCT_NAME} to add unit tests when pull requests are opened, updated,
-                  or synchronized in this repository. Cannot be used together with &quot;On
-                  merge&quot; trigger.{" "}
-                  <Link
-                    href={RELATIVE_URLS.DOCS.TRIGGERS.PR_CHANGE}
-                    className="text-pink-600 hover:text-pink-700 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Learn more →
-                  </Link>
-                </>
-              }
-              isEnabled={triggerSettings.triggerOnPrChange}
-              isDisabled={isSaving}
-              onToggle={() => handleToggle("triggerOnPrChange")}
-            />
-
-            <TriggerToggle
-              title="On merge"
-              description={
-                <>
-                  Triggers {PRODUCT_NAME} to add unit tests for code that has been merged into your
-                  target branch. Ensures newly merged features have proper test coverage. Cannot be
-                  used together with &quot;On PR change&quot; trigger.{" "}
-                  <Link
-                    href={RELATIVE_URLS.DOCS.TRIGGERS.PR_MERGE}
-                    className="text-pink-600 hover:text-pink-700 underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Learn more →
-                  </Link>
-                </>
-              }
-              isEnabled={triggerSettings.triggerOnMerged}
-              isDisabled={isSaving}
-              onToggle={() => handleToggle("triggerOnMerged")}
-            />
-
-            <div>
-              <TriggerToggle
-                title="On schedule"
-                description={
-                  <>
-                    Triggers GitAuto to automatically create a PR to add unit tests at specified
-                    times, prioritizing files with the lowest test coverage first.{" "}
-                    <Link
-                      href={RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE}
-                      className="text-pink-600 hover:text-pink-700 underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Learn more →
-                    </Link>
-                  </>
-                }
-                isEnabled={triggerSettings.triggerOnSchedule}
-                isDisabled={isSaving}
-                onToggle={() => handleToggle("triggerOnSchedule")}
-              />
-            </div>
-          </div>
-
-          <div className={`h-72 ${triggerSettings.triggerOnSchedule ? "block" : "invisible"}`}>
-            {triggerSettings.triggerOnSchedule && (
-              <div className="ml-10 mt-3 p-4 border border-gray-200 rounded-lg bg-gray-50">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                  <div>
-                    <label
-                      htmlFor="scheduleTimeLocal"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Start time
-                    </label>
-                    <input
-                      type="time"
-                      id="scheduleTimeLocal"
-                      value={triggerSettings.scheduleTimeLocal}
-                      onChange={(e) => handleScheduleChange("scheduleTimeLocal", e.target.value)}
-                      onFocus={handleTimeFocus}
-                      onBlur={handleTimeBlur}
-                      className="w-full h-12 p-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
-                      disabled={isSaving}
-                    />
-                    <p className="mt-1 text-xs text-gray-500">
-                      Time is based on {getTimezoneInfo()}
-                    </p>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="scheduleExecutions"
-                      className="block text-sm font-medium text-gray-700 mb-1"
-                    >
-                      Executions per day
-                    </label>
-                    <select
-                      id="scheduleExecutions"
-                      value={triggerSettings.scheduleExecutionCount || 1}
-                      onChange={(e) =>
-                        handleScheduleChange("scheduleExecutionCount", parseInt(e.target.value))
-                      }
-                      className="w-full h-12 p-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
-                      disabled={isSaving}
-                    >
-                      {Array.from({ length: MAX_EXECUTIONS }, (_, i) => i + 1).map((count) => (
-                        <option key={count} value={count}>
-                          {count} time{count > 1 ? "s" : ""}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Show interval settings only if execution count > 1 */}
-                  {(triggerSettings.scheduleExecutionCount || 1) > 1 && (
-                    <div>
-                      <label
-                        htmlFor="scheduleInterval"
-                        className="block text-sm font-medium text-gray-700 mb-1"
-                      >
-                        Interval
-                      </label>
-                      <select
-                        id="scheduleInterval"
-                        value={triggerSettings.scheduleIntervalMinutes || 15}
-                        onChange={(e) =>
-                          handleScheduleChange("scheduleIntervalMinutes", parseInt(e.target.value))
-                        }
-                        className="w-full h-12 p-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
-                        disabled={isSaving}
-                      >
-                        {ALLOWED_INTERVALS.map((interval) => (
-                          <option key={interval} value={interval}>
-                            Every {interval} minutes
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                </div>
-
-                {/* Preview execution times - show only if execution count > 1 */}
-                {(triggerSettings.scheduleExecutionCount || 1) > 1 &&
-                  calculateExecutionTimes().length > 0 && (
-                    <div className="bg-blue-50 p-3 rounded border border-blue-200 mb-4">
-                      <p className="text-sm font-medium text-blue-800 mb-2">
-                        Daily execution times:
-                      </p>
-                      <p className="text-sm text-blue-700">
-                        {calculateExecutionTimes().join(", ")}
-                      </p>
-                    </div>
-                  )}
-
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="includeWeekends"
-                    checked={triggerSettings.scheduleIncludeWeekends}
-                    onChange={(e) =>
-                      handleScheduleChange("scheduleIncludeWeekends", e.target.checked)
-                    }
-                    className="h-4 w-4 text-pink-600 rounded border-gray-300"
-                    disabled={isSaving}
+      <div className="relative rounded-lg border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="sticky top-0 px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50 border-b border-gray-200 z-10">
+                  Repository
+                </th>
+                <th className="sticky top-0 px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50 border-b border-gray-200 w-32 z-10">
+                  <ColumnHeader
+                    title="Review Comment Trigger"
+                    description="Responds to review comments on GitAuto-created PRs by automatically creating fix commits."
+                    learnMoreUrl={RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT}
                   />
-                  <label htmlFor="includeWeekends" className="ml-2 block text-sm text-gray-700">
-                    Include weekends
-                  </label>
-                </div>
-              </div>
-            )}
-          </div>
+                </th>
+                <th className="sticky top-0 px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50 border-b border-gray-200 w-28 z-10">
+                  <ColumnHeader
+                    title="Test Failure Trigger"
+                    description="Automatically creates a fix commit when a CI test fails on a GitAuto-created PR."
+                    learnMoreUrl={RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE}
+                  />
+                </th>
+                <th className="sticky top-0 px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50 border-b border-gray-200 w-24 z-10">
+                  <ColumnHeader
+                    title="Schedule Trigger"
+                    description="Automatically creates a PR to add unit tests at specified times, prioritizing files with the lowest test coverage first."
+                    learnMoreUrl={RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE}
+                  />
+                </th>
+                <th className="sticky top-0 px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50 border-b border-gray-200 z-10">
+                  Schedule Settings
+                </th>
+                <th className="sticky top-0 px-4 py-3 text-left text-sm font-medium text-gray-700 bg-gray-50 border-b border-gray-200 z-10">
+                  Last Updated
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {repoSettings.map((repo) => {
+                const settings = repo.settings || {
+                  trigger_on_review_comment: true,
+                  trigger_on_test_failure: true,
+                  trigger_on_schedule: false,
+                  updated_at: "",
+                  updated_by: "",
+                };
+                const scheduleConfig = scheduleConfigs[repo.repoId] || DEFAULT_SCHEDULE_CONFIG;
+
+                return (
+                  <tr key={repo.repoId}>
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{repo.repoName}</td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() =>
+                          updateSetting(
+                            repo.repoId,
+                            repo.repoName,
+                            "triggerOnReviewComment",
+                            !settings.trigger_on_review_comment
+                          )
+                        }
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                          settings.trigger_on_review_comment ? "bg-pink-600" : "bg-gray-300"
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+                            settings.trigger_on_review_comment ? "translate-x-6" : "translate-x-1"
+                          }`}
+                        />
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() =>
+                          updateSetting(
+                            repo.repoId,
+                            repo.repoName,
+                            "triggerOnTestFailure",
+                            !settings.trigger_on_test_failure
+                          )
+                        }
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                          settings.trigger_on_test_failure ? "bg-pink-600" : "bg-gray-300"
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+                            settings.trigger_on_test_failure ? "translate-x-6" : "translate-x-1"
+                          }`}
+                        />
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() =>
+                          updateSetting(
+                            repo.repoId,
+                            repo.repoName,
+                            "triggerOnSchedule",
+                            !settings.trigger_on_schedule
+                          )
+                        }
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                          settings.trigger_on_schedule ? "bg-pink-600" : "bg-gray-300"
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+                            settings.trigger_on_schedule ? "translate-x-6" : "translate-x-1"
+                          }`}
+                        />
+                      </button>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="space-y-1.5 py-1">
+                        <div className="flex items-center gap-2 h-6">
+                          <span className="text-xs text-gray-700 w-16 font-medium">Start</span>
+                          <input
+                            type="time"
+                            value={scheduleConfig.time}
+                            onChange={(e) =>
+                              updateScheduleConfig(
+                                repo.repoId,
+                                repo.repoName,
+                                "time",
+                                e.target.value
+                              )
+                            }
+                            disabled={!settings.trigger_on_schedule}
+                            className="w-28 px-2 py-1 text-xs text-gray-900 border border-gray-300 rounded focus:ring-1 focus:ring-pink-500 focus:border-pink-500 disabled:bg-gray-50 disabled:text-gray-400"
+                            title={`Timezone: ${getTimezoneInfo()}`}
+                          />
+                        </div>
+                        <div className="flex items-center gap-2 h-6">
+                          <span className="text-xs text-gray-700 w-16 font-medium">Times/Day</span>
+                          <select
+                            value={scheduleConfig.executions}
+                            onChange={(e) =>
+                              updateScheduleConfig(
+                                repo.repoId,
+                                repo.repoName,
+                                "executions",
+                                parseInt(e.target.value)
+                              )
+                            }
+                            disabled={!settings.trigger_on_schedule}
+                            className="w-28 px-2 py-1 text-xs text-gray-900 border border-gray-300 rounded focus:ring-1 focus:ring-pink-500 focus:border-pink-500 disabled:bg-gray-50 disabled:text-gray-400"
+                          >
+                            {Array.from({ length: MAX_EXECUTIONS }, (_, i) => i + 1).map(
+                              (count) => (
+                                <option key={count} value={count}>
+                                  {count}x
+                                </option>
+                              )
+                            )}
+                          </select>
+                        </div>
+                        <div className="flex items-center gap-2 h-6">
+                          <span className="text-xs text-gray-700 w-16 font-medium">Interval</span>
+                          <select
+                            value={scheduleConfig.interval}
+                            onChange={(e) =>
+                              updateScheduleConfig(
+                                repo.repoId,
+                                repo.repoName,
+                                "interval",
+                                parseInt(e.target.value)
+                              )
+                            }
+                            disabled={
+                              !settings.trigger_on_schedule || scheduleConfig.executions === 1
+                            }
+                            className="w-28 px-2 py-1 text-xs text-gray-900 border border-gray-300 rounded focus:ring-1 focus:ring-pink-500 focus:border-pink-500 disabled:bg-gray-50 disabled:text-gray-400"
+                          >
+                            {ALLOWED_INTERVALS.map((interval) => (
+                              <option key={interval} value={interval}>
+                                {interval}min
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="flex items-center gap-2 h-6">
+                          <span className="text-xs text-gray-700 w-16 font-medium">Weekends</span>
+                          <input
+                            type="checkbox"
+                            checked={scheduleConfig.weekends}
+                            onChange={(e) =>
+                              updateScheduleConfig(
+                                repo.repoId,
+                                repo.repoName,
+                                "weekends",
+                                e.target.checked
+                              )
+                            }
+                            disabled={!settings.trigger_on_schedule}
+                            className="h-3.5 w-3.5 text-pink-600 rounded border-gray-300 disabled:bg-gray-50 disabled:border-gray-200"
+                          />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600">
+                      {repo.settings?.updated_by && repo.settings?.updated_at ? (
+                        <>
+                          <div>
+                            {repo.settings.updated_by.split(":")[1] || repo.settings.updated_by}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {new Date(repo.settings.updated_at).toLocaleString()}
+                          </div>
+                        </>
+                      ) : (
+                        <span className="text-gray-400">Never</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </div>
 
-      {(isLoading || isSaving) && <LoadingSpinner />}
+      {isLoading && <LoadingSpinner />}
     </div>
   );
 }
