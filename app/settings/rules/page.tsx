@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState, useRef, useTransition } from "react";
 
 // Local imports
 import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
-import { saveRepositorySettings } from "@/app/actions/supabase/repositories/save-repository-settings";
+import { upsertRepository } from "@/app/actions/supabase/repositories/upsert-repository";
 import { Branch } from "@/app/api/github/get-branches/route";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
@@ -191,13 +191,17 @@ export default function RulesPage() {
 
         startTransition(async () => {
           try {
-            await saveRepositorySettings(
+            await upsertRepository(
               currentOwnerId,
               currentRepoId,
               currentRepoName,
               userId,
               userName,
-              updatedFormData
+              {
+                repo_rules: updatedFormData.repoRules,
+                structured_rules: updatedFormData.structuredRules,
+                target_branch: updatedFormData.targetBranch,
+              }
             );
           } catch (error) {
             setError("Failed to auto-save settings. Please try again later.");
@@ -217,14 +221,11 @@ export default function RulesPage() {
 
     startTransition(async () => {
       try {
-        await saveRepositorySettings(
-          currentOwnerId,
-          currentRepoId,
-          currentRepoName,
-          userId,
-          userName,
-          formData
-        );
+        await upsertRepository(currentOwnerId, currentRepoId, currentRepoName, userId, userName, {
+          repo_rules: formData.repoRules,
+          structured_rules: formData.structuredRules,
+          target_branch: formData.targetBranch,
+        });
       } catch (error) {
         setError("Failed to save settings. Please try again later.");
         console.error("Error saving settings:", error);

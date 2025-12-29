@@ -1,9 +1,10 @@
 "use server";
 
+import { upsertRepository } from "@/app/actions/supabase/repositories/upsert-repository";
 import { supabaseAdmin } from "@/lib/supabase/server";
-import type { Tables, TablesInsert, TablesUpdate } from "@/types/supabase";
+import type { Tables } from "@/types/supabase";
 
-export const saveActionSettings = async (
+export const upsertRepositoryFeatures = async (
   ownerId: number,
   ownerName: string,
   repoId: number,
@@ -15,16 +16,8 @@ export const saveActionSettings = async (
     "auto_merge" | "auto_merge_only_test_files" | "merge_method"
   >
 ) => {
-  const missingParams = [];
-  if (!ownerId) missingParams.push("ownerId");
-  if (!ownerName) missingParams.push("ownerName");
-  if (!repoId) missingParams.push("repoId");
-  if (!repoName) missingParams.push("repoName");
-  if (!userId) missingParams.push("userId");
-  if (!userName) missingParams.push("userName");
-
-  if (missingParams.length > 0)
-    throw new Error(`Missing required parameters: ${missingParams.join(", ")}`);
+  // Ensure repository exists before upserting to repository_features
+  await upsertRepository(ownerId, repoId, repoName, userId, userName);
 
   const { error } = await supabaseAdmin.from("repository_features").upsert(
     {

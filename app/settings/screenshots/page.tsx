@@ -2,9 +2,11 @@
 // Third-party imports
 import { useEffect, useState, useCallback, useTransition } from "react";
 
-// Local imports
+// Local imports (Actions)
 import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
-import { saveRepositorySettings } from "@/app/actions/supabase/repositories/save-repository-settings";
+import { upsertRepository } from "@/app/actions/supabase/repositories/upsert-repository";
+
+// Local imports (Components and Types)
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
@@ -42,9 +44,7 @@ export default function ScreenshotsPage() {
             useScreenshots: data.use_screenshots || false,
             productionUrl: data.production_url || "",
             localPort: data.local_port || 8080,
-            startupCommands: Array.isArray(data.startup_commands)
-              ? data.startup_commands
-              : [],
+            startupCommands: Array.isArray(data.startup_commands) ? data.startup_commands : [],
           });
         } else {
           setSettings({
@@ -80,14 +80,12 @@ export default function ScreenshotsPage() {
 
     startTransition(async () => {
       try {
-        await saveRepositorySettings(
-          currentOwnerId!,
-          currentRepoId!,
-          currentRepoName!,
-          userId!,
-          userName,
-          settings
-        );
+        await upsertRepository(currentOwnerId, currentRepoId, currentRepoName, userId, userName, {
+          use_screenshots: settings.useScreenshots,
+          production_url: settings.productionUrl,
+          local_port: settings.localPort,
+          startup_commands: settings.startupCommands.filter((cmd) => cmd.trim() !== ""),
+        });
       } catch (error) {
         setError("Failed to save settings. Please try again later.");
         console.error("Error saving settings:", error);

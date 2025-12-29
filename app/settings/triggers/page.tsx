@@ -9,7 +9,7 @@ import { createOrUpdateSchedule } from "@/app/actions/aws/create-or-update-sched
 import { deleteSchedules } from "@/app/actions/aws/delete-schedules";
 import { getAllTriggerSettings } from "@/app/actions/supabase/repositories/get-all-trigger-settings";
 import type { TriggerSettingsForRepo } from "@/app/actions/supabase/repositories/get-all-trigger-settings";
-import { saveTriggerSettings } from "@/app/actions/supabase/repositories/save-trigger-settings";
+import { upsertRepository } from "@/app/actions/supabase/repositories/upsert-repository";
 import { slackUs } from "@/app/actions/slack/slack-us";
 
 // Local imports (Components)
@@ -170,7 +170,18 @@ export default function TriggersPage() {
     );
 
     // Save to database
-    saveTriggerSettings(currentOwnerId, repoId, repoName, userId, userLogin, updatedSettings)
+    upsertRepository(currentOwnerId, repoId, repoName, userId, userLogin, {
+      trigger_on_review_comment: updatedSettings.triggerOnReviewComment,
+      trigger_on_test_failure: updatedSettings.triggerOnTestFailure,
+      trigger_on_schedule: updatedSettings.triggerOnSchedule,
+      schedule_time: updatedSettings.triggerOnSchedule
+        ? `${updatedSettings.scheduleTimeUTC}:00+00`
+        : null,
+      schedule_frequency: updatedSettings.triggerOnSchedule ? "daily" : null,
+      schedule_include_weekends: updatedSettings.scheduleIncludeWeekends,
+      schedule_execution_count: updatedSettings.scheduleExecutionCount,
+      schedule_interval_minutes: updatedSettings.scheduleIntervalMinutes,
+    })
       .then(async () => {
         // Handle AWS scheduling
         if (updatedSettings.triggerOnSchedule) {
@@ -253,7 +264,18 @@ export default function TriggersPage() {
     };
 
     // Save to database and AWS
-    saveTriggerSettings(currentOwnerId, repoId, repoName, userId, userLogin, updatedSettings)
+    upsertRepository(currentOwnerId, repoId, repoName, userId, userLogin, {
+      trigger_on_review_comment: updatedSettings.triggerOnReviewComment,
+      trigger_on_test_failure: updatedSettings.triggerOnTestFailure,
+      trigger_on_schedule: updatedSettings.triggerOnSchedule,
+      schedule_time: updatedSettings.triggerOnSchedule
+        ? `${updatedSettings.scheduleTimeUTC}:00+00`
+        : null,
+      schedule_frequency: updatedSettings.triggerOnSchedule ? "daily" : null,
+      schedule_include_weekends: updatedSettings.scheduleIncludeWeekends,
+      schedule_execution_count: updatedSettings.scheduleExecutionCount,
+      schedule_interval_minutes: updatedSettings.scheduleIntervalMinutes,
+    })
       .then(async () => {
         if (updatedSettings.triggerOnSchedule) {
           await createOrUpdateSchedule({

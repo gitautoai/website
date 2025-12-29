@@ -4,9 +4,9 @@
 import { useEffect, useState } from "react";
 
 // Local imports (Actions)
-import { getAllActionSettings } from "@/app/actions/supabase/repositories/get-all-action-settings";
-import { saveActionSettings } from "@/app/actions/supabase/repositories/save-action-settings";
 import { slackUs } from "@/app/actions/slack/slack-us";
+import { getAllActionSettings } from "@/app/actions/supabase/repository-features/get-all-action-settings";
+import { upsertRepositoryFeatures } from "@/app/actions/supabase/repository-features/upsert-repository-features";
 
 // Local imports (Components and Types)
 import { useAccountContext } from "@/app/components/contexts/Account";
@@ -118,7 +118,7 @@ export default function ActionsPage() {
     );
 
     // Save to database in background (no await)
-    saveActionSettings(
+    upsertRepositoryFeatures(
       currentOwnerId,
       currentOwnerName,
       repoId,
