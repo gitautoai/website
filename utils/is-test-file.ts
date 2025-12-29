@@ -6,11 +6,11 @@ export function isTestFile(filename: string): boolean {
 
   const filenameLower = filename.toLowerCase();
 
-  const testPatterns = [
+  // Strong patterns: Unambiguous test file indicators (no false positives)
+  // If these match, it's definitely a test file - skip weak exclude patterns
+  const strongTestPatterns = [
     /\.test\./, // Button.test.tsx, utils.test.js
     /\.spec\./, // Button.spec.tsx, api.spec.js
-    /test\./, // ButtonTest.java, UserTest.cs - but we'll use better filtering below
-    /tests\./, // ButtonTests.java, UserTests.cs - but we'll use better filtering below
     /_test\./, // button_test.py, user_test.go
     /_spec\./, // button_spec.rb, user_spec.rb
     /^test_/, // test_button.py, test_utils.py
@@ -28,39 +28,59 @@ export function isTestFile(filename: string): boolean {
     /^testing\//, // testing/utils.py (start of path)
     /\/__mocks__\//, // src/__mocks__/api.js
     /\.mock\./, // api.mock.ts, database.mock.js
-    /mock\./, // ApiMock.java, DatabaseMock.cs - but we'll use better filtering below
-    /mocks\./, // ApiMocks.java, DatabaseMocks.cs - but we'll use better filtering below
     /^test\./, // test.js, test.py
     /^spec\./, // spec.rb, spec.js
     /^\.github\//, // .github/scripts/*, .github/workflows/*
+    // Snapshot files (Jest, Vitest, etc.)
+    /\/__snapshots__\//, // __snapshots__/Button.test.tsx.snap
+    /\.snap$/, // any .snap file
+    // Test fixtures and data
+    /(^|\/)__fixtures__\//, // __fixtures__/user.json
+    /(^|\/)fixtures\//, // fixtures/sample_data.json
+    /\.fixture\./, // user.fixture.ts
+    // Test configuration files
+    /jest\.config\./, // jest.config.js, jest.config.ts
+    /vitest\.config\./, // vitest.config.js
+    /karma\.conf\./, // karma.conf.js
+    /^setuptest/, // setupTests.js, setupTest.js
+    /^testutil/, // testUtils.js, testUtil.js
+    /^testhelper/, // testHelper.js
+    /^testconfig/, // testConfig.js
+    /^testsetup/, // testSetup.js
+    /testenviron/, // testEnvironment.js - test environment config
+    // Storybook files (visual testing)
+    /\.stories\./, // Button.stories.tsx
+    /(^|\/)stories\//, // stories/Button.tsx
   ];
 
-  // Check if any pattern matches
-  const matches = testPatterns.some((pattern) => pattern.test(filenameLower));
+  // Check strong patterns first - if matched, it's definitely a test file
+  if (strongTestPatterns.some((pattern) => pattern.test(filenameLower))) {
+    return true;
+  }
 
-  if (!matches) return false;
+  // Weak patterns: Can have false positives (e.g., "latest" matches "test.")
+  // These require stricter exclusion filtering
+  const weakTestPatterns = [
+    /test\./, // ButtonTest.java, UserTest.cs - but also matches "latest.py"
+    /tests\./, // ButtonTests.java, UserTests.cs
+    /mock\./, // ApiMock.java, DatabaseMock.cs
+    /mocks\./, // ApiMocks.java, DatabaseMocks.cs
+  ];
 
-  // Additional filtering to prevent false positives
-  // Patterns that should NOT be considered test files even if they match broad patterns
-  const excludePatterns = [
-    /^setuptest/, // setupTests.js, setupTest.js - configuration files
-    /^testthat$/, // testThat.js - utility library, not tests
+  // Check weak patterns
+  const matchesWeakPattern = weakTestPatterns.some((pattern) => pattern.test(filenameLower));
+
+  if (!matchesWeakPattern) return false;
+
+  // Additional filtering to prevent false positives from weak patterns
+  const weakExcludePatterns = [
     /contest/, // contest.js - contains "test" but not a test file
     /protest/, // protest.js - contains "test" but not a test file
     /latest/, // latest.py - contains "test" but not a test file
     /fastest/, // fastest.js - contains "test" but not a test file
     /greatest/, // greatest.js - contains "test" but not a test file
-    /\btestenviron/, // testEnvironment.js - configuration, not test
-    /testutils?$/, // testUtils.js, testUtil.js - utility files, not tests
-    /testhelper/, // testHelper.js - helper files, not tests
-    /testconfig/, // testConfig.js - config files, not tests
-    /testsetup/, // testSetup.js - setup files, not tests
   ];
 
   // If any exclude pattern matches, it's not a test file
-  if (excludePatterns.some((pattern) => pattern.test(filenameLower))) {
-    return false;
-  }
-
-  return true;
+  return !weakExcludePatterns.some((pattern) => pattern.test(filenameLower));
 }

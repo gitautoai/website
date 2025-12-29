@@ -62,6 +62,18 @@ describe("isTestFile", () => {
     });
   });
 
+  describe("tests directory patterns", () => {
+    it("should identify files starting with tests/", () => {
+      expect(isTestFile("tests/Button.tsx")).toBe(true);
+      expect(isTestFile("test/Button.java")).toBe(true);
+    });
+
+    it("should identify files starting with testing/", () => {
+      expect(isTestFile("testing/utils.py")).toBe(true);
+      expect(isTestFile("testing/helpers.js")).toBe(true);
+    });
+  });
+
   describe("test directories", () => {
     it("should identify files in __tests__ directory", () => {
       expect(isTestFile("src/__tests__/Button.tsx")).toBe(true);
@@ -127,11 +139,13 @@ describe("isTestFile", () => {
     it("should identify files starting with test.", () => {
       expect(isTestFile("test.js")).toBe(true);
       expect(isTestFile("test.py")).toBe(true);
+      expect(isTestFile("test.ts")).toBe(true);
     });
 
     it("should identify files starting with spec.", () => {
       expect(isTestFile("spec.rb")).toBe(true);
       expect(isTestFile("spec.js")).toBe(true);
+      expect(isTestFile("spec.ts")).toBe(true);
     });
   });
 
@@ -186,6 +200,18 @@ describe("isTestFile", () => {
       expect(isTestFile("utils/files/is_test_file.py")).toBe(false); // Utility to detect tests, not a test
     });
 
+    it("should correctly identify test files even when they contain words like latest/fastest/greatest", () => {
+      // These SHOULD be considered test files (test_ prefix takes precedence)
+      expect(isTestFile("test_get_latest_remote_commit_sha.py")).toBe(true);
+      expect(isTestFile("services/github/commits/test_get_latest_remote_commit_sha.py")).toBe(true);
+      expect(isTestFile("test_fastest_algorithm.py")).toBe(true);
+      expect(isTestFile("test_greatest_common_divisor.py")).toBe(true);
+      expect(isTestFile("test_latest.py")).toBe(true);
+      // But non-test files with these words should NOT be test files
+      expect(isTestFile("get_latest_remote_commit_sha.py")).toBe(false);
+      expect(isTestFile("services/github/commits/get_latest_remote_commit_sha.py")).toBe(false);
+    });
+
     it("should handle files with paths correctly", () => {
       expect(isTestFile("src/components/Button.test.tsx")).toBe(true);
       expect(isTestFile("utils/test_helpers.py")).toBe(true);
@@ -206,15 +232,102 @@ describe("isTestFile", () => {
     });
   });
 
+  describe("snapshot files", () => {
+    it("should identify files in __snapshots__ directory", () => {
+      expect(isTestFile("src/__snapshots__/Button.test.tsx.snap")).toBe(true);
+      expect(isTestFile("components/__snapshots__/Modal.spec.js.snap")).toBe(true);
+    });
+
+    it("should identify .snap files", () => {
+      expect(isTestFile("Button.test.snap")).toBe(true);
+      expect(isTestFile("component.spec.snap")).toBe(true);
+      expect(isTestFile("component.test.snap")).toBe(true);
+      expect(isTestFile("api.test.snap")).toBe(true);
+    });
+  });
+
+  describe("fixture files", () => {
+    it("should identify files in __fixtures__ directory", () => {
+      expect(isTestFile("__fixtures__/user.json")).toBe(true);
+      expect(isTestFile("tests/__fixtures__/sample_data.json")).toBe(true);
+    });
+
+    it("should identify files in fixtures directory", () => {
+      expect(isTestFile("fixtures/sample_data.json")).toBe(true);
+      expect(isTestFile("tests/fixtures/user.json")).toBe(true);
+    });
+
+    it("should identify .fixture. files", () => {
+      expect(isTestFile("user.fixture.ts")).toBe(true);
+      expect(isTestFile("data.fixture.json")).toBe(true);
+    });
+  });
+
+  describe("test configuration files", () => {
+    it("should identify jest config files", () => {
+      expect(isTestFile("jest.config.js")).toBe(true);
+      expect(isTestFile("jest.config.ts")).toBe(true);
+    });
+
+    it("should identify vitest config files", () => {
+      expect(isTestFile("vitest.config.js")).toBe(true);
+      expect(isTestFile("vitest.config.ts")).toBe(true);
+    });
+
+    it("should identify karma config files", () => {
+      expect(isTestFile("karma.conf.js")).toBe(true);
+      expect(isTestFile("karma.conf.ts")).toBe(true);
+    });
+
+    it("should identify test setup files", () => {
+      expect(isTestFile("setupTests.js")).toBe(true);
+      expect(isTestFile("setupTest.ts")).toBe(true);
+    });
+
+    it("should identify test utility files", () => {
+      expect(isTestFile("testUtils.js")).toBe(true);
+      expect(isTestFile("testUtil.ts")).toBe(true);
+    });
+
+    it("should identify test helper files", () => {
+      expect(isTestFile("testHelper.js")).toBe(true);
+      expect(isTestFile("testHelpers.ts")).toBe(true);
+    });
+
+    it("should identify test config files", () => {
+      expect(isTestFile("testConfig.js")).toBe(true);
+      expect(isTestFile("testConfiguration.ts")).toBe(true);
+    });
+
+    it("should identify test setup files with different naming", () => {
+      expect(isTestFile("testSetup.js")).toBe(true);
+      expect(isTestFile("testSetup.ts")).toBe(true);
+    });
+
+    it("should identify test environment files", () => {
+      expect(isTestFile("testEnvironment.js")).toBe(true);
+      expect(isTestFile("jestTestEnvironment.js")).toBe(true);
+    });
+  });
+
+  describe("storybook files", () => {
+    it("should identify .stories. files", () => {
+      expect(isTestFile("Button.stories.tsx")).toBe(true);
+      expect(isTestFile("Modal.stories.js")).toBe(true);
+    });
+
+    it("should identify files in stories directory", () => {
+      expect(isTestFile("stories/Button.tsx")).toBe(true);
+      expect(isTestFile("src/stories/Modal.js")).toBe(true);
+    });
+  });
+
   describe("real world examples", () => {
     it("should handle real world test file examples", () => {
       expect(isTestFile("src/components/__tests__/Button.test.tsx")).toBe(true);
       expect(isTestFile("utils/files/test_is_code_file.py")).toBe(true);
       expect(isTestFile("cypress/e2e/login.cy.ts")).toBe(true);
       expect(isTestFile("playwright/tests/checkout.spec.ts")).toBe(true);
-      expect(isTestFile("jest.config.js")).toBe(false); // Config file, not test
-      expect(isTestFile("setupTests.js")).toBe(false); // Setup file, not test
-      expect(isTestFile("testUtils.js")).toBe(false); // Utility file, not test
     });
   });
 });
