@@ -31,6 +31,9 @@ export const THUMBNAILS = {
 
   // Documentation
   DOCS: {
+    ACTIONS: {
+      AUTO_MERGE: `${BASE_URL}/og/docs-actions-auto-merge.png`,
+    },
     GETTING_STARTED: {
       INSTALLATION: `${BASE_URL}/og/docs-getting-started-installation.png`,
     },

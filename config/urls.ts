@@ -41,6 +41,9 @@ export const RELATIVE_URLS = {
   },
   BLOG: "/blog",
   DOCS: {
+    ACTIONS: {
+      AUTO_MERGE: "/docs/actions/auto-merge",
+    },
     GETTING_STARTED: {
       INSTALLATION: "/docs/getting-started/installation",
     },
@@ -95,6 +98,9 @@ export const ABSOLUTE_URLS = {
       USAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.USAGE}`,
     },
     DOCS: {
+      ACTIONS: {
+        AUTO_MERGE: `${BASE_URL}${RELATIVE_URLS.DOCS.ACTIONS.AUTO_MERGE}`,
+      },
       GETTING_STARTED: {
         INSTALLATION: `${BASE_URL}${RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION}`,
       },

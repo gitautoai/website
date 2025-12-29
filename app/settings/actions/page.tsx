@@ -1,6 +1,7 @@
 "use client";
 
 // Third-party imports
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 // Local imports (Actions)
@@ -12,6 +13,7 @@ import { upsertRepositoryFeatures } from "@/app/actions/supabase/repository-feat
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import { RELATIVE_URLS } from "@/config/urls";
 import type { Tables } from "@/types/supabase";
 
 type RepoFeatures = Tables<"repository_features">;
@@ -32,8 +34,6 @@ export default function ActionsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [savingRepoId, setSavingRepoId] = useState<number | null>(null);
   const [repoSettings, setRepoSettings] = useState<RepoWithSettings[]>([]);
-  const [showHowItWorks, setShowHowItWorks] = useState(false);
-  const [showWhoShouldUse, setShowWhoShouldUse] = useState(false);
 
   useEffect(() => {
     const loadAllSettings = async () => {
@@ -190,85 +190,15 @@ export default function ActionsPage() {
 
       <p className="mb-6 text-gray-600">
         Configure auto-merge behavior and merge strategies for all your repositories. Changes are
-        saved automatically.
+        saved automatically.{" "}
+        <Link
+          href={RELATIVE_URLS.DOCS.ACTIONS.AUTO_MERGE}
+          className="text-pink-600 hover:text-pink-700 underline"
+        >
+          Learn more
+        </Link>{" "}
+        about how auto-merge works and branch protection bypass.
       </p>
-
-      <div className="mb-6 space-y-3">
-        {/* How auto-merge works */}
-        <div>
-          <button
-            onClick={() => setShowHowItWorks(!showHowItWorks)}
-            className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900"
-          >
-            <svg
-              className={`w-4 h-4 transition-transform ${showHowItWorks ? "rotate-90" : ""}`}
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="font-medium">How auto-merge works</span>
-          </button>
-
-          {showHowItWorks && (
-            <div className="mt-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <p className="text-sm text-gray-700 mb-2">
-                Auto-merge happens immediately when check suite completes successfully and:
-              </p>
-              <ul className="text-sm text-gray-700 space-y-1 ml-4 list-disc">
-                <li>All status checks pass</li>
-                <li>No merge conflicts</li>
-                <li>Branch is up to date</li>
-                <li>
-                  Repository does NOT require reviews (reviews haven&apos;t happened yet at this
-                  point)
-                </li>
-              </ul>
-              <p className="text-sm text-gray-600 mt-2">
-                <em>
-                  Note: Auto-merge won&apos;t work if your repository requires reviews in branch
-                  protection.
-                </em>
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Who should use this */}
-        <div>
-          <button
-            onClick={() => setShowWhoShouldUse(!showWhoShouldUse)}
-            className="flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900"
-          >
-            <svg
-              className={`w-4 h-4 transition-transform ${showWhoShouldUse ? "rotate-90" : ""}`}
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="font-medium">Who should use this</span>
-          </button>
-
-          {showWhoShouldUse && (
-            <div className="mt-3 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-              <p className="text-sm text-gray-600">
-                Teams with scheduled triggers creating many PRs per day who are already familiar
-                with GitAuto&apos;s changes and want to reduce the manual burden of merging PRs they
-                would normally merge without detailed code review when tests pass.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
 
       <div className="relative rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
