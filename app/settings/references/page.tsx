@@ -2,17 +2,17 @@
 // Third-party imports
 import { useEffect, useState, useCallback, useTransition } from "react";
 
-// Local imports (Absolute imports)
+// Local imports (Actions)
 import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
-import { saveRepositorySettings } from "@/app/actions/supabase/repositories/save-repository-settings";
+import { upsertRepository } from "@/app/actions/supabase/repositories/upsert-repository";
+
+// Local imports (Components and Types)
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
-
-// Local imports (Relative imports)
-import RepositorySelector from "../components/RepositorySelector";
-import SaveButton from "../components/SaveButton";
-import { PLAN_LIMITS } from "../constants/plans";
-import { ReferenceSettings } from "../types";
+import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import SaveButton from "@/app/settings/components/SaveButton";
+import { PLAN_LIMITS } from "@/app/settings/constants/plans";
+import { ReferenceSettings } from "@/app/settings/types";
 
 export default function ReferencesPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -204,14 +204,10 @@ export default function ReferencesPage() {
 
     startTransition(async () => {
       try {
-        await saveRepositorySettings(
-          currentOwnerId,
-          currentRepoId,
-          currentRepoName,
-          userId,
-          userName,
-          { webUrls, filePaths }
-        );
+        await upsertRepository(currentOwnerId, currentRepoId, currentRepoName, userId, userName, {
+          web_urls: webUrls,
+          file_paths: filePaths,
+        });
       } catch (error) {
         setError("Failed to save settings. Please try again later.");
         console.error("Error saving settings:", error);
