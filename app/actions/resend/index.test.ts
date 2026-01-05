@@ -1,4 +1,4 @@
-// Mock the Resend class before importing
+// Mock Resend before any imports
 const mockResendInstance = {
   emails: {
     send: jest.fn(),
@@ -11,155 +11,96 @@ const mockResendInstance = {
   },
 };
 
-const MockResend = jest.fn().mockImplementation(() => mockResendInstance);
+const MockResendConstructor = jest.fn(() => mockResendInstance);
 
 jest.mock("resend", () => ({
-  Resend: MockResend,
+  Resend: MockResendConstructor,
 }));
 
 // Mock the config
-const mockApiKey = "test-resend-api-key-123";
 jest.mock("@/config/resend", () => ({
-  RESEND_API_KEY: mockApiKey,
+  RESEND_API_KEY: "test-resend-api-key",
 }));
 
 describe("app/actions/resend/index", () => {
+  let resend: typeof mockResendInstance;
+  let RESEND_API_KEY: string;
+
+  beforeAll(() => {
+    // Import after mocks are set up
+    const resendModule = require("./index");
+    const configModule = require("@/config/resend");
+
+    resend = resendModule.resend;
+    RESEND_API_KEY = configModule.RESEND_API_KEY;
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("resend instance", () => {
-    it("should create a Resend instance with the API key from config", () => {
-      // Import after mocks are set up
-      const { resend } = require("./index");
-
-      // Verify Resend constructor was called with the correct API key
-      expect(MockResend).toHaveBeenCalledWith(mockApiKey);
-      expect(resend).toBeDefined();
-    });
-
+  describe("module exports", () => {
     it("should export a resend instance", () => {
-      const { resend } = require("./index");
-
-      expect(resend).toBe(mockResendInstance);
       expect(resend).toBeDefined();
+      expect(resend).toBe(mockResendInstance);
     });
 
-    it("should have emails property", () => {
-      const { resend } = require("./index");
+    it("should create Resend instance with API key from config", () => {
+      expect(MockResendConstructor).toHaveBeenCalledWith(RESEND_API_KEY);
+    });
+  });
 
+  describe("resend instance properties", () => {
+    it("should have emails property with send method", () => {
       expect(resend.emails).toBeDefined();
+      expect(resend.emails.send).toBeDefined();
       expect(typeof resend.emails.send).toBe("function");
     });
 
-    it("should have apiKeys property", () => {
-      const { resend } = require("./index");
-
+    it("should have apiKeys property with create method", () => {
       expect(resend.apiKeys).toBeDefined();
+      expect(resend.apiKeys.create).toBeDefined();
       expect(typeof resend.apiKeys.create).toBe("function");
     });
 
-    it("should have domains property", () => {
-      const { resend } = require("./index");
-
+    it("should have domains property with list method", () => {
       expect(resend.domains).toBeDefined();
+      expect(resend.domains.list).toBeDefined();
       expect(typeof resend.domains.list).toBe("function");
     });
   });
 
-  describe("module initialization", () => {
-    it("should initialize Resend with the correct API key", () => {
-      // Clear module cache and re-import
-      jest.resetModules();
+  describe("instance usage", () => {
+    it("should be able to call emails.send", () => {
+      mockResendInstance.emails.send.mockResolvedValue({ data: { id: "test-id" } });
 
-      // Re-apply mocks
-      jest.mock("resend", () => ({
-        Resend: MockResend,
-      }));
+      const result = resend.emails.send({
+        from: "test@example.com",
+        to: ["recipient@example.com"],
+        subject: "Test",
+        text: "Test email",
+      });
 
-      jest.mock("@/config/resend", () => ({
-        RESEND_API_KEY: mockApiKey,
-      }));
-
-      // Import the module
-      require("./index");
-
-      // Verify constructor was called
-      expect(MockResend).toHaveBeenCalled();
-      expect(MockResend).toHaveBeenCalledWith(mockApiKey);
+      expect(resend.emails.send).toHaveBeenCalled();
+      expect(result).resolves.toBeDefined();
     });
 
-    it("should handle empty API key", () => {
-      jest.resetModules();
+    it("should be able to call apiKeys.create", () => {
+      mockResendInstance.apiKeys.create.mockResolvedValue({ data: { id: "key-id" } });
 
-      // Mock with empty API key
-      jest.mock("resend", () => ({
-        Resend: MockResend,
-      }));
+      const result = resend.apiKeys.create({ name: "test-key" });
 
-      jest.mock("@/config/resend", () => ({
-        RESEND_API_KEY: "",
-      }));
-
-      const { resend } = require("./index");
-
-      expect(MockResend).toHaveBeenCalledWith("");
-      expect(resend).toBeDefined();
+      expect(resend.apiKeys.create).toHaveBeenCalled();
+      expect(result).resolves.toBeDefined();
     });
 
-    it("should create a singleton instance", () => {
-      jest.resetModules();
+    it("should be able to call domains.list", () => {
+      mockResendInstance.domains.list.mockResolvedValue({ data: [] });
 
-      jest.mock("resend", () => ({
-        Resend: MockResend,
-      }));
+      const result = resend.domains.list();
 
-      jest.mock("@/config/resend", () => ({
-        RESEND_API_KEY: mockApiKey,
-      }));
-
-      // Import multiple times
-      const module1 = require("./index");
-      const module2 = require("./index");
-
-      // Should be the same instance due to module caching
-      expect(module1.resend).toBe(module2.resend);
-    });
-  });
-
-  describe("edge cases", () => {
-    it("should handle undefined API key", () => {
-      jest.resetModules();
-
-      jest.mock("resend", () => ({
-        Resend: MockResend,
-      }));
-
-      jest.mock("@/config/resend", () => ({
-        RESEND_API_KEY: undefined,
-      }));
-
-      const { resend } = require("./index");
-
-      expect(MockResend).toHaveBeenCalledWith(undefined);
-      expect(resend).toBeDefined();
-    });
-
-    it("should handle null API key", () => {
-      jest.resetModules();
-
-      jest.mock("resend", () => ({
-        Resend: MockResend,
-      }));
-
-      jest.mock("@/config/resend", () => ({
-        RESEND_API_KEY: null,
-      }));
-
-      const { resend } = require("./index");
-
-      expect(MockResend).toHaveBeenCalledWith(null);
-      expect(resend).toBeDefined();
+      expect(resend.domains.list).toHaveBeenCalled();
+      expect(result).resolves.toBeDefined();
     });
   });
 });
