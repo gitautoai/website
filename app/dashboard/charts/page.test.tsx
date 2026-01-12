@@ -20,7 +20,8 @@ jest.mock("next-auth/react", () => ({
 }));
 jest.mock("swr", () => jest.fn(() => ({ data: undefined, error: undefined })));
 jest.mock("@/app/components/contexts/Account");
-jest.mock("@/app/actions/supabase/coverage/get-repo-coverage");
+jest.mock("@/app/actions/supabase/repo-coverage/get-repo-coverage");
+jest.mock("@/app/actions/supabase/total-repo-coverage/get-total-coverage");
 jest.mock("./utils/generate-dummy-data");
 jest.mock("@/app/components/DocsLink", () => () => null);
 jest.mock("@/app/components/ErrorBanner", () => () => null);
@@ -39,7 +40,7 @@ jest.mock("./components/CoverageStats", () => () => null);
 
 import { render, screen, waitFor } from "@testing-library/react";
 import { useAccountContext } from "@/app/components/contexts/Account";
-import { getRepoCoverage } from "@/app/actions/supabase/coverage/get-repo-coverage";
+import { getRepoCoverage } from "@/app/actions/supabase/repo-coverage/get-repo-coverage";
 import { Tables } from "@/types/supabase";
 import ChartsPage from "./page";
 import { generateDummyData } from "./utils/generate-dummy-data";
@@ -63,6 +64,12 @@ describe("ChartsPage - Demo Data Logic", () => {
       branch_coverage: 70,
       function_coverage: 75,
       statement_coverage: 80,
+      lines_covered: 800,
+      lines_total: 1000,
+      functions_covered: 75,
+      functions_total: 100,
+      branches_covered: 140,
+      branches_total: 200,
       created_at: "2024-01-01T00:00:00Z",
     },
   ];
@@ -81,6 +88,12 @@ describe("ChartsPage - Demo Data Logic", () => {
       branch_coverage: 65,
       function_coverage: 70,
       statement_coverage: 75,
+      lines_covered: 750,
+      lines_total: 1000,
+      functions_covered: 70,
+      functions_total: 100,
+      branches_covered: 130,
+      branches_total: 200,
       created_at: "2024-01-15T00:00:00Z",
     },
   ];

@@ -13,3 +13,13 @@ global.fetch = require("node-fetch");
 // Import jest-dom AFTER environment setup because it extends Jest's expect global
 // which is only available in setupFilesAfterEnv, not setupFiles
 import "@testing-library/jest-dom";
+
+// Suppress console output during tests to keep test output clean
+global.console = {
+  ...console,
+  log: jest.fn(),
+  error: jest.fn(),
+  warn: jest.fn(),
+  info: jest.fn(),
+  debug: jest.fn(),
+};

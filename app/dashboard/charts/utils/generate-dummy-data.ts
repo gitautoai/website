@@ -35,6 +35,13 @@ export function generateDummyData(): Tables<"repo_coverage">[] {
       );
     }
 
+    const totalLines = 1000;
+    const linesCovered = Math.round((statementCoverage / 100) * totalLines);
+    const totalFunctions = 100;
+    const functionsCovered = Math.round((functionCoverage / 100) * totalFunctions);
+    const totalBranches = 200;
+    const branchesCovered = Math.round((branchCoverage / 100) * totalBranches);
+
     data.push({
       id: i + 1,
       owner_id: 1,
@@ -46,6 +53,12 @@ export function generateDummyData(): Tables<"repo_coverage">[] {
       line_coverage: Math.round(statementCoverage * 100) / 100,
       function_coverage: Math.round(functionCoverage * 100) / 100,
       branch_coverage: Math.round(branchCoverage * 100) / 100,
+      lines_covered: linesCovered,
+      lines_total: totalLines,
+      functions_covered: functionsCovered,
+      functions_total: totalFunctions,
+      branches_covered: branchesCovered,
+      branches_total: totalBranches,
       language: "TypeScript",
       created_at: date.toISOString(),
       created_by: "demo-system",

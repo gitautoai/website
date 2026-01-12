@@ -247,6 +247,7 @@ export default function UsagePage() {
     };
 
     fetchAllReposStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchRepoStats excluded to prevent infinite re-renders
   }, [
     currentStripeCustomerId,
     currentOwnerName,
