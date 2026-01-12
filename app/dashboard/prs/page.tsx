@@ -171,6 +171,7 @@ export default function PRsPage() {
     };
 
     fetchPRData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchRepoPRs excluded to prevent infinite re-renders
   }, [currentOwnerName, currentRepoName, currentInstallationId, organizations]);
 
   const handleReloadRepo = async (repoName: string) => {

@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Tables } from "@/types/supabase";
+import ChartLegend from "./ChartLegend";
 
 interface CoverageChartProps {
   data: Tables<"repo_coverage">[];
@@ -124,7 +125,7 @@ export default function CoverageChart({
           />
           <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
           <Tooltip formatter={(value: number) => [`${value}%`, ""]} labelFormatter={formatXAxis} />
-          <Legend />
+          <Legend content={ChartLegend} />
           <Line
             type="monotone"
             dataKey="statement"

@@ -17,15 +17,17 @@ source .env.local && psql "postgresql://postgres.dkrxtcbaqzrodvsagwwn:$SUPABASE_
 source .env.local && psql "postgresql://postgres.awegqusxzsmlgxaxyyrq:$SUPABASE_DB_PASSWORD_PRD@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
 ```
 
-**CRITICAL: Always test queries on production database before making changes**
+**CRITICAL**: Always test queries on production database before making changes
 
 When investigating performance issues or timeouts:
+
 1. **Test the actual query on production database first** using psql with `\timing` enabled
 2. **Measure the actual execution time** - don't guess or assume what the problem is
 3. **Only after confirming the root cause** should you make code changes
 4. **Never make blind fixes** based on assumptions - always verify the problem first
 
 Example workflow for investigating slow queries:
+
 ```bash
 # Connect to production database
 source .env.local && psql "postgresql://postgres.awegqusxzsmlgxaxyyrq:$SUPABASE_DB_PASSWORD_PRD@aws-0-us-west-1.pooler.supabase.com:6543/postgres"
@@ -115,7 +117,7 @@ source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" 
 
 The following variables must be set in .env.local file:
 
-- `SENTRY_PERSONAL_TOKEN`: Personal auth token with project:read permissions (get from https://gitauto-ai.sentry.io/settings/auth-tokens/)
+- `SENTRY_PERSONAL_TOKEN`: Personal auth token with project:read permissions (get from <https://gitauto-ai.sentry.io/settings/auth-tokens/>)
 - `SENTRY_ORG_SLUG`: Organization slug (gitauto-ai)
 - `SENTRY_PROJECT_ID`: Project ID (4506827829346304)
 
@@ -181,7 +183,6 @@ This is a Next.js 15 application using App Router for GitAuto - a SaaS platform 
 ### Key Architectural Patterns
 
 1. **API Routes Organization** (`/app/api/`):
-
    - `/auth/[...nextauth]` - Authentication handling
    - `/github/*` - GitHub App integration (issues, repos, branches)
    - `/stripe/*` - Subscription management
@@ -189,13 +190,11 @@ This is a Next.js 15 application using App Router for GitAuto - a SaaS platform 
    - `/supabase/*` - Database operations
 
 2. **Context Architecture**:
-
    - `AccountContext` - Global user/installation state, repository selection
    - Authentication flows through NextAuth session provider
    - PostHog analytics wrapper
 
 3. **Database Schema** (key tables):
-
    - `users` - GitHub users
    - `installations` - GitHub App installations
    - `repositories` - Repository configurations and rules
@@ -204,7 +203,6 @@ This is a Next.js 15 application using App Router for GitAuto - a SaaS platform 
    - `oauth_tokens` - Third-party integrations
 
 4. **External Service Integration**:
-
    - **GitHub**: Octokit with App authentication, GraphQL for issue creation
    - **Stripe**: Customer portal, checkout sessions, webhook handling
    - **AWS**: EventBridge Scheduler for cron triggers
@@ -247,20 +245,23 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;
 
 **CRITICAL**: Never proceed with git add/commit/push unless ALL tests pass 100%. There is no "mostly passed" - either all tests pass or the task is incomplete.
 
+**CRITICAL**: Fix ALL errors and warnings before proceeding to the next step. Do not continue running commands if there are errors or warnings - fix them first. Moving on without fixing is a waste of time.
+
 **EXCEPTION**: For blog-only changes (adding/editing blog posts in `app/blog/posts/`), tests can be skipped since blog content doesn't affect application functionality.
 
 When the user says "LGTM", execute these commands in order:
 
 1. `npm run types:generate` - Generate TypeScript types
-2. `npm run lint` - Run linting
-3. `npx tsc --noEmit` - Type-check ALL files including tests (use this to catch TypeScript errors)
-4. `npm test` - Run unit tests (must pass 100%, skip for blog-only changes)
-5. `npm run build` - Build the project
-6. **STOP if any test fails** - Fix all failures before proceeding (unless blog-only)
-7. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes
-8. `git add <specific-file-paths>` - Stage specific changed files (NEVER use `git add .`, always specify exact file paths)
-9. Create a descriptive commit message based on changes (do NOT include Claude Code attribution)
-10. `git push` - Push to remote
+2. `npm run lint` - Run linting. **Fix any errors/warnings before proceeding.**
+3. `npx markdownlint-cli2 "**/*.md" "#node_modules"` - Lint markdown files. **Fix any errors before proceeding.**
+4. `npx tsc --noEmit` - Type-check ALL files including tests. **Fix any errors before proceeding.**
+5. `npm test` - Run unit tests (must pass 100%, skip for blog-only changes). **Fix any failures before proceeding.**
+6. `npm run build` - Build the project
+7. **STOP if any step fails** - Fix all failures before proceeding (unless blog-only)
+8. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes
+9. `git add <specific-file-paths>` - Stage specific changed files including updated/created test files (NEVER use `git add .`, always specify exact file paths)
+10. Create a descriptive commit message based on changes (do NOT include Claude Code attribution)
+11. `git push` - Push to remote
 
 **Note**: E2E tests (`npx playwright test`) are skipped during LGTM to save time. Run them manually when needed.
 

@@ -3,7 +3,10 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { Tables } from "@/types/supabase";
 
-export async function getRepoCoverage(ownerId: number, repoId: number) {
+export const getRepoCoverage = async (
+  ownerId: number,
+  repoId: number
+): Promise<Tables<"repo_coverage">[]> => {
   const { data, error } = await supabaseAdmin
     .from("repo_coverage")
     .select("*")
@@ -16,5 +19,5 @@ export async function getRepoCoverage(ownerId: number, repoId: number) {
     throw error;
   }
 
-  return data as Tables<"repo_coverage">[];
-}
+  return data || [];
+};
