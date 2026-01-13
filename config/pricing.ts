@@ -11,7 +11,7 @@ export const TEST_LEGACY_CUSTOMER_ID = "cus_QO4R5vh6FJuN7t";
 
 export const CREDIT_PRICING = {
   PER_PR: {
-    AMOUNT_USD: 4,
+    AMOUNT_USD: 5,
   },
   PURCHASE_LIMITS: {
     MIN_AMOUNT_USD: 10,
