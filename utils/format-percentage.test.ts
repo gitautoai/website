@@ -1,6 +1,5 @@
 import { formatPercentage } from "./format-percentage";
 
-
 describe("formatPercentage", () => {
   describe("null values", () => {
     it("should return '0%' for null", () => {
