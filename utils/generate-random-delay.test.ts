@@ -69,7 +69,7 @@ describe("generateRandomDelay", () => {
       const result = generateRandomDelay();
 
       expect(result).toBeInstanceOf(Date);
-      const expectedTime = fixedNow + 35 * 60 * 1000;
+      const expectedTime = fixedNow + 34 * 60 * 1000;
       expect(result.getTime()).toBe(expectedTime);
     });
 
