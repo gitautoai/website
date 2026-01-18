@@ -57,7 +57,6 @@ describe("formatPercentage", () => {
       expect(formatPercentage(999999.99)).toBe("999999%");
     });
   });
-describe("formatPercentage", () => {
   describe("null values", () => {
     it("should return '0%' for null", () => {
       expect(formatPercentage(null)).toBe("0%");
