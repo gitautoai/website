@@ -61,7 +61,7 @@ describe("generateRandomDelay", () => {
   });
 
   describe("various random values", () => {
-    it("should return a date 35 minutes in the future when random is 0.16", () => {
+    it("should return a date 34 minutes in the future when random is 0.16", () => {
       const fixedNow = 1000000000000;
       mockDateNow.mockReturnValue(fixedNow);
       mockMathRandom.mockReturnValue(0.16); // Results in 35 minutes
