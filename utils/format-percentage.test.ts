@@ -57,3 +57,8 @@ describe("formatPercentage", () => {
     });
   });
 });
+
+  describe("real world usage", () => {
+    it("should handle coverage percentage values", () => {
+      expect(formatPercentage(85.7)).toBe("85%");
+    });
