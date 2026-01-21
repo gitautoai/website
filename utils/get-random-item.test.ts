@@ -146,6 +146,66 @@ describe("getRandomItem", () => {
       expect(result).toBe("first");
     });
 
+    it("should return last item when Math.random returns close to 1", () => {
+      Math.random = jest.fn(() => 0.99);
+      const items = ["first", "second", "third"];
+      const result = getRandomItem(items);
+      expect(result).toBe("third");
+    });
+
+    it("should return middle item when Math.random returns 0.5", () => {
+      Math.random = jest.fn(() => 0.5);
+      const items = ["first", "second", "third", "fourth", "fifth"];
+      const result = getRandomItem(items);
+      expect(result).toBe("third");
+    });
+
+    it("should correctly calculate index for two-item array", () => {
+      Math.random = jest.fn(() => 0.5);
+      const items = ["a", "b"];
+      const result = getRandomItem(items);
+      expect(result).toBe("b");
+    });
+
+    it("should handle large arrays", () => {
+      Math.random = jest.fn(() => 0.5);
+      const items = Array.from({ length: 100 }, (_, i) => i);
+      const result = getRandomItem(items);
+      expect(result).toBe(50);
+    });
+
+    it("should use Math.floor to round down the index", () => {
+      Math.random = jest.fn(() => 0.33);
+      const items = ["a", "b", "c"];
+      const result = getRandomItem(items);
+      // 0.33 * 3 = 0.99, Math.floor(0.99) = 0
+      expect(result).toBe("a");
+    });
+
+    it("should multiply random by array length", () => {
+      Math.random = jest.fn(() => 0.75);
+      const items = [10, 20, 30, 40];
+      const result = getRandomItem(items);
+      // 0.75 * 4 = 3, Math.floor(3) = 3, items[3] = 40
+
+  describe("deterministic behavior with mocked Math.random", () => {
+    let originalRandom: () => number;
+
+    beforeEach(() => {
+      originalRandom = Math.random;
+    });
+
+    afterEach(() => {
+      Math.random = originalRandom;
+    });
+
+    it("should return first item when Math.random returns 0", () => {
+      Math.random = jest.fn(() => 0);
+      const items = ["first", "second", "third"];
+      const result = getRandomItem(items);
+      expect(result).toBe("first");
+    });
+
     it("should return last item when Math.random returns value close to 1", () => {
       Math.random = jest.fn(() => 0.99);
       const items = ["first", "second", "third"];
