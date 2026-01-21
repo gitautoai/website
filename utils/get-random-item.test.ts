@@ -127,66 +127,7 @@ describe("getRandomItem", () => {
       const result = getRandomItem(items);
       expect(result).toBeUndefined();
     });
-
-  describe("deterministic behavior with mocked Math.random", () => {
-    let originalRandom: () => number;
-
-    beforeEach(() => {
-      originalRandom = Math.random;
-    });
-
-    afterEach(() => {
-      Math.random = originalRandom;
-    });
-
-    it("should return first item when Math.random returns 0", () => {
-      Math.random = jest.fn(() => 0);
-      const items = ["first", "second", "third"];
-      const result = getRandomItem(items);
-      expect(result).toBe("first");
-    });
-
-    it("should return last item when Math.random returns close to 1", () => {
-      Math.random = jest.fn(() => 0.99);
-      const items = ["first", "second", "third"];
-      const result = getRandomItem(items);
-      expect(result).toBe("third");
-    });
-
-    it("should return middle item when Math.random returns 0.5", () => {
-      Math.random = jest.fn(() => 0.5);
-      const items = ["first", "second", "third", "fourth", "fifth"];
-      const result = getRandomItem(items);
-      expect(result).toBe("third");
-    });
-
-    it("should correctly calculate index for two-item array", () => {
-      Math.random = jest.fn(() => 0.5);
-      const items = ["a", "b"];
-      const result = getRandomItem(items);
-      expect(result).toBe("b");
-    });
-
-    it("should handle large arrays", () => {
-      Math.random = jest.fn(() => 0.5);
-      const items = Array.from({ length: 100 }, (_, i) => i);
-      const result = getRandomItem(items);
-      expect(result).toBe(50);
-    });
-
-    it("should use Math.floor to round down the index", () => {
-      Math.random = jest.fn(() => 0.33);
-      const items = ["a", "b", "c"];
-      const result = getRandomItem(items);
-      // 0.33 * 3 = 0.99, Math.floor(0.99) = 0
-      expect(result).toBe("a");
-    });
-
-    it("should multiply random by array length", () => {
-      Math.random = jest.fn(() => 0.75);
-      const items = [10, 20, 30, 40];
-      const result = getRandomItem(items);
-      // 0.75 * 4 = 3, Math.floor(3) = 3, items[3] = 40
+  });
 
   describe("deterministic behavior with mocked Math.random", () => {
     let originalRandom: () => number;
@@ -247,5 +188,46 @@ describe("getRandomItem", () => {
       const items = Array.from({ length: 1000 }, (_, i) => i);
       const result = getRandomItem(items);
       expect(result).toBe(500);
+    });
+
+    it("should multiply random by array length correctly", () => {
+      Math.random = jest.fn(() => 0.75);
+      const items = [10, 20, 30, 40];
+      const result = getRandomItem(items);
+      // 0.75 * 4 = 3, Math.floor(3) = 3, items[3] = 40
+      expect(result).toBe(40);
+    });
+
+    it("should handle boundary case with Math.random = 0.25", () => {
+      Math.random = jest.fn(() => 0.25);
+      const items = ["a", "b", "c", "d"];
+      const result = getRandomItem(items);
+      // 0.25 * 4 = 1, Math.floor(1) = 1, items[1] = "b"
+      expect(result).toBe("b");
+    });
+
+    it("should verify Math.floor rounds down fractional indices", () => {
+      Math.random = jest.fn(() => 0.666);
+      const items = [1, 2, 3];
+      const result = getRandomItem(items);
+      // 0.666 * 3 = 1.998, Math.floor(1.998) = 1, items[1] = 2
+      expect(result).toBe(2);
+    });
+
+    it("should handle single item array with any Math.random value", () => {
+      Math.random = jest.fn(() => 0.999);
+      const items = ["only"];
+      const result = getRandomItem(items);
+      // 0.999 * 1 = 0.999, Math.floor(0.999) = 0, items[0] = "only"
+      expect(result).toBe("only");
+    });
+
+    it("should access correct index for 10-item array", () => {
+      Math.random = jest.fn(() => 0.7);
+      const items = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      const result = getRandomItem(items);
+      // 0.7 * 10 = 7, Math.floor(7) = 7, items[7] = 7
+      expect(result).toBe(7);
+    });
   });
 });
