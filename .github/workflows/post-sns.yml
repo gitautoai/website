@@ -67,11 +67,11 @@ jobs:
             // Check if it's a blog post
             const { isBlog, postUrl } = await getBlogInfo({ github, context: triggeringContext });
 
-            // Check if has sns label
-            const hasSnsLabel = pullRequest.labels?.some(label => label.name === 'sns') || false;
+            // Check if PR body has Social Media Post section
+            const hasSocialMediaPost = pullRequest.body?.includes('## Social Media Post') || false;
 
-            // Should post if it's a blog post OR has sns label
-            const shouldPost = isBlog || hasSnsLabel;
+            // Should post if it's a blog post OR has Social Media Post section
+            const shouldPost = isBlog || hasSocialMediaPost;
 
             core.setOutput('should-post', shouldPost);
             core.setOutput('is-blog', isBlog);
@@ -79,7 +79,7 @@ jobs:
             core.setOutput('pr-number', pullRequest.number);
 
             console.log(`Blog post detected: ${isBlog}`);
-            console.log(`SNS label detected: ${hasSnsLabel}`);
+            console.log(`Social Media Post section detected: ${hasSocialMediaPost}`);
             console.log(`Should post to SNS: ${shouldPost}`);
 
   post-sns:
