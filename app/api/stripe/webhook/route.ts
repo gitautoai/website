@@ -20,9 +20,10 @@ export async function POST(req: NextRequest) {
   try {
     // Verify webhook signature
     event = stripe.webhooks.constructEvent(body, signature, STRIPE_WEBHOOK_SECRET);
-  } catch (err: any) {
-    console.error("Webhook signature verification failed:", err.message);
-    return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("Webhook signature verification failed:", message);
+    return NextResponse.json({ error: `Webhook Error: ${message}` }, { status: 400 });
   }
 
   try {
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
           },
         });
         console.log(
-          `Set payment method ${paymentIntent.payment_method} as default for customer ${paymentIntent.customer}`
+          `Set payment method ${paymentIntent.payment_method} as default for customer ${paymentIntent.customer}`,
         );
       } catch (error) {
         console.error("Failed to set default payment method:", error);
@@ -90,7 +91,7 @@ export async function POST(req: NextRequest) {
       `💰 ${paymentType} successful!\n` +
         `Owner: ${ownerId}\n` +
         `Amount: $${creditAmountUsd}\n` +
-        `Payment ID: ${paymentIntent.id}`
+        `Payment ID: ${paymentIntent.id}`,
     );
 
     return NextResponse.json({ received: true }, { status: 200 });

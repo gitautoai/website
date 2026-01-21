@@ -10,7 +10,7 @@ const createJestConfig = nextJest({
 const customJestConfig: Config = {
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testEnvironment: "jest-environment-jsdom",
-  testPathIgnorePatterns: ["/node_modules/", "/e2e/"],
+  testPathIgnorePatterns: ["/node_modules/", "/e2e/", "\\.integration\\.test\\."],
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
 
@@ -27,7 +27,7 @@ const customJestConfig: Config = {
     // Transform all necessary ES modules
     "/node_modules/(?!(next-auth|@next-auth|jose|openid-client|@supabase|supabase-js|isows|@octokit))/",
   ],
-  collectCoverage: true,
+  collectCoverage: false,
   collectCoverageFrom: [
     "**/*.{js,jsx,ts,tsx}",
     "!**/_*.{js,jsx,ts,tsx}", // Next.js private files

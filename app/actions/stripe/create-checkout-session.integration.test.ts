@@ -1,7 +1,6 @@
 import { createCheckoutSession } from "./create-checkout-session";
 import stripe from "@/lib/stripe";
-import { BASE_URL, ABSOLUTE_URLS } from "@/config/urls";
-import Stripe from "stripe";
+import { ABSOLUTE_URLS } from "@/config/urls";
 
 // Increase timeout for Stripe API calls
 jest.setTimeout(60000);

@@ -70,16 +70,18 @@ export async function chargeSavedPaymentMethod({
         error: `Payment intent status: ${paymentIntent.status}`,
       };
     }
-  } catch (error: any) {
+  } catch (error) {
     // Don't log errors for test customers (reduces noise in test output)
     if (!customerId.includes("test")) console.error("Error charging saved payment method:", error);
 
+    const stripeError = error as { type?: string; message?: string };
+
     // Handle specific Stripe errors
-    if (error.type === "StripeCardError") return { success: false, error: error.message };
+    if (stripeError.type === "StripeCardError") return { success: false, error: stripeError.message || "Card error" };
 
     return {
       success: false,
-      error: error.message || "Failed to charge payment method",
+      error: stripeError.message || "Failed to charge payment method",
     };
   }
 }

@@ -12,7 +12,7 @@ export async function fetchOpenIssues(
   setOpenIssues: (issues: ParentIssue[]) => void,
   setSelectedParentIssue: (issue: ParentIssue | null) => void,
   setIsLoadingIssues: (loading: boolean) => void,
-  setError: (error: string) => void
+  _setError: (error: string) => void
 ) {
   setIsLoadingIssues(true);
   try {

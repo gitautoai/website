@@ -12,7 +12,7 @@ export default function HowToGetStarted() {
   const { currentOwnerType, currentOwnerName, currentInstallationId } = useAccountContext();
 
   // If installed, generate URL based on current Org/User
-  const getManageReposUrl = () => {
+  const _getManageReposUrl = () => {
     if (!currentInstallationId) return ABSOLUTE_URLS.GITHUB.INSTALLED_APPS;
 
     if (currentOwnerType === "Organization" && currentOwnerName)

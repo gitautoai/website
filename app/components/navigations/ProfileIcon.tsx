@@ -2,7 +2,7 @@
 
 // Third party imports
 import Image from "next/image";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Session } from "next-auth";
 import { signOut } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
@@ -32,10 +32,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
     currentOwnerType,
     currentOwnerName,
     currentStripeCustomerId,
-    userName,
   } = useAccountContext();
-
-  const router = useRouter();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

@@ -24,7 +24,6 @@ export const RELATIVE_URLS = {
     ACTIONS: "/settings/actions",
     REFERENCES: "/settings/references",
     RULES: "/settings/rules",
-    SCREENSHOTS: "/settings/screenshots",
     TRIGGERS: "/settings/triggers",
     INTEGRATIONS: {
       CIRCLECI: "/settings/integrations/circleci",
@@ -143,7 +142,6 @@ export const ABSOLUTE_URLS = {
       ACTIONS: `${BASE_URL}${RELATIVE_URLS.SETTINGS.ACTIONS}`,
       REFERENCES: `${BASE_URL}${RELATIVE_URLS.SETTINGS.REFERENCES}`,
       RULES: `${BASE_URL}${RELATIVE_URLS.SETTINGS.RULES}`,
-      SCREENSHOTS: `${BASE_URL}${RELATIVE_URLS.SETTINGS.SCREENSHOTS}`,
       TRIGGERS: `${BASE_URL}${RELATIVE_URLS.SETTINGS.TRIGGERS}`,
       INTEGRATIONS: {
         CIRCLECI: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI}`,

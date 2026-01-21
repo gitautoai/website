@@ -31,13 +31,24 @@ export async function getBlogPosts() {
           console.error(`Error processing ${file}:`, error);
           return null;
         }
-      })
+      }),
   );
 
+  type BlogPostMetadata = {
+    slug: string;
+    title: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+
   const posts = results
-    .filter((result): result is PromiseFulfilledResult<any> => result.status === "fulfilled")
+    .filter(
+      (result): result is PromiseFulfilledResult<BlogPostMetadata | null> =>
+        result.status === "fulfilled",
+    )
     .map((result) => result.value)
-    .filter((post) => post !== null);
+    .filter((post): post is BlogPostMetadata => post !== null);
 
   return posts.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 }

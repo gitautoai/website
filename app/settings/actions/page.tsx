@@ -32,7 +32,6 @@ export default function ActionsPage() {
     useAccountContext();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [savingRepoId, setSavingRepoId] = useState<number | null>(null);
   const [repoSettings, setRepoSettings] = useState<RepoWithSettings[]>([]);
 
   useEffect(() => {
@@ -93,7 +92,7 @@ export default function ActionsPage() {
     repoId: number,
     repoName: string,
     field: keyof Pick<RepoFeatures, "auto_merge" | "auto_merge_only_test_files" | "merge_method">,
-    value: boolean | string
+    value: boolean | string,
   ) => {
     if (!currentOwnerId || !currentOwnerName || !userId || !userLogin) return;
 
@@ -114,7 +113,7 @@ export default function ActionsPage() {
 
     // Optimistic update - update UI immediately
     setRepoSettings((prev) =>
-      prev.map((r) => (r.repoId === repoId ? { ...r, settings: updatedSettings } : r))
+      prev.map((r) => (r.repoId === repoId ? { ...r, settings: updatedSettings } : r)),
     );
 
     // Save to database in background (no await)
@@ -125,12 +124,12 @@ export default function ActionsPage() {
       repoName,
       userId,
       userLogin,
-      updatedSettings
+      updatedSettings,
     ).catch((error) => {
       console.error("Error saving action settings:", error);
       // Revert optimistic update on error
       setRepoSettings((prev) =>
-        prev.map((r) => (r.repoId === repoId ? { ...r, settings: currentSettings } : r))
+        prev.map((r) => (r.repoId === repoId ? { ...r, settings: currentSettings } : r)),
       );
     });
 
@@ -234,10 +233,9 @@ export default function ActionsPage() {
                   updated_at: "",
                   updated_by: "",
                 };
-                const isSaving = savingRepoId === repo.repoId;
 
                 return (
-                  <tr key={repo.repoId} className={isSaving ? "opacity-50" : ""}>
+                  <tr key={repo.repoId}>
                     <td className="px-4 py-3 text-sm font-medium text-gray-900">{repo.repoName}</td>
                     <td className="px-4 py-3">
                       <button
@@ -246,13 +244,12 @@ export default function ActionsPage() {
                             repo.repoId,
                             repo.repoName,
                             "auto_merge",
-                            !settings.auto_merge
+                            !settings.auto_merge,
                           )
                         }
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
                           settings.auto_merge ? "bg-pink-600" : "bg-gray-300"
                         }`}
-                        disabled={isSaving}
                       >
                         <span
                           className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
@@ -268,13 +265,13 @@ export default function ActionsPage() {
                             repo.repoId,
                             repo.repoName,
                             "auto_merge_only_test_files",
-                            !settings.auto_merge_only_test_files
+                            !settings.auto_merge_only_test_files,
                           )
                         }
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
                           settings.auto_merge_only_test_files ? "bg-pink-600" : "bg-gray-300"
                         }`}
-                        disabled={isSaving || !settings.auto_merge}
+                        disabled={!settings.auto_merge}
                       >
                         <span
                           className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
@@ -290,7 +287,7 @@ export default function ActionsPage() {
                           updateSetting(repo.repoId, repo.repoName, "merge_method", e.target.value)
                         }
                         className="w-32 p-1.5 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500 text-sm"
-                        disabled={isSaving || !settings.auto_merge}
+                        disabled={!settings.auto_merge}
                       >
                         <option value="merge">Merge</option>
                         <option value="squash">Squash</option>

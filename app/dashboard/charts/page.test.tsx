@@ -28,7 +28,7 @@ jest.mock("@/app/components/ErrorBanner", () => () => null);
 jest.mock("@/app/components/LoadingSpinner", () => () => null);
 jest.mock("@/app/components/PeriodSelector", () => ({
   __esModule: true,
-  default: ({ selectedPeriod, onPeriodChange }: any) => null,
+  default: ({ selectedPeriod: _selectedPeriod, onPeriodChange: _onPeriodChange }: any) => null,
   calculatePeriodDates: jest.fn(() => ({
     startDate: "2024-01-01",
     endDate: "2024-12-31",

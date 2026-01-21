@@ -20,7 +20,6 @@ export const THUMBNAILS = {
     ACTIONS: `${BASE_URL}/og/settings-actions.png`,
     REFERENCES: `${BASE_URL}/og/settings-references.png`,
     RULES: `${BASE_URL}/og/settings-rules.png`,
-    SCREENSHOTS: `${BASE_URL}/og/settings-screenshots.png`,
     TRIGGERS: `${BASE_URL}/og/settings-triggers.png`,
     INTEGRATIONS: {
       CIRCLECI: `${BASE_URL}/og/settings-integrations-circleci.png`,

@@ -15,7 +15,7 @@ export const createCheckoutSession = async ({
 }: {
   customerId: string;
   amountUsd: number; // Credit amount in whole dollars
-  metadata: any;
+  metadata: Record<string, string>;
   cancelUrl?: string;
 }) => {
   try {
@@ -71,7 +71,7 @@ export const createCheckoutSession = async ({
 
     // Return a plain object to avoid Next.js serialization errors
     return { ...checkoutSession };
-  } catch (error: any) {
+  } catch (error) {
     throw error;
   }
 };

@@ -2,7 +2,7 @@
 
 // Third Party Imports
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 
@@ -27,7 +27,6 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen }: MobileDrawerPr
     jwtToken,
     email,
     installations,
-    userName,
     currentOwnerId,
     currentOwnerType,
     currentOwnerName,

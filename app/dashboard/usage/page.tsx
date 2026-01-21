@@ -140,8 +140,9 @@ export default function UsagePage() {
         total_open_prs: openPRs.length,
         total_passing_prs: checkStatuses.filter((status) => status.isTestPassed).length,
       };
-    } catch (githubError: any) {
-      console.error(`GitHub PR stats failed for ${repoName}:`, githubError.message);
+    } catch (githubError) {
+      const message = githubError instanceof Error ? githubError.message : "Unknown error";
+      console.error(`GitHub PR stats failed for ${repoName}:`, message);
     }
 
     return {
@@ -390,7 +391,7 @@ export default function UsagePage() {
 
       setUpdatingRepo("__ALL__");
       try {
-        let totalResult = { total: 0, successful: 0, skipped: 0, failed: 0 };
+        const totalResult = { total: 0, successful: 0, skipped: 0, failed: 0 };
 
         for (const repo of currentOrg.repositories) {
           const openPRs = await getOpenPRNumbers({

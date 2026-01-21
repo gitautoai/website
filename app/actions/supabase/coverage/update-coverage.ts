@@ -1,14 +1,17 @@
 "use server";
 
 import { supabaseAdmin } from "@/lib/supabase/server";
+import type { Tables } from "@/types/supabase";
+
+type CoverageRow = Tables<"coverages">;
 
 /**
  * Bulk update file sizes using upsert with existing data preservation
  */
 export async function updateCoverage(
-  updates: Array<{ id: number; fileSize: number; existingData: any }>,
+  updates: Array<{ id: number; fileSize: number; existingData: CoverageRow }>,
   userId: number,
-  userName: string
+  userName: string,
 ) {
   if (updates.length === 0) return 0;
 

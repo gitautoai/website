@@ -1,7 +1,6 @@
 "use client";
 
 import * as Sentry from "@sentry/nextjs";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { usePostHog } from "posthog-js/react";
 import { useState, useEffect } from "react";
@@ -19,7 +18,6 @@ type CreditPurchaseModalProps = {
 
 export default function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseModalProps) {
   const posthog = usePostHog();
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [purchaseAmountUsd, setPurchaseAmountUsd] = useState(
     CREDIT_PRICING.PURCHASE_LIMITS.DEFAULT_AMOUNT_USD
@@ -104,11 +102,11 @@ export default function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseM
         customerId: currentStripeCustomerId,
         amountUsd: purchaseAmountUsd,
         metadata: {
-          user_id: userId,
+          user_id: String(userId),
           user_name: userName,
           owner_name: currentOwnerName,
-          owner_id: currentOwnerId,
-          credit_amount: purchaseAmountUsd,
+          owner_id: String(currentOwnerId),
+          credit_amount: String(purchaseAmountUsd),
         },
         cancelUrl: window.location.href,
       });

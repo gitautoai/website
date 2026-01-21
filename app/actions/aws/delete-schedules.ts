@@ -22,12 +22,12 @@ export async function deleteSchedules(ownerId: number, repoId: number) {
         // Delete the schedule
         try {
           await schedulerClient.send(new DeleteScheduleCommand({ Name: schedule.Name }));
-        } catch (error: any) {
-          if (error.name !== "ResourceNotFoundException") throw error;
+        } catch (error) {
+          if (error instanceof Error && error.name !== "ResourceNotFoundException") throw error;
         }
       }
     }
-  } catch (error: any) {
-    if (error.name !== "ResourceNotFoundException") throw error;
+  } catch (error) {
+    if (error instanceof Error && error.name !== "ResourceNotFoundException") throw error;
   }
 }

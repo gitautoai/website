@@ -43,12 +43,21 @@ export async function getUsageStats({
         })
       : allTimeData;
 
-  const calculateStats = (data: any[]): HistoricalStats => {
+  type UsageRecord = {
+    created_at: string;
+    pr_number: number | null;
+    owner_name: string;
+    repo_name: string;
+    issue_number: number;
+    is_merged: boolean | null;
+  };
+
+  const calculateStats = (data: UsageRecord[]): HistoricalStats => {
     // Get only the latest record for each PR number for merge status
     const sortedData = [...data].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     );
-    const latestRecordsByPR = new Map<number, any>();
+    const latestRecordsByPR = new Map<number, UsageRecord>();
     for (const record of sortedData) {
       if (record.pr_number && !latestRecordsByPR.has(record.pr_number)) {
         latestRecordsByPR.set(record.pr_number, record);
@@ -60,19 +69,19 @@ export async function getUsageStats({
     const uniquePRs = new Set(
       data
         .filter((record) => record.pr_number)
-        .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
+        .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`),
     );
 
     // Unique issue count is owner_name + repo_name + issue_number combination
     const uniqueIssues = new Set(
-      data.map((record) => `${record.owner_name}/${record.repo_name}#${record.issue_number}`)
+      data.map((record) => `${record.owner_name}/${record.repo_name}#${record.issue_number}`),
     );
 
     // Track unique merged PRs (deduplicate by PR number) - use latest records only
     const uniqueMergedPRs = new Set(
       latestPRRecords
         .filter((record) => record.is_merged && record.pr_number)
-        .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`)
+        .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`),
     );
 
     return {
