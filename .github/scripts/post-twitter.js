@@ -4,21 +4,22 @@ const { TwitterApi } = require("twitter-api-v2");
  * Post tweet with retry logic for 403 errors
  */
 async function postTweetWithRetry(client, message, title, url, socialMediaPost) {
-  let tweet = socialMediaPost
-    ? `${message}: ${title} ${url}\n\n${socialMediaPost}`
-    : `${message}: ${title} ${url}`;
+  let tweet = `${message}: ${title}`;
+  if (socialMediaPost) tweet += `\n\n${socialMediaPost}`;
+  if (url) tweet += `\n\n${url}`;
 
   try {
     return await client.v2.tweet(tweet);
   } catch (error) {
     if (error.code === 403 && socialMediaPost) {
-      // Fit as much content as possible
-      const baseLength = `${message}: ${title} ${url}\n\n`.length;
-      const maxLength = 280 - baseLength - 3; // 3 for "..."
-      if (maxLength > 10) {
-        tweet = `${message}: ${title} ${url}\n\n${socialMediaPost.substring(0, maxLength)}...`;
+      // Truncate socialMediaPost to fit 280 char limit
+      const base = `${message}: ${title}`;
+      const suffix = url ? `\n\n${url}` : "";
+      const available = 280 - base.length - suffix.length - 5; // 5 for "\n\n" + "..."
+      if (available > 10) {
+        tweet = `${base}\n\n${socialMediaPost.substring(0, available)}...${suffix}`;
       } else {
-        tweet = `${message}: ${title} ${url}`;
+        tweet = `${base}${suffix}`;
       }
       return await client.v2.tweet(tweet);
     }
@@ -29,7 +30,7 @@ async function postTweetWithRetry(client, message, title, url, socialMediaPost) 
 /**
  * @see https://developer.x.com/en/docs/x-api/tweets/manage-tweets/api-reference/post-tweets
  */
-async function postTwitter({ context, isBlog, postUrl }) {
+async function postTwitter({ isBlog, postUrl, socialMediaPost, title }) {
   // GitAuto company account
   const clientGitAuto = new TwitterApi({
     appKey: process.env.TWITTER_API_KEY,
@@ -47,14 +48,7 @@ async function postTwitter({ context, isBlog, postUrl }) {
   });
 
   const message = isBlog ? "📝 New post" : "🚀 New release";
-  const url = `${postUrl}?utm_source=x&utm_medium=referral`;
-  const title = context.payload.pull_request.title;
-  const prBody = context.payload.pull_request.body || "";
-  const socialMediaPost = prBody.match(/## Social Media Post\s*\n([\s\S]*?)(?=\n##|$)/)?.[1]?.trim() || "";
-
-  // Non-paid account, we can only post 280 characters. Paid account can post 250,000 characters.
-  const combinedText = socialMediaPost ? `${title} ${url}\n\n${socialMediaPost}` : `${title} ${url}`;
-  const tweet = `${message}: ${combinedText}`;
+  const url = isBlog ? `${postUrl}?utm_source=x&utm_medium=referral` : null;
 
   // Senders have to be in the community
   // https://x.com/hnishio0105/communities
@@ -68,7 +62,13 @@ async function postTwitter({ context, isBlog, postUrl }) {
 
   // Post tweets and get their IDs
   // https://github.com/PLhery/node-twitter-api-v2/blob/master/doc/v2.md#create-a-tweet
-  const gitAutoTweet = await postTweetWithRetry(clientGitAuto, message, title, url, socialMediaPost);
+  const gitAutoTweet = await postTweetWithRetry(
+    clientGitAuto,
+    message,
+    title,
+    url,
+    socialMediaPost,
+  );
   const wesTweet = await postTweetWithRetry(clientWes, message, title, url, socialMediaPost);
 
   // https://docs.x.com/x-api/posts/creation-of-a-post

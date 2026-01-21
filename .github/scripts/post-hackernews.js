@@ -3,7 +3,7 @@ const { chromium } = require("playwright");
 /**
  * Posts to Hacker News using Playwright for browser automation
  */
-async function postHackerNews({ context, isBlog, postUrl }) {
+async function postHackerNews({ isBlog, postUrl, socialMediaPost, title }) {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
@@ -26,15 +26,17 @@ async function postHackerNews({ context, isBlog, postUrl }) {
     await page.waitForLoadState("networkidle");
 
     // Submit story
-    const title = context.payload.pull_request.title.substring(0, 80);
-    const prBody = context.payload.pull_request.body || "";
-    const socialMediaPost = prBody.match(/## Social Media Post\s*\n([\s\S]*?)(?=\n##|$)/)?.[1]?.trim() || "";
+    const hnTitle = title.substring(0, 80);
 
-    await page.fill('input[name="title"]', title);
-    await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
+    await page.fill('input[name="title"]', hnTitle);
 
-    // If there's a social media post section, add it as text
-    if (socialMediaPost) await page.fill('textarea[name="text"]', socialMediaPost);
+    // Blog posts: submit with URL; Non-blog: text-only post
+    if (isBlog) {
+      await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
+    }
+    if (socialMediaPost) {
+      await page.fill('textarea[name="text"]', socialMediaPost);
+    }
 
     await page.click('input[type="submit"]');
     await page.waitForLoadState("networkidle");
