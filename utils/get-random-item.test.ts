@@ -127,5 +127,65 @@ describe("getRandomItem", () => {
       const result = getRandomItem(items);
       expect(result).toBeUndefined();
     });
+
+  describe("deterministic behavior with mocked Math.random", () => {
+    let originalRandom: () => number;
+
+    beforeEach(() => {
+      originalRandom = Math.random;
+    });
+
+    afterEach(() => {
+      Math.random = originalRandom;
+    });
+
+    it("should return first item when Math.random returns 0", () => {
+      Math.random = jest.fn(() => 0);
+      const items = ["first", "second", "third"];
+      const result = getRandomItem(items);
+      expect(result).toBe("first");
+    });
+
+    it("should return last item when Math.random returns value close to 1", () => {
+      Math.random = jest.fn(() => 0.99);
+      const items = ["first", "second", "third"];
+      const result = getRandomItem(items);
+      expect(result).toBe("third");
+    });
+
+    it("should return middle item when Math.random returns 0.5", () => {
+      Math.random = jest.fn(() => 0.5);
+      const items = ["first", "second", "third", "fourth", "fifth"];
+      const result = getRandomItem(items);
+      expect(result).toBe("third");
+    });
+
+    it("should correctly calculate index with Math.floor", () => {
+      Math.random = jest.fn(() => 0.33);
+      const items = ["a", "b", "c"];
+      const result = getRandomItem(items);
+      // 0.33 * 3 = 0.99, Math.floor(0.99) = 0
+      expect(result).toBe("a");
+    });
+
+    it("should handle two-item array with Math.random = 0", () => {
+      Math.random = jest.fn(() => 0);
+      const items = [100, 200];
+      const result = getRandomItem(items);
+      expect(result).toBe(100);
+    });
+
+    it("should handle two-item array with Math.random = 0.99", () => {
+      Math.random = jest.fn(() => 0.99);
+      const items = [100, 200];
+      const result = getRandomItem(items);
+      expect(result).toBe(200);
+    });
+
+    it("should handle large arrays", () => {
+      Math.random = jest.fn(() => 0.5);
+      const items = Array.from({ length: 1000 }, (_, i) => i);
+      const result = getRandomItem(items);
+      expect(result).toBe(500);
   });
 });
