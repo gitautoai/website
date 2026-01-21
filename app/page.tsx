@@ -1,6 +1,4 @@
 "use client";
-// Third party imports
-import { usePathname } from "next/navigation";
 
 // Local components
 import FAQ from "@/app/components/home/FAQ";

@@ -6,7 +6,7 @@ jest.setTimeout(60000);
 
 describe("checkActiveSubscription integration", () => {
   let testCustomers: string[] = [];
-  let testPrices: string[] = [];
+  const testPrices: string[] = [];
 
   // Helper function to attach payment method to customer for paid subscriptions
   const attachPaymentMethod = async (customerId: string) => {

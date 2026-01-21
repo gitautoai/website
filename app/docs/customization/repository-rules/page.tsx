@@ -6,7 +6,6 @@ import { RELATIVE_URLS } from "@/config/urls";
 import { bestPracticesFirst } from "./code/best-practices-first";
 import { consistencyFirst } from "./code/consistency-first";
 import { customRulesExample } from "./code/custom-rules";
-import { priorityExample } from "./code/priority-example";
 import { oneFunctionPerFileGood } from "./code/one-function-per-file-good";
 import { oneFunctionPerFileBad } from "./code/one-function-per-file-bad";
 import { earlyReturnsGood } from "./code/early-returns-good";

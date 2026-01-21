@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     const graphqlClient = getGraphQL(accessToken);
 
     // Get repository Node ID and label ID if needed
-    let allLabels: Array<{ id: string; name: string }> = [];
+    const allLabels: Array<{ id: string; name: string }> = [];
     let hasNextPage = true;
     let endCursor: string | null = null;
     let repositoryId: string | null = null;

@@ -23,13 +23,6 @@ export type ReferenceSettings = {
   filePaths: string[];
 };
 
-export type ScreenshotSettings = {
-  useScreenshots: boolean;
-  productionUrl: string;
-  localPort: number;
-  startupCommands: string[];
-};
-
 export type TriggerSettings = {
   triggerOnReviewComment: boolean;
   triggerOnTestFailure: boolean;
@@ -41,4 +34,4 @@ export type TriggerSettings = {
   scheduleIntervalMinutes: number;
 };
 
-export type Settings = RulesSettings | ReferenceSettings | ScreenshotSettings | TriggerSettings;
+export type Settings = RulesSettings | ReferenceSettings | TriggerSettings;

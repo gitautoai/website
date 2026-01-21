@@ -1,7 +1,17 @@
 import { AUDIENCE, CREATOR } from "@/app/jsonld";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
-export function createBlogPostJsonLd(post: any, slug: string) {
+type BlogPost = {
+  title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  author?: string;
+  authorUrl?: string;
+  tags?: string[];
+};
+
+export function createBlogPostJsonLd(post: BlogPost, slug: string) {
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",

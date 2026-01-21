@@ -82,10 +82,10 @@ export const getOpenPRNumbers = async ({
       hasConflicts: pr.mergeable === "CONFLICTING",
       createdAt: pr.createdAt,
     }));
-  } catch (error: any) {
+  } catch (error) {
     console.error("getOpenPRNumbers failed:", {
-      error: error.message,
-      status: error.status,
+      error: error instanceof Error ? error.message : "Unknown error",
+      status: (error as { status?: number }).status,
       ownerName,
       repoName,
       installationId,

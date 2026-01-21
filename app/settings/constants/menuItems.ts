@@ -31,17 +31,5 @@ export const menuItems = [
     href: RELATIVE_URLS.SETTINGS.INTEGRATIONS.NPM,
     isHeader: false,
   },
-  // {
-  //   id: "screenshots",
-  //   label: "Screenshots",
-  //   href: RELATIVE_URLS.SETTINGS.SCREENSHOTS,
-  //   isHeader: false,
-  // },
-  // {
-  //   id: "integrations",
-  //   label: "Integrations",
-  //   href: RELATIVE_URLS.SETTINGS.INTEGRATIONS.JIRA,
-  //   isHeader: false,
-  // },
   { id: "home", label: "Back to Home", href: RELATIVE_URLS.INDEX, isHeader: false },
 ] as const;

@@ -32,9 +32,9 @@ export async function getOwnerIds(userId: number, accessToken: string) {
 
     // Combine user's own ID with organization IDs (and additional owner IDs for admin)
     return [userId, ...orgs.map((org) => org.id), ...ADDITIONAL_OWNER_IDS];
-  } catch (error: any) {
+  } catch (error) {
     // If GitHub API call fails, log error and continue with just userId
-    console.error(`GitHub API error for user ${userId}:`, error.message);
+    console.error(`GitHub API error for user ${userId}:`, error instanceof Error ? error.message : "Unknown error");
     return [userId, ...ADDITIONAL_OWNER_IDS]; // Fallback to user ID (+ additional owners for admin)
   }
 }

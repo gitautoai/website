@@ -326,8 +326,11 @@ export type StructuredRules = {
 
 // Extract default values from config
 export const DEFAULT_STRUCTURED_RULES = Object.values(STRUCTURED_RULES_CONFIG)
-  .flatMap((section: any) => section.rules)
-  .reduce((acc: any, rule: any) => {
-    acc[rule.key] = rule.default;
-    return acc;
-  }, {} as any) as StructuredRules;
+  .flatMap((section) => [...section.rules])
+  .reduce(
+    (acc, rule) => {
+      acc[rule.key as keyof StructuredRules] = rule.default;
+      return acc;
+    },
+    {} as Record<string, boolean | string>,
+  ) as StructuredRules;

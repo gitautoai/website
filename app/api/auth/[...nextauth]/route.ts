@@ -4,7 +4,7 @@ import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
 
 // Local imports
-import { config, isPrd, EMAIL_FROM, PRODUCT_NAME } from "@/config";
+import { config, EMAIL_FROM, PRODUCT_NAME } from "@/config";
 import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "@/config/github";
 import { sendEmail } from "@/app/actions/resend/send-email";
 import { generateWelcomeEmail } from "@/app/actions/resend/templates/generate-welcome-email";

@@ -49,42 +49,45 @@ export default function ContactPage() {
   const [showErrorModal, setShowErrorModal] = useState(false);
 
   // Form action
-  const [state, formAction] = useActionState(async (prevState: any, formData: FormData) => {
-    // Save to database
-    const saveResult = await saveContact(formData, userId, userName);
+  const [state, formAction] = useActionState(
+    async (_prevState: typeof initialState, formData: FormData) => {
+      // Save to database
+      const saveResult = await saveContact(formData, userId, userName);
 
-    if (saveResult.success && saveResult.data) {
-      // Send Slack notification (existing)
-      const message = formatContactMessage(saveResult.data);
-      await slackUs(message);
+      if (saveResult.success && saveResult.data) {
+        // Send Slack notification (existing)
+        const message = formatContactMessage(saveResult.data);
+        await slackUs(message);
 
-      // Send email notification (direct call)
-      const subjects = [
-        `Thanks for reaching out to ${PRODUCT_NAME}!`,
-        `Got your message!`,
-        `Thanks for contacting ${PRODUCT_NAME}`,
-        `Received your ${PRODUCT_NAME} inquiry`,
-      ];
+        // Send email notification (direct call)
+        const subjects = [
+          `Thanks for reaching out to ${PRODUCT_NAME}!`,
+          `Got your message!`,
+          `Thanks for contacting ${PRODUCT_NAME}`,
+          `Received your ${PRODUCT_NAME} inquiry`,
+        ];
 
-      const emailResult = await sendEmail({
-        from: EMAIL_FROM,
-        to: [saveResult.data.email],
-        cc: [EMAIL],
-        subject: getRandomItem(subjects),
-        text: generateContactConfirmation(saveResult.data),
-      });
+        const emailResult = await sendEmail({
+          from: EMAIL_FROM,
+          to: [saveResult.data.email],
+          cc: [EMAIL],
+          subject: getRandomItem(subjects),
+          text: generateContactConfirmation(saveResult.data),
+        });
 
-      if (!emailResult.success) {
-        console.error("Failed to send email notification:", emailResult.error);
+        if (!emailResult.success) {
+          console.error("Failed to send email notification:", emailResult.error);
+        }
+
+        setShowSuccessModal(true);
+      } else {
+        setShowErrorModal(true);
       }
 
-      setShowSuccessModal(true);
-    } else {
-      setShowErrorModal(true);
-    }
-
-    return saveResult;
-  }, initialState);
+      return saveResult;
+    },
+    initialState,
+  );
 
   // Scroll to top when form is submitted successfully
   useEffect(() => {

@@ -15,6 +15,7 @@
     "lint": "eslint .",
     "types:generate": "supabase gen types typescript --project-id dkrxtcbaqzrodvsagwwn > types/supabase.ts && prettier --write types/supabase.ts",
     "test": "jest",
+    "test:integration": "jest --config jest.integration.config.ts",
     "test:watch": "jest --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

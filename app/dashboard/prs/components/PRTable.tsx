@@ -38,20 +38,20 @@ const getDiffBadge = (additions: number, deletions: number) => {
     parts.push(
       <span key="add" className="text-green-600">
         +{additions}
-      </span>
+      </span>,
     );
   if (deletions > 0)
     parts.push(
       <span key="del" className="text-red-600">
         -{deletions}
-      </span>
+      </span>,
     );
 
   if (parts.length === 0) return null;
 
   return (
     <span className="text-xs ml-2">
-      ({parts.reduce((prev, curr, i) => [prev, i > 0 ? ", " : "", curr] as any)})
+      ({parts.reduce<React.ReactNode[]>((acc, curr, i) => [...acc, i > 0 ? ", " : "", curr], [])})
     </span>
   );
 };

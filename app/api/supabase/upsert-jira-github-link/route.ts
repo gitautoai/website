@@ -40,7 +40,7 @@ export async function POST(request: Request) {
       );
 
     // Upsert the data into the database
-    const { data, error } = await supabaseAdmin.from("jira_github_links").upsert(
+    const { error } = await supabaseAdmin.from("jira_github_links").upsert(
       {
         ...body,
         updated_at: new Date().toISOString(),

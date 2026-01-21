@@ -24,9 +24,9 @@ export const updatePRBranches = async ({
           pull_number: prNumber,
         });
         return { success: true, prNumber, skipped: false };
-      } catch (error: any) {
+      } catch (error) {
         // If 422, treat as already up to date (success)
-        if (error.status === 422) return { success: true, prNumber, skipped: true };
+        if ((error as { status?: number }).status === 422) return { success: true, prNumber, skipped: true };
 
         return {
           success: false,

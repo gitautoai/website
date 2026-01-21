@@ -3,13 +3,18 @@ import { getSortFieldForMetric } from "../utils/get-sort-field-for-metric";
 import { getMetricHeader } from "../utils/get-metric-header";
 import SortIcon from "@/app/components/icons/SortIcon";
 
+type CoverageRow = {
+  id: number;
+  level: string;
+};
+
 interface TableHeaderProps {
   sortField: SortField;
   sortDirection: SortDirection;
   onSort: (field: SortField) => void;
   selectedMobileMetric: Metric;
   selectedRows: number[];
-  filteredData: any[];
+  filteredData: CoverageRow[];
   onSelectAll: () => void;
 }
 

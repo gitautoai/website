@@ -314,31 +314,9 @@ export default function TriggersPage() {
       const offset = -now.getTimezoneOffset() / 60;
       const offsetStr = offset >= 0 ? `UTC+${offset}` : `UTC${offset}`;
       return `${timezone} (${offsetStr})`;
-    } catch (e) {
+    } catch {
       return "your local timezone";
     }
-  };
-
-  const calculateExecutionTimes = (repoId: number) => {
-    const config = scheduleConfigs[repoId];
-    if (!config) return [];
-
-    const intervalMinutes = config.interval;
-    const executionTimes = [];
-    const [startHour, startMinute] = config.time.split(":").map(Number);
-
-    for (let i = 0; i < config.executions; i++) {
-      const totalMinutes = startMinute + i * intervalMinutes;
-      const hour = startHour + Math.floor(totalMinutes / 60);
-      const minute = totalMinutes % 60;
-
-      if (hour < 24) {
-        const timeStr = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
-        executionTimes.push(timeStr);
-      }
-    }
-
-    return executionTimes;
   };
 
   const ColumnHeader = ({

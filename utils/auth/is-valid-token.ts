@@ -1,8 +1,14 @@
 import { config } from "@/config";
 import jwt from "jsonwebtoken";
 
+type DecodedToken = {
+  id: string;
+  exp: number;
+  iat: number;
+};
+
 export function isValidToken(userId: string, jwtToken: string) {
-  const decodedToken: any = jwt.verify(jwtToken, config.JWT_SECRET || "");
+  const decodedToken = jwt.verify(jwtToken, config.JWT_SECRET || "") as DecodedToken;
   const currentTime = Math.floor(Date.now() / 1000);
 
   if (

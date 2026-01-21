@@ -10,22 +10,21 @@ export async function POST(req: NextRequest) {
 
     // Run the credit expiration job
     const result = await expireCredits();
-    
+
     return NextResponse.json({
       success: true,
       message: `Expired credits for ${result.expired} owners`,
       ...result,
     });
-    
-  } catch (error: any) {
-    console.error('Credit expiration API error:', error);
-    
+  } catch (error) {
+    console.error("Credit expiration API error:", error);
+
     return NextResponse.json(
-      { 
-        success: false, 
-        error: error.message || 'Credit expiration failed' 
-      }, 
-      { status: 500 }
+      {
+        success: false,
+        error: error instanceof Error ? error.message : "Credit expiration failed",
+      },
+      { status: 500 },
     );
   }
 }
@@ -33,8 +32,8 @@ export async function POST(req: NextRequest) {
 // Allow GET for health checks
 export async function GET() {
   return NextResponse.json({
-    service: 'credit-expiration',
-    status: 'healthy',
+    service: "credit-expiration",
+    status: "healthy",
     timestamp: new Date().toISOString(),
   });
 }
