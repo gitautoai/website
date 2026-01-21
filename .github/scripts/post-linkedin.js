@@ -13,7 +13,8 @@ async function postLinkedIn({ context, isBlog, postUrl }) {
   const message = isBlog ? "📝 New post" : "🚀 New release";
   const url = `${postUrl}?utm_source=linkedin&utm_medium=referral`;
   const title = context.payload.pull_request.title;
-  const description = context.payload.pull_request.body || "";
+  const prBody = context.payload.pull_request.body || "";
+  const socialMediaPost = prBody.match(/## Social Media Post\s*\n([\s\S]*?)(?=\n##|$)/)?.[1]?.trim() || "";
 
   // Helper function for random delay between 5-15 seconds
   const getRandomDelay = () => Math.floor(Math.random() * 10000 + 5000);
@@ -25,7 +26,7 @@ async function postLinkedIn({ context, isBlog, postUrl }) {
       resourcePath: "/posts",
       entity: {
         author: authorUrn,
-        commentary: `${message}: ${title}${description ? `\n\n${description}` : ""}`,
+        commentary: `${message}: ${title}${socialMediaPost ? `\n\n${socialMediaPost}` : ""}`,
         visibility: "PUBLIC",
         distribution: {
           feedDistribution: "MAIN_FEED",
@@ -38,7 +39,7 @@ async function postLinkedIn({ context, isBlog, postUrl }) {
           article: {
             source: url,
             title: title,
-            description: description || `Check out our latest release on GitAuto!`,
+            description: socialMediaPost || `Check out our latest release on GitAuto!`,
           },
         },
         lifecycleState: "PUBLISHED",

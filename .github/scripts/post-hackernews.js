@@ -27,13 +27,14 @@ async function postHackerNews({ context, isBlog, postUrl }) {
 
     // Submit story
     const title = context.payload.pull_request.title.substring(0, 80);
-    const description = context.payload.pull_request.body;
+    const prBody = context.payload.pull_request.body || "";
+    const socialMediaPost = prBody.match(/## Social Media Post\s*\n([\s\S]*?)(?=\n##|$)/)?.[1]?.trim() || "";
 
     await page.fill('input[name="title"]', title);
     await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
 
-    // If there's a description, submit as a "text" post with both URL and description
-    if (description) await page.fill('textarea[name="text"]', description);
+    // If there's a social media post section, add it as text
+    if (socialMediaPost) await page.fill('textarea[name="text"]', socialMediaPost);
 
     await page.click('input[type="submit"]');
     await page.waitForLoadState("networkidle");
