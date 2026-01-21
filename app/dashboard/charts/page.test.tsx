@@ -225,43 +225,4 @@ describe("ChartsPage - Demo Data Logic", () => {
     });
   });
 
-  describe("Single Repository mode", () => {
-    it("shows demo data when repo has no real data", async () => {
-      mockUseAccountContext.mockReturnValue({
-        currentOwnerId: "owner-1",
-        currentRepoId: "repo-1",
-        currentRepoName: "repo-one",
-        currentOwnerName: "test-owner",
-        organizations: [],
-      } as any);
-
-      mockGetRepoCoverage.mockResolvedValue([]);
-
-      render(<ChartsPage />);
-
-      await waitFor(() => {
-        expect(screen.getByText(/Showing demo data with/)).toBeInTheDocument();
-      });
-    });
-
-    it("shows real data when repo has data", async () => {
-      mockUseAccountContext.mockReturnValue({
-        currentOwnerId: "owner-1",
-        currentRepoId: "repo-1",
-        currentRepoName: "repo-one",
-        currentOwnerName: "test-owner",
-        organizations: [],
-      } as any);
-
-      mockGetRepoCoverage.mockResolvedValue(mockRealData);
-
-      render(<ChartsPage />);
-
-      await waitFor(() => {
-        expect(screen.getByText(/Showing 1 actual data points/)).toBeInTheDocument();
-      });
-
-      expect(screen.queryByText(/Showing demo data with/)).not.toBeInTheDocument();
-    });
-  });
 });

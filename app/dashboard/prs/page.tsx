@@ -16,14 +16,8 @@ import PRTable from "./components/PRTable";
 import { PRData } from "./types";
 
 export default function PRsPage() {
-  const {
-    userId,
-    userName,
-    currentOwnerName,
-    currentRepoName,
-    currentInstallationId,
-    organizations,
-  } = useAccountContext();
+  const { userId, userName, currentOwnerName, currentInstallationId, organizations } =
+    useAccountContext();
 
   const [error, setError] = useState<string | null>(null);
   const [prDataByRepo, setPRDataByRepo] = useState<Record<string, PRData[]>>({});
@@ -38,11 +32,11 @@ export default function PRsPage() {
 
   // Send Slack notification on page visit
   useEffect(() => {
-    if (!userId || !userName || !currentOwnerName || !currentRepoName) return;
+    if (!userId || !userName || !currentOwnerName) return;
 
-    const message = `${userName} (${userId}) visited PRs page for ${currentOwnerName}/${currentRepoName === "__ALL__" ? "All Repositories" : currentRepoName}`;
+    const message = `${userName} (${userId}) visited PRs page for ${currentOwnerName}`;
     slackUs(message);
-  }, [userId, userName, currentOwnerName, currentRepoName]);
+  }, [userId, userName, currentOwnerName]);
 
   // Load saved filter from localStorage on mount
   useEffect(() => {
@@ -51,22 +45,18 @@ export default function PRsPage() {
 
   // Load from localStorage on mount
   useEffect(() => {
-    const loadFromCache = () => {
-      if (!currentOwnerName || !currentRepoName) return;
+    if (!currentOwnerName) return;
 
-      try {
-        const cacheKey = `pr-data-${currentOwnerName}-${currentRepoName}`;
-        const cached = localStorage.getItem(cacheKey);
-        if (cached) {
-          setPRDataByRepo(JSON.parse(cached));
-        }
-      } catch (err) {
-        console.error("Failed to load from cache:", err);
+    try {
+      const cacheKey = `pr-data-${currentOwnerName}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        setPRDataByRepo(JSON.parse(cached));
       }
-    };
-
-    loadFromCache();
-  }, [currentOwnerName, currentRepoName]);
+    } catch (err) {
+      console.error("Failed to load from cache:", err);
+    }
+  }, [currentOwnerName]);
 
   // Fetch PRs for a single repo
   const fetchRepoPRs = async (repoName: string): Promise<PRData[]> => {
@@ -121,10 +111,10 @@ export default function PRsPage() {
     return Promise.all(prDetailsPromises);
   };
 
-  // Fetch fresh data from GitHub
+  // Fetch fresh data from GitHub for all repos
   useEffect(() => {
     const fetchPRData = async () => {
-      if (!currentOwnerName || !currentRepoName || !currentInstallationId) return;
+      if (!currentOwnerName || !currentInstallationId) return;
 
       const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
       if (!currentOrg || currentOrg.repositories.length === 0) return;
@@ -132,16 +122,13 @@ export default function PRsPage() {
       try {
         setError(null);
 
-        const reposToFetch =
-          currentRepoName === "__ALL__"
-            ? currentOrg.repositories.map((r) => r.repoName)
-            : [currentRepoName];
+        const reposToFetch = currentOrg.repositories.map((r) => r.repoName);
 
         // Mark all repos as loading
         setReloadingRepos(new Set(reposToFetch));
 
         const allPRsResults = await Promise.allSettled(
-          reposToFetch.map((repoName) => fetchRepoPRs(repoName))
+          reposToFetch.map((repoName) => fetchRepoPRs(repoName)),
         );
 
         // Group PRs by repo
@@ -160,7 +147,7 @@ export default function PRsPage() {
         setPRDataByRepo(prsByRepo);
 
         // Save to localStorage
-        const cacheKey = `pr-data-${currentOwnerName}-${currentRepoName}`;
+        const cacheKey = `pr-data-${currentOwnerName}`;
         localStorage.setItem(cacheKey, JSON.stringify(prsByRepo));
       } catch (err) {
         console.error("Failed to fetch PR data:", err);
@@ -172,7 +159,7 @@ export default function PRsPage() {
 
     fetchPRData();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- fetchRepoPRs excluded to prevent infinite re-renders
-  }, [currentOwnerName, currentRepoName, currentInstallationId, organizations]);
+  }, [currentOwnerName, currentInstallationId, organizations]);
 
   const handleReloadRepo = async (repoName: string) => {
     setReloadingRepos((prev) => new Set(prev).add(repoName));
@@ -197,14 +184,8 @@ export default function PRsPage() {
     }
   };
 
-  // Determine what to display
-  const isAllRepos = currentRepoName === "__ALL__";
   const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
-  const reposToDisplay = isMounted
-    ? isAllRepos
-      ? currentOrg?.repositories.map((r) => r.repoName) || []
-      : ([currentRepoName].filter(Boolean) as string[])
-    : [];
+  const reposToDisplay = isMounted ? currentOrg?.repositories.map((r) => r.repoName) || [] : [];
 
   const handleStatusFilterChange = (value: string) => {
     const filterValue = value as typeof statusFilter;
@@ -222,7 +203,7 @@ export default function PRsPage() {
       <h1 className="text-3xl font-bold mb-6">Open Pull Requests</h1>
 
       <ErrorBanner error={error} />
-      <RepositorySelector />
+      <RepositorySelector ownerOnly={true} />
 
       <div className="mt-6 mb-4">
         <FilterSelect
@@ -244,8 +225,7 @@ export default function PRsPage() {
           return (
             <div key={repoName}>
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                {isAllRepos && repoName}
-                {!isAllRepos && currentRepoName}
+                {repoName}
                 <ReloadButton
                   onClick={() => handleReloadRepo(repoName)}
                   isLoading={reloadingRepos.has(repoName)}
