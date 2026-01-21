@@ -29,10 +29,19 @@ const customJestConfig: Config = {
   ],
   collectCoverage: true,
   collectCoverageFrom: [
-    "app/**/*.{js,jsx,ts,tsx}", // Include all files in the app directory
-    "!app/**/_*.{js,jsx,ts,tsx}", // Exclude files starting with _
-    "!app/**/*.d.ts", // Exclude declaration files
-    "!**/node_modules/**", // Exclude node_modules
+    "**/*.{js,jsx,ts,tsx}",
+    "!**/_*.{js,jsx,ts,tsx}", // Next.js private files
+    "!**/*.d.ts", // Type declaration files
+    "!**/*.test.{js,jsx,ts,tsx}", // Test files
+    "!**/*.spec.{js,jsx,ts,tsx}", // Spec files
+    "!**/node_modules/**",
+    "!.next/**", // Next.js build output
+    "!coverage/**", // Coverage output
+    "!e2e/**", // E2E tests (Playwright)
+    "!.storybook/**", // Storybook config
+    "!stories/**", // Storybook stories
+    "!styles/**", // Tailwind config
+    "!types/**", // Type definitions
   ],
   coverageReporters: ["text", "lcov"],
 };
