@@ -16,7 +16,12 @@ export async function getOwnerIds(userId: number, accessToken: string) {
   }
 
   // Admin users can view additional specific organizations
-  const ADDITIONAL_OWNER_IDS = isAdmin(userId) ? [28540514] : [];
+  // To get owner ID: curl -s https://api.github.com/users/USERNAME | jq '.id'
+  const ADMIN_VISIBLE_OWNERS: Record<number, string> = {
+    28540514: "Foxquilt",
+    253508792: "DashFin-FarDb",
+  };
+  const ADDITIONAL_OWNER_IDS = isAdmin(userId) ? Object.keys(ADMIN_VISIBLE_OWNERS).map(Number) : [];
 
   try {
     // Use GitHub API to get organizations the user belongs to

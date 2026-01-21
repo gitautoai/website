@@ -21,6 +21,7 @@ jobs:
       is-blog: ${{ steps.check.outputs.is-blog }}
       post-url: ${{ steps.check.outputs.post-url }}
       pr-number: ${{ steps.check.outputs.pr-number }}
+      social-media-post: ${{ steps.check.outputs.social-media-post }}
     steps:
       - uses: actions/checkout@v4
       - name: Check if should post to SNS
@@ -67,19 +68,21 @@ jobs:
             // Check if it's a blog post
             const { isBlog, postUrl } = await getBlogInfo({ github, context: triggeringContext });
 
-            // Check if has sns label
-            const hasSnsLabel = pullRequest.labels?.some(label => label.name === 'sns') || false;
+            // Extract Social Media Post content
+            const prBody = pullRequest.body || '';
+            const socialMediaPost = prBody.match(/## Social Media Post\s*\n([\s\S]*?)(?=\n##|$)/)?.[1]?.trim() || '';
 
-            // Should post if it's a blog post OR has sns label
-            const shouldPost = isBlog || hasSnsLabel;
+            // Should post if it's a blog post OR has Social Media Post content
+            const shouldPost = isBlog || !!socialMediaPost;
 
             core.setOutput('should-post', shouldPost);
             core.setOutput('is-blog', isBlog);
             core.setOutput('post-url', postUrl);
             core.setOutput('pr-number', pullRequest.number);
+            core.setOutput('social-media-post', socialMediaPost);
 
             console.log(`Blog post detected: ${isBlog}`);
-            console.log(`SNS label detected: ${hasSnsLabel}`);
+            console.log(`Social Media Post content: ${socialMediaPost ? 'yes' : 'no'}`);
             console.log(`Should post to SNS: ${shouldPost}`);
 
   post-sns:
@@ -114,6 +117,7 @@ jobs:
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
             const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
             const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
+            const socialMediaPost = `${{ needs.check-should-post.outputs.social-media-post }}`;
 
             const { data: pullRequest } = await github.rest.pulls.get({
               owner: context.repo.owner,
@@ -121,11 +125,7 @@ jobs:
               pull_number: prNumber
             });
 
-            const triggeringContext = {
-              repo: context.repo,
-              payload: { pull_request: pullRequest }
-            };
-            await postTwitter({ context: triggeringContext, isBlog, postUrl });
+            await postTwitter({ isBlog, postUrl, socialMediaPost, title: pullRequest.title });
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
@@ -145,6 +145,7 @@ jobs:
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
             const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
             const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
+            const socialMediaPost = `${{ needs.check-should-post.outputs.social-media-post }}`;
 
             const { data: pullRequest } = await github.rest.pulls.get({
               owner: context.repo.owner,
@@ -152,11 +153,7 @@ jobs:
               pull_number: prNumber
             });
 
-            const triggeringContext = {
-              repo: context.repo,
-              payload: { pull_request: pullRequest }
-            };
-            await postLinkedIn({ context: triggeringContext, isBlog, postUrl });
+            await postLinkedIn({ isBlog, postUrl, socialMediaPost, title: pullRequest.title });
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
 
@@ -169,6 +166,7 @@ jobs:
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
             const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
             const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
+            const socialMediaPost = `${{ needs.check-should-post.outputs.social-media-post }}`;
 
             const { data: pullRequest } = await github.rest.pulls.get({
               owner: context.repo.owner,
@@ -176,11 +174,7 @@ jobs:
               pull_number: prNumber
             });
 
-            const triggeringContext = {
-              repo: context.repo,
-              payload: { pull_request: pullRequest }
-            };
-            await postHackerNews({ context: triggeringContext, isBlog, postUrl });
+            await postHackerNews({ isBlog, postUrl, socialMediaPost, title: pullRequest.title });
         env:
           HN_USERNAME: ${{ secrets.HN_USERNAME }}
           HN_PASSWORD: ${{ secrets.HN_PASSWORD }}
