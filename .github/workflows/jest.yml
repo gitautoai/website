@@ -1,6 +1,7 @@
 name: Jest Coverage
 
 on:
+  # Run tests on PRs to verify code doesn't break before merge
   pull_request:
     types: [opened, synchronize]
     branches: [main]
@@ -11,6 +12,17 @@ on:
       - "docs/**"
       - "infrastructure/**"
       - "public/**"
+  # Run tests after merge and save coverage to Supabase as canonical source of truth
+  push:
+    branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "**.mdx"
+      - ".github/workflows/**"
+      - "docs/**"
+      - "infrastructure/**"
+      - "public/**"
+  # Allow manual trigger for debugging
   workflow_dispatch:
 
 jobs:
@@ -30,17 +42,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Jest with coverage
-        run: npm test -- --coverage --coverageReporters="text" --coverageReporters="lcov"
+      - name: Run Jest
         env:
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            npm test -- --coverage --coverageReporters="text" --coverageReporters="lcov"
+          else
+            npm test
+          fi
 
       - name: Upload coverage artifact
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: coverage-report
           path: coverage/lcov.info
