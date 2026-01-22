@@ -64,10 +64,18 @@ export function CommonConfiguration({
         <h2 className="text-2xl font-semibold mb-4 text-left">Viewing Coverage Reports</h2>
         <p className="text-gray-600 mb-4">
           After your workflow runs successfully, GitAuto automatically processes the coverage
-          reports and displays them in the Coverage Dashboard. The data updates whenever:
+          reports and displays them in the Coverage Dashboard. GitAuto only saves coverage data
+          when the workflow runs on your target branch (configurable in your repository&apos;s{" "}
+          <a href="/dashboard/settings/rules" className="text-pink-600 hover:underline">
+            Rules page
+          </a>
+          , defaults to your repository&apos;s default branch, e.g.,{" "}
+          <code className="bg-gray-100 px-1 rounded">main</code> or{" "}
+          <code className="bg-gray-100 px-1 rounded">master</code>). This typically happens when:
         </p>
         <ul className="list-disc list-outside space-y-2 text-gray-600 mb-6 ml-5">
-          <li>You push to your target branch (as configured in the workflow)</li>
+          <li>You merge a pull request to your target branch</li>
+          <li>You push directly to your target branch</li>
           <li>You manually trigger the workflow</li>
         </ul>
       </section>

@@ -66,6 +66,7 @@ describe("syncRepositoryFiles", () => {
         uncovered_branches: null,
         uncovered_functions: null,
         uncovered_lines: null,
+        exclusion_reason: null,
       },
     ];
 
@@ -135,6 +136,7 @@ describe("syncRepositoryFiles", () => {
         uncovered_branches: null,
         uncovered_functions: null,
         uncovered_lines: null,
+        exclusion_reason: null,
       },
     ];
 
@@ -193,6 +195,7 @@ describe("syncRepositoryFiles", () => {
         uncovered_branches: null,
         uncovered_functions: null,
         uncovered_lines: null,
+        exclusion_reason: null,
       },
     ];
 

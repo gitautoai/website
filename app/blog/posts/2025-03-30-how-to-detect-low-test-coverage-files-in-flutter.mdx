@@ -9,7 +9,7 @@ export const metadata = {
   authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
   tags: ["solution", "Flutter", "Dart", "Test Coverage", "GitHub Actions"],
   createdAt: "2025-03-30",
-  updatedAt: "2025-03-30",
+  updatedAt: "2026-01-22",
 };
 
 # How to Detect Low Test Coverage Files in Flutter / Dart
@@ -58,13 +58,13 @@ GitAuto will automatically process the coverage reports [here](/dashboard/covera
 
 ![Coverage Dashboard](/blog/how-to-detect-low-test-coverage-files-in-flutter/step3-3.png)
 
-The coverage data updates automatically whenever your GitHub Actions workflow runs. In this example configuration, that happens when:
+The coverage data updates automatically whenever your GitHub Actions workflow runs on your target branch. GitAuto only saves coverage data when the workflow runs on the target branch (configurable in your repository's [Rules page](/dashboard/settings/rules), defaults to your repository's default branch, e.g., `main` or `master`). This typically happens when:
 
-- You push to any branch except master (e.g., when pushing your feature branch for a pull request)
-- You push additional commits to an existing pull request
+- You merge a pull request to your target branch
+- You push directly to your target branch
 - You manually trigger the workflow from the GitHub Actions page using "workflow_dispatch"
 
-This ensures you always see the latest coverage information as your code evolves.
+This ensures your coverage dashboard reflects the actual state of your main codebase, not in-progress PR changes.
 
 ## 4. Creating Issues for Low Coverage
 
