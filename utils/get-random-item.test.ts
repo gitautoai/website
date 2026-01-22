@@ -128,6 +128,54 @@ describe("getRandomItem", () => {
       expect(result).toBeUndefined();
     });
 
+
+  describe("deterministic behavior with mocked Math.random", () => {
+    let originalRandom: () => number;
+
+    beforeEach(() => {
+      originalRandom = Math.random;
+    });
+
+    afterEach(() => {
+      Math.random = originalRandom;
+    });
+
+    it("should return first item when Math.random returns 0", () => {
+      Math.random = jest.fn(() => 0);
+      const items = ["first", "second", "third"];
+      expect(getRandomItem(items)).toBe("first");
+    });
+
+    it("should return last item when Math.random returns value close to 1", () => {
+      Math.random = jest.fn(() => 0.99);
+      const items = ["first", "second", "third"];
+      expect(getRandomItem(items)).toBe("third");
+    });
+
+    it("should return middle item when Math.random returns 0.5", () => {
+      Math.random = jest.fn(() => 0.5);
+      const items = ["first", "second", "third", "fourth", "fifth"];
+      expect(getRandomItem(items)).toBe("third");
+    });
+
+    it("should handle Math.floor correctly for fractional indices", () => {
+      Math.random = jest.fn(() => 0.33);
+      const items = ["a", "b", "c"];
+      // 0.33 * 3 = 0.99, Math.floor(0.99) = 0
+      expect(getRandomItem(items)).toBe("a");
+    });
+
+    it("should return correct item for two-item array with Math.random = 0.5", () => {
+      Math.random = jest.fn(() => 0.5);
+      const items = ["first", "second"];
+      // 0.5 * 2 = 1, Math.floor(1) = 1
+      expect(getRandomItem(items)).toBe("second");
+    });
+
+    it("should return correct item for large array", () => {
+      Math.random = jest.fn(() => 0.75);
+      const items = Array.from({ length: 100 }, (_, i) => i);
+      // 0.75 * 100 = 75, Math.floor(75) = 75
   describe("deterministic behavior with mocked Math.random", () => {
     it("should return the first item when Math.random returns 0", () => {
       const items = ["first", "second", "third"];
