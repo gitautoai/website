@@ -1,4 +1,4 @@
- 
+
 import { getRandomItem } from "./get-random-item";
 
 describe("getRandomItem", () => {
@@ -127,5 +127,53 @@ describe("getRandomItem", () => {
       const result = getRandomItem(items);
       expect(result).toBeUndefined();
     });
+
+  describe("deterministic behavior with mocked Math.random", () => {
+    it("should return the first item when Math.random returns 0", () => {
+      const items = ["first", "second", "third"];
+      const mockRandom = jest.spyOn(Math, "random").mockReturnValue(0);
+
+      const result = getRandomItem(items);
+
+      expect(result).toBe("first");
+      mockRandom.mockRestore();
+    });
+
+    it("should return the last item when Math.random returns close to 1", () => {
+      const items = ["first", "second", "third"];
+      const mockRandom = jest.spyOn(Math, "random").mockReturnValue(0.999);
+
+      const result = getRandomItem(items);
+
+      expect(result).toBe("third");
+      mockRandom.mockRestore();
+    });
+
+    it("should return the middle item when Math.random returns 0.5", () => {
+      const items = ["first", "second", "third"];
+      const mockRandom = jest.spyOn(Math, "random").mockReturnValue(0.5);
+
+      const result = getRandomItem(items);
+
+      expect(result).toBe("second");
+      mockRandom.mockRestore();
+    });
+
+    it("should correctly calculate index with Math.floor", () => {
+      const items = [10, 20, 30, 40, 50];
+      const mockRandom = jest.spyOn(Math, "random").mockReturnValue(0.6);
+
+      const result = getRandomItem(items);
+
+      // 0.6 * 5 = 3, Math.floor(3) = 3, so items[3] = 40
+      expect(result).toBe(40);
+      mockRandom.mockRestore();
+    });
+
+    it("should handle array access with calculated index", () => {
+      const items = ["a", "b", "c", "d"];
+      const mockRandom = jest.spyOn(Math, "random").mockReturnValue(0.25);
+
+      const result = getRandomItem(items);
   });
 });
