@@ -175,6 +175,7 @@ export type Database = {
           branch_name: string;
           created_at: string;
           created_by: string;
+          exclusion_reason: string | null;
           file_size: number | null;
           full_path: string;
           function_coverage: number | null;
@@ -200,6 +201,7 @@ export type Database = {
           branch_name?: string;
           created_at?: string;
           created_by: string;
+          exclusion_reason?: string | null;
           file_size?: number | null;
           full_path: string;
           function_coverage?: number | null;
@@ -225,6 +227,7 @@ export type Database = {
           branch_name?: string;
           created_at?: string;
           created_by?: string;
+          exclusion_reason?: string | null;
           file_size?: number | null;
           full_path?: string;
           function_coverage?: number | null;
