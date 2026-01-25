@@ -20,26 +20,12 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Check blog post
-        id: blog-check
-        uses: actions/github-script@v7
-        with:
-          script: |
-            // Push event context: https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#push
-            const { getBlogInfo } = require('.github/scripts/utils.js');
-            const { isBlog, postUrl } = await getBlogInfo({ github, context });
-            core.setOutput('isBlog', isBlog);
-            core.setOutput('postUrl', postUrl);
-
       - name: Post to Dev.to
-        if: steps.blog-check.outputs.isBlog == 'true'
         uses: actions/github-script@v7
         with:
           script: |
             const postDevTo = require('.github/scripts/post-devto.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
-            const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
-            await postDevTo({ isBlog, postUrl });
+            await postDevTo({ commits: context.payload.commits });
         env:
           DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY_WES }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

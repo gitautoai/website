@@ -2,12 +2,29 @@ const fs = require("fs");
 const path = require("path");
 
 /**
+ * Extracts blog post URLs from push event commits
+ */
+function getPostUrls(commits) {
+  const urls = new Set();
+  for (const commit of commits) {
+    for (const filename of [...(commit.added || []), ...(commit.modified || [])]) {
+      if (filename.startsWith("app/blog/posts/") && filename.endsWith(".mdx")) {
+        const slug = filename
+          .split("/")
+          .pop()
+          .replace(/^\d{4}-\d{2}-\d{2}-/, "")
+          .replace(/\.mdx$/, "");
+        urls.add(`https://gitauto.ai/blog/${slug}`);
+      }
+    }
+  }
+  return [...urls];
+}
+
+/**
  * @see https://developers.forem.com/api/v1#operation/createArticle
  */
-async function postDevTo({ isBlog, postUrl }) {
-  if (!isBlog) return; // Only post blogs to dev.to
-
-  // Extract blog path from the URL
+async function postOneToDevTo(postUrl) {
   const urlPath = new URL(postUrl).pathname;
   const blogPath = path.join(process.cwd(), "app", urlPath, "page.mdx");
   const imageUrl = `https://gitauto.ai${urlPath}/thumbnail-devto.png`;
@@ -68,7 +85,7 @@ async function postDevTo({ isBlog, postUrl }) {
   // Strip UTM parameters for comparison
   const stripUtm = (url) => url?.split("?")[0];
   const existingArticle = articles.find(
-    (a) => stripUtm(a.canonical_url) === stripUtm(newArticle.article.canonical_url)
+    (a) => stripUtm(a.canonical_url) === stripUtm(newArticle.article.canonical_url),
   );
 
   // Update or create the article
@@ -104,6 +121,13 @@ async function postDevTo({ isBlog, postUrl }) {
 
   if (!slackResponse.ok) {
     console.warn(`Failed to send Slack notification: ${slackResponse.statusText}`);
+  }
+}
+
+async function postDevTo({ commits }) {
+  const postUrls = getPostUrls(commits);
+  for (const postUrl of postUrls) {
+    await postOneToDevTo(postUrl);
   }
 }
 
