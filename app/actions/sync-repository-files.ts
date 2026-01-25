@@ -1,15 +1,13 @@
 "use server";
 
-import { fetchRepositoryFiles } from "@/app/actions/github/fetch-repository-files";
+import { getOctokitForInstallation } from "@/app/api/github";
 import { getDefaultBranch } from "@/app/actions/github/get-default-branch";
-import { deleteCoverage } from "@/app/actions/supabase/coverage/delete-coverage";
-import { insertCoverage } from "@/app/actions/supabase/coverage/insert-coverage";
-import { updateCoverage } from "@/app/actions/supabase/coverage/update-coverage";
 import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
-import { Tables } from "@/types/supabase";
+import { GITAUTO_API_KEY, GITAUTO_API_URL } from "@/config/gitauto-api";
 
 /**
- * Sync repository files to coverage database
+ * Trigger background sync of repository files from GitHub to coverage database.
+ * Returns immediately - actual sync happens in background on Lambda.
  */
 export async function syncRepositoryFiles(
   ownerName: string,
@@ -17,74 +15,40 @@ export async function syncRepositoryFiles(
   ownerId: number,
   repoId: number,
   installationId: number,
-  userId: number,
   userName: string,
-  coverageData: Tables<"coverages">[]
 ) {
-  const startTime = performance.now();
+  // Get target branch from repository settings, fall back to GitHub default branch
+  const settings = await getRepositorySettings(ownerId, repoId);
+  const targetBranch =
+    settings.target_branch || (await getDefaultBranch(ownerName, repoName, installationId));
 
-  try {
-    // Get target branch from repository settings, fall back to GitHub default branch
-    const settings = await getRepositorySettings(ownerId, repoId);
-    const targetBranch =
-      settings.target_branch || (await getDefaultBranch(ownerName, repoName, installationId));
+  // Get GitHub token for Lambda to use
+  const octokit = await getOctokitForInstallation(installationId);
+  const auth = (await octokit.auth({ type: "installation" })) as { token: string };
 
-    // Fetch repository files (only source files)
-    const files = await fetchRepositoryFiles(ownerName, repoName, installationId, targetBranch);
+  const response = await fetch(
+    `${GITAUTO_API_URL}/api/${ownerName}/${repoName}/sync_files_from_github_to_coverage`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-GitHub-Token": auth.token,
+        "X-API-Key": GITAUTO_API_KEY,
+      },
+      body: JSON.stringify({
+        branch: targetBranch,
+        owner_id: ownerId,
+        repo_id: repoId,
+        user_name: userName,
+      }),
+    },
+  );
 
-    // Create maps for efficient lookup
-    const existingFileMap = new Map(coverageData.map((file) => [file.full_path, file]));
-    const newFileMap = new Map(files.map((file) => [file.path, file]));
-
-    // 1. Find new files to insert
-    const filesToInsert = files.filter((file) => !existingFileMap.has(file.path));
-
-    // 2. Find existing files to update (only file_size)
-    const filesToUpdate = files
-      .filter((file) => {
-        const existing = existingFileMap.get(file.path);
-        return existing && existing.file_size !== file.size;
-      })
-      .map((file) => {
-        const existingData = existingFileMap.get(file.path)!;
-        return {
-          id: existingData.id,
-          fileSize: file.size,
-          existingData: existingData,
-        };
-      });
-
-    // 3. Find files to delete (exist in DB but not in GitHub)
-    const filesToDelete = coverageData.filter((file) => !newFileMap.has(file.full_path));
-    const idsToDelete = filesToDelete.map((file) => file.id);
-
-    // Execute operations
-    const insertedCount = await insertCoverage(
-      filesToInsert,
-      ownerId,
-      repoId,
-      targetBranch,
-      userId,
-      userName
-    );
-    const updatedCount = await updateCoverage(filesToUpdate, userId, userName);
-    const deletedCount = await deleteCoverage(idsToDelete);
-
-    const endTime = performance.now();
-    const executionTime = endTime - startTime;
-    if (executionTime > 1000) console.log(`Repository sync completed in ${executionTime}ms`);
-
-    return {
-      success: true,
-      filesCount: files.length,
-      inserted: insertedCount,
-      updated: updatedCount,
-      deleted: deletedCount,
-      branch: targetBranch,
-      executionTime,
-    };
-  } catch (error) {
-    console.error("Error syncing repository files:", error);
-    throw error;
+  if (!response.ok) {
+    const error = await response.text();
+    console.error(`Error triggering sync: ${response.status} ${error}`);
+    throw new Error(`Failed to trigger sync: ${response.status}`);
   }
+
+  return { status: "syncing", branch: targetBranch };
 }
