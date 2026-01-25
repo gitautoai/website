@@ -115,6 +115,8 @@ export default function CoveragePage() {
 
   // Fetch coverage data
   useEffect(() => {
+    const abortController = new AbortController();
+
     const loadDataAndSync = async () => {
       if (!currentOwnerId || !currentRepoId) {
         setIsLoadingDB(false);
@@ -130,6 +132,8 @@ export default function CoveragePage() {
         setError,
         setIsLoadingDB,
       );
+
+      if (abortController.signal.aborted) return;
 
       // After data is fetched, perform sync
       if (!currentOwnerName || !currentRepoName || !currentInstallationId || !userName) return;
@@ -168,9 +172,11 @@ export default function CoveragePage() {
           userName,
         );
 
+        if (abortController.signal.aborted) return;
+
         localStorage.setItem(syncKey, now.toString());
 
-        // Poll for data if no data exists
+        // Poll for data if no data exists (silent mode to avoid UI flickering)
         if (hasNoData) {
           const found = await pollUntil(
             async () => {
@@ -181,17 +187,23 @@ export default function CoveragePage() {
                 setPackageNames,
                 setError,
                 setIsLoadingDB,
+                { silent: true },
               );
               return data && data.length > 0;
             },
-            { intervalMs: POLL_INTERVAL_MS, timeoutMs: POLL_TIMEOUT_MS },
+            {
+              intervalMs: POLL_INTERVAL_MS,
+              timeoutMs: POLL_TIMEOUT_MS,
+              signal: abortController.signal,
+            },
           );
+          if (abortController.signal.aborted) return;
           setGitHubSyncStatus(null);
           if (!found) setLastSyncTime("just now");
         }
       } catch (error) {
         console.error("Sync failed:", error);
-        if (hasNoData) {
+        if (hasNoData && !abortController.signal.aborted) {
           setGitHubSyncStatus("error");
           setTimeout(() => setGitHubSyncStatus(null), 5000);
         }
@@ -199,6 +211,8 @@ export default function CoveragePage() {
     };
 
     loadDataAndSync();
+
+    return () => abortController.abort();
   }, [
     currentOwnerId,
     currentRepoId,

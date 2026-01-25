@@ -10,16 +10,21 @@ export async function fetchCoverageData(
   setCoverageData: (data: Tables<"coverages">[]) => void,
   setPackageNames: (names: string[]) => void,
   setError: (error: string | null) => void,
-  setIsLoading: (loading: boolean) => void
+  setIsLoading: (loading: boolean) => void,
+  options: { silent?: boolean } = {},
 ): Promise<Tables<"coverages">[]> {
+  const { silent = false } = options;
+
   if (!currentOwnerId || !currentRepoId) {
-    setIsLoading(false);
+    if (!silent) setIsLoading(false);
     return [];
   }
 
   try {
-    setError(null);
-    setIsLoading(true);
+    if (!silent) {
+      setError(null);
+      setIsLoading(true);
+    }
 
     // First, get existing data from Supabase
     const data = await getCoverage(currentOwnerId, currentRepoId);
@@ -37,10 +42,10 @@ export async function fetchCoverageData(
 
     return data;
   } catch (error) {
-    setError("Failed to load coverage data");
+    if (!silent) setError("Failed to load coverage data");
     console.error("Error loading coverage data:", error);
     return [];
   } finally {
-    setIsLoading(false);
+    if (!silent) setIsLoading(false);
   }
 }
