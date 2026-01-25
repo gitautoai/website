@@ -36,14 +36,6 @@ export const SyncLoading: Story = {
   },
 };
 
-export const SyncSuccess: Story = {
-  args: {
-    title: "Sync Complete",
-    type: "success",
-    message: SYNC_MESSAGES.success,
-  },
-};
-
 export const SyncError: Story = {
   args: {
     title: "Sync Failed",

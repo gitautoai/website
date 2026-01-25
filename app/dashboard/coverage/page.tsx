@@ -18,6 +18,7 @@ import Toast from "@/app/components/Toast";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import { RELATIVE_URLS } from "@/config/urls";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { pollUntil } from "@/lib/polling";
 import { Tables } from "@/types/supabase";
 
 // Local imports (Relative imports)
@@ -71,9 +72,8 @@ export default function CoveragePage() {
   // Loading states
   const [isLoadingDB, setIsLoadingDB] = useState(true);
   const [isLoadingIssues, setIsLoadingIssues] = useState(false);
-  const [gitHubSyncStatus, setGitHubSyncStatus] = useState<"loading" | "success" | "error" | null>(
-    null
-  );
+  const [gitHubSyncStatus, setGitHubSyncStatus] = useState<"loading" | "error" | null>(null);
+  const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const [isCreatingIssues, setIsCreatingIssues] = useState(false);
   const [actionSuccess, setActionSuccess] = useState(false);
@@ -128,44 +128,67 @@ export default function CoveragePage() {
         setCoverageData,
         setPackageNames,
         setError,
-        setIsLoadingDB
+        setIsLoadingDB,
       );
 
       // After data is fetched, perform sync
-      if (!currentOwnerName || !currentRepoName || !currentInstallationId || !userId) return;
+      if (!currentOwnerName || !currentRepoName || !currentInstallationId || !userName) return;
       if (currentRepoName === "__ALL__") return; // Skip sync if "All Repositories" is selected
 
       const hasNoData = coverageData.length === 0;
 
+      // Check if we synced recently (within 5 minutes) to avoid redundant syncs
+      const SYNC_DEBOUNCE_MS = 5 * 60 * 1000;
+      const POLL_INTERVAL_MS = 10 * 1000;
+      const POLL_TIMEOUT_MS = 3 * 60 * 1000;
+      const syncKey = `lastSync_${currentOwnerId}_${currentRepoId}`;
+      const lastSync = localStorage.getItem(syncKey);
+      const now = Date.now();
+
+      if (lastSync && now - parseInt(lastSync, 10) < SYNC_DEBOUNCE_MS) {
+        // Show last sync time if we have it and no data
+        if (hasNoData) {
+          const elapsed = now - parseInt(lastSync, 10);
+          const mins = Math.floor(elapsed / 60000);
+          setLastSyncTime(mins < 1 ? "just now" : `${mins} min ago`);
+        }
+        return;
+      }
+
       try {
         if (hasNoData) setGitHubSyncStatus("loading");
 
-        const result = await syncRepositoryFiles(
+        // Trigger background sync - returns immediately, sync happens on Lambda
+        await syncRepositoryFiles(
           currentOwnerName,
           currentRepoName,
           currentOwnerId,
           currentRepoId,
           currentInstallationId,
-          userId,
           userName,
-          coverageData
         );
 
-        if (hasNoData) setGitHubSyncStatus("success");
+        localStorage.setItem(syncKey, now.toString());
 
-        // If there are changes, refetch the data
-        if (result && (result.inserted > 0 || result.updated > 0 || result.deleted > 0)) {
-          await fetchCoverageData(
-            currentOwnerId,
-            currentRepoId,
-            setCoverageData,
-            setPackageNames,
-            setError,
-            setIsLoadingDB
+        // Poll for data if no data exists
+        if (hasNoData) {
+          const found = await pollUntil(
+            async () => {
+              const data = await fetchCoverageData(
+                currentOwnerId,
+                currentRepoId,
+                setCoverageData,
+                setPackageNames,
+                setError,
+                setIsLoadingDB,
+              );
+              return data && data.length > 0;
+            },
+            { intervalMs: POLL_INTERVAL_MS, timeoutMs: POLL_TIMEOUT_MS },
           );
+          setGitHubSyncStatus(null);
+          if (!found) setLastSyncTime("just now");
         }
-
-        if (hasNoData) setTimeout(() => setGitHubSyncStatus(null), 3000);
       } catch (error) {
         console.error("Sync failed:", error);
         if (hasNoData) {
@@ -182,7 +205,6 @@ export default function CoveragePage() {
     currentOwnerName,
     currentRepoName,
     currentInstallationId,
-    userId,
     userName,
   ]);
 
@@ -198,7 +220,7 @@ export default function CoveragePage() {
       setOpenIssues,
       setSelectedParentIssue,
       setIsLoadingIssues,
-      setError
+      setError,
     );
   }, [currentOwnerName, currentRepoName, currentInstallationId]);
 
@@ -210,7 +232,7 @@ export default function CoveragePage() {
     hideFullCoverage,
     selectedExclusionFilter,
     sortField,
-    sortDirection
+    sortDirection,
   );
 
   // Get selected data for actions
@@ -251,7 +273,7 @@ export default function CoveragePage() {
         setCoverageData,
         setPackageNames,
         setError,
-        setIsLoadingDB
+        setIsLoadingDB,
       );
 
       setSelectedRows([]);
@@ -420,18 +442,19 @@ export default function CoveragePage() {
         />
       )}
 
-      {/* If no data exists: show modal in the center of the screen */}
+      {/* If no data exists: show sync status or last sync time */}
       {!isLoadingDB && coverageData.length === 0 && gitHubSyncStatus && (
         <Modal
-          title={
-            gitHubSyncStatus === "loading"
-              ? "Syncing Repository"
-              : gitHubSyncStatus === "success"
-                ? "Sync Complete"
-                : "Sync Failed"
-          }
+          title={gitHubSyncStatus === "loading" ? "Syncing Repository" : "Sync Failed"}
           type={gitHubSyncStatus}
           message={SYNC_MESSAGES[gitHubSyncStatus]}
+        />
+      )}
+      {!isLoadingDB && coverageData.length === 0 && !gitHubSyncStatus && lastSyncTime && (
+        <Modal
+          title="No Coverage Data"
+          type="loading"
+          message={`Last synced: ${lastSyncTime}. Refresh to check again.`}
         />
       )}
     </div>
