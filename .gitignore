@@ -1,42 +1,19 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-
-# testing
-/coverage
-e2e/.auth/
-test-results/
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
 .DS_Store
+.env*
 *.pem
-
-# debug
+*.tsbuildinfo
+*storybook.log
+/.next/
+/build
+/coverage
+/node_modules
+/out/
+e2e/.auth/
+next-env.d.ts
 npm-debug.log*
+scripts/
+storybook-static
+supabase/.temp/
+test-results/
 yarn-debug.log*
 yarn-error.log*
-
-# env files
-.env*
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# prisma
-prisma/.env
-
-# storybook
-*storybook.log
-storybook-static
-
-# Supabase
-supabase/.temp/

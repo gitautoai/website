@@ -3,6 +3,7 @@ import { Tables } from "@/types/supabase";
 
 const mockGetDefaultBranch = jest.fn();
 const mockFetchRepositoryFiles = jest.fn();
+const mockGetRepositorySettings = jest.fn();
 const mockInsertCoverage = jest.fn();
 const mockUpdateCoverage = jest.fn();
 const mockDeleteCoverage = jest.fn();
@@ -13,6 +14,10 @@ jest.mock("@/app/actions/github/get-default-branch", () => ({
 
 jest.mock("@/app/actions/github/fetch-repository-files", () => ({
   fetchRepositoryFiles: (...args: unknown[]) => mockFetchRepositoryFiles(...args),
+}));
+
+jest.mock("@/app/actions/supabase/repositories/get-repository-settings", () => ({
+  getRepositorySettings: (...args: unknown[]) => mockGetRepositorySettings(...args),
 }));
 
 jest.mock("@/app/actions/supabase/coverage/insert-coverage", () => ({
@@ -75,6 +80,7 @@ describe("syncRepositoryFiles", () => {
       { path: "src/new.ts", sha: "def456", size: 200 },
     ];
 
+    mockGetRepositorySettings.mockResolvedValue({ target_branch: "" });
     mockGetDefaultBranch.mockResolvedValue("main");
     mockFetchRepositoryFiles.mockResolvedValue(fetchedFiles);
     mockInsertCoverage.mockResolvedValue(1);
@@ -89,15 +95,16 @@ describe("syncRepositoryFiles", () => {
       installationId,
       userId,
       userName,
-      existingCoverage
+      existingCoverage,
     );
 
+    expect(mockGetRepositorySettings).toHaveBeenCalledWith(ownerId, repoId);
     expect(mockGetDefaultBranch).toHaveBeenCalledWith(ownerName, repoName, installationId);
     expect(mockFetchRepositoryFiles).toHaveBeenCalledWith(
       ownerName,
       repoName,
       installationId,
-      "main"
+      "main",
     );
     expect(mockInsertCoverage).toHaveBeenCalled();
     expect(result).toMatchObject({
@@ -142,6 +149,7 @@ describe("syncRepositoryFiles", () => {
 
     const fetchedFiles = [{ path: "src/file.ts", sha: "abc123", size: 200 }];
 
+    mockGetRepositorySettings.mockResolvedValue({ target_branch: "" });
     mockGetDefaultBranch.mockResolvedValue("main");
     mockFetchRepositoryFiles.mockResolvedValue(fetchedFiles);
     mockInsertCoverage.mockResolvedValue(0);
@@ -156,9 +164,10 @@ describe("syncRepositoryFiles", () => {
       installationId,
       userId,
       userName,
-      existingCoverage
+      existingCoverage,
     );
 
+    expect(mockGetRepositorySettings).toHaveBeenCalledWith(ownerId, repoId);
     expect(mockUpdateCoverage).toHaveBeenCalled();
     expect(result).toMatchObject({
       success: true,
@@ -201,6 +210,7 @@ describe("syncRepositoryFiles", () => {
 
     const fetchedFiles = [{ path: "src/new.ts", sha: "abc123", size: 100 }];
 
+    mockGetRepositorySettings.mockResolvedValue({ target_branch: "" });
     mockGetDefaultBranch.mockResolvedValue("main");
     mockFetchRepositoryFiles.mockResolvedValue(fetchedFiles);
     mockInsertCoverage.mockResolvedValue(1);
@@ -215,9 +225,10 @@ describe("syncRepositoryFiles", () => {
       installationId,
       userId,
       userName,
-      existingCoverage
+      existingCoverage,
     );
 
+    expect(mockGetRepositorySettings).toHaveBeenCalledWith(ownerId, repoId);
     expect(mockDeleteCoverage).toHaveBeenCalledWith([1]);
     expect(result).toMatchObject({
       success: true,
@@ -230,16 +241,56 @@ describe("syncRepositoryFiles", () => {
 
   it("should throw error when sync fails", async () => {
     const mockError = new Error("Sync failed");
-    mockGetDefaultBranch.mockRejectedValue(mockError);
+    mockGetRepositorySettings.mockRejectedValue(mockError);
 
     const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
 
     await expect(
-      syncRepositoryFiles(ownerName, repoName, ownerId, repoId, installationId, userId, userName, [])
+      syncRepositoryFiles(
+        ownerName,
+        repoName,
+        ownerId,
+        repoId,
+        installationId,
+        userId,
+        userName,
+        [],
+      ),
     ).rejects.toThrow("Sync failed");
 
     expect(consoleErrorSpy).toHaveBeenCalledWith("Error syncing repository files:", mockError);
 
     consoleErrorSpy.mockRestore();
+  });
+
+  it("should use target_branch from settings when available", async () => {
+    const fetchedFiles = [{ path: "src/file.ts", sha: "abc123", size: 100 }];
+
+    mockGetRepositorySettings.mockResolvedValue({ target_branch: "develop" });
+    mockFetchRepositoryFiles.mockResolvedValue(fetchedFiles);
+    mockInsertCoverage.mockResolvedValue(1);
+    mockUpdateCoverage.mockResolvedValue(0);
+    mockDeleteCoverage.mockResolvedValue(0);
+
+    const result = await syncRepositoryFiles(
+      ownerName,
+      repoName,
+      ownerId,
+      repoId,
+      installationId,
+      userId,
+      userName,
+      [],
+    );
+
+    expect(mockGetRepositorySettings).toHaveBeenCalledWith(ownerId, repoId);
+    expect(mockGetDefaultBranch).not.toHaveBeenCalled();
+    expect(mockFetchRepositoryFiles).toHaveBeenCalledWith(
+      ownerName,
+      repoName,
+      installationId,
+      "develop",
+    );
+    expect(result.branch).toBe("develop");
   });
 });

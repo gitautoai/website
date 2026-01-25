@@ -1,6 +1,7 @@
 "use server";
 
 import { getOctokitForInstallation } from "@/app/api/github";
+import { GITAUTO_API_KEY, GITAUTO_API_URL } from "@/config/gitauto-api";
 
 export interface RepositoryFile {
   path: string;
@@ -9,40 +10,34 @@ export interface RepositoryFile {
 }
 
 /**
- * Fetch all files from a GitHub repository
+ * Fetch all files from a GitHub repository via gitauto API.
+ * Uses gitauto backend to avoid Vercel's 10s timeout on large repos for hobby plan.
  */
 export async function fetchRepositoryFiles(
   ownerName: string,
   repoName: string,
   installationId: number,
-  branch = "main"
+  branch: string,
 ) {
   const octokit = await getOctokitForInstallation(installationId);
+  const auth = (await octokit.auth({ type: "installation" })) as { token: string };
 
-  try {
-    // Get all files recursively in one API call
-    const { data } = await octokit.rest.git.getTree({
-      owner: ownerName,
-      repo: repoName,
-      tree_sha: branch,
-      recursive: "true",
-    });
+  const response = await fetch(
+    `${GITAUTO_API_URL}/api/files/${ownerName}/${repoName}?branch=${branch}`,
+    {
+      headers: {
+        "X-GitHub-Token": auth.token,
+        "X-API-Key": GITAUTO_API_KEY,
+      },
+    },
+  );
 
-    const allFiles: RepositoryFile[] = [];
-
-    for (const item of data.tree) {
-      if (!item.path || item.type !== "blob") continue;
-
-      allFiles.push({
-        path: item.path,
-        sha: item.sha!,
-        size: item.size || 0,
-      });
-    }
-
-    return allFiles;
-  } catch (error) {
-    console.error(`Error fetching repository files:`, error);
-    throw error;
+  if (!response.ok) {
+    const error = await response.text();
+    console.error(`Error fetching repository files: ${response.status} ${error}`);
+    throw new Error(`Failed to fetch repository files: ${response.status}`);
   }
+
+  const files: RepositoryFile[] = await response.json();
+  return files;
 }
