@@ -5,6 +5,7 @@ import { getDefaultBranch } from "@/app/actions/github/get-default-branch";
 import { deleteCoverage } from "@/app/actions/supabase/coverage/delete-coverage";
 import { insertCoverage } from "@/app/actions/supabase/coverage/insert-coverage";
 import { updateCoverage } from "@/app/actions/supabase/coverage/update-coverage";
+import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
 import { Tables } from "@/types/supabase";
 
 /**
@@ -23,8 +24,10 @@ export async function syncRepositoryFiles(
   const startTime = performance.now();
 
   try {
-    // Get default branch
-    const targetBranch = await getDefaultBranch(ownerName, repoName, installationId);
+    // Get target branch from repository settings, fall back to GitHub default branch
+    const settings = await getRepositorySettings(ownerId, repoId);
+    const targetBranch =
+      settings.target_branch || (await getDefaultBranch(ownerName, repoName, installationId));
 
     // Fetch repository files (only source files)
     const files = await fetchRepositoryFiles(ownerName, repoName, installationId, targetBranch);
