@@ -452,9 +452,9 @@ export default function CoveragePage() {
       )}
       {!isLoadingDB && coverageData.length === 0 && !gitHubSyncStatus && lastSyncTime && (
         <Modal
-          title="No Coverage Data"
+          title="Syncing Repository"
           type="loading"
-          message={`Last synced: ${lastSyncTime}. Refresh to check again.`}
+          message={`Last triggered: ${lastSyncTime}. Refresh to check for updates.`}
         />
       )}
     </div>
