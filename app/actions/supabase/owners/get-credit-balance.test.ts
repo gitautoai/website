@@ -23,6 +23,8 @@ describe("getCreditBalance", () => {
         auto_reload_target_usd: 50,
         org_rules: "",
         max_spending_limit_usd: null,
+        created_by: null,
+        updated_by: null,
         created_at: "2024-01-01T00:00:00Z",
         updated_at: "2024-01-01T00:00:00Z",
       };
@@ -48,6 +50,8 @@ describe("getCreditBalance", () => {
         auto_reload_target_usd: 100,
         org_rules: "",
         max_spending_limit_usd: 5000,
+        created_by: null,
+        updated_by: null,
         created_at: "2024-01-01T00:00:00Z",
         updated_at: "2024-01-01T00:00:00Z",
       };
@@ -71,18 +75,20 @@ describe("getCreditBalance", () => {
       expect(mockGetOwner).toHaveBeenCalledWith(999);
     });
 
-    it("should return 0 when credit_balance_usd is null", async () => {
+    it("should return 0 when credit_balance_usd is undefined (edge case)", async () => {
       const mockOwner = {
         owner_id: 789,
         owner_name: "test-owner-3",
         owner_type: "User" as const,
         stripe_customer_id: "cus_test789",
-        credit_balance_usd: null,
+        credit_balance_usd: undefined as any,
         auto_reload_enabled: false,
         auto_reload_threshold_usd: 10,
         auto_reload_target_usd: 50,
         org_rules: "",
         max_spending_limit_usd: null,
+        created_by: null,
+        updated_by: null,
         created_at: "2024-01-01T00:00:00Z",
         updated_at: "2024-01-01T00:00:00Z",
       };
