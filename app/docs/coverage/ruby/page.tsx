@@ -4,6 +4,7 @@ import { RELATIVE_URLS } from "@/config/urls";
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
+import { MultiLanguageLink } from "../MultiLanguageLink";
 import { gemfile, specHelper } from "./code/simplecov-config";
 import { workflow } from "./code/workflow";
 
@@ -50,6 +51,8 @@ export default function RubyConfigurationPage() {
           ]}
         />
       </div>
+
+      <MultiLanguageLink />
 
       <DocsContact
         title="RSpec Coverage Issues?"

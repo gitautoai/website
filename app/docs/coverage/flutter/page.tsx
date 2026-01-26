@@ -4,6 +4,7 @@ import { RELATIVE_URLS } from "@/config/urls";
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
+import { MultiLanguageLink } from "../MultiLanguageLink";
 import { pubspecYaml } from "./code/config";
 import { workflow } from "./code/workflow";
 
@@ -43,6 +44,8 @@ export default function FlutterConfigurationPage() {
           ]}
         />
       </div>
+
+      <MultiLanguageLink />
 
       <DocsContact
         title="Flutter Coverage Acting Weird?"

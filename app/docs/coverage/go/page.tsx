@@ -4,6 +4,7 @@ import { RELATIVE_URLS } from "@/config/urls";
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
+import { MultiLanguageLink } from "../MultiLanguageLink";
 import { makefileExample, testExample } from "./code/test-config";
 import { workflow } from "./code/workflow";
 
@@ -57,6 +58,8 @@ export default function GoConfigurationPage() {
           ]}
         />
       </div>
+
+      <MultiLanguageLink />
 
       <DocsContact
         title="Go Coverage Confusion?"

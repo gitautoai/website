@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
 import { DocsContact } from "@/app/components/docs/DocsContact";
+import { MultiLanguageChartInfo } from "../MultiLanguageChartInfo";
 import { RELATIVE_URLS } from "@/config/urls";
 
 export default function CoverageChartsPage() {
@@ -165,6 +166,8 @@ export default function CoverageChartsPage() {
             and test quality.
           </p>
         </section>
+
+        <MultiLanguageChartInfo linkTo="multi-language" />
 
         <section>
           <h2 className="text-2xl font-semibold mt-0 mb-4">Using the Charts</h2>

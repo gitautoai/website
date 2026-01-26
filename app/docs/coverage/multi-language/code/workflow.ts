@@ -1,6 +1,5 @@
-export const workflow = `name: PHPUnit Coverage
+export const workflow = `name: Multi-Language Coverage
 
-# Run on target branch (probably default branch like main) to track coverage history
 on:
   push:
     branches:
@@ -8,13 +7,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  php-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
 
-      # Use Xdebug for comprehensive coverage (line, branch, path)
-      # PCOV is faster but only supports line coverage
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -24,21 +21,40 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      # For generic PHP: runs 'phpunit' which reads phpunit.xml
-      # For Laravel: runs 'php artisan test' which internally calls PHPUnit
-      # Both generate coverage because phpunit.xml configures it
       - name: Run tests with coverage
         run: composer test
 
-      # Most popular Clover-to-LCOV conversion tool
       - name: Convert Clover to LCOV format
         uses: andstor/clover2lcov-action@v1
         with:
           src: coverage/clover.xml
           dst: coverage/lcov.info
 
-      - name: Upload coverage reports
+      - name: Upload PHP coverage
         uses: actions/upload-artifact@v6
         with:
-          name: coverage-report
+          name: php-coverage
+          path: coverage/lcov.info
+
+  js-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm test -- --coverage
+
+      - name: Upload JS coverage
+        uses: actions/upload-artifact@v6
+        with:
+          name: js-coverage
           path: coverage/lcov.info`;

@@ -55,6 +55,7 @@ export const RELATIVE_URLS = {
       PHP: "/docs/coverage/php",
       RUBY: "/docs/coverage/ruby",
       FLUTTER: "/docs/coverage/flutter",
+      MULTI_LANGUAGE: "/docs/coverage/multi-language",
       CHARTS: "/docs/coverage/charts",
     },
     TRIGGERS: {
@@ -112,6 +113,7 @@ export const ABSOLUTE_URLS = {
         PHP: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.PHP}`,
         RUBY: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.RUBY}`,
         FLUTTER: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.FLUTTER}`,
+        MULTI_LANGUAGE: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.MULTI_LANGUAGE}`,
         CHARTS: `${BASE_URL}${RELATIVE_URLS.DOCS.COVERAGE.CHARTS}`,
       },
       TRIGGERS: {
