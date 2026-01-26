@@ -4,6 +4,7 @@ import { RELATIVE_URLS } from "@/config/urls";
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
+import { MultiLanguageLink } from "../MultiLanguageLink";
 import { workflow } from "./code/workflow";
 
 export default function PythonConfigurationPage() {
@@ -48,6 +49,8 @@ export default function PythonConfigurationPage() {
           ]}
         />
       </div>
+
+      <MultiLanguageLink />
 
       <DocsContact
         title="pytest-cov Giving You Headaches?"

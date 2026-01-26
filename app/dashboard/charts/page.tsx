@@ -62,12 +62,31 @@ export default function ChartsPage() {
 
         const reposData: Record<string, { data: Tables<"repo_coverage">[]; isDummy: boolean }> = {};
 
-        // First pass: fetch all data
+        // First pass: fetch all data and group by language
         await Promise.all(
           currentOrg.repositories.map(async (repo) => {
             try {
               const data = await getRepoCoverage(currentOwnerId, repo.repoId);
-              reposData[repo.repoName] = { data, isDummy: false };
+              // Group data by language
+              const dataByLanguage = new Map<string, Tables<"repo_coverage">[]>();
+              for (const row of data) {
+                const lang = row.language || "Unknown";
+                if (!dataByLanguage.has(lang)) dataByLanguage.set(lang, []);
+                dataByLanguage.get(lang)!.push(row);
+              }
+              // Create separate entries for each language
+              if (dataByLanguage.size === 0) {
+                reposData[repo.repoName] = { data: [], isDummy: false };
+              } else if (dataByLanguage.size === 1) {
+                // Single language - use repo name only
+                const entries = Array.from(dataByLanguage.entries());
+                reposData[repo.repoName] = { data: entries[0][1], isDummy: false };
+              } else {
+                // Multiple languages - use "repoName (language)" format
+                Array.from(dataByLanguage.entries()).forEach(([lang, langData]) => {
+                  reposData[`${repo.repoName} (${lang})`] = { data: langData, isDummy: false };
+                });
+              }
             } catch (error) {
               console.error(`Error loading coverage for ${repo.repoName}:`, error);
               reposData[repo.repoName] = { data: [], isDummy: false };
@@ -138,28 +157,55 @@ export default function ChartsPage() {
     });
   };
 
-  const handleReloadRepo = async (repoName: string) => {
+  const handleReloadRepo = async (displayKey: string) => {
     if (!currentOwnerId) return;
 
-    setReloadingRepos((prev) => new Set(prev).add(repoName));
+    setReloadingRepos((prev) => new Set(prev).add(displayKey));
 
     try {
       const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
-      const repo = currentOrg?.repositories.find((r) => r.repoName === repoName);
+      // Extract base repo name from display key (e.g., "repoName (Python)" -> "repoName")
+      const baseRepoName = displayKey.replace(/ \([^)]+\)$/, "");
+      const repo = currentOrg?.repositories.find((r) => r.repoName === baseRepoName);
 
       if (repo) {
         const data = await getRepoCoverage(currentOwnerId, repo.repoId);
-        setAllReposData((prev) => ({
-          ...prev,
-          [repoName]: { data, isDummy: data.length === 0 },
-        }));
+        // Group by language
+        const dataByLanguage = new Map<string, Tables<"repo_coverage">[]>();
+        for (const row of data) {
+          const lang = row.language || "Unknown";
+          if (!dataByLanguage.has(lang)) dataByLanguage.set(lang, []);
+          dataByLanguage.get(lang)!.push(row);
+        }
+
+        setAllReposData((prev) => {
+          const next = { ...prev };
+          // Remove old entries for this repo (both single and multi-language formats)
+          for (const key of Object.keys(next)) {
+            if (key === baseRepoName || key.startsWith(`${baseRepoName} (`)) {
+              delete next[key];
+            }
+          }
+          // Add new entries
+          if (dataByLanguage.size === 0) {
+            next[baseRepoName] = { data: [], isDummy: false };
+          } else if (dataByLanguage.size === 1) {
+            const entries = Array.from(dataByLanguage.entries());
+            next[baseRepoName] = { data: entries[0][1], isDummy: false };
+          } else {
+            Array.from(dataByLanguage.entries()).forEach(([lang, langData]) => {
+              next[`${baseRepoName} (${lang})`] = { data: langData, isDummy: false };
+            });
+          }
+          return next;
+        });
       }
     } catch (error) {
-      console.error(`Error reloading coverage for ${repoName}:`, error);
+      console.error(`Error reloading coverage for ${displayKey}:`, error);
     } finally {
       setReloadingRepos((prev) => {
         const next = new Set(prev);
-        next.delete(repoName);
+        next.delete(displayKey);
         return next;
       });
     }

@@ -124,6 +124,14 @@ export default function DocsPage() {
               <h3 className="text-xl font-semibold mb-2">Flutter</h3>
               <p className="text-gray-600">Flutter&apos;s built-in test framework</p>
             </Link>
+
+            <Link
+              href="/docs/coverage/multi-language"
+              className="block p-6 border rounded-lg hover:border-pink-600"
+            >
+              <h3 className="text-xl font-semibold mb-2">Multi-Language</h3>
+              <p className="text-gray-600">Repositories with multiple languages (e.g., PHP + JS)</p>
+            </Link>
           </div>
         </section>
 

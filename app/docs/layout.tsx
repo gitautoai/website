@@ -31,6 +31,7 @@ const sidebarItems = [
       { href: RELATIVE_URLS.DOCS.COVERAGE.PHP, label: "PHP Testing" },
       { href: RELATIVE_URLS.DOCS.COVERAGE.RUBY, label: "Ruby Testing" },
       { href: RELATIVE_URLS.DOCS.COVERAGE.FLUTTER, label: "Flutter Testing" },
+      { href: RELATIVE_URLS.DOCS.COVERAGE.MULTI_LANGUAGE, label: "Multi-Language" },
       { href: RELATIVE_URLS.DOCS.COVERAGE.CHARTS, label: "Coverage Charts" },
     ],
   },
@@ -100,7 +101,7 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
                 <option key={item.href} value={item.href}>
                   {section.title} - {item.label}
                 </option>
-              ))
+              )),
             )}
           </select>
         </div>

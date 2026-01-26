@@ -4,6 +4,7 @@ import { RELATIVE_URLS } from "@/config/urls";
 import { CodeBlock } from "../CodeBlock";
 import { CommonConfiguration } from "../CommonConfiguration";
 import { KeyRequirements } from "../KeyRequirements";
+import { MultiLanguageLink } from "../MultiLanguageLink";
 import { packageJson as jestPackageJson, jestConfig } from "./code/jest";
 import { packageJson as vitestPackageJson, vitestConfig } from "./code/vitest";
 import { workflow } from "./code/workflow";
@@ -56,6 +57,8 @@ export default function JavaScriptConfigurationPage() {
           ]}
         />
       </div>
+
+      <MultiLanguageLink />
 
       <DocsContact
         title="Jest Acting Up Again?"

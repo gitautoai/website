@@ -45,6 +45,7 @@ export const THUMBNAILS = {
       PHP: `${BASE_URL}/og/docs-coverage-php.png`,
       RUBY: `${BASE_URL}/og/docs-coverage-ruby.png`,
       FLUTTER: `${BASE_URL}/og/docs-coverage-flutter.png`,
+      MULTI_LANGUAGE: `${BASE_URL}/og/docs-coverage-multi-language.png`,
       CHARTS: `${BASE_URL}/og/docs-coverage-charts.png`,
     },
     TRIGGERS: {
