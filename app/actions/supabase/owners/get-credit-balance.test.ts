@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { getCreditBalance } from "./get-credit-balance";
 import { getOwner } from "./get-owner";
 
