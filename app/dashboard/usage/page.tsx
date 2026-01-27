@@ -20,6 +20,7 @@ import PeriodSelector, { Period, calculatePeriodDates } from "@/app/components/P
 import ReloadButton from "@/app/components/ReloadButton";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import { safeLocalStorage } from "@/lib/local-storage";
 
 const DEFAULT_PERIOD: Period = { type: "this-month", label: "This Month" };
 
@@ -69,7 +70,7 @@ export default function UsagePage() {
 
   // Load saved period from localStorage on mount
   useEffect(() => {
-    const savedPeriod = localStorage.getItem("usage-period");
+    const savedPeriod = safeLocalStorage.getItem("usage-period");
     if (savedPeriod) {
       try {
         const parsed = JSON.parse(savedPeriod);
@@ -82,7 +83,7 @@ export default function UsagePage() {
 
   // Save period to localStorage when it changes
   useEffect(() => {
-    localStorage.setItem("usage-period", JSON.stringify(selectedPeriod));
+    safeLocalStorage.setItem("usage-period", JSON.stringify(selectedPeriod));
   }, [selectedPeriod]);
 
   // Load cached data from localStorage on mount
@@ -90,7 +91,7 @@ export default function UsagePage() {
     if (!currentOwnerName) return;
 
     const cacheKey = `usage-stats-${currentOwnerName}-${selectedPeriod.type}`;
-    const cached = localStorage.getItem(cacheKey);
+    const cached = safeLocalStorage.getItem(cacheKey);
     if (cached) {
       try {
         const parsedCache = JSON.parse(cached);
@@ -230,7 +231,7 @@ export default function UsagePage() {
 
         // Save to localStorage
         const cacheKey = `usage-stats-${currentOwnerName}-${selectedPeriod.type}`;
-        localStorage.setItem(
+        safeLocalStorage.setItem(
           cacheKey,
           JSON.stringify({
             allRepoStats: statsCache,

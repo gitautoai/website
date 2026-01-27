@@ -13,6 +13,7 @@ import { checkActiveSubscription } from "@/app/actions/stripe/check-active-subsc
 import { getInstalledRepos } from "@/app/actions/github/get-installed-repos";
 import { swrOptions } from "@/config/swr";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { safeLocalStorage } from "@/lib/local-storage";
 import { AccountContextType } from "@/types/account";
 import { Installation, Organization } from "@/types/github";
 import { parseName } from "@/utils/parse-name";
@@ -61,36 +62,24 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   // Current selection
   const [currentOwnerId, setCurrentOwnerId] = useState<number | null>(null);
   const [currentOwnerType, setCurrentOwnerType] = useState<"User" | "Organization" | null>(null);
-  const [currentOwnerName, setCurrentOwnerName] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
-    }
-    return null;
-  });
+  const [currentOwnerName, setCurrentOwnerName] = useState<string | null>(() =>
+    safeLocalStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME),
+  );
   const [currentRepoId, setCurrentRepoId] = useState<number | null>(null);
-  const [currentRepoName, setCurrentRepoName] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem(STORAGE_KEYS.CURRENT_REPO_NAME);
-    }
-    return null;
-  });
+  const [currentRepoName, setCurrentRepoName] = useState<string | null>(() =>
+    safeLocalStorage.getItem(STORAGE_KEYS.CURRENT_REPO_NAME),
+  );
   const [currentInstallationId, setCurrentInstallationId] = useState<number | null>(() => {
-    if (typeof window !== "undefined") {
-      const cached = localStorage.getItem(STORAGE_KEYS.CURRENT_INSTALLATION_ID);
-      return cached ? parseInt(cached, 10) : null;
-    }
-    return null;
+    const cached = safeLocalStorage.getItem(STORAGE_KEYS.CURRENT_INSTALLATION_ID);
+    return cached ? parseInt(cached, 10) : null;
   });
-  const [currentStripeCustomerId, setCurrentStripeCustomerId] = useState<string | null>(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem(STORAGE_KEYS.CURRENT_STRIPE_CUSTOMER_ID);
-    }
-    return null;
-  });
+  const [currentStripeCustomerId, setCurrentStripeCustomerId] = useState<string | null>(() =>
+    safeLocalStorage.getItem(STORAGE_KEYS.CURRENT_STRIPE_CUSTOMER_ID),
+  );
 
   // Load cached organizations on mount (before API call completes)
   useEffect(() => {
-    const cached = localStorage.getItem(STORAGE_KEYS.ORGANIZATIONS);
+    const cached = safeLocalStorage.getItem(STORAGE_KEYS.ORGANIZATIONS);
     if (cached) {
       try {
         setOrganizations(JSON.parse(cached));
@@ -158,32 +147,32 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
           stripe_customer_id: stripeCustomerId,
           hasActiveSubscription,
         };
-      })
+      }),
     );
 
     // Update all states while we're at it
     setOrganizations(organizations);
-    localStorage.setItem(STORAGE_KEYS.ORGANIZATIONS, JSON.stringify(organizations));
+    safeLocalStorage.setItem(STORAGE_KEYS.ORGANIZATIONS, JSON.stringify(organizations));
 
     // Handle installation selection and set current values
-    const savedOwnerName = localStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
+    const savedOwnerName = safeLocalStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
 
     let selectedOwnerName = savedOwnerName;
 
     if (savedOwnerName) {
       const ownerExists = installationsWithOwners.some(
-        (installation) => installation.owner_name === savedOwnerName
+        (installation) => installation.owner_name === savedOwnerName,
       );
 
       if (!ownerExists && installationsWithOwners.length > 0) {
         // Saved owner doesn't exist, use first installation
         selectedOwnerName = installationsWithOwners[0].owner_name;
-        localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, selectedOwnerName);
+        safeLocalStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, selectedOwnerName);
       }
     } else if (installationsWithOwners.length > 0) {
       // No saved owner, use first installation
       selectedOwnerName = installationsWithOwners[0].owner_name;
-      localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, selectedOwnerName);
+      safeLocalStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, selectedOwnerName);
     }
 
     // Set current owner name and ID for initial load
@@ -192,7 +181,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
       // For initial load, also set the ID directly from installations
       const selectedInstallation = installationsWithOwners.find(
-        (installation) => installation.owner_name === selectedOwnerName
+        (installation) => installation.owner_name === selectedOwnerName,
       );
       if (selectedInstallation) {
         setCurrentOwnerId(selectedInstallation.owner_id);
@@ -201,7 +190,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
         // Set initial repo selection if organizations are available
         const selectedOrg = organizations.find((org) => org.ownerName === selectedOwnerName);
         if (selectedOrg) {
-          const savedRepo = localStorage.getItem(STORAGE_KEYS.CURRENT_REPO_NAME);
+          const savedRepo = safeLocalStorage.getItem(STORAGE_KEYS.CURRENT_REPO_NAME);
           if (
             savedRepo &&
             (savedRepo === "__ALL__" ||
@@ -210,7 +199,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
             setCurrentRepoName(savedRepo);
             if (savedRepo !== "__ALL__") {
               const currentRepo = selectedOrg.repositories.find(
-                (repo) => repo.repoName === savedRepo
+                (repo) => repo.repoName === savedRepo,
               );
               if (currentRepo) setCurrentRepoId(currentRepo.repoId);
             }
@@ -218,19 +207,19 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
             const firstRepo = selectedOrg.repositories[0];
             setCurrentRepoName(firstRepo.repoName);
             setCurrentRepoId(firstRepo.repoId);
-            localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, firstRepo.repoName);
+            safeLocalStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, firstRepo.repoName);
           }
         }
 
         setCurrentInstallationId(selectedInstallation.installation_id);
         setCurrentStripeCustomerId(selectedInstallation.stripe_customer_id);
-        localStorage.setItem(
+        safeLocalStorage.setItem(
           STORAGE_KEYS.CURRENT_INSTALLATION_ID,
-          selectedInstallation.installation_id.toString()
+          selectedInstallation.installation_id.toString(),
         );
-        localStorage.setItem(
+        safeLocalStorage.setItem(
           STORAGE_KEYS.CURRENT_STRIPE_CUSTOMER_ID,
-          selectedInstallation.stripe_customer_id
+          selectedInstallation.stripe_customer_id,
         );
       }
     }
@@ -241,7 +230,7 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
   const { data: installations, mutate: mutateInstallations } = useSWR<Installation[] | undefined>(
     userId ? `fetchInstallations-${userId}` : null,
     fetchInstallations,
-    swrOptions
+    swrOptions,
   );
 
   // Auto-update owner-related states when currentOwnerName changes
@@ -258,13 +247,13 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
       if (installation) {
         setCurrentInstallationId(installation.installation_id);
         setCurrentStripeCustomerId(installation.stripe_customer_id);
-        localStorage.setItem(
+        safeLocalStorage.setItem(
           STORAGE_KEYS.CURRENT_INSTALLATION_ID,
-          installation.installation_id.toString()
+          installation.installation_id.toString(),
         );
-        localStorage.setItem(
+        safeLocalStorage.setItem(
           STORAGE_KEYS.CURRENT_STRIPE_CUSTOMER_ID,
-          installation.stripe_customer_id
+          installation.stripe_customer_id,
         );
       }
     }
@@ -288,12 +277,12 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     setCurrentOwnerName(ownerName);
 
     if (ownerName) {
-      localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, ownerName);
+      safeLocalStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, ownerName);
     } else {
-      localStorage.removeItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
-      localStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);
-      localStorage.removeItem(STORAGE_KEYS.CURRENT_INSTALLATION_ID);
-      localStorage.removeItem(STORAGE_KEYS.CURRENT_STRIPE_CUSTOMER_ID);
+      safeLocalStorage.removeItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
+      safeLocalStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);
+      safeLocalStorage.removeItem(STORAGE_KEYS.CURRENT_INSTALLATION_ID);
+      safeLocalStorage.removeItem(STORAGE_KEYS.CURRENT_STRIPE_CUSTOMER_ID);
     }
   };
 
@@ -302,9 +291,9 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
     setCurrentRepoName(repoName);
 
     if (repoName) {
-      localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, repoName);
+      safeLocalStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, repoName);
     } else {
-      localStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);
+      safeLocalStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);
     }
   };
 

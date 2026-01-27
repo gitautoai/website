@@ -1,6 +1,7 @@
 import { getOpenIssues } from "@/app/actions/github/get-open-issues";
 import { ParentIssue } from "@/app/dashboard/coverage/types";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { safeLocalStorage } from "@/lib/local-storage";
 
 /**
  * Handle fetching open GitHub issues
@@ -12,7 +13,7 @@ export async function fetchOpenIssues(
   setOpenIssues: (issues: ParentIssue[]) => void,
   setSelectedParentIssue: (issue: ParentIssue | null) => void,
   setIsLoadingIssues: (loading: boolean) => void,
-  _setError: (error: string) => void
+  _setError: (error: string) => void,
 ) {
   setIsLoadingIssues(true);
   try {
@@ -20,13 +21,13 @@ export async function fetchOpenIssues(
     setOpenIssues(issues);
 
     // Get saved parent issue number
-    const savedParentIssueNumber = localStorage.getItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER);
+    const savedParentIssueNumber = safeLocalStorage.getItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER);
     if (savedParentIssueNumber) {
       const savedIssue = issues.find((issue) => issue.number === Number(savedParentIssueNumber));
       if (savedIssue) {
         setSelectedParentIssue(savedIssue);
       } else {
-        localStorage.removeItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER);
+        safeLocalStorage.removeItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER);
       }
     }
   } catch (error) {

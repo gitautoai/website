@@ -18,6 +18,7 @@ import Toast from "@/app/components/Toast";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import { RELATIVE_URLS } from "@/config/urls";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { safeLocalStorage } from "@/lib/local-storage";
 import { pollUntil } from "@/lib/polling";
 import { Tables } from "@/types/supabase";
 
@@ -99,8 +100,10 @@ export default function CoveragePage() {
 
   // Load sort settings from localStorage
   useEffect(() => {
-    const savedSortField = localStorage.getItem(STORAGE_KEYS.SORT_FIELD) as SortField;
-    const savedSortDirection = localStorage.getItem(STORAGE_KEYS.SORT_DIRECTION) as SortDirection;
+    const savedSortField = safeLocalStorage.getItem(STORAGE_KEYS.SORT_FIELD) as SortField;
+    const savedSortDirection = safeLocalStorage.getItem(
+      STORAGE_KEYS.SORT_DIRECTION,
+    ) as SortDirection;
 
     if (savedSortField) setSortField(savedSortField);
     if (savedSortDirection) setSortDirection(savedSortDirection);
@@ -108,9 +111,9 @@ export default function CoveragePage() {
 
   // Load filter settings from localStorage if it exists
   useEffect(() => {
-    setSelectedLevel(localStorage.getItem("selectedCoverageLevel") || "");
-    setSelectedExclusionFilter(localStorage.getItem("selectedExclusionFilter") || "");
-    setHideFullCoverage((localStorage.getItem("hideFullCoverage") as "all" | "hide") || "hide");
+    setSelectedLevel(safeLocalStorage.getItem("selectedCoverageLevel") || "");
+    setSelectedExclusionFilter(safeLocalStorage.getItem("selectedExclusionFilter") || "");
+    setHideFullCoverage((safeLocalStorage.getItem("hideFullCoverage") as "all" | "hide") || "hide");
   }, []);
 
   // Fetch coverage data
@@ -146,7 +149,7 @@ export default function CoveragePage() {
       const POLL_INTERVAL_MS = 10 * 1000;
       const POLL_TIMEOUT_MS = 3 * 60 * 1000;
       const syncKey = `lastSync_${currentOwnerId}_${currentRepoId}`;
-      const lastSync = localStorage.getItem(syncKey);
+      const lastSync = safeLocalStorage.getItem(syncKey);
       const now = Date.now();
 
       if (lastSync && now - parseInt(lastSync, 10) < SYNC_DEBOUNCE_MS) {
@@ -174,7 +177,7 @@ export default function CoveragePage() {
 
         if (abortController.signal.aborted) return;
 
-        localStorage.setItem(syncKey, now.toString());
+        safeLocalStorage.setItem(syncKey, now.toString());
 
         // Poll for data if no data exists (silent mode to avoid UI flickering)
         if (hasNoData) {
@@ -257,18 +260,18 @@ export default function CoveragePage() {
 
   const handleLevelChange = (value: string) => {
     setSelectedLevel(value);
-    localStorage.setItem("selectedCoverageLevel", value);
+    safeLocalStorage.setItem("selectedCoverageLevel", value);
   };
 
   const handleCoverageFilterChange = (value: string) => {
     const filterValue = value as "all" | "hide";
     setHideFullCoverage(filterValue);
-    localStorage.setItem("hideFullCoverage", filterValue);
+    safeLocalStorage.setItem("hideFullCoverage", filterValue);
   };
 
   const handleExclusionFilterChange = (value: string) => {
     setSelectedExclusionFilter(value);
-    localStorage.setItem("selectedExclusionFilter", value);
+    safeLocalStorage.setItem("selectedExclusionFilter", value);
   };
 
   const handleToggleExclusion = async (isExcluded: boolean) => {
