@@ -4,6 +4,7 @@
 
 import * as Sentry from "@sentry/nextjs";
 import { config } from "./config";
+import { DOMAIN } from "./config/urls";
 
 // import { NODE_ENV } from "@/lib/constants";
 
@@ -39,6 +40,13 @@ Sentry.init({
     /moz-extension:\/\//,
     /safari-extension:\/\//,
   ],
+
+  // Only capture errors from production domain (filters scrapers and preview deploys)
+  beforeSend(event) {
+    const url = event.request?.url || event.tags?.url;
+    if (typeof url === "string" && !url.includes(DOMAIN)) return null;
+    return event;
+  },
 
   // You can remove this option if you're not planning to use the Sentry Session Replay feature:
   integrations: [
