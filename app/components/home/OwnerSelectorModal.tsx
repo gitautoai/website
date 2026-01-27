@@ -3,6 +3,7 @@
 import { useAccountContext } from "../contexts/Account";
 import { ABSOLUTE_URLS } from "@/config/urls";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { safeLocalStorage } from "@/lib/local-storage";
 import { Installation } from "@/types/github";
 
 export default function OwnerSelectorModal({
@@ -30,7 +31,7 @@ export default function OwnerSelectorModal({
     const newOwnerName = installation.owner_name;
 
     // Store the selected owner in localStorage
-    localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, newOwnerName);
+    safeLocalStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, newOwnerName);
 
     // Update the owner name (ID will be auto-updated by useEffect)
     setCurrentOwnerName(newOwnerName);
@@ -39,7 +40,7 @@ export default function OwnerSelectorModal({
     const newOwner = organizations?.find((org) => org.ownerName === newOwnerName);
     if (newOwner && newOwner.repositories.length > 0) {
       const firstRepo = newOwner.repositories[0].repoName;
-      localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, firstRepo);
+      safeLocalStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, firstRepo);
       setCurrentRepoName(firstRepo);
     }
 
@@ -71,7 +72,7 @@ export default function OwnerSelectorModal({
                       window.open(
                         ABSOLUTE_URLS.GITHUB.OAUTH_GRANT,
                         "_blank",
-                        "noopener,noreferrer"
+                        "noopener,noreferrer",
                       );
                     }}
                     className="text-sm text-gray-500 hover:text-gray-700 underline mt-1"

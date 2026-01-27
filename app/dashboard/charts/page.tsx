@@ -11,6 +11,7 @@ import PeriodSelector, { Period, calculatePeriodDates } from "@/app/components/P
 import ReloadButton from "@/app/components/ReloadButton";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import { RELATIVE_URLS } from "@/config/urls";
+import { safeLocalStorage } from "@/lib/local-storage";
 import { Tables } from "@/types/supabase";
 
 // Relative imports
@@ -33,7 +34,7 @@ export default function ChartsPage() {
 
   // Load saved period from localStorage on mount
   useEffect(() => {
-    const savedPeriod = localStorage.getItem("charts-period");
+    const savedPeriod = safeLocalStorage.getItem("charts-period");
     if (savedPeriod) {
       try {
         const parsed = JSON.parse(savedPeriod);
@@ -46,7 +47,7 @@ export default function ChartsPage() {
 
   // Save period to localStorage when it changes
   useEffect(() => {
-    localStorage.setItem("charts-period", JSON.stringify(selectedPeriod));
+    safeLocalStorage.setItem("charts-period", JSON.stringify(selectedPeriod));
   }, [selectedPeriod]);
 
   // Fetch data for all repos

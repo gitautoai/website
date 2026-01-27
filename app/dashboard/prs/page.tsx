@@ -11,6 +11,7 @@ import ErrorBanner from "@/app/components/ErrorBanner";
 import FilterSelect from "@/app/components/FilterSelect";
 import ReloadButton from "@/app/components/ReloadButton";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import { safeLocalStorage } from "@/lib/local-storage";
 
 import PRTable from "./components/PRTable";
 import { PRData } from "./types";
@@ -40,7 +41,7 @@ export default function PRsPage() {
 
   // Load saved filter from localStorage on mount
   useEffect(() => {
-    setStatusFilter((localStorage.getItem("pr-status-filter") as typeof statusFilter) || "all");
+    setStatusFilter((safeLocalStorage.getItem("pr-status-filter") as typeof statusFilter) || "all");
   }, []);
 
   // Load from localStorage on mount
@@ -49,7 +50,7 @@ export default function PRsPage() {
 
     try {
       const cacheKey = `pr-data-${currentOwnerName}`;
-      const cached = localStorage.getItem(cacheKey);
+      const cached = safeLocalStorage.getItem(cacheKey);
       if (cached) {
         setPRDataByRepo(JSON.parse(cached));
       }
@@ -148,7 +149,7 @@ export default function PRsPage() {
 
         // Save to localStorage
         const cacheKey = `pr-data-${currentOwnerName}`;
-        localStorage.setItem(cacheKey, JSON.stringify(prsByRepo));
+        safeLocalStorage.setItem(cacheKey, JSON.stringify(prsByRepo));
       } catch (err) {
         console.error("Failed to fetch PR data:", err);
         setError("Failed to load PR data. Please try again.");
@@ -190,7 +191,7 @@ export default function PRsPage() {
   const handleStatusFilterChange = (value: string) => {
     const filterValue = value as typeof statusFilter;
     setStatusFilter(filterValue);
-    localStorage.setItem("pr-status-filter", filterValue);
+    safeLocalStorage.setItem("pr-status-filter", filterValue);
   };
 
   const filterPRs = (prs: PRData[]) => {

@@ -1,5 +1,6 @@
 import { ParentIssue } from "@/app/dashboard/coverage/types";
 import { STORAGE_KEYS } from "@/lib/constants";
+import { safeLocalStorage } from "@/lib/local-storage";
 
 /**
  * Handle parent issue selection change
@@ -14,8 +15,8 @@ export function handleParentIssueChange(
 
   // Save selected parent issue to local storage
   if (issue) {
-    localStorage.setItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER, String(issue.number));
+    safeLocalStorage.setItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER, String(issue.number));
   } else {
-    localStorage.removeItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER);
+    safeLocalStorage.removeItem(STORAGE_KEYS.PARENT_ISSUE_NUMBER);
   }
 }
