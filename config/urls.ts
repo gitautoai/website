@@ -2,7 +2,8 @@ import { isPrd } from "@/config";
 import { GITHUB_CLIENT_ID } from "@/config/github";
 
 // URLs
-export const BASE_URL = isPrd ? "https://gitauto.ai" : "http://localhost:4000";
+export const DOMAIN = "gitauto.ai";
+export const BASE_URL = isPrd ? `https://${DOMAIN}` : "http://localhost:4000";
 
 export const RELATIVE_URLS = {
   // Top Page
