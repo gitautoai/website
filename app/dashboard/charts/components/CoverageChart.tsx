@@ -124,7 +124,12 @@ export default function CoverageChart({
             allowDataOverflow={true}
           />
           <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
-          <Tooltip formatter={(value: number) => [`${value}%`, ""]} labelFormatter={formatXAxis} />
+          <Tooltip
+            formatter={(value) => [`${value}%`, ""]}
+            labelFormatter={(label) =>
+              typeof label === "number" ? formatXAxis(label) : String(label)
+            }
+          />
           <Legend content={ChartLegend} />
           <Line
             type="monotone"

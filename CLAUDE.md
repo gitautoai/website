@@ -169,11 +169,11 @@ Check screenshots first: When a test failure includes a screenshot, ALWAYS exami
 
 ## Architecture Overview
 
-This is a Next.js 15 application using App Router for GitAuto - a SaaS platform for automated test generation with GitHub/Jira integration.
+This is a Next.js 16 application using App Router for GitAuto - a SaaS platform for automated test generation with GitHub/Jira integration.
 
 ### Tech Stack
 
-- **Framework**: Next.js 15.3.0 with TypeScript
+- **Framework**: Next.js 16 with TypeScript
 - **Styling**: Tailwind CSS + CSS Modules
 - **Database**: Supabase (PostgreSQL)
 - **Auth**: NextAuth.js with GitHub OAuth
@@ -253,7 +253,7 @@ When the user says "LGTM", execute these commands in order:
 
 1. `npm run types:generate` - Generate TypeScript types
 2. `npm run lint` - Run linting. **Fix any errors/warnings before proceeding.**
-3. `npx markdownlint-cli2 "**/*.md" "#node_modules"` - Lint markdown files. **Fix any errors before proceeding.**
+3. `npx markdownlint-cli2 "**/*.md" "#node_modules" "#.next"` - Lint markdown files. **Fix any errors before proceeding.**
 4. `npx tsc --noEmit` - Type-check ALL files including tests. **Fix any errors before proceeding.**
 5. `npm test` - Run unit tests (must pass 100%, skip for blog-only changes). **Fix any failures before proceeding.**
 6. `npm run build` - Build the project
