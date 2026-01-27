@@ -1,5 +1,4 @@
 import { withSentryConfig } from "@sentry/nextjs";
-import remarkGfm from "remark-gfm";
 import createMDX from "@next/mdx";
 
 /** @type {import('next').NextConfig} */
@@ -24,19 +23,12 @@ const nextConfig = {
   // },
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   reactStrictMode: false,
-  // Suppress the MDX webpack warning
-  webpack: (config) => {
-    config.infrastructureLogging = {
-      level: "error",
-    };
-    return config;
-  },
 };
 
 const withMDX = createMDX({
   extension: /\mdx?$/,
   options: {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: ["remark-gfm"],
     rehypePlugins: [],
   },
 });
