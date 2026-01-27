@@ -28,6 +28,16 @@ Sentry.init({
     // https://github.com/getsentry/sentry-javascript/issues/3440
     // https://docs.sentry.io/platforms/javascript/configuration/filtering/#using-
     /Non-Error promise rejection captured with value: (undefined|Object Not Found Matching Id:\d+, MethodName:\w+, ParamCount:\d+)/,
+    // Browser extension errors (TronLink, MetaMask, etc.)
+    /tronlinkParams/,
+  ],
+
+  denyUrls: [
+    // Browser extensions inject scripts that can throw errors we can't control
+    /injected\.js/,
+    /chrome-extension:\/\//,
+    /moz-extension:\/\//,
+    /safari-extension:\/\//,
   ],
 
   // You can remove this option if you're not planning to use the Sentry Session Replay feature:
