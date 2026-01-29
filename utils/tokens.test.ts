@@ -103,6 +103,7 @@ describe("countTokens", () => {
 
       expect(result).toBe(2000);
       expect(mockEncode).toHaveBeenCalledWith(longText);
+    });
 
     it("should handle multiple consecutive spaces", () => {
       mockEncode.mockReturnValue([1, 2]);
