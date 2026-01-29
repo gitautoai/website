@@ -103,6 +103,41 @@ describe("countTokens", () => {
 
       expect(result).toBe(2000);
       expect(mockEncode).toHaveBeenCalledWith(longText);
+
+    it("should handle multiple consecutive spaces", () => {
+      mockEncode.mockReturnValue([1, 2]);
+
+      const result = countTokens("word     word");
+
+      expect(result).toBe(2);
+      expect(mockEncode).toHaveBeenCalledWith("word     word");
+    });
+
+    it("should handle code snippets", () => {
+      mockEncode.mockReturnValue([1, 2, 3, 4, 5, 6, 7]);
+
+      const result = countTokens("const x = 42;");
+
+      expect(result).toBe(7);
+      expect(mockEncode).toHaveBeenCalledWith("const x = 42;");
+    });
+
+    it("should handle JSON strings", () => {
+      mockEncode.mockReturnValue([1, 2, 3, 4, 5]);
+
+      const result = countTokens('{"key": "value"}');
+
+      expect(result).toBe(5);
+      expect(mockEncode).toHaveBeenCalledWith('{"key": "value"}');
+    });
+
+    it("should handle mixed content with numbers and text", () => {
+      mockEncode.mockReturnValue([1, 2, 3, 4, 5, 6]);
+
+      const result = countTokens("Price: $99.99 for 2 items");
+
+      expect(result).toBe(6);
+      expect(mockEncode).toHaveBeenCalledWith("Price: $99.99 for 2 items");
     });
   });
 
