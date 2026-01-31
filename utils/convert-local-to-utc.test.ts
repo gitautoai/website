@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { convertLocalToUTC } from "./convert-local-to-utc";
 
 describe("convertLocalToUTC", () => {
