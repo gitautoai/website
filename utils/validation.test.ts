@@ -7,100 +7,110 @@ describe("validateLength", () => {
       expect(() => validateLength("Test", "Description", 1, 100)).not.toThrow();
       expect(() => validateLength("Valid content", "Content", 5, 50)).not.toThrow();
     });
+  });
 
-    it("should not throw for text exactly at minimum length", () => {
-      expect(() => validateLength("a", "Field", 1, 10)).not.toThrow();
-      expect(() => validateLength("abc", "Field", 3, 10)).not.toThrow();
-      expect(() => validateLength("12345", "Field", 5, 20)).not.toThrow();
+  describe("text at exact boundaries", () => {
+    it("should not throw for text exactly at minLength", () => {
+      expect(() => validateLength("Hi", "Title", 2, 10)).not.toThrow();
+      expect(() => validateLength("A", "Name", 1, 5)).not.toThrow();
+      expect(() => validateLength("12345", "Code", 5, 10)).not.toThrow();
     });
 
-    it("should not throw for text exactly at maximum length", () => {
-      expect(() => validateLength("a", "Field", 1, 1)).not.toThrow();
-      expect(() => validateLength("abc", "Field", 1, 3)).not.toThrow();
-      expect(() => validateLength("12345", "Field", 1, 5)).not.toThrow();
-    });
-
-    it("should not throw for text at both min and max when they are equal", () => {
-      expect(() => validateLength("exact", "Field", 5, 5)).not.toThrow();
-      expect(() => validateLength("a", "Field", 1, 1)).not.toThrow();
+    it("should not throw for text exactly at maxLength", () => {
+      expect(() => validateLength("Hello", "Title", 1, 5)).not.toThrow();
+      expect(() => validateLength("Test", "Name", 1, 4)).not.toThrow();
+      expect(() => validateLength("1234567890", "Code", 5, 10)).not.toThrow();
     });
   });
 
   describe("text too short", () => {
-    it("should throw error when text is shorter than minimum length", () => {
-      expect(() => validateLength("", "Title", 1, 10)).toThrow(
-        'Title length violation: 0 characters. Must be between 1-10 characters according to Ahrefs.\nText: ""'
+    it("should throw error when text length is less than minLength", () => {
+      expect(() => validateLength("Hi", "Title", 5, 10)).toThrow(
+        'Title length violation: 2 characters. Must be between 5-10 characters according to Ahrefs.\nText: "Hi"'
       );
     });
 
-    it("should throw error with correct message for various short texts", () => {
-      expect(() => validateLength("ab", "Description", 5, 100)).toThrow(
-        'Description length violation: 2 characters. Must be between 5-100 characters according to Ahrefs.\nText: "ab"'
-      );
-
-      expect(() => validateLength("test", "Content", 10, 50)).toThrow(
-        'Content length violation: 4 characters. Must be between 10-50 characters according to Ahrefs.\nText: "test"'
+    it("should throw error for empty string when minLength is greater than 0", () => {
+      expect(() => validateLength("", "Description", 10, 100)).toThrow(
+        'Description length violation: 0 characters. Must be between 10-100 characters according to Ahrefs.\nText: ""'
       );
     });
 
     it("should throw error when text is one character short", () => {
-      expect(() => validateLength("1234", "Field", 5, 10)).toThrow(
-        'Field length violation: 4 characters. Must be between 5-10 characters according to Ahrefs.\nText: "1234"'
+      expect(() => validateLength("Test", "Content", 5, 20)).toThrow(
+        'Content length violation: 4 characters. Must be between 5-20 characters according to Ahrefs.\nText: "Test"'
       );
     });
   });
 
   describe("text too long", () => {
-    it("should throw error when text is longer than maximum length", () => {
-      expect(() => validateLength("This is too long", "Title", 1, 10)).toThrow(
-        'Title length violation: 16 characters. Must be between 1-10 characters according to Ahrefs.\nText: "This is too long"'
-      );
-    });
-
-    it("should throw error with correct message for various long texts", () => {
-      expect(() => validateLength("This is a very long description that exceeds the limit", "Description", 5, 20)).toThrow(
-        'Description length violation: 55 characters. Must be between 5-20 characters according to Ahrefs.\nText: "This is a very long description that exceeds the limit"'
+    it("should throw error when text length exceeds maxLength", () => {
+      expect(() => validateLength("This is a very long text", "Title", 1, 10)).toThrow(
+        'Title length violation: 24 characters. Must be between 1-10 characters according to Ahrefs.\nText: "This is a very long text"'
       );
     });
 
     it("should throw error when text is one character too long", () => {
-      expect(() => validateLength("123456", "Field", 1, 5)).toThrow(
-        'Field length violation: 6 characters. Must be between 1-5 characters according to Ahrefs.\nText: "123456"'
+      expect(() => validateLength("Hello!", "Name", 1, 5)).toThrow(
+        'Name length violation: 6 characters. Must be between 1-5 characters according to Ahrefs.\nText: "Hello!"'
+      );
+    });
+
+    it("should throw error for very long text", () => {
+      const longText = "a".repeat(200);
+      expect(() => validateLength(longText, "Description", 10, 100)).toThrow(
+        `Description length violation: 200 characters. Must be between 10-100 characters according to Ahrefs.\nText: "${longText}"`
       );
     });
   });
 
-  describe("edge cases", () => {
-    it("should handle empty string with zero minimum", () => {
-      expect(() => validateLength("", "Field", 0, 10)).not.toThrow();
+  describe("empty string edge cases", () => {
+    it("should not throw for empty string when minLength is 0", () => {
+      expect(() => validateLength("", "Optional", 0, 10)).not.toThrow();
     });
 
-    it("should throw for empty string when minimum is greater than zero", () => {
-      expect(() => validateLength("", "Field", 1, 10)).toThrow(
-        'Field length violation: 0 characters. Must be between 1-10 characters according to Ahrefs.\nText: ""'
+    it("should throw for empty string when minLength is 1", () => {
+      expect(() => validateLength("", "Required", 1, 10)).toThrow(
+        'Required length violation: 0 characters. Must be between 1-10 characters according to Ahrefs.\nText: ""'
       );
     });
+  });
 
-    it("should handle very large maximum values", () => {
-      const longText = "a".repeat(1000);
-      expect(() => validateLength(longText, "Field", 1, 10000)).not.toThrow();
+  describe("single character text", () => {
+    it("should not throw for single character when within bounds", () => {
+      expect(() => validateLength("A", "Initial", 1, 1)).not.toThrow();
+      expect(() => validateLength("X", "Letter", 1, 5)).not.toThrow();
     });
 
-    it("should handle special characters in text", () => {
-      expect(() => validateLength("Hello! @#$%", "Field", 5, 20)).not.toThrow();
-      expect(() => validateLength("Line1\nLine2", "Field", 5, 20)).not.toThrow();
-      expect(() => validateLength("Tab\there", "Field", 5, 20)).not.toThrow();
+    it("should throw for single character when minLength is greater", () => {
+      expect(() => validateLength("A", "Name", 2, 10)).toThrow(
+        'Name length violation: 1 characters. Must be between 2-10 characters according to Ahrefs.\nText: "A"'
+      );
+    });
+  });
+
+  describe("special characters and unicode", () => {
+    it("should handle special characters correctly", () => {
+      expect(() => validateLength("Hello@#$%", "Password", 5, 20)).not.toThrow();
+      expect(() => validateLength("Test\nNew\nLine", "Content", 5, 20)).not.toThrow();
     });
 
     it("should handle unicode characters correctly", () => {
-      expect(() => validateLength("Hello 世界", "Field", 5, 20)).not.toThrow();
-      expect(() => validateLength("🎉🎊", "Field", 1, 5)).not.toThrow();
+      expect(() => validateLength("Hello 世界", "Title", 5, 20)).not.toThrow();
+      expect(() => validateLength("🎉🎊🎈", "Emoji", 1, 10)).not.toThrow();
     });
 
-    it("should include the actual text in error message", () => {
-      expect(() => validateLength("Short", "Title", 10, 100)).toThrow(
-        'Title length violation: 5 characters. Must be between 10-100 characters according to Ahrefs.\nText: "Short"'
-      );
+    it("should count unicode characters by length", () => {
+      const emojiText = "🎉🎊🎈";
+      expect(() => validateLength(emojiText, "Emoji", 1, 2)).toThrow();
+    });
+  });
+
+  describe("different field names", () => {
+    it("should include field name in error message", () => {
+      expect(() => validateLength("Hi", "Meta Title", 10, 60)).toThrow(/Meta Title length violation/);
+      expect(() => validateLength("Short", "Meta Description", 50, 160)).toThrow(/Meta Description length violation/);
+      expect(() => validateLength("X", "SEO Heading", 20, 70)).toThrow(/SEO Heading length violation/);
     });
   });
 });
