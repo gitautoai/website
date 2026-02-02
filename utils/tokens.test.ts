@@ -66,6 +66,16 @@ describe("countTokens", () => {
       expect(result).toBe(7);
       expect(mockEncode).toHaveBeenCalledWith(specialText);
     });
+
+    it("should handle single character", () => {
+      const mockTokens = [1];
+      mockEncode.mockReturnValue(mockTokens);
+
+      const result = countTokens("a");
+
+      expect(result).toBe(1);
+      expect(mockEncode).toHaveBeenCalledWith("a");
+    });
   });
 
   describe("error handling", () => {
