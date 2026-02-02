@@ -79,6 +79,7 @@ Line 3`;
       expect(mockEncode).toHaveBeenCalledWith(multilineText);
       expect(result).toBe(8);
     });
+
     it("should handle single character", () => {
       const mockTokens = [1];
       mockEncode.mockReturnValue(mockTokens);
