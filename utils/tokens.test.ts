@@ -67,6 +67,17 @@ describe("countTokens", () => {
       expect(mockEncode).toHaveBeenCalledWith(specialText);
     });
 
+    it("should handle multiline text", () => {
+      const multilineText = `Line 1
+Line 2
+Line 3`;
+      const mockTokens = [1, 2, 3, 4, 5, 6, 7, 8];
+      mockEncode.mockReturnValue(mockTokens);
+
+      const result = countTokens(multilineText);
+
+      expect(result).toBe(8);
+
     it("should handle single character", () => {
       const mockTokens = [1];
       mockEncode.mockReturnValue(mockTokens);
