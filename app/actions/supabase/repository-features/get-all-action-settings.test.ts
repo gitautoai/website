@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { getAllActionSettings } from "./get-all-action-settings";
 
 jest.mock("@/lib/supabase/server", () => ({
