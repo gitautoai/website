@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getOwners } from "./get-owners";
 
 // Mock the supabase server module before importing
@@ -73,10 +73,7 @@ describe("getOwners", () => {
   });
 
   it("should throw error when query fails with error object", async () => {
-    const mockError = {
-      message: "Database connection failed",
-      code: "PGRST301",
-    };
+    const mockError = new Error("Database connection failed");
 
     mockIn.mockResolvedValue({
       data: null,
