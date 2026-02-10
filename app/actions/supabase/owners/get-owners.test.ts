@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getOwners } from "./get-owners";
 
 // Mock the supabase server module before importing
@@ -13,10 +13,14 @@ import { supabaseAdmin } from "@/lib/supabase/server";
 describe("getOwners", () => {
   let mockFrom: jest.Mock;
   let mockSelect: jest.Mock;
+  let mockIn: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSelect = jest.fn();
+    mockIn = jest.fn();
+    mockSelect = jest.fn().mockReturnValue({
+      in: mockIn,
+    });
     mockFrom = jest.fn().mockReturnValue({
       select: mockSelect,
     });
@@ -41,28 +45,30 @@ describe("getOwners", () => {
       },
     ];
 
-    mockSelect.mockResolvedValue({
+    mockIn.mockResolvedValue({
       data: mockOwners,
       error: null,
     });
 
-    const result = await getOwners(supabaseAdmin);
+    const result = await getOwners([1, 2]);
 
     expect(mockFrom).toHaveBeenCalledWith("owners");
     expect(mockSelect).toHaveBeenCalledWith("*");
+    expect(mockIn).toHaveBeenCalledWith("id", [1, 2]);
     expect(result).toEqual(mockOwners);
   });
 
   it("should return empty array when no owners exist", async () => {
-    mockSelect.mockResolvedValue({
+    mockIn.mockResolvedValue({
       data: [],
       error: null,
     });
 
-    const result = await getOwners(supabaseAdmin);
+    const result = await getOwners([999]);
 
     expect(mockFrom).toHaveBeenCalledWith("owners");
     expect(mockSelect).toHaveBeenCalledWith("*");
+    expect(mockIn).toHaveBeenCalledWith("id", [999]);
     expect(result).toEqual([]);
   });
 
@@ -72,24 +78,39 @@ describe("getOwners", () => {
       code: "PGRST301",
     };
 
-    mockSelect.mockResolvedValue({
+    mockIn.mockResolvedValue({
       data: null,
       error: mockError,
     });
 
-    await expect(getOwners(supabaseAdmin)).rejects.toThrow(
+    await expect(getOwners([1, 2])).rejects.toThrow(
       "Database connection failed"
     );
     expect(mockFrom).toHaveBeenCalledWith("owners");
     expect(mockSelect).toHaveBeenCalledWith("*");
+    expect(mockIn).toHaveBeenCalledWith("id", [1, 2]);
   });
 
   it("should throw error when data is null", async () => {
-    mockSelect.mockResolvedValue({
+    mockIn.mockResolvedValue({
       data: null,
       error: { message: "No data returned" },
     });
 
-    await expect(getOwners(supabaseAdmin)).rejects.toThrow("No data returned");
+    await expect(getOwners([1])).rejects.toThrow("No data returned");
+  });
+
+  it("should handle empty ids array", async () => {
+    mockIn.mockResolvedValue({
+      data: [],
+      error: null,
+    });
+
+    const result = await getOwners([]);
+
+    expect(mockFrom).toHaveBeenCalledWith("owners");
+    expect(mockSelect).toHaveBeenCalledWith("*");
+    expect(mockIn).toHaveBeenCalledWith("id", []);
+    expect(result).toEqual([]);
   });
 });
