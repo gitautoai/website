@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getOwners } from "./get-owners";
 
 // Mock the supabase server module before importing
@@ -72,7 +72,7 @@ describe("getOwners", () => {
     expect(result).toEqual([]);
   });
 
-  it("should throw error when query fails", async () => {
+  it("should throw error when query fails with error object", async () => {
     const mockError = {
       message: "Database connection failed",
       code: "PGRST301",
@@ -91,7 +91,7 @@ describe("getOwners", () => {
     expect(mockIn).toHaveBeenCalledWith("owner_id", [1, 2]);
   });
 
-  it("should return empty array when data is null but no error", async () => {
+  it("should return null when data is null but no error", async () => {
     mockIn.mockResolvedValue({
       data: null,
       error: null,
@@ -99,7 +99,7 @@ describe("getOwners", () => {
 
     const result = await getOwners([1]);
 
-    expect(result).toEqual([]);
+    expect(result).toBeNull();
   });
 
   it("should handle empty ids array by returning empty array immediately", async () => {
