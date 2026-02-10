@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getOwners } from "./get-owners";
 
 // Mock the supabase server module before importing
@@ -54,7 +54,7 @@ describe("getOwners", () => {
 
     expect(mockFrom).toHaveBeenCalledWith("owners");
     expect(mockSelect).toHaveBeenCalledWith("*");
-    expect(mockIn).toHaveBeenCalledWith("id", [1, 2]);
+    expect(mockIn).toHaveBeenCalledWith("owner_id", [1, 2]);
     expect(result).toEqual(mockOwners);
   });
 
@@ -68,7 +68,7 @@ describe("getOwners", () => {
 
     expect(mockFrom).toHaveBeenCalledWith("owners");
     expect(mockSelect).toHaveBeenCalledWith("*");
-    expect(mockIn).toHaveBeenCalledWith("id", [999]);
+    expect(mockIn).toHaveBeenCalledWith("owner_id", [999]);
     expect(result).toEqual([]);
   });
 
@@ -88,29 +88,27 @@ describe("getOwners", () => {
     );
     expect(mockFrom).toHaveBeenCalledWith("owners");
     expect(mockSelect).toHaveBeenCalledWith("*");
-    expect(mockIn).toHaveBeenCalledWith("id", [1, 2]);
+    expect(mockIn).toHaveBeenCalledWith("owner_id", [1, 2]);
   });
 
-  it("should throw error when data is null", async () => {
+  it("should return empty array when data is null but no error", async () => {
     mockIn.mockResolvedValue({
       data: null,
-      error: { message: "No data returned" },
-    });
-
-    await expect(getOwners([1])).rejects.toThrow("No data returned");
-  });
-
-  it("should handle empty ids array", async () => {
-    mockIn.mockResolvedValue({
-      data: [],
       error: null,
     });
 
+    const result = await getOwners([1]);
+
+    expect(result).toEqual([]);
+  });
+
+  it("should handle empty ids array by returning empty array immediately", async () => {
     const result = await getOwners([]);
 
-    expect(mockFrom).toHaveBeenCalledWith("owners");
-    expect(mockSelect).toHaveBeenCalledWith("*");
-    expect(mockIn).toHaveBeenCalledWith("id", []);
+    // Should not call database when ids is empty
+    expect(mockFrom).not.toHaveBeenCalled();
+    expect(mockSelect).not.toHaveBeenCalled();
+    expect(mockIn).not.toHaveBeenCalled();
     expect(result).toEqual([]);
   });
 });
