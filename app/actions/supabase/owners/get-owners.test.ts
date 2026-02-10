@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { getOwners } from "./get-owners";
 import { createClient } from "@/lib/supabase/server";
 
