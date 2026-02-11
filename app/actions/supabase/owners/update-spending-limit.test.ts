@@ -42,13 +42,11 @@ describe("updateSpendingLimit", () => {
 
     // Default successful DB update response
     mockSingle.mockResolvedValue({
-      data: [
-        {
-          owner_id: 123,
-          max_spending_limit_usd: 800,
-          credit_balance_usd: 500,
-        },
-      ],
+      data: {
+        owner_id: 123,
+        max_spending_limit_usd: 800,
+        credit_balance_usd: 500,
+      },
       error: null,
     });
 
@@ -67,15 +65,13 @@ describe("updateSpendingLimit", () => {
       updated_by: null,
       owner_name: "Test Owner",
       owner_type: "user",
-      stripe_subscription_id: null,
-      stripe_subscription_status: null,
     });
   });
 
   describe("when owner does not exist", () => {
     it("should return error when owner is not found", async () => {
       mockSingle.mockResolvedValue({
-        data: [],
+        data: null,
         error: null,
       });
 
@@ -110,8 +106,6 @@ describe("updateSpendingLimit", () => {
         updated_by: null,
         owner_name: "Test Owner",
         owner_type: "user",
-        stripe_subscription_id: null,
-        stripe_subscription_status: null,
       });
 
       const result = await updateSpendingLimit({
@@ -146,8 +140,6 @@ describe("updateSpendingLimit", () => {
         updated_by: null,
         owner_name: "Test Owner",
         owner_type: "user",
-        stripe_subscription_id: null,
-        stripe_subscription_status: null,
       });
 
       const result = await updateSpendingLimit({
@@ -206,7 +198,7 @@ describe("updateSpendingLimit", () => {
 
     it("should throw error when no data is returned after update", async () => {
       mockSingle.mockResolvedValue({
-        data: [],
+        data: null,
         error: null,
       });
 
