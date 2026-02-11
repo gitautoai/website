@@ -759,6 +759,7 @@ export type Database = {
           startup_commands: string[] | null;
           structured_rules: Json | null;
           target_branch: string;
+          test_dir_prefixes: string[] | null;
           trigger_on_commit: boolean;
           trigger_on_merged: boolean;
           trigger_on_pr_change: boolean;
@@ -795,6 +796,7 @@ export type Database = {
           startup_commands?: string[] | null;
           structured_rules?: Json | null;
           target_branch?: string;
+          test_dir_prefixes?: string[] | null;
           trigger_on_commit?: boolean;
           trigger_on_merged?: boolean;
           trigger_on_pr_change?: boolean;
@@ -831,6 +833,7 @@ export type Database = {
           startup_commands?: string[] | null;
           structured_rules?: Json | null;
           target_branch?: string;
+          test_dir_prefixes?: string[] | null;
           trigger_on_commit?: boolean;
           trigger_on_merged?: boolean;
           trigger_on_pr_change?: boolean;

@@ -74,52 +74,27 @@ Credit expiration is handled automatically via Vercel cron jobs:
 4. **Set up log drains** for persistent logging (external services)
 5. **Add better error logging** to server actions/API routes
 
-### Sentry CLI for Error Tracking
+### Sentry Issue Investigation
 
-Sentry CLI is available for accessing error logs and issues.
-
-#### Installation
+Use the script at `scripts/sentry/get-issue.ts` to investigate Sentry issues:
 
 ```bash
-# Install Sentry CLI if not already installed
-brew install getsentry/tools/sentry-cli
+# Get details for a specific issue (replace WEBSITE-2K with actual issue ID)
+npx tsx scripts/sentry/get-issue.ts WEBSITE-2K
 ```
 
-#### Accessing Sentry Issues
+The script will:
 
-Sentry issues are identified by IDs like `WEBSITE-2X`. Use these commands to investigate specific issues:
-
-```bash
-# List recent issues (requires SENTRY_PERSONAL_TOKEN in .env.local)
-source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --max-rows 10
-
-# List issues with specific status
-source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --status unresolved --max-rows 20
-
-# Get details for a specific issue by ID (replace WEBSITE-2X with actual issue ID)
-source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --id WEBSITE-2X
-
-# Search issues with query
-source .env.local && sentry-cli issues list --auth-token "$SENTRY_PERSONAL_TOKEN" --org "$SENTRY_ORG_SLUG" --project "$SENTRY_PROJECT_ID" --query "is:unresolved level:error" --max-rows 10
-
-# Get full event details for a specific issue (replace WEBSITE-2X with actual issue ID)
-source .env.local && curl -sS -H "Authorization: Bearer $SENTRY_PERSONAL_TOKEN" \
-  "https://sentry.io/api/0/organizations/$SENTRY_ORG_SLUG/issues/WEBSITE-2X/events/latest/" | python -m json.tool
-```
-
-#### Issue ID Format
-
-- Issues are identified with IDs like `WEBSITE-2X`
-- Use the exact issue ID in commands (e.g., `--id WEBSITE-2X` or in API URLs)
-- Issue IDs can be found in Sentry dashboard or error notifications
+- Display error message and exception details
+- Show stack trace with file locations
+- Save full JSON to `/tmp/sentry_<issue_id>.json` for detailed investigation
 
 #### Required Environment Variables
 
-The following variables must be set in .env.local file:
+Set these in `.env.local`:
 
-- `SENTRY_PERSONAL_TOKEN`: Personal auth token with project:read permissions (get from <https://gitauto-ai.sentry.io/settings/auth-tokens/>)
+- `SENTRY_PERSONAL_TOKEN`: Personal auth token (get from <https://gitauto-ai.sentry.io/settings/auth-tokens/>)
 - `SENTRY_ORG_SLUG`: Organization slug (gitauto-ai)
-- `SENTRY_PROJECT_ID`: Project ID (4506827829346304)
 
 ### Running Individual Tests
 
@@ -223,7 +198,7 @@ This is a Next.js 16 application using App Router for GitAuto - a SaaS platform 
 
 - **Dual system in operation**: Both subscription-based (legacy) and credit-based (new) payment systems are active
 - **Legacy customers**: Existing paying customers still have monthly/yearly Stripe subscriptions
-- **New system**: New customers use credit-based system ($5 per PR, auto-reload, etc.)
+- **New system**: New customers use credit-based system ($7 per PR, auto-reload, etc.)
 - **Do not remove subscription code**: Billing period and subscription functionality must be maintained for existing customers
 
 ### Database Design Rules

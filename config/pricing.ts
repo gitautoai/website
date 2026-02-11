@@ -1,6 +1,4 @@
 import { ANTHROPIC_MODEL_CLAUDE_OPUS, ANTHROPIC_MODEL_CLAUDE_SONNET } from "./anthropic";
-import { GOOGLE_GEMINI } from "./google";
-import { OPENAI_MODEL_O4_MINI } from "./openai";
 
 // https://dashboard.stripe.com/test/prices/price_1QHCpnKUN3yUNaHzXNhxtQ8A
 export const TEST_STANDARD_PLAN_PRICE_ID = "price_1QHCpnKUN3yUNaHzXNhxtQ8A";
@@ -11,7 +9,7 @@ export const TEST_LEGACY_CUSTOMER_ID = "cus_QO4R5vh6FJuN7t";
 
 export const CREDIT_PRICING = {
   PER_PR: {
-    AMOUNT_USD: 5,
+    AMOUNT_USD: 7,
   },
   PURCHASE_LIMITS: {
     MIN_AMOUNT_USD: 10,
@@ -29,7 +27,7 @@ export const CREDIT_PRICING = {
 
 export const FREE_CREDITS_AMOUNT_USD = CREDIT_PRICING.PER_PR.AMOUNT_USD * 3;
 export const FREE_PRS_LIMIT = Math.floor(
-  FREE_CREDITS_AMOUNT_USD / CREDIT_PRICING.PER_PR.AMOUNT_USD
+  FREE_CREDITS_AMOUNT_USD / CREDIT_PRICING.PER_PR.AMOUNT_USD,
 );
 
 export const FREE_FEATURES = [
@@ -67,7 +65,7 @@ export const STANDARD_FEATURES = [
 
 export const ENTERPRISE_FEATURES = [
   "Everything in Standard plan",
-  `${ANTHROPIC_MODEL_CLAUDE_OPUS}, ${ANTHROPIC_MODEL_CLAUDE_SONNET}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
+  `${ANTHROPIC_MODEL_CLAUDE_OPUS} and more`,
   "Self LLM API key",
   "Self hosting",
   "SAML / SSO",
@@ -121,8 +119,8 @@ export const TABLE_FEATURES = [
         name: "AI Models",
         description: "AI models used for test generation",
         free: ANTHROPIC_MODEL_CLAUDE_SONNET,
-        standard: ANTHROPIC_MODEL_CLAUDE_SONNET,
-        enterprise: `${ANTHROPIC_MODEL_CLAUDE_OPUS}, ${ANTHROPIC_MODEL_CLAUDE_SONNET}, ${OPENAI_MODEL_O4_MINI}, ${GOOGLE_GEMINI}, and more`,
+        standard: ANTHROPIC_MODEL_CLAUDE_OPUS,
+        enterprise: `${ANTHROPIC_MODEL_CLAUDE_OPUS} and more`,
       },
       {
         name: "Credits",
