@@ -1,30 +1,30 @@
 import { updateSpendingLimit } from "./update-spending-limit";
 
-jest.mock("./validate-spending-limit");
 jest.mock("@/utils/supabase/client", () => ({
   supabase: {
     from: jest.fn(),
   },
 }));
 
-// Import after mocking
-import { supabase } from "@/utils/supabase/client";
-
 describe("updateSpendingLimit", () => {
   let mockFrom: jest.Mock;
   let mockUpdate: jest.Mock;
   let mockEq: jest.Mock;
   let mockSelect: jest.Mock;
+  let supabase: { from: jest.Mock };
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Get the mocked supabase instance
+    supabase = jest.requireMock("@/utils/supabase/client").supabase;
 
     mockSelect = jest.fn().mockResolvedValue({ data: null, error: null });
     mockEq = jest.fn().mockReturnValue({ select: mockSelect });
     mockUpdate = jest.fn().mockReturnValue({ eq: mockEq });
     mockFrom = jest.fn().mockReturnValue({ update: mockUpdate });
 
-    (supabase.from as jest.Mock) = mockFrom;
+    supabase.from = mockFrom;
   });
 
   describe("when owner does not exist", () => {
