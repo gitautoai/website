@@ -250,6 +250,10 @@ When the user says "LGTM", execute these commands in order:
       - **NEVER use typical marketing keywords**: "all-in", "doubling down", "sunsetting", "deeper features", "polished product", "game-changer", "seamless"
       - **NEVER frame things negatively**: "unused", "nobody used", "removing unused" - this is embarrassing
       - **Be straightforward and honest** like a dev talking to other devs
+      - **Users don't know GitAuto internals** - They don't know we clone repos, install dependencies, set up working environments, etc. When relevant, educate them on what GitAuto does
+      - **Tell the story when there's a real failure** - When you find a real flaw or failure, be transparent. Tell the story: what happened, what went wrong (e.g. Claude misunderstood X, our pipeline missed Y), what the impact was, and how we improved. Developers respect honesty and the story resonates more than hiding it. Frame it as "we found a flaw → it caused X → we improved" not "we fixed a bug".
+      - **Sound like a human wrote it** - AI-generated posts are obvious and get ignored. Write like a real dev sharing something they built. Be casual, imperfect, opinionated. No polished marketing tone.
+      - **Vary the opening every time** - NEVER use patterns like "GitAuto now...", "We just...", or any formula that gets stale. Start with the substance — what changed, why it matters, or a hook.
       - Good example: "We're dropping Jira integration to focus on GitHub. Less code to maintain, fewer edge cases to handle, and we can ship GitHub features faster."
       - Bad example: "GitAuto is sunsetting Jira integration to deliver the best possible GitHub experience" (too corporate)
       - Bad example: "Removed unused Jira code paths" (sounds like failure)
