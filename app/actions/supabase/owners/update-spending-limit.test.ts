@@ -19,21 +19,7 @@ describe("updateSpendingLimit", () => {
 
   describe("when owner does not exist", () => {
     it("should return error when owner is not found", async () => {
-      mockGetOwner.mockResolvedValue({
-        auto_reload_enabled: false,
-        auto_reload_target_usd: 0,
-        auto_reload_threshold_usd: 0,
-        created_at: "2024-01-01",
-        created_by: null,
-        credit_balance_usd: 0,
-        max_spending_limit_usd: null,
-        owner: "",
-        owner_id: 0,
-        spending_limit_usd: 0,
-        stripe_customer_id: null,
-        updated_at: "2024-01-01",
-        updated_by: null,
-      });
+      mockGetOwner.mockResolvedValue(null);
 
       const result = await updateSpendingLimit({
         ownerId: 123,
@@ -56,15 +42,17 @@ describe("updateSpendingLimit", () => {
         auto_reload_target_usd: 0,
         auto_reload_threshold_usd: 0,
         created_at: "2024-01-01",
-        created_by: null,
+        created_by: "system",
         credit_balance_usd: 500,
         max_spending_limit_usd: 1000,
-        owner: "test-owner",
+        org_rules: null,
         owner_id: 123,
+        owner_name: "test-owner",
+        owner_type: "User",
         spending_limit_usd: 200,
         stripe_customer_id: "cus_123",
         updated_at: "2024-01-01",
-        updated_by: null,
+        updated_by: "system",
       });
 
       const result = await updateSpendingLimit({
@@ -86,15 +74,17 @@ describe("updateSpendingLimit", () => {
         auto_reload_target_usd: 0,
         auto_reload_threshold_usd: 0,
         created_at: "2024-01-01",
-        created_by: null,
+        created_by: "system",
         credit_balance_usd: 500,
         max_spending_limit_usd: 1000,
-        owner: "test-owner",
+        org_rules: null,
         owner_id: 123,
+        owner_name: "test-owner",
+        owner_type: "User",
         spending_limit_usd: 200,
         stripe_customer_id: "cus_123",
         updated_at: "2024-01-01",
-        updated_by: null,
+        updated_by: "system",
       });
 
       const result = await updateSpendingLimit({
@@ -118,24 +108,32 @@ describe("updateSpendingLimit", () => {
         auto_reload_target_usd: 0,
         auto_reload_threshold_usd: 0,
         created_at: "2024-01-01",
-        created_by: null,
+        created_by: "system",
         credit_balance_usd: 500,
         max_spending_limit_usd: 1000,
-        owner: "test-owner",
+        org_rules: null,
         owner_id: 123,
+        owner_name: "test-owner",
+        owner_type: "User" as const,
         spending_limit_usd: 200,
         stripe_customer_id: "cus_123",
         updated_at: "2024-01-01",
-        updated_by: null,
+        updated_by: "system",
       };
 
       mockGetOwner.mockResolvedValue(mockOwnerData);
 
+      const mockSelect = jest.fn().mockResolvedValue({
+        data: { ...mockOwnerData, max_spending_limit_usd: 800 },
+        error: null,
+      });
+
+      const mockEq = jest.fn().mockReturnValue({
+        select: mockSelect,
+      });
+
       const mockUpdate = jest.fn().mockReturnValue({
-        eq: jest.fn().mockResolvedValue({
-          data: { ...mockOwnerData, max_spending_limit_usd: 800 },
-          error: null,
-        }),
+        eq: mockEq,
       });
 
       (mockSupabaseAdmin.from as jest.Mock).mockReturnValue({
@@ -151,6 +149,8 @@ describe("updateSpendingLimit", () => {
       expect(mockGetOwner).toHaveBeenCalledWith({ ownerId: 123 });
       expect(mockSupabaseAdmin.from).toHaveBeenCalledWith("owners");
       expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 800 });
+      expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
+      expect(mockSelect).toHaveBeenCalled();
     });
   });
 });
