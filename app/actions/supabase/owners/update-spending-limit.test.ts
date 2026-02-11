@@ -13,13 +13,23 @@ const mockGetOwner = getOwner as jest.MockedFunction<typeof getOwner>;
 const mockSupabaseAdmin = supabaseAdmin as jest.Mocked<typeof supabaseAdmin>;
 
 describe("updateSpendingLimit", () => {
+  const mockSelect = jest.fn();
+  const mockEq = jest.fn();
+  const mockUpdate = jest.fn();
+
   beforeEach(() => {
     jest.clearAllMocks();
+    mockEq.mockReturnValue({ select: mockSelect });
+    mockUpdate.mockReturnValue({ eq: mockEq });
+    (mockSupabaseAdmin.from as jest.Mock).mockReturnValue({
+      update: mockUpdate,
+    });
   });
 
   describe("when owner does not exist", () => {
     it("should return error when owner is not found", async () => {
       mockGetOwner.mockResolvedValue(null);
+      mockSelect.mockResolvedValue({ data: null, error: null });
 
       const result = await updateSpendingLimit({
         ownerId: 123,
@@ -45,7 +55,7 @@ describe("updateSpendingLimit", () => {
         created_by: "system",
         credit_balance_usd: 500,
         max_spending_limit_usd: 1000,
-        org_rules: null,
+        org_rules: "",
         owner_id: 123,
         owner_name: "test-owner",
         owner_type: "User",
@@ -54,6 +64,7 @@ describe("updateSpendingLimit", () => {
         updated_at: "2024-01-01",
         updated_by: "system",
       });
+      mockSelect.mockResolvedValue({ data: null, error: null });
 
       const result = await updateSpendingLimit({
         ownerId: 123,
@@ -77,7 +88,7 @@ describe("updateSpendingLimit", () => {
         created_by: "system",
         credit_balance_usd: 500,
         max_spending_limit_usd: 1000,
-        org_rules: null,
+        org_rules: "",
         owner_id: 123,
         owner_name: "test-owner",
         owner_type: "User",
@@ -86,6 +97,7 @@ describe("updateSpendingLimit", () => {
         updated_at: "2024-01-01",
         updated_by: "system",
       });
+      mockSelect.mockResolvedValue({ data: null, error: null });
 
       const result = await updateSpendingLimit({
         ownerId: 123,
@@ -111,7 +123,7 @@ describe("updateSpendingLimit", () => {
         created_by: "system",
         credit_balance_usd: 500,
         max_spending_limit_usd: 1000,
-        org_rules: null,
+        org_rules: "",
         owner_id: 123,
         owner_name: "test-owner",
         owner_type: "User" as const,
@@ -122,22 +134,9 @@ describe("updateSpendingLimit", () => {
       };
 
       mockGetOwner.mockResolvedValue(mockOwnerData);
-
-      const mockSelect = jest.fn().mockResolvedValue({
+      mockSelect.mockResolvedValue({
         data: { ...mockOwnerData, max_spending_limit_usd: 800 },
         error: null,
-      });
-
-      const mockEq = jest.fn().mockReturnValue({
-        select: mockSelect,
-      });
-
-      const mockUpdate = jest.fn().mockReturnValue({
-        eq: mockEq,
-      });
-
-      (mockSupabaseAdmin.from as jest.Mock).mockReturnValue({
-        update: mockUpdate,
       });
 
       const result = await updateSpendingLimit({
@@ -146,6 +145,45 @@ describe("updateSpendingLimit", () => {
       });
 
       expect(result).toEqual({ success: true });
+      expect(mockGetOwner).toHaveBeenCalledWith({ ownerId: 123 });
+      expect(mockSupabaseAdmin.from).toHaveBeenCalledWith("owners");
+      expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 800 });
+      expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
+      expect(mockSelect).toHaveBeenCalled();
+    });
+
+    it("should throw error when database update fails", async () => {
+      const mockOwnerData = {
+        auto_reload_enabled: false,
+        auto_reload_target_usd: 0,
+        auto_reload_threshold_usd: 0,
+        created_at: "2024-01-01",
+        created_by: "system",
+        credit_balance_usd: 500,
+        max_spending_limit_usd: 1000,
+        org_rules: "",
+        owner_id: 123,
+        owner_name: "test-owner",
+        owner_type: "User" as const,
+        spending_limit_usd: 200,
+        stripe_customer_id: "cus_123",
+        updated_at: "2024-01-01",
+        updated_by: "system",
+      };
+
+      mockGetOwner.mockResolvedValue(mockOwnerData);
+      mockSelect.mockResolvedValue({
+        data: null,
+        error: { message: "Database error" },
+      });
+
+      await expect(
+        updateSpendingLimit({
+          ownerId: 123,
+          maxSpendingLimitUsd: 800,
+        }),
+      ).rejects.toThrow("Failed to update spending limit: Database error");
+
       expect(mockGetOwner).toHaveBeenCalledWith({ ownerId: 123 });
       expect(mockSupabaseAdmin.from).toHaveBeenCalledWith("owners");
       expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 800 });
