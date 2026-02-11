@@ -1,7 +1,9 @@
 import { updateSpendingLimit } from "./update-spending-limit";
 
 jest.mock("@/lib/supabase/server", () => ({
-  createClient: jest.fn(),
+  supabaseAdmin: {
+    from: jest.fn(),
+  },
 }));
 
 describe("updateSpendingLimit", () => {
@@ -9,21 +11,19 @@ describe("updateSpendingLimit", () => {
   let mockUpdate: jest.Mock;
   let mockEq: jest.Mock;
   let mockSelect: jest.Mock;
-  let mockSupabase: { from: jest.Mock };
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Get the mocked createClient function
-    const { createClient } = jest.requireMock("@/lib/supabase/server");
+    // Get the mocked supabaseAdmin
+    const { supabaseAdmin } = jest.requireMock("@/lib/supabase/server");
 
     mockSelect = jest.fn().mockResolvedValue({ data: null, error: null });
     mockEq = jest.fn().mockReturnValue({ select: mockSelect });
     mockUpdate = jest.fn().mockReturnValue({ eq: mockEq });
     mockFrom = jest.fn().mockReturnValue({ update: mockUpdate });
 
-    mockSupabase = { from: mockFrom };
-    createClient.mockReturnValue(mockSupabase);
+    supabaseAdmin.from = mockFrom;
   });
 
   describe("when owner does not exist", () => {
