@@ -1,9 +1,13 @@
+jest.mock("@/lib/supabase/server", () => ({
+  supabaseAdmin: {
+    from: jest.fn(),
+  },
+}));
+jest.mock("./get-owner");
+
 import { updateSpendingLimit } from "./update-spending-limit";
 import { getOwner } from "./get-owner";
 import { supabaseAdmin } from "@/lib/supabase/server";
-
-jest.mock("@/lib/supabase/server");
-jest.mock("./get-owner");
 
 const mockGetOwner = getOwner as jest.MockedFunction<typeof getOwner>;
 const mockSupabaseAdmin = supabaseAdmin as jest.Mocked<typeof supabaseAdmin>;
@@ -61,7 +65,7 @@ describe("updateSpendingLimit", () => {
       auto_reload_target_usd: 0,
       created_by: null,
       updated_by: null,
-      owner_name: null,
+      owner_name: "Test Owner",
       owner_type: "user",
       stripe_subscription_id: null,
       stripe_subscription_status: null,
@@ -104,7 +108,7 @@ describe("updateSpendingLimit", () => {
         auto_reload_target_usd: 0,
         created_by: null,
         updated_by: null,
-        owner_name: null,
+        owner_name: "Test Owner",
         owner_type: "user",
         stripe_subscription_id: null,
         stripe_subscription_status: null,
@@ -140,7 +144,7 @@ describe("updateSpendingLimit", () => {
         auto_reload_target_usd: 0,
         created_by: null,
         updated_by: null,
-        owner_name: null,
+        owner_name: "Test Owner",
         owner_type: "user",
         stripe_subscription_id: null,
         stripe_subscription_status: null,
