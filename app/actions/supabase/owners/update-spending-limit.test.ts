@@ -1,20 +1,14 @@
 import { updateSpendingLimit } from "./update-spending-limit";
 import { getOwner } from "./get-owner";
+import { supabaseAdmin } from "@/lib/supabase/server";
 
-jest.mock("@/lib/supabase/server", () => ({
-  supabaseAdmin: {
-    from: jest.fn(),
-  },
-}));
-
-jest.mock("./get-owner", () => ({
-  getOwner: jest.fn(),
-}));
+jest.mock("@/lib/supabase/server");
+jest.mock("./get-owner");
 
 const mockGetOwner = getOwner as jest.MockedFunction<typeof getOwner>;
+const mockSupabaseAdmin = supabaseAdmin as jest.Mocked<typeof supabaseAdmin>;
 
 describe("updateSpendingLimit", () => {
-  let mockSupabaseAdmin: any;
   let mockUpdate: jest.Mock;
   let mockEq: jest.Mock;
   let mockSelect: jest.Mock;
@@ -23,16 +17,13 @@ describe("updateSpendingLimit", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    mockSupabaseAdmin = require("@/lib/supabase/server").supabaseAdmin;
-
     // Set up the mock chain for supabase operations
     mockUpdate = jest.fn();
     mockEq = jest.fn();
     mockSelect = jest.fn();
     mockSingle = jest.fn();
 
-    mockSupabaseAdmin.from.mockReturnValue({
+    (mockSupabaseAdmin.from as jest.Mock) = jest.fn().mockReturnValue({
       update: mockUpdate,
     });
     mockUpdate.mockReturnValue({
@@ -47,11 +38,13 @@ describe("updateSpendingLimit", () => {
 
     // Default successful DB update response
     mockSingle.mockResolvedValue({
-      data: {
-        owner_id: 123,
-        max_spending_limit_usd: 800,
-        credit_balance_usd: 500,
-      },
+      data: [
+        {
+          owner_id: 123,
+          max_spending_limit_usd: 800,
+          credit_balance_usd: 500,
+        },
+      ],
       error: null,
     });
 
@@ -63,25 +56,37 @@ describe("updateSpendingLimit", () => {
       stripe_customer_id: "cus_123",
       created_at: "2024-01-01T00:00:00Z",
       updated_at: "2024-01-01T00:00:00Z",
+      auto_reload_enabled: false,
+      auto_reload_threshold_usd: 0,
+      auto_reload_target_usd: 0,
+      created_by: null,
+      updated_by: null,
+      owner_name: null,
+      owner_type: "user",
+      stripe_subscription_id: null,
+      stripe_subscription_status: null,
     });
   });
 
   describe("when owner does not exist", () => {
     it("should return error when owner is not found", async () => {
-      mockGetOwner.mockResolvedValue(null);
-
-      const result = await updateSpendingLimit({
-        ownerId: 123,
-        maxSpendingLimitUsd: 500,
+      mockSingle.mockResolvedValue({
+        data: [],
+        error: null,
       });
 
-      expect(result).toEqual({ error: "Owner not found" });
+      await expect(
+        updateSpendingLimit({
+          ownerId: 123,
+          maxSpendingLimitUsd: 500,
+        }),
+      ).rejects.toThrow("Owner with ID 123 not found");
+
       expect(mockSupabaseAdmin.from).toHaveBeenCalledWith("owners");
       expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 500 });
       expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
       expect(mockSelect).toHaveBeenCalled();
       expect(mockSingle).toHaveBeenCalled();
-      expect(mockGetOwner).toHaveBeenCalledWith({ ownerId: 123 });
     });
   });
 
@@ -94,6 +99,15 @@ describe("updateSpendingLimit", () => {
         stripe_customer_id: "cus_123",
         created_at: "2024-01-01T00:00:00Z",
         updated_at: "2024-01-01T00:00:00Z",
+        auto_reload_enabled: false,
+        auto_reload_threshold_usd: 0,
+        auto_reload_target_usd: 0,
+        created_by: null,
+        updated_by: null,
+        owner_name: null,
+        owner_type: "user",
+        stripe_subscription_id: null,
+        stripe_subscription_status: null,
       });
 
       const result = await updateSpendingLimit({
@@ -121,6 +135,15 @@ describe("updateSpendingLimit", () => {
         stripe_customer_id: "cus_123",
         created_at: "2024-01-01T00:00:00Z",
         updated_at: "2024-01-01T00:00:00Z",
+        auto_reload_enabled: false,
+        auto_reload_threshold_usd: 0,
+        auto_reload_target_usd: 0,
+        created_by: null,
+        updated_by: null,
+        owner_name: null,
+        owner_type: "user",
+        stripe_subscription_id: null,
+        stripe_subscription_status: null,
       });
 
       const result = await updateSpendingLimit({
@@ -179,7 +202,7 @@ describe("updateSpendingLimit", () => {
 
     it("should throw error when no data is returned after update", async () => {
       mockSingle.mockResolvedValue({
-        data: null,
+        data: [],
         error: null,
       });
 
