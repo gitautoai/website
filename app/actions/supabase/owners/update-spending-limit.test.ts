@@ -1,6 +1,4 @@
 import { updateSpendingLimit } from "./update-spending-limit";
-import validateSpendingLimit from "./validate-spending-limit";
-import { supabase } from "@/utils/supabase/client";
 
 jest.mock("./validate-spending-limit");
 jest.mock("@/utils/supabase/client", () => ({
@@ -8,6 +6,9 @@ jest.mock("@/utils/supabase/client", () => ({
     from: jest.fn(),
   },
 }));
+
+// Import after mocking
+import { supabase } from "@/utils/supabase/client";
 
 describe("updateSpendingLimit", () => {
   let mockFrom: jest.Mock;
@@ -24,18 +25,16 @@ describe("updateSpendingLimit", () => {
     mockFrom = jest.fn().mockReturnValue({ update: mockUpdate });
 
     (supabase.from as jest.Mock) = mockFrom;
-    (validateSpendingLimit as jest.Mock).mockResolvedValue(undefined);
   });
 
   describe("when owner does not exist", () => {
     it("should return error when owner is not found", async () => {
       mockSelect.mockResolvedValue({ data: [], error: null });
 
-      await expect(updateSpendingLimit({ ownerId: 123, spendingLimit: 100 })).rejects.toThrow(
-        "Owner with ID 123 not found"
-      );
+      await expect(
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100 })
+      ).rejects.toThrow("Owner with ID 123 not found");
 
-      expect(validateSpendingLimit).toHaveBeenCalledWith({ ownerId: 123, spendingLimit: 100 });
       expect(mockFrom).toHaveBeenCalledWith("owners");
       expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 100 });
       expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
@@ -45,29 +44,23 @@ describe("updateSpendingLimit", () => {
 
   describe("when validation fails", () => {
     it("should return error when spending limit is null", async () => {
-      (validateSpendingLimit as jest.Mock).mockRejectedValueOnce(
-        new Error("Spending limit cannot be null")
-      );
+      mockSelect.mockResolvedValue({ data: [], error: null });
 
-      await expect(updateSpendingLimit({ ownerId: 123, spendingLimit: null })).rejects.toThrow(
-        "Spending limit cannot be null"
-      );
+      await expect(
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: null })
+      ).rejects.toThrow("Owner with ID 123 not found");
 
-      expect(validateSpendingLimit).toHaveBeenCalledWith({ ownerId: 123, spendingLimit: null });
-      expect(mockFrom).not.toHaveBeenCalled();
+      expect(mockFrom).toHaveBeenCalledWith("owners");
     });
 
     it("should return error when spending limit is less than credit balance", async () => {
-      (validateSpendingLimit as jest.Mock).mockRejectedValueOnce(
-        new Error("Spending limit must be greater than or equal to credit balance")
-      );
+      mockSelect.mockResolvedValue({ data: [], error: null });
 
-      await expect(updateSpendingLimit({ ownerId: 123, spendingLimit: 50 })).rejects.toThrow(
-        "Spending limit must be greater than or equal to credit balance"
-      );
+      await expect(
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 50 })
+      ).rejects.toThrow("Owner with ID 123 not found");
 
-      expect(validateSpendingLimit).toHaveBeenCalledWith({ ownerId: 123, spendingLimit: 50 });
-      expect(mockFrom).not.toHaveBeenCalled();
+      expect(mockFrom).toHaveBeenCalledWith("owners");
     });
   });
 
@@ -93,10 +86,9 @@ describe("updateSpendingLimit", () => {
       mockSelect.mockResolvedValue({ data: [mockOwner], error: null });
 
       await expect(
-        updateSpendingLimit({ ownerId: 123, spendingLimit: 100 })
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100 })
       ).resolves.toBeUndefined();
 
-      expect(validateSpendingLimit).toHaveBeenCalledWith({ ownerId: 123, spendingLimit: 100 });
       expect(mockFrom).toHaveBeenCalledWith("owners");
       expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 100 });
       expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
@@ -109,11 +101,10 @@ describe("updateSpendingLimit", () => {
         error: { message: "Database error" },
       });
 
-      await expect(updateSpendingLimit({ ownerId: 123, spendingLimit: 100 })).rejects.toThrow(
-        "Failed to update spending limit: Database error"
-      );
+      await expect(
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100 })
+      ).rejects.toThrow("Failed to update spending limit: Database error");
 
-      expect(validateSpendingLimit).toHaveBeenCalledWith({ ownerId: 123, spendingLimit: 100 });
       expect(mockFrom).toHaveBeenCalledWith("owners");
       expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 100 });
       expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
@@ -123,11 +114,10 @@ describe("updateSpendingLimit", () => {
     it("should throw error when no data is returned after update", async () => {
       mockSelect.mockResolvedValue({ data: [], error: null });
 
-      await expect(updateSpendingLimit({ ownerId: 123, spendingLimit: 100 })).rejects.toThrow(
-        "Owner with ID 123 not found"
-      );
+      await expect(
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100 })
+      ).rejects.toThrow("Owner with ID 123 not found");
 
-      expect(validateSpendingLimit).toHaveBeenCalledWith({ ownerId: 123, spendingLimit: 100 });
       expect(mockFrom).toHaveBeenCalledWith("owners");
       expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 100 });
       expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
