@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { CREDIT_PRICING } from "@/config/pricing";
 
 test.describe("Credits - Non-signed in users", () => {
   test.beforeEach(async ({ page }) => {
@@ -22,7 +23,7 @@ test.describe("Credits - Non-signed in users", () => {
     await page.goto("/pricing");
 
     // Should see credit pricing information
-    await expect(page.getByText("$5").first()).toBeVisible();
+    await expect(page.getByText(`$${CREDIT_PRICING.PER_PR.AMOUNT_USD}`).first()).toBeVisible();
     await expect(page.getByText("per PR").first()).toBeVisible();
 
     // Buy Credits button should show modal when clicked

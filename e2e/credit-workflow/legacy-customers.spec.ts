@@ -2,7 +2,11 @@ import { test, expect } from "@playwright/test";
 import { createTestCustomer } from "../helpers/create-test-customer";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import stripe from "@/lib/stripe";
-import { TEST_STANDARD_PLAN_PRICE_ID, TEST_LEGACY_CUSTOMER_ID } from "@/config/pricing";
+import {
+  TEST_STANDARD_PLAN_PRICE_ID,
+  TEST_LEGACY_CUSTOMER_ID,
+  CREDIT_PRICING,
+} from "@/config/pricing";
 import fs from "fs/promises";
 import path from "path";
 
@@ -236,7 +240,7 @@ test.describe("Credits - Legacy subscription owners", () => {
     await page.goto("/dashboard/credits");
 
     // Should show credit pricing information
-    await expect(page.locator("text=$5")).toBeVisible();
+    await expect(page.locator(`text=$${CREDIT_PRICING.PER_PR.AMOUNT_USD}`)).toBeVisible();
     await expect(page.locator("text=per PR")).toBeVisible();
     await expect(page.locator("text=Credits expire after 1 year")).toBeVisible();
   });
