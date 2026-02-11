@@ -13,17 +13,8 @@ const mockGetOwner = getOwner as jest.MockedFunction<typeof getOwner>;
 const mockSupabaseAdmin = supabaseAdmin as jest.Mocked<typeof supabaseAdmin>;
 
 describe("updateSpendingLimit", () => {
-  const mockSelect = jest.fn();
-  const mockEq = jest.fn();
-  const mockUpdate = jest.fn();
-
   beforeEach(() => {
     jest.clearAllMocks();
-    mockEq.mockReturnValue({ select: mockSelect });
-    mockUpdate.mockReturnValue({ eq: mockEq });
-    (mockSupabaseAdmin.from as jest.Mock).mockReturnValue({
-      update: mockUpdate,
-    });
   });
 
   describe("when owner does not exist", () => {
@@ -128,9 +119,22 @@ describe("updateSpendingLimit", () => {
       };
 
       mockGetOwner.mockResolvedValue(mockOwnerData);
-      mockSelect.mockResolvedValue({
+
+      const mockSelect = jest.fn().mockResolvedValue({
         data: [{ ...mockOwnerData, max_spending_limit_usd: 800 }],
         error: null,
+      });
+
+      const mockEq = jest.fn().mockReturnValue({
+        select: mockSelect,
+      });
+
+      const mockUpdate = jest.fn().mockReturnValue({
+        eq: mockEq,
+      });
+
+      (mockSupabaseAdmin.from as jest.Mock).mockReturnValue({
+        update: mockUpdate,
       });
 
       const result = await updateSpendingLimit({
@@ -165,9 +169,22 @@ describe("updateSpendingLimit", () => {
       };
 
       mockGetOwner.mockResolvedValue(mockOwnerData);
-      mockSelect.mockResolvedValue({
+
+      const mockSelect = jest.fn().mockResolvedValue({
         data: null,
         error: { message: "Database error" },
+      });
+
+      const mockEq = jest.fn().mockReturnValue({
+        select: mockSelect,
+      });
+
+      const mockUpdate = jest.fn().mockReturnValue({
+        eq: mockEq,
+      });
+
+      (mockSupabaseAdmin.from as jest.Mock).mockReturnValue({
+        update: mockUpdate,
       });
 
       await expect(
@@ -203,9 +220,22 @@ describe("updateSpendingLimit", () => {
       };
 
       mockGetOwner.mockResolvedValue(mockOwnerData);
-      mockSelect.mockResolvedValue({
+
+      const mockSelect = jest.fn().mockResolvedValue({
         data: [],
         error: null,
+      });
+
+      const mockEq = jest.fn().mockReturnValue({
+        select: mockSelect,
+      });
+
+      const mockUpdate = jest.fn().mockReturnValue({
+        eq: mockEq,
+      });
+
+      (mockSupabaseAdmin.from as jest.Mock).mockReturnValue({
+        update: mockUpdate,
       });
 
       await expect(
