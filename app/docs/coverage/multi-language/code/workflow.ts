@@ -6,6 +6,11 @@ on:
       - main
   workflow_dispatch:
 
+# Auto-cancel outdated runs on the same branch
+concurrency:
+  group: \${{ github.workflow }}-\${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   php-tests:
     runs-on: ubuntu-latest

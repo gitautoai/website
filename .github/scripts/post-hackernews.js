@@ -3,7 +3,7 @@ const { chromium } = require("playwright");
 /**
  * Posts to Hacker News using Playwright for browser automation
  */
-async function postHackerNews({ isBlog, postUrl, socialMediaPost, title }) {
+async function postHackerNews({ isBlog, postUrl, gitautoPost, wesPost, title }) {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
@@ -34,8 +34,10 @@ async function postHackerNews({ isBlog, postUrl, socialMediaPost, title }) {
     if (isBlog) {
       await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
     }
-    if (socialMediaPost) {
-      await page.fill('textarea[name="text"]', socialMediaPost);
+    // Use GitAuto post for HN (company voice is more appropriate)
+    const hnText = gitautoPost || wesPost;
+    if (hnText) {
+      await page.fill('textarea[name="text"]', hnText);
     }
 
     await page.click('input[type="submit"]');

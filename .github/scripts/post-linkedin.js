@@ -6,11 +6,10 @@ const wesUrn = "urn:li:person:Nu-Ocwc81N"; // curl -X GET "https://api.linkedin.
 /**
  * @see https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/posts-api?view=li-lms-2024-11&viewFallbackFrom=li-lms-unversioned&tabs=http
  */
-async function postLinkedIn({ isBlog, postUrl, socialMediaPost, title }) {
+async function postLinkedIn({ isBlog, postUrl, gitautoPost, wesPost, title }) {
   const restliClient = new RestliClient();
   const accessToken = process.env.LINKEDIN_ACCESS_TOKEN;
 
-  const message = isBlog ? "📝 New post" : "🚀 New release";
   const url = isBlog ? `${postUrl}?utm_source=linkedin&utm_medium=referral` : null;
 
   // Helper function for random delay between 5-15 seconds
@@ -18,10 +17,11 @@ async function postLinkedIn({ isBlog, postUrl, socialMediaPost, title }) {
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   // Helper function to create a post
-  const createPost = async (authorUrn) => {
+  // https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/advertising-targeting/version/article-ads-integrations?view=li-lms-2024-11&tabs=http#workflow
+  const createPost = async (authorUrn, text) => {
     const entity = {
       author: authorUrn,
-      commentary: `${message}: ${title}${socialMediaPost ? `\n\n${socialMediaPost}` : ""}`,
+      commentary: text,
       visibility: "PUBLIC",
       distribution: {
         feedDistribution: "MAIN_FEED",
@@ -33,13 +33,12 @@ async function postLinkedIn({ isBlog, postUrl, socialMediaPost, title }) {
     };
 
     // Include article preview only for blog posts
-    // https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/advertising-targeting/version/article-ads-integrations?view=li-lms-2024-11&tabs=http#workflow
     if (url) {
       entity.content = {
         article: {
           source: url,
           title: title,
-          description: socialMediaPost || `Check out our latest release on GitAuto!`,
+          description: text || `Check out our latest release on GitAuto!`,
         },
       };
     }
@@ -62,16 +61,37 @@ async function postLinkedIn({ isBlog, postUrl, socialMediaPost, title }) {
     });
   };
 
-  // Post from both accounts
-  const gitautoPost = await createPost(gitautoUrn);
-  const gitautoPostUrn = gitautoPost.headers["x-restli-id"];
-  const wesPost = await createPost(wesUrn);
-  const wesPostUrn = wesPost.headers["x-restli-id"];
+  const gitautoText = gitautoPost || title;
+  const wesText = wesPost || title;
+
+  if (!gitautoText && !wesText) {
+    console.log("No social media post content, skipping LinkedIn post");
+    return;
+  }
+
+  // Post from both accounts with different content
+  const gitautoResult = await createPost(gitautoUrn, gitautoText);
+  const gitautoPostUrn = gitautoResult.headers["x-restli-id"];
+  const wesResult = await createPost(wesUrn, wesText);
+  const wesPostUrn = wesResult.headers["x-restli-id"];
 
   // Wait and like each other's posts
-  await sleep(getRandomDelay());
-  await likePost(gitautoUrn, wesPostUrn);
-  await likePost(wesUrn, gitautoPostUrn);
+  if (gitautoPostUrn && wesPostUrn) {
+    await sleep(getRandomDelay());
+    await likePost(gitautoUrn, wesPostUrn);
+    await likePost(wesUrn, gitautoPostUrn);
+  }
+
+  // Send the post links to Slack webhook
+  const links = [
+    gitautoPostUrn ? `https://www.linkedin.com/feed/update/urn:li:activity:${gitautoPostUrn}` : null,
+    wesPostUrn ? `https://www.linkedin.com/feed/update/urn:li:activity:${wesPostUrn}` : null,
+  ].filter(Boolean).join(" and ");
+  await fetch(process.env.SLACK_WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ msg: `Posted to LinkedIn! ${links}` }),
+  });
 }
 
 module.exports = postLinkedIn;
