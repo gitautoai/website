@@ -81,6 +81,17 @@ async function postLinkedIn({ isBlog, postUrl, gitautoPost, wesPost, title }) {
     await likePost(gitautoUrn, wesPostUrn);
     await likePost(wesUrn, gitautoPostUrn);
   }
+
+  // Send the post links to Slack webhook
+  const links = [
+    gitautoPostUrn ? `https://www.linkedin.com/feed/update/urn:li:activity:${gitautoPostUrn}` : null,
+    wesPostUrn ? `https://www.linkedin.com/feed/update/urn:li:activity:${wesPostUrn}` : null,
+  ].filter(Boolean).join(" and ");
+  await fetch(process.env.SLACK_WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ msg: `Posted to LinkedIn! ${links}` }),
+  });
 }
 
 module.exports = postLinkedIn;
