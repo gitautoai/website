@@ -5,7 +5,17 @@ on:
   push:
     branches:
       - main
+    # Optional: Only run when relevant files change (customize as needed)
+    paths:
+      - '**/*.go'
+      - go.mod
+      - go.sum
   workflow_dispatch:
+
+# Auto-cancel outdated runs on the same branch
+concurrency:
+  group: \${{ github.workflow }}-\${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
