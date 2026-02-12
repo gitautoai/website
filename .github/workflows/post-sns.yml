@@ -21,7 +21,8 @@ jobs:
       is-blog: ${{ steps.check.outputs.is-blog }}
       post-url: ${{ steps.check.outputs.post-url }}
       pr-number: ${{ steps.check.outputs.pr-number }}
-      social-media-post: ${{ steps.check.outputs.social-media-post }}
+      social-media-post-gitauto: ${{ steps.check.outputs.social-media-post-gitauto }}
+      social-media-post-wes: ${{ steps.check.outputs.social-media-post-wes }}
     steps:
       - uses: actions/checkout@v4
       - name: Check if should post to SNS
@@ -68,21 +69,24 @@ jobs:
             // Check if it's a blog post
             const { isBlog, postUrl } = await getBlogInfo({ github, context: triggeringContext });
 
-            // Extract Social Media Post content
+            // Extract Social Media Post content (supports separate GitAuto/Wes posts)
+            const extractSocialPosts = require('.github/scripts/extract-social-posts.js');
             const prBody = pullRequest.body || '';
-            const socialMediaPost = prBody.match(/## Social Media Post\s*\n([\s\S]*?)(?=\n##|$)/)?.[1]?.trim() || '';
+            const { gitauto: gitautoPost, wes: wesPost } = extractSocialPosts(prBody);
 
             // Should post if it's a blog post OR has Social Media Post content
-            const shouldPost = isBlog || !!socialMediaPost;
+            const shouldPost = isBlog || !!gitautoPost || !!wesPost;
 
             core.setOutput('should-post', shouldPost);
             core.setOutput('is-blog', isBlog);
             core.setOutput('post-url', postUrl);
             core.setOutput('pr-number', pullRequest.number);
-            core.setOutput('social-media-post', socialMediaPost);
+            core.setOutput('social-media-post-gitauto', gitautoPost);
+            core.setOutput('social-media-post-wes', wesPost);
 
             console.log(`Blog post detected: ${isBlog}`);
-            console.log(`Social Media Post content: ${socialMediaPost ? 'yes' : 'no'}`);
+            console.log(`GitAuto post: ${gitautoPost ? 'yes' : 'no'}`);
+            console.log(`Wes post: ${wesPost ? 'yes' : 'no'}`);
             console.log(`Should post to SNS: ${shouldPost}`);
 
   post-sns:
@@ -117,7 +121,8 @@ jobs:
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
             const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
             const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
-            const socialMediaPost = `${{ needs.check-should-post.outputs.social-media-post }}`;
+            const gitautoPost = `${{ needs.check-should-post.outputs.social-media-post-gitauto }}`;
+            const wesPost = `${{ needs.check-should-post.outputs.social-media-post-wes }}`;
 
             const { data: pullRequest } = await github.rest.pulls.get({
               owner: context.repo.owner,
@@ -125,7 +130,7 @@ jobs:
               pull_number: prNumber
             });
 
-            await postTwitter({ isBlog, postUrl, socialMediaPost, title: pullRequest.title });
+            await postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
@@ -145,7 +150,8 @@ jobs:
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
             const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
             const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
-            const socialMediaPost = `${{ needs.check-should-post.outputs.social-media-post }}`;
+            const gitautoPost = `${{ needs.check-should-post.outputs.social-media-post-gitauto }}`;
+            const wesPost = `${{ needs.check-should-post.outputs.social-media-post-wes }}`;
 
             const { data: pullRequest } = await github.rest.pulls.get({
               owner: context.repo.owner,
@@ -153,7 +159,7 @@ jobs:
               pull_number: prNumber
             });
 
-            await postLinkedIn({ isBlog, postUrl, socialMediaPost, title: pullRequest.title });
+            await postLinkedIn({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
 
@@ -166,7 +172,8 @@ jobs:
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
             const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
             const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
-            const socialMediaPost = `${{ needs.check-should-post.outputs.social-media-post }}`;
+            const gitautoPost = `${{ needs.check-should-post.outputs.social-media-post-gitauto }}`;
+            const wesPost = `${{ needs.check-should-post.outputs.social-media-post-wes }}`;
 
             const { data: pullRequest } = await github.rest.pulls.get({
               owner: context.repo.owner,
@@ -174,7 +181,7 @@ jobs:
               pull_number: prNumber
             });
 
-            await postHackerNews({ isBlog, postUrl, socialMediaPost, title: pullRequest.title });
+            await postHackerNews({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
         env:
           HN_USERNAME: ${{ secrets.HN_USERNAME }}
           HN_PASSWORD: ${{ secrets.HN_PASSWORD }}
