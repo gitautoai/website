@@ -50,7 +50,7 @@
     "lodash": "^4.17.21",
     "next": "^16.1.5",
     "next-auth": "^4.24.13",
-    "next-mdx-remote": "^5.0.0",
+    "next-mdx-remote": "^6.0.0",
     "playwright": "^1.57.0",
     "posthog-js": "^1.258.5",
     "prismjs": "^1.30.0",
