@@ -82,12 +82,12 @@ export default function PRTable({ prs }: PRTableProps) {
                   {/* PR Title Row */}
                   <tr className="hover:bg-gray-50 border-t">
                     <td className="pt-3 pb-1 px-4 border-l border-r font-medium">#{pr.number}</td>
-                    <td className="pt-3 pb-1 px-4 border-r">
+                    <td className="pt-3 pb-1 px-4 border-r overflow-hidden">
                       <a
                         href={pr.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-pink-600 hover:text-pink-700 hover:underline"
+                        className="text-pink-600 hover:text-pink-700 hover:underline break-all"
                       >
                         {pr.title}
                       </a>
@@ -113,9 +113,9 @@ export default function PRTable({ prs }: PRTableProps) {
                         className={`py-1 px-4 border-l border-r ${index === pr.files.length - 1 ? "pb-3" : ""}`}
                       ></td>
                       <td
-                        className={`py-1 px-4 border-r pl-8 ${index === pr.files.length - 1 ? "pb-3" : ""}`}
+                        className={`py-1 px-4 border-r pl-8 overflow-hidden ${index === pr.files.length - 1 ? "pb-3" : ""}`}
                       >
-                        <div className="text-sm">
+                        <div className="text-sm break-all">
                           {getStatusBadge(file.status)}{" "}
                           <span className="font-mono text-sm">{file.filename}</span>
                           {getDiffBadge(file.additions, file.deletions)}

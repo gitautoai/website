@@ -9,20 +9,19 @@ jest.mock("js-tiktoken/ranks/o200k_base", () => ({}));
 
 describe("countTokens", () => {
   let mockEncode: jest.Mock;
-  let mockTiktoken: jest.Mock;
+  const mockTiktoken = Tiktoken as jest.MockedClass<typeof Tiktoken>;
 
   beforeEach(() => {
-    // Reset mocks before each test
     jest.clearAllMocks();
 
-    // Create a mock encode function
     mockEncode = jest.fn();
 
-    // Mock the Tiktoken constructor
-    mockTiktoken = Tiktoken as jest.MockedClass<typeof Tiktoken>;
-    mockTiktoken.mockImplementation(() => ({
-      encode: mockEncode,
-    }) as any);
+    mockTiktoken.mockImplementation(
+      () =>
+        ({
+          encode: mockEncode,
+        }) as unknown as Tiktoken,
+    );
   });
 
   describe("successful token counting", () => {
