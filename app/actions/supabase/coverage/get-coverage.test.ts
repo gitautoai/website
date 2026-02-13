@@ -435,13 +435,11 @@ describe("getCoverage", () => {
           id: 8,
           owner_id: 555,
           repo_id: 666,
-          file_path: longPath,
+          full_path: longPath,
           statement_coverage: 50,
           branch_coverage: 50,
           function_coverage: 50,
           line_coverage: 50,
-          lines_covered: 50,
-          lines_total: 100,
           created_at: "2024-01-08T00:00:00Z",
           updated_at: "2024-01-08T00:00:00Z",
         },
@@ -458,39 +456,7 @@ describe("getCoverage", () => {
       const result = await getCoverage(555, 666);
 
       expect(result).toEqual(mockData);
-      expect(result[0].file_path).toBe(longPath);
-    });
-
-    it("should handle coverage data with very large line counts", async () => {
-      const mockData = [
-        {
-          id: 9,
-          owner_id: 777,
-          repo_id: 888,
-          file_path: "src/large.ts",
-          statement_coverage: 99.99,
-          branch_coverage: 99.99,
-          function_coverage: 99.99,
-          line_coverage: 99.99,
-          lines_covered: 99999,
-          lines_total: 100000,
-          created_at: "2024-01-09T00:00:00Z",
-          updated_at: "2024-01-09T00:00:00Z",
-        },
-      ];
-
-      mockFrom.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-          eq: jest.fn().mockReturnValue({
-            eq: jest.fn().mockResolvedValue({ data: mockData, error: null }),
-          }),
-        }),
-      });
-
-      const result = await getCoverage(777, 888);
-
-      expect(result).toEqual(mockData);
-      expect(result[0].lines_total).toBe(100000);
+      expect(result[0].full_path).toBe(longPath);
     });
 
     it("should handle coverage data with special characters in file path", async () => {
@@ -499,13 +465,11 @@ describe("getCoverage", () => {
           id: 10,
           owner_id: 999,
           repo_id: 1111,
-          file_path: "src/special-chars_@#$%.ts",
+          full_path: "src/special-chars_@#$%.ts",
           statement_coverage: 75,
           branch_coverage: 75,
           function_coverage: 75,
           line_coverage: 75,
-          lines_covered: 75,
-          lines_total: 100,
           created_at: "2024-01-10T00:00:00Z",
           updated_at: "2024-01-10T00:00:00Z",
         },
@@ -522,7 +486,7 @@ describe("getCoverage", () => {
       const result = await getCoverage(999, 1111);
 
       expect(result).toEqual(mockData);
-      expect(result[0].file_path).toBe("src/special-chars_@#$%.ts");
+      expect(result[0].full_path).toBe("src/special-chars_@#$%.ts");
     });
 
     it("should handle zero as owner and repo IDs", async () => {
