@@ -235,17 +235,19 @@ When the user says "LGTM", execute these commands in order:
 7. **STOP if any step fails** - Fix all failures before proceeding (unless blog-only)
 8. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes
 9. `git add <specific-file-paths>` - Stage specific changed files including updated/created test files (NEVER use `git add .`, always specify exact file paths)
-10. Create a descriptive commit message based on changes (do NOT include Claude Code attribution)
+10. Create a descriptive commit message based on changes (do NOT include Claude Code attribution, do NOT include `[skip ci]` as it skips CI)
 11. `git push` - Push to remote
 12. Create pull request: `gh pr create --title "PR title" --body "PR description" --assignee @me`
-
     - PR title should be technical and descriptive
-    - **Social Media Post section**: Include `## Social Media Post` section to trigger X/LinkedIn/HN posts. Only include when there are explicit customer benefits. Skip for internal-only changes (refactoring, logging fixes, test improvements, infrastructure updates) that don't affect customers.
-    - When included, Social Media Post must:
+    - **Do NOT include a `## Test plan` section** - it's unnecessary noise
+    - **Social Media Post sections must always be the last sections in the PR body**
+    - **Social Media Post sections**: Only include when there are explicit customer benefits or useful dev insights. Skip for internal-only changes (refactoring, logging fixes, test improvements, infrastructure updates) that don't affect customers or teach anything.
+    - Always write TWO posts:
+      - **GitAuto post** (`## Social Media Post (GitAuto)`): Product voice. Can mention GitAuto. Explains what changed and why it matters for users.
+      - **Wes post** (`## Social Media Post (Wes)`): Personal voice. Written as Wes (the founder) sharing what he debugged/built. Don't emphasize "GitAuto" — no "GitAuto now does X" pattern. More like telling a friend what you worked on today.
+    - Shared guidelines for both posts:
+      - **NEVER use em dashes (—)** in social media posts. Use regular dashes (-) or rewrite the sentence instead.
       - Be concise and fit in a tweet (under 280 characters is ideal)
-      - Mention "GitAuto" by name
-      - Explain WHAT changed in practical terms
-      - Highlight WHY it matters - benefits for existing or potential GitAuto customers
       - **Write for developers, not marketers** - our customers are devs who hate corporate speak
       - **NEVER use typical marketing keywords**: "all-in", "doubling down", "sunsetting", "deeper features", "polished product", "game-changer", "seamless"
       - **NEVER frame things negatively**: "unused", "nobody used", "removing unused" - this is embarrassing
@@ -254,9 +256,6 @@ When the user says "LGTM", execute these commands in order:
       - **Tell the story when there's a real failure** - When you find a real flaw or failure, be transparent. Tell the story: what happened, what went wrong (e.g. Claude misunderstood X, our pipeline missed Y), what the impact was, and how we improved. Developers respect honesty and the story resonates more than hiding it. Frame it as "we found a flaw → it caused X → we improved" not "we fixed a bug".
       - **Sound like a human wrote it** - AI-generated posts are obvious and get ignored. Write like a real dev sharing something they built. Be casual, imperfect, opinionated. No polished marketing tone.
       - **Vary the opening every time** - NEVER use patterns like "GitAuto now...", "We just...", or any formula that gets stale. Start with the substance — what changed, why it matters, or a hook.
-      - Good example: "We're dropping Jira integration to focus on GitHub. Less code to maintain, fewer edge cases to handle, and we can ship GitHub features faster."
-      - Bad example: "GitAuto is sunsetting Jira integration to deliver the best possible GitHub experience" (too corporate)
-      - Bad example: "Removed unused Jira code paths" (sounds like failure)
 
 **Note**: E2E tests (`npx playwright test`) are skipped during LGTM to save time. Run them manually when needed.
 

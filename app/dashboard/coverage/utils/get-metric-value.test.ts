@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
+ 
 import { Tables } from "@/types/supabase";
 import { Metric } from "../types";
 import { getMetricValue } from "./get-metric-value";

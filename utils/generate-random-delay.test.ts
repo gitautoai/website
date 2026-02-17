@@ -99,13 +99,14 @@ describe("generateRandomDelay", () => {
 
   describe("consistency", () => {
     it("should always return dates within the valid range across multiple calls", () => {
+      const toleranceMs = 100; // allow 100ms for execution time between Date.now() calls
       for (let i = 0; i < 100; i++) {
         const now = Date.now();
         const result = generateRandomDelay();
-        const minutesFromNow = (result.getTime() - now) / (60 * 1000);
+        const diffMs = result.getTime() - now;
 
-        expect(minutesFromNow).toBeGreaterThanOrEqual(30);
-        expect(minutesFromNow).toBeLessThanOrEqual(60);
+        expect(diffMs).toBeGreaterThanOrEqual(30 * 60 * 1000 - toleranceMs);
+        expect(diffMs).toBeLessThanOrEqual(60 * 60 * 1000 + toleranceMs);
       }
     });
   });
