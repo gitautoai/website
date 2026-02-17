@@ -27,9 +27,7 @@ import type { TriggerSettings } from "@/app/settings/types";
 // Local imports (Others)
 import { RELATIVE_URLS } from "@/config/urls";
 import { ALLOWED_INTERVALS, DEFAULT_SCHEDULE_CONFIG, MAX_EXECUTIONS } from "@/config/schedule";
-import { convertLocalDateToUTC } from "@/utils/convert-local-date-to-utc";
 import { convertLocalToUTC } from "@/utils/convert-local-to-utc";
-import { convertUTCDateToLocal } from "@/utils/convert-utc-date-to-local";
 import { convertUTCToLocal } from "@/utils/convert-utc-to-local";
 import { formatDateTime } from "@/utils/format-date-time";
 
@@ -356,8 +354,8 @@ export default function TriggersPage() {
       const pause = await addSchedulePause(
         currentOwnerId,
         repoId,
-        convertLocalDateToUTC(form.start),
-        convertLocalDateToUTC(form.end, true),
+        new Date(`${form.start}T00:00:00`).toISOString(),
+        new Date(`${form.end}T23:59:59`).toISOString(),
         `${userId}:${userLogin}`,
         form.reason || undefined,
       );
@@ -416,8 +414,8 @@ export default function TriggersPage() {
           addSchedulePause(
             currentOwnerId,
             repo.repoId,
-            convertLocalDateToUTC(pauseAllForm.start),
-            convertLocalDateToUTC(pauseAllForm.end, true),
+            new Date(`${pauseAllForm.start}T00:00:00`).toISOString(),
+            new Date(`${pauseAllForm.end}T23:59:59`).toISOString(),
             `${userId}:${userLogin}`,
             pauseAllForm.reason || undefined,
           ),
@@ -443,6 +441,11 @@ export default function TriggersPage() {
         error: error instanceof Error ? error.message : "Failed to add pauses",
       }));
     }
+  };
+
+  const toLocalDate = (utcTimestamp: string) => {
+    const d = new Date(utcTimestamp);
+    return `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
   };
 
   const getTimezoneInfo = () => {
@@ -733,8 +736,8 @@ export default function TriggersPage() {
                                 </span>
                               )}
                               {(schedulePauses[repo.repoId] || []).some((p) => {
-                                const localStart = convertUTCDateToLocal(p.pause_start);
-                                const localEnd = convertUTCDateToLocal(p.pause_end);
+                                const localStart = toLocalDate(p.pause_start);
+                                const localEnd = toLocalDate(p.pause_end);
                                 const now = new Date();
                                 const todayLocal = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}`;
                                 return localStart <= todayLocal && localEnd >= todayLocal;
@@ -828,8 +831,8 @@ export default function TriggersPage() {
             {(schedulePauses[repo.repoId] || []).length > 0 ? (
               <div className="space-y-2">
                 {(schedulePauses[repo.repoId] || []).map((pause) => {
-                  const localStart = convertUTCDateToLocal(pause.pause_start);
-                  const localEnd = convertUTCDateToLocal(pause.pause_end);
+                  const localStart = toLocalDate(pause.pause_start);
+                  const localEnd = toLocalDate(pause.pause_end);
                   const now = new Date();
                   const todayLocal = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}`;
                   const isActive = localStart <= todayLocal && localEnd >= todayLocal;
