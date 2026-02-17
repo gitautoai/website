@@ -20,8 +20,8 @@ describe("addSchedulePause", () => {
         id: "uuid-1",
         owner_id: 123,
         repo_id: 456,
-        pause_start: "2026-03-01",
-        pause_end: "2026-03-10",
+        pause_start: "2026-03-01T08:00:00.000Z",
+        pause_end: "2026-03-11T06:59:59.000Z",
         reason: "Holiday",
         created_by: "1:user",
         created_at: "2026-02-12T00:00:00Z",
@@ -37,8 +37,8 @@ describe("addSchedulePause", () => {
       const result = await addSchedulePause(
         123,
         456,
-        "2026-03-01",
-        "2026-03-10",
+        "2026-03-01T08:00:00.000Z",
+        "2026-03-11T06:59:59.000Z",
         "1:user",
         "Holiday",
       );
@@ -47,8 +47,8 @@ describe("addSchedulePause", () => {
       expect(mockInsert).toHaveBeenCalledWith({
         owner_id: 123,
         repo_id: 456,
-        pause_start: "2026-03-01",
-        pause_end: "2026-03-10",
+        pause_start: "2026-03-01T08:00:00.000Z",
+        pause_end: "2026-03-11T06:59:59.000Z",
         reason: "Holiday",
         created_by: "1:user",
         updated_by: "1:user",
@@ -61,8 +61,8 @@ describe("addSchedulePause", () => {
         id: "uuid-2",
         owner_id: 123,
         repo_id: 456,
-        pause_start: "2026-03-01",
-        pause_end: "2026-03-10",
+        pause_start: "2026-03-01T08:00:00.000Z",
+        pause_end: "2026-03-11T06:59:59.000Z",
         reason: null,
         created_by: "1:user",
         created_at: "2026-02-12T00:00:00Z",
@@ -75,7 +75,13 @@ describe("addSchedulePause", () => {
       const mockInsert = jest.fn().mockReturnValue({ select: mockSelect });
       mockFrom.mockReturnValue({ insert: mockInsert });
 
-      await addSchedulePause(123, 456, "2026-03-01", "2026-03-10", "1:user");
+      await addSchedulePause(
+        123,
+        456,
+        "2026-03-01T08:00:00.000Z",
+        "2026-03-11T06:59:59.000Z",
+        "1:user",
+      );
 
       expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({ reason: null }));
     });
@@ -83,42 +89,48 @@ describe("addSchedulePause", () => {
 
   describe("validation", () => {
     it("should throw when ownerId is 0", async () => {
-      await expect(addSchedulePause(0, 456, "2026-03-01", "2026-03-10", "1:user")).rejects.toThrow(
-        "Missing required parameters",
-      );
+      await expect(
+        addSchedulePause(0, 456, "2026-03-01T08:00:00.000Z", "2026-03-11T06:59:59.000Z", "1:user"),
+      ).rejects.toThrow("Missing required parameters");
     });
 
     it("should throw when repoId is 0", async () => {
-      await expect(addSchedulePause(123, 0, "2026-03-01", "2026-03-10", "1:user")).rejects.toThrow(
-        "Missing required parameters",
-      );
+      await expect(
+        addSchedulePause(123, 0, "2026-03-01T08:00:00.000Z", "2026-03-11T06:59:59.000Z", "1:user"),
+      ).rejects.toThrow("Missing required parameters");
     });
 
     it("should throw when pauseStart is empty", async () => {
-      await expect(addSchedulePause(123, 456, "", "2026-03-10", "1:user")).rejects.toThrow(
-        "Missing date range",
-      );
+      await expect(
+        addSchedulePause(123, 456, "", "2026-03-11T06:59:59.000Z", "1:user"),
+      ).rejects.toThrow("Missing date range");
     });
 
     it("should throw when pauseEnd is empty", async () => {
-      await expect(addSchedulePause(123, 456, "2026-03-01", "", "1:user")).rejects.toThrow(
-        "Missing date range",
-      );
+      await expect(
+        addSchedulePause(123, 456, "2026-03-01T08:00:00.000Z", "", "1:user"),
+      ).rejects.toThrow("Missing date range");
     });
 
     it("should throw when end date is before start date", async () => {
       await expect(
-        addSchedulePause(123, 456, "2026-03-10", "2026-03-01", "1:user"),
+        addSchedulePause(
+          123,
+          456,
+          "2026-03-11T06:59:59.000Z",
+          "2026-03-01T08:00:00.000Z",
+          "1:user",
+        ),
       ).rejects.toThrow("End date must be on or after start date");
     });
 
-    it("should not throw when start and end dates are the same", async () => {
+    it("should not throw when start and end are the same timestamp", async () => {
       const mockPause = {
         id: "uuid-3",
         owner_id: 123,
         repo_id: 456,
-        pause_start: "2026-03-01",
-        pause_end: "2026-03-01",
+        pause_start: "2026-03-01T08:00:00.000Z",
+        pause_end: "2026-03-01T08:00:00.000Z",
         reason: null,
         created_by: "1:user",
         created_at: "2026-02-12T00:00:00Z",
@@ -131,7 +143,13 @@ describe("addSchedulePause", () => {
       const mockInsert = jest.fn().mockReturnValue({ select: mockSelect });
       mockFrom.mockReturnValue({ insert: mockInsert });
 
-      const result = await addSchedulePause(123, 456, "2026-03-01", "2026-03-01", "1:user");
+      const result = await addSchedulePause(
+        123,
+        456,
+        "2026-03-01T08:00:00.000Z",
+        "2026-03-01T08:00:00.000Z",
+        "1:user",
+      );
 
       expect(result).toEqual(mockPause);
     });
@@ -146,7 +164,13 @@ describe("addSchedulePause", () => {
       mockFrom.mockReturnValue({ insert: mockInsert });
 
       await expect(
-        addSchedulePause(123, 456, "2026-03-01", "2026-03-10", "1:user"),
+        addSchedulePause(
+          123,
+          456,
+          "2026-03-01T08:00:00.000Z",
+          "2026-03-11T06:59:59.000Z",
+          "1:user",
+        ),
       ).rejects.toEqual(mockError);
     });
   });
