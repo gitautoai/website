@@ -357,7 +357,7 @@ export default function TriggersPage() {
         currentOwnerId,
         repoId,
         convertLocalDateToUTC(form.start),
-        convertLocalDateToUTC(form.end),
+        convertLocalDateToUTC(form.end, true),
         `${userId}:${userLogin}`,
         form.reason || undefined,
       );
@@ -417,7 +417,7 @@ export default function TriggersPage() {
             currentOwnerId,
             repo.repoId,
             convertLocalDateToUTC(pauseAllForm.start),
-            convertLocalDateToUTC(pauseAllForm.end),
+            convertLocalDateToUTC(pauseAllForm.end, true),
             `${userId}:${userLogin}`,
             pauseAllForm.reason || undefined,
           ),
