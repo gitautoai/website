@@ -759,7 +759,7 @@ export type Database = {
           startup_commands: string[] | null;
           structured_rules: Json | null;
           target_branch: string;
-          test_dir_prefixes: string[] | null;
+          test_dir_prefixes: string[];
           trigger_on_commit: boolean;
           trigger_on_merged: boolean;
           trigger_on_pr_change: boolean;
@@ -796,7 +796,7 @@ export type Database = {
           startup_commands?: string[] | null;
           structured_rules?: Json | null;
           target_branch?: string;
-          test_dir_prefixes?: string[] | null;
+          test_dir_prefixes?: string[];
           trigger_on_commit?: boolean;
           trigger_on_merged?: boolean;
           trigger_on_pr_change?: boolean;
@@ -833,7 +833,7 @@ export type Database = {
           startup_commands?: string[] | null;
           structured_rules?: Json | null;
           target_branch?: string;
-          test_dir_prefixes?: string[] | null;
+          test_dir_prefixes?: string[];
           trigger_on_commit?: boolean;
           trigger_on_merged?: boolean;
           trigger_on_pr_change?: boolean;
@@ -909,6 +909,53 @@ export type Database = {
             foreignKeyName: "repository_features_owner_id_repo_id_fkey";
             columns: ["owner_id", "repo_id"];
             isOneToOne: true;
+            referencedRelation: "repositories";
+            referencedColumns: ["owner_id", "repo_id"];
+          },
+        ];
+      };
+      schedule_pauses: {
+        Row: {
+          created_at: string;
+          created_by: string;
+          id: string;
+          owner_id: number;
+          pause_end: string;
+          pause_start: string;
+          reason: string | null;
+          repo_id: number;
+          updated_at: string;
+          updated_by: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by: string;
+          id?: string;
+          owner_id: number;
+          pause_end: string;
+          pause_start: string;
+          reason?: string | null;
+          repo_id: number;
+          updated_at?: string;
+          updated_by: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string;
+          id?: string;
+          owner_id?: number;
+          pause_end?: string;
+          pause_start?: string;
+          reason?: string | null;
+          repo_id?: number;
+          updated_at?: string;
+          updated_by?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "schedule_pauses_owner_id_repo_id_fkey";
+            columns: ["owner_id", "repo_id"];
+            isOneToOne: false;
             referencedRelation: "repositories";
             referencedColumns: ["owner_id", "repo_id"];
           },

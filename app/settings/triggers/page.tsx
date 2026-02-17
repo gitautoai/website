@@ -7,6 +7,10 @@ import { useEffect, useState } from "react";
 // Local imports (Actions)
 import { createOrUpdateSchedule } from "@/app/actions/aws/create-or-update-schedule";
 import { deleteSchedules } from "@/app/actions/aws/delete-schedules";
+import { addSchedulePause } from "@/app/actions/supabase/schedule-pauses/add-schedule-pause";
+import { deleteSchedulePause } from "@/app/actions/supabase/schedule-pauses/delete-schedule-pause";
+import { getAllSchedulePauses } from "@/app/actions/supabase/schedule-pauses/get-all-schedule-pauses";
+import type { SchedulePause } from "@/app/actions/supabase/schedule-pauses/get-all-schedule-pauses";
 import { getAllTriggerSettings } from "@/app/actions/supabase/repositories/get-all-trigger-settings";
 import type { TriggerSettingsForRepo } from "@/app/actions/supabase/repositories/get-all-trigger-settings";
 import { upsertRepository } from "@/app/actions/supabase/repositories/upsert-repository";
@@ -16,6 +20,8 @@ import { slackUs } from "@/app/actions/slack/slack-us";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import PauseModal from "@/app/settings/triggers/PauseModal";
+import ToggleSwitch from "@/app/settings/triggers/ToggleSwitch";
 import type { TriggerSettings } from "@/app/settings/types";
 
 // Local imports (Others)
@@ -23,6 +29,7 @@ import { RELATIVE_URLS } from "@/config/urls";
 import { ALLOWED_INTERVALS, DEFAULT_SCHEDULE_CONFIG, MAX_EXECUTIONS } from "@/config/schedule";
 import { convertLocalToUTC } from "@/utils/convert-local-to-utc";
 import { convertUTCToLocal } from "@/utils/convert-utc-to-local";
+import { formatDateTime } from "@/utils/format-date-time";
 
 type RepoWithSettings = {
   repoId: number;
@@ -47,6 +54,18 @@ export default function TriggersPage() {
   const [scheduleConfigs, setScheduleConfigs] = useState<
     Record<number, { time: string; executions: number; interval: number; weekends: boolean }>
   >({});
+  const [schedulePauses, setSchedulePauses] = useState<Record<number, SchedulePause[]>>({});
+  const [newPauseForm, setNewPauseForm] = useState<
+    Record<number, { start: string; end: string; reason: string; isOpen: boolean }>
+  >({});
+  const [pauseErrors, setPauseErrors] = useState<Record<number, string>>({});
+  const [pauseAllForm, setPauseAllForm] = useState<{
+    start: string;
+    end: string;
+    reason: string;
+    isOpen: boolean;
+    error: string;
+  }>({ start: "", end: "", reason: "", isOpen: false, error: "" });
 
   useEffect(() => {
     const loadAllSettings = async () => {
@@ -99,6 +118,15 @@ export default function TriggersPage() {
           }
         });
         setScheduleConfigs(configs);
+
+        // Load schedule pauses
+        const allPauses = await getAllSchedulePauses(currentOwnerId);
+        const pausesByRepo: Record<number, SchedulePause[]> = {};
+        for (const pause of allPauses) {
+          if (!pausesByRepo[pause.repo_id]) pausesByRepo[pause.repo_id] = [];
+          pausesByRepo[pause.repo_id].push(pause);
+        }
+        setSchedulePauses(pausesByRepo);
       } catch (error) {
         console.error("Failed to load trigger settings:", error);
       } finally {
@@ -109,6 +137,14 @@ export default function TriggersPage() {
     loadAllSettings();
   }, [currentOwnerId, currentOwnerName, organizations]);
 
+  // Notify on page visit
+  useEffect(() => {
+    if (!userId || !userName || !currentOwnerName) return;
+
+    const message = `${userName} (${userId}) visited Triggers page for ${currentOwnerName}`;
+    slackUs(message);
+  }, [userId, userName, currentOwnerName]);
+
   const updateSetting = async (
     repoId: number,
     repoName: string,
@@ -116,7 +152,7 @@ export default function TriggersPage() {
       TriggerSettings,
       "triggerOnReviewComment" | "triggerOnTestFailure" | "triggerOnSchedule"
     >,
-    value: boolean
+    value: boolean,
   ) => {
     if (
       !currentOwnerId ||
@@ -166,7 +202,7 @@ export default function TriggersPage() {
     };
 
     setRepoSettings((prev) =>
-      prev.map((r) => (r.repoId === repoId ? { ...r, settings: updatedDbSettings } : r))
+      prev.map((r) => (r.repoId === repoId ? { ...r, settings: updatedDbSettings } : r)),
     );
 
     // Save to database
@@ -206,7 +242,9 @@ export default function TriggersPage() {
       .catch((error) => {
         console.error("Error saving trigger settings:", error);
         setRepoSettings((prev) =>
-          prev.map((r) => (r.repoId === repoId ? { ...r, settings: currentDbSettings || null } : r))
+          prev.map((r) =>
+            r.repoId === repoId ? { ...r, settings: currentDbSettings || null } : r,
+          ),
         );
       });
 
@@ -224,7 +262,7 @@ export default function TriggersPage() {
     repoId: number,
     repoName: string,
     field: "time" | "executions" | "interval" | "weekends",
-    value: string | number | boolean
+    value: string | number | boolean,
   ) => {
     if (
       !currentOwnerId ||
@@ -307,6 +345,104 @@ export default function TriggersPage() {
     slackUs(message).catch((error) => console.error("Error sending Slack notification:", error));
   };
 
+  const handleAddPause = async (repoId: number, repoName: string) => {
+    if (!currentOwnerId || !userId || !userLogin || !currentOwnerName) return;
+    const form = newPauseForm[repoId];
+    if (!form?.start || !form?.end) return;
+
+    try {
+      const pause = await addSchedulePause(
+        currentOwnerId,
+        repoId,
+        form.start,
+        form.end,
+        `${userId}:${userLogin}`,
+        form.reason || undefined,
+      );
+
+      setSchedulePauses((prev) => ({
+        ...prev,
+        [repoId]: [...(prev[repoId] || []), pause].sort((a, b) =>
+          a.pause_start.localeCompare(b.pause_start),
+        ),
+      }));
+
+      setNewPauseForm((prev) => ({
+        ...prev,
+        [repoId]: { start: "", end: "", reason: "", isOpen: false },
+      }));
+
+      setPauseErrors((prev) => ({ ...prev, [repoId]: "" }));
+
+      const message = `${userName} (${userId}) added schedule pause ${form.start} to ${form.end} for ${currentOwnerName}/${repoName}`;
+      slackUs(message).catch(console.error);
+    } catch (error) {
+      setPauseErrors((prev) => ({
+        ...prev,
+        [repoId]: error instanceof Error ? error.message : "Failed to add pause",
+      }));
+    }
+  };
+
+  const handleDeletePause = async (repoId: number, pauseId: string, repoName: string) => {
+    if (!currentOwnerName) return;
+    try {
+      await deleteSchedulePause(pauseId);
+
+      setSchedulePauses((prev) => ({
+        ...prev,
+        [repoId]: (prev[repoId] || []).filter((p) => p.id !== pauseId),
+      }));
+
+      const message = `${userName} (${userId}) removed a schedule pause for ${currentOwnerName}/${repoName}`;
+      slackUs(message).catch(console.error);
+    } catch (error) {
+      console.error("Failed to delete pause:", error);
+    }
+  };
+
+  const handlePauseAll = async () => {
+    if (!currentOwnerId || !userId || !userLogin || !currentOwnerName) return;
+    if (!pauseAllForm.start || !pauseAllForm.end) return;
+
+    const scheduledRepos = repoSettings.filter((r) => r.settings?.trigger_on_schedule);
+    if (scheduledRepos.length === 0) return;
+
+    try {
+      const results = await Promise.all(
+        scheduledRepos.map((repo) =>
+          addSchedulePause(
+            currentOwnerId,
+            repo.repoId,
+            pauseAllForm.start,
+            pauseAllForm.end,
+            `${userId}:${userLogin}`,
+            pauseAllForm.reason || undefined,
+          ),
+        ),
+      );
+
+      const newPauses: Record<number, SchedulePause[]> = { ...schedulePauses };
+      results.forEach((pause) => {
+        if (!newPauses[pause.repo_id]) newPauses[pause.repo_id] = [];
+        newPauses[pause.repo_id] = [...newPauses[pause.repo_id], pause].sort((a, b) =>
+          a.pause_start.localeCompare(b.pause_start),
+        );
+      });
+      setSchedulePauses(newPauses);
+
+      setPauseAllForm({ start: "", end: "", reason: "", isOpen: false, error: "" });
+
+      const message = `${userName} (${userId}) added schedule pause ${pauseAllForm.start} to ${pauseAllForm.end} for all ${scheduledRepos.length} repos in ${currentOwnerName}`;
+      slackUs(message).catch(console.error);
+    } catch (error) {
+      setPauseAllForm((prev) => ({
+        ...prev,
+        error: error instanceof Error ? error.message : "Failed to add pauses",
+      }));
+    }
+  };
+
   const getTimezoneInfo = () => {
     try {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -371,6 +507,43 @@ export default function TriggersPage() {
         Each trigger can be enabled independently. Changes are saved automatically.
       </p>
 
+      {repoSettings.some((r) => r.settings?.trigger_on_schedule) && (
+        <div className="mb-4 flex justify-end">
+          <button
+            onClick={() =>
+              setPauseAllForm((prev) => ({
+                ...prev,
+                start: new Date().toISOString().split("T")[0],
+                isOpen: true,
+              }))
+            }
+            className="px-3 py-1.5 text-sm text-pink-600 border border-pink-600 rounded-md hover:bg-pink-50"
+          >
+            Pause All Scheduled Repos
+          </button>
+        </div>
+      )}
+
+      {/* Pause All Modal */}
+      {pauseAllForm.isOpen && (
+        <PauseModal
+          title="Pause All Scheduled Repos"
+          description={`This will add a pause period to all ${repoSettings.filter((r) => r.settings?.trigger_on_schedule).length} repos with schedule triggers enabled.`}
+          start={pauseAllForm.start}
+          end={pauseAllForm.end}
+          reason={pauseAllForm.reason}
+          error={pauseAllForm.error}
+          onStartChange={(v) => setPauseAllForm((prev) => ({ ...prev, start: v }))}
+          onEndChange={(v) => setPauseAllForm((prev) => ({ ...prev, end: v }))}
+          onReasonChange={(v) => setPauseAllForm((prev) => ({ ...prev, reason: v }))}
+          onSubmit={handlePauseAll}
+          onClose={() =>
+            setPauseAllForm({ start: "", end: "", reason: "", isOpen: false, error: "" })
+          }
+          submitLabel="Pause All"
+        />
+      )}
+
       <div className="relative rounded-lg border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -423,67 +596,43 @@ export default function TriggersPage() {
                   <tr key={repo.repoId}>
                     <td className="px-4 py-3 text-sm font-medium text-gray-900">{repo.repoName}</td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() =>
+                      <ToggleSwitch
+                        checked={settings.trigger_on_review_comment}
+                        onChange={() =>
                           updateSetting(
                             repo.repoId,
                             repo.repoName,
                             "triggerOnReviewComment",
-                            !settings.trigger_on_review_comment
+                            !settings.trigger_on_review_comment,
                           )
                         }
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                          settings.trigger_on_review_comment ? "bg-pink-600" : "bg-gray-300"
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
-                            settings.trigger_on_review_comment ? "translate-x-6" : "translate-x-1"
-                          }`}
-                        />
-                      </button>
+                      />
                     </td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() =>
+                      <ToggleSwitch
+                        checked={settings.trigger_on_test_failure}
+                        onChange={() =>
                           updateSetting(
                             repo.repoId,
                             repo.repoName,
                             "triggerOnTestFailure",
-                            !settings.trigger_on_test_failure
+                            !settings.trigger_on_test_failure,
                           )
                         }
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                          settings.trigger_on_test_failure ? "bg-pink-600" : "bg-gray-300"
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
-                            settings.trigger_on_test_failure ? "translate-x-6" : "translate-x-1"
-                          }`}
-                        />
-                      </button>
+                      />
                     </td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() =>
+                      <ToggleSwitch
+                        checked={settings.trigger_on_schedule}
+                        onChange={() =>
                           updateSetting(
                             repo.repoId,
                             repo.repoName,
                             "triggerOnSchedule",
-                            !settings.trigger_on_schedule
+                            !settings.trigger_on_schedule,
                           )
                         }
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                          settings.trigger_on_schedule ? "bg-pink-600" : "bg-gray-300"
-                        }`}
-                      >
-                        <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
-                            settings.trigger_on_schedule ? "translate-x-6" : "translate-x-1"
-                          }`}
-                        />
-                      </button>
+                      />
                     </td>
                     <td className="px-4 py-3">
                       <div className="space-y-1.5 py-1">
@@ -497,7 +646,7 @@ export default function TriggersPage() {
                                 repo.repoId,
                                 repo.repoName,
                                 "time",
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             disabled={!settings.trigger_on_schedule}
@@ -514,7 +663,7 @@ export default function TriggersPage() {
                                 repo.repoId,
                                 repo.repoName,
                                 "executions",
-                                parseInt(e.target.value)
+                                parseInt(e.target.value),
                               )
                             }
                             disabled={!settings.trigger_on_schedule}
@@ -525,7 +674,7 @@ export default function TriggersPage() {
                                 <option key={count} value={count}>
                                   {count}x
                                 </option>
-                              )
+                              ),
                             )}
                           </select>
                         </div>
@@ -538,7 +687,7 @@ export default function TriggersPage() {
                                 repo.repoId,
                                 repo.repoName,
                                 "interval",
-                                parseInt(e.target.value)
+                                parseInt(e.target.value),
                               )
                             }
                             disabled={
@@ -563,13 +712,51 @@ export default function TriggersPage() {
                                 repo.repoId,
                                 repo.repoName,
                                 "weekends",
-                                e.target.checked
+                                e.target.checked,
                               )
                             }
                             disabled={!settings.trigger_on_schedule}
                             className="h-3.5 w-3.5 text-pink-600 rounded border-gray-300 disabled:bg-gray-50 disabled:border-gray-200"
                           />
                         </div>
+
+                        {/* Schedule Pause Periods - compact indicator */}
+                        {settings.trigger_on_schedule && (
+                          <div className="mt-1.5">
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs text-gray-700 font-medium">Pauses</span>
+                              {(schedulePauses[repo.repoId] || []).length > 0 && (
+                                <span className="text-xs text-gray-500">
+                                  {(schedulePauses[repo.repoId] || []).length}
+                                </span>
+                              )}
+                              {(schedulePauses[repo.repoId] || []).some((p) => {
+                                const today = new Date().toISOString().split("T")[0];
+                                return p.pause_start <= today && p.pause_end >= today;
+                              }) && (
+                                <span className="text-xs text-amber-600 font-medium">Active</span>
+                              )}
+                              <button
+                                onClick={() =>
+                                  setNewPauseForm((prev) => ({
+                                    ...prev,
+                                    [repo.repoId]: {
+                                      start:
+                                        prev[repo.repoId]?.start ||
+                                        new Date().toISOString().split("T")[0],
+                                      end: prev[repo.repoId]?.end || "",
+                                      reason: prev[repo.repoId]?.reason || "",
+                                      isOpen: true,
+                                    },
+                                  }))
+                                }
+                                className="text-xs text-pink-600 hover:text-pink-700 hover:underline ml-auto"
+                              >
+                                Manage
+                              </button>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
@@ -593,6 +780,85 @@ export default function TriggersPage() {
           </table>
         </div>
       </div>
+
+      {/* Pause Periods Modal */}
+      {repoSettings
+        .filter((repo) => newPauseForm[repo.repoId]?.isOpen)
+        .map((repo) => (
+          <PauseModal
+            key={`modal-${repo.repoId}`}
+            title={`Pause Periods - ${repo.repoName}`}
+            start={newPauseForm[repo.repoId]?.start || ""}
+            end={newPauseForm[repo.repoId]?.end || ""}
+            reason={newPauseForm[repo.repoId]?.reason || ""}
+            error={pauseErrors[repo.repoId]}
+            onStartChange={(v) =>
+              setNewPauseForm((prev) => ({
+                ...prev,
+                [repo.repoId]: { ...prev[repo.repoId], start: v },
+              }))
+            }
+            onEndChange={(v) =>
+              setNewPauseForm((prev) => ({
+                ...prev,
+                [repo.repoId]: { ...prev[repo.repoId], end: v },
+              }))
+            }
+            onReasonChange={(v) =>
+              setNewPauseForm((prev) => ({
+                ...prev,
+                [repo.repoId]: { ...prev[repo.repoId], reason: v },
+              }))
+            }
+            onSubmit={() => handleAddPause(repo.repoId, repo.repoName)}
+            onClose={() =>
+              setNewPauseForm((prev) => ({
+                ...prev,
+                [repo.repoId]: { start: "", end: "", reason: "", isOpen: false },
+              }))
+            }
+            submitLabel="Add Pause"
+          >
+            {/* Existing pauses */}
+            {(schedulePauses[repo.repoId] || []).length > 0 ? (
+              <div className="space-y-2">
+                {(schedulePauses[repo.repoId] || []).map((pause) => {
+                  const today = new Date().toISOString().split("T")[0];
+                  const isActive = pause.pause_start <= today && pause.pause_end >= today;
+                  return (
+                    <div
+                      key={pause.id}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-lg border ${isActive ? "border-amber-200 bg-amber-50" : "border-gray-200 bg-gray-50"}`}
+                    >
+                      {isActive && (
+                        <span className="text-xs font-medium text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">
+                          Active
+                        </span>
+                      )}
+                      <div className="flex-1">
+                        <div className="text-sm text-gray-700">
+                          {formatDateTime(pause.pause_start, { includeTime: false })} ~{" "}
+                          {formatDateTime(pause.pause_end, { includeTime: false })}
+                        </div>
+                        {pause.reason && (
+                          <div className="text-xs text-gray-400">{pause.reason}</div>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => handleDeletePause(repo.repoId, pause.id, repo.repoName)}
+                        className="text-red-400 hover:text-red-600 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-400">No pause periods configured.</p>
+            )}
+          </PauseModal>
+        ))}
 
       {isLoading && <LoadingSpinner />}
     </div>

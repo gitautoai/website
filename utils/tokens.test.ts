@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
+ 
 import { Tiktoken } from "js-tiktoken/lite";
 import o200k_base from "js-tiktoken/ranks/o200k_base";
 import { countTokens } from "./tokens";

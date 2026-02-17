@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
+ 
 
 import { getOwners } from "./get-owners";
 

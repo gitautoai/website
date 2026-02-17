@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
+ 
 import { parseName } from "./parse-name";
 
 describe("parseName", () => {
