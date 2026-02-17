@@ -239,6 +239,7 @@ When the user says "LGTM", execute these commands in order:
 11. `git push` - Push to remote
 12. Create pull request: `gh pr create --title "PR title" --body "PR description" --assignee @me`
     - PR title should be technical and descriptive
+    - **Do NOT include a `## Test plan` section** - it's unnecessary noise
     - **Social Media Post sections must always be the last sections in the PR body**
     - **Social Media Post sections**: Only include when there are explicit customer benefits or useful dev insights. Skip for internal-only changes (refactoring, logging fixes, test improvements, infrastructure updates) that don't affect customers or teach anything.
     - Always write TWO posts:
