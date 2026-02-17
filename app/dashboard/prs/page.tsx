@@ -196,7 +196,7 @@ export default function PRsPage() {
 
   const filterPRs = (prs: PRData[]) => {
     if (statusFilter === "all") return prs;
-    return prs.filter((pr) => pr.checkStatus === "failure" || pr.hasConflicts);
+    return prs.filter((pr) => pr.checkStatus !== "success" || pr.hasConflicts);
   };
 
   return (

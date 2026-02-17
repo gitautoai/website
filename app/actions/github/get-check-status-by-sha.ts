@@ -1,7 +1,9 @@
 "use server";
 
-import { checkCommitHasSkipCI } from "./check-commit-has-skip-ci";
 import { getOctokitForInstallation } from "@/app/api/github";
+import { PRData } from "@/app/dashboard/prs/types";
+
+import { checkCommitHasSkipCI } from "./check-commit-has-skip-ci";
 
 export const getCheckStatusBySHA = async ({
   ownerName,
@@ -13,18 +15,18 @@ export const getCheckStatusBySHA = async ({
   repoName: string;
   installationId: number;
   sha: string;
-}): Promise<"success" | "failure" | "pending" | "none"> => {
+}): Promise<PRData["checkStatus"]> => {
   try {
     const octokit = await getOctokitForInstallation(installationId);
 
-    // Check if last commit has [skip ci] - if yes, tests never ran, NOT passing
+    // Check if last commit has [skip ci] - if yes, tests never ran (not a failure)
     const hasSkipCI = await checkCommitHasSkipCI({
       ownerName,
       repoName,
       installationId,
       sha,
     });
-    if (hasSkipCI) return "failure";
+    if (hasSkipCI) return "skipped";
 
     // Get check runs for the commit SHA
     const { data: checkRuns } = await octokit.checks.listForRef({
@@ -40,20 +42,29 @@ export const getCheckStatusBySHA = async ({
 
     // Check if any are still in progress or queued
     const hasPending = checkRuns.check_runs.some(
-      (run) => run.status === "queued" || run.status === "in_progress"
+      (run) => run.status === "queued" || run.status === "in_progress",
     );
     if (hasPending) {
       return "pending";
     }
 
-    // Check if all completed successfully
-    const allSuccess = checkRuns.check_runs.every((run) => run.conclusion === "success");
-    if (allSuccess) {
-      return "success";
+    // Return the worst conclusion across all check runs (priority order)
+    const CONCLUSION_PRIORITY: PRData["checkStatus"][] = [
+      "failure",
+      "timed_out",
+      "cancelled",
+      "action_required",
+      "stale",
+      "success",
+      "neutral",
+      "skipped",
+    ];
+    const conclusions = new Set<string | null>(checkRuns.check_runs.map((run) => run.conclusion));
+    for (const conclusion of CONCLUSION_PRIORITY) {
+      if (conclusions.has(conclusion)) return conclusion;
     }
 
-    // Some failed
-    return "failure";
+    return "none";
   } catch (error) {
     console.error(`Failed to get check status for SHA ${sha}:`, error);
     return "none";
