@@ -1,22 +1,33 @@
 import React from "react";
 
-import { PRData } from "../types";
+import { FAILURE_STATUSES, PRData } from "../types";
 
 type PRTableProps = {
   prs: PRData[];
 };
 
+const STATUS_LABELS: Record<PRData["checkStatus"], string> = {
+  success: "✓ Passed",
+  failure: "✗ Failed",
+  timed_out: "✗ Timed Out",
+  cancelled: "✗ Cancelled",
+  action_required: "✗ Action Required",
+  stale: "✗ Stale",
+  pending: "⋯ Pending",
+  skipped: "⊘ Skipped",
+  neutral: "⊘ Neutral",
+  none: "- No Checks",
+};
+
 const getCheckStatusBadge = (status: PRData["checkStatus"]) => {
-  switch (status) {
-    case "success":
-      return <span className="px-2 py-1 text-xs rounded text-green-800">✓ Passed</span>;
-    case "failure":
-      return <span className="px-2 py-1 text-xs rounded text-red-800">✗ Failed</span>;
-    case "pending":
-      return <span className="px-2 py-1 text-xs rounded text-yellow-800">⋯ Pending</span>;
-    case "none":
-      return <span className="px-2 py-1 text-xs rounded text-gray-600">- No Checks</span>;
-  }
+  const label = STATUS_LABELS[status];
+  if (status === "success")
+    return <span className="px-2 py-1 text-xs rounded text-green-800">{label}</span>;
+  if (FAILURE_STATUSES.has(status))
+    return <span className="px-2 py-1 text-xs rounded text-red-800">{label}</span>;
+  if (status === "pending")
+    return <span className="px-2 py-1 text-xs rounded text-yellow-800">{label}</span>;
+  return <span className="px-2 py-1 text-xs rounded text-gray-600">{label}</span>;
 };
 
 const getStatusBadge = (status: string) => {
