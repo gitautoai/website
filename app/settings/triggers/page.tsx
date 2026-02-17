@@ -27,7 +27,9 @@ import type { TriggerSettings } from "@/app/settings/types";
 // Local imports (Others)
 import { RELATIVE_URLS } from "@/config/urls";
 import { ALLOWED_INTERVALS, DEFAULT_SCHEDULE_CONFIG, MAX_EXECUTIONS } from "@/config/schedule";
+import { convertLocalDateToUTC } from "@/utils/convert-local-date-to-utc";
 import { convertLocalToUTC } from "@/utils/convert-local-to-utc";
+import { convertUTCDateToLocal } from "@/utils/convert-utc-date-to-local";
 import { convertUTCToLocal } from "@/utils/convert-utc-to-local";
 import { formatDateTime } from "@/utils/format-date-time";
 
@@ -354,8 +356,8 @@ export default function TriggersPage() {
       const pause = await addSchedulePause(
         currentOwnerId,
         repoId,
-        form.start,
-        form.end,
+        convertLocalDateToUTC(form.start),
+        convertLocalDateToUTC(form.end, true),
         `${userId}:${userLogin}`,
         form.reason || undefined,
       );
@@ -414,8 +416,8 @@ export default function TriggersPage() {
           addSchedulePause(
             currentOwnerId,
             repo.repoId,
-            pauseAllForm.start,
-            pauseAllForm.end,
+            convertLocalDateToUTC(pauseAllForm.start),
+            convertLocalDateToUTC(pauseAllForm.end, true),
             `${userId}:${userLogin}`,
             pauseAllForm.reason || undefined,
           ),
@@ -731,8 +733,11 @@ export default function TriggersPage() {
                                 </span>
                               )}
                               {(schedulePauses[repo.repoId] || []).some((p) => {
-                                const today = new Date().toISOString().split("T")[0];
-                                return p.pause_start <= today && p.pause_end >= today;
+                                const localStart = convertUTCDateToLocal(p.pause_start);
+                                const localEnd = convertUTCDateToLocal(p.pause_end);
+                                const now = new Date();
+                                const todayLocal = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}`;
+                                return localStart <= todayLocal && localEnd >= todayLocal;
                               }) && (
                                 <span className="text-xs text-amber-600 font-medium">Active</span>
                               )}
@@ -823,8 +828,11 @@ export default function TriggersPage() {
             {(schedulePauses[repo.repoId] || []).length > 0 ? (
               <div className="space-y-2">
                 {(schedulePauses[repo.repoId] || []).map((pause) => {
-                  const today = new Date().toISOString().split("T")[0];
-                  const isActive = pause.pause_start <= today && pause.pause_end >= today;
+                  const localStart = convertUTCDateToLocal(pause.pause_start);
+                  const localEnd = convertUTCDateToLocal(pause.pause_end);
+                  const now = new Date();
+                  const todayLocal = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}`;
+                  const isActive = localStart <= todayLocal && localEnd >= todayLocal;
                   return (
                     <div
                       key={pause.id}
@@ -837,8 +845,8 @@ export default function TriggersPage() {
                       )}
                       <div className="flex-1">
                         <div className="text-sm text-gray-700">
-                          {formatDateTime(pause.pause_start, { includeTime: false })} ~{" "}
-                          {formatDateTime(pause.pause_end, { includeTime: false })}
+                          {formatDateTime(localStart, { includeTime: false })} ~{" "}
+                          {formatDateTime(localEnd, { includeTime: false })}
                         </div>
                         {pause.reason && (
                           <div className="text-xs text-gray-400">{pause.reason}</div>
