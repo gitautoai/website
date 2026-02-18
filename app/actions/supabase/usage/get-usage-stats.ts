@@ -22,7 +22,8 @@ export async function getUsageStats({
     .from("usage")
     .select("created_at, pr_number, owner_name, repo_name, issue_number, is_merged")
     .eq("owner_name", ownerName)
-    .eq("repo_name", repoName);
+    .eq("repo_name", repoName)
+    .in("trigger", ["issue_comment", "issue_label", "manual", "pull_request"]);
 
   console.log("Supabase query result:", { dataLength: allTimeData?.length, error });
 
