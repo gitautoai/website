@@ -1,14 +1,15 @@
 import { getScheduleStatus } from "./get-schedule-status";
-
-const mockSend = jest.fn();
+import { schedulerClient } from "@/lib/aws-scheduler";
 
 jest.mock("@/lib/aws-scheduler", () => ({
-  schedulerClient: { send: mockSend },
+  schedulerClient: { send: jest.fn() },
 }));
 
 jest.mock("@/utils/get-schedule-name", () => ({
   getScheduleName: jest.fn().mockReturnValue("gitauto-repo-123-456"),
 }));
+
+const mockSend = schedulerClient.send as jest.Mock;
 
 describe("getScheduleStatus", () => {
   beforeEach(() => {
