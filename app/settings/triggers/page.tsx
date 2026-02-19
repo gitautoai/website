@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 // Local imports (Actions)
 import { createOrUpdateSchedule } from "@/app/actions/aws/create-or-update-schedule";
 import { deleteSchedules } from "@/app/actions/aws/delete-schedules";
+import { hasPurchasedCredits } from "@/app/actions/supabase/credits/has-purchased-credits";
 import { addSchedulePause } from "@/app/actions/supabase/schedule-pauses/add-schedule-pause";
 import { deleteSchedulePause } from "@/app/actions/supabase/schedule-pauses/delete-schedule-pause";
 import { getAllSchedulePauses } from "@/app/actions/supabase/schedule-pauses/get-all-schedule-pauses";
@@ -26,7 +27,12 @@ import type { TriggerSettings } from "@/app/settings/types";
 
 // Local imports (Others)
 import { RELATIVE_URLS } from "@/config/urls";
-import { ALLOWED_INTERVALS, DEFAULT_SCHEDULE_CONFIG, MAX_EXECUTIONS } from "@/config/schedule";
+import {
+  ALLOWED_INTERVALS,
+  DEFAULT_SCHEDULE_CONFIG,
+  MAX_EXECUTIONS,
+  MAX_SCHEDULE_REPOS_FREE,
+} from "@/config/schedule";
 import { convertLocalToUTC } from "@/utils/convert-local-to-utc";
 import { convertUTCToLocal } from "@/utils/convert-utc-to-local";
 import { formatDateTime } from "@/utils/format-date-time";
@@ -50,6 +56,7 @@ export default function TriggersPage() {
   } = useAccountContext();
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isPaidUser, setIsPaidUser] = useState(false);
   const [repoSettings, setRepoSettings] = useState<RepoWithSettings[]>([]);
   const [scheduleConfigs, setScheduleConfigs] = useState<
     Record<number, { time: string; executions: number; interval: number; weekends: boolean }>
@@ -119,14 +126,18 @@ export default function TriggersPage() {
         });
         setScheduleConfigs(configs);
 
-        // Load schedule pauses
-        const allPauses = await getAllSchedulePauses(currentOwnerId);
+        // Load schedule pauses and check paid status
+        const [allPauses, purchased] = await Promise.all([
+          getAllSchedulePauses(currentOwnerId),
+          hasPurchasedCredits(currentOwnerId),
+        ]);
         const pausesByRepo: Record<number, SchedulePause[]> = {};
         for (const pause of allPauses) {
           if (!pausesByRepo[pause.repo_id]) pausesByRepo[pause.repo_id] = [];
           pausesByRepo[pause.repo_id].push(pause);
         }
         setSchedulePauses(pausesByRepo);
+        setIsPaidUser(purchased);
       } catch (error) {
         console.error("Failed to load trigger settings:", error);
       } finally {
@@ -163,6 +174,14 @@ export default function TriggersPage() {
       !currentInstallationId
     )
       return;
+
+    // Block free users from enabling schedule on more repos than allowed
+    if (field === "triggerOnSchedule" && value && !isPaidUser) {
+      const enabledCount = repoSettings.filter(
+        (r) => r.settings?.trigger_on_schedule && r.repoId !== repoId,
+      ).length;
+      if (enabledCount >= MAX_SCHEDULE_REPOS_FREE) return;
+    }
 
     const repoData = repoSettings.find((r) => r.repoId === repoId);
     const currentDbSettings = repoData?.settings;
@@ -596,6 +615,11 @@ export default function TriggersPage() {
                   updated_by: "",
                 };
                 const scheduleConfig = scheduleConfigs[repo.repoId] || DEFAULT_SCHEDULE_CONFIG;
+                const scheduleLimitReached =
+                  !isPaidUser &&
+                  !settings.trigger_on_schedule &&
+                  repoSettings.filter((r) => r.settings?.trigger_on_schedule).length >=
+                    MAX_SCHEDULE_REPOS_FREE;
 
                 return (
                   <tr key={repo.repoId}>
@@ -627,17 +651,33 @@ export default function TriggersPage() {
                       />
                     </td>
                     <td className="px-4 py-3">
-                      <ToggleSwitch
-                        checked={settings.trigger_on_schedule}
-                        onChange={() =>
-                          updateSetting(
-                            repo.repoId,
-                            repo.repoName,
-                            "triggerOnSchedule",
-                            !settings.trigger_on_schedule,
-                          )
-                        }
-                      />
+                      <div className="flex flex-col gap-1">
+                        <ToggleSwitch
+                          checked={settings.trigger_on_schedule}
+                          disabled={scheduleLimitReached}
+                          onChange={() =>
+                            updateSetting(
+                              repo.repoId,
+                              repo.repoName,
+                              "triggerOnSchedule",
+                              !settings.trigger_on_schedule,
+                            )
+                          }
+                          title={
+                            scheduleLimitReached
+                              ? `Free plan: max ${MAX_SCHEDULE_REPOS_FREE} repo. Purchase credits to unlock unlimited.`
+                              : undefined
+                          }
+                        />
+                        {scheduleLimitReached && (
+                          <Link
+                            href={RELATIVE_URLS.PRICING}
+                            className="text-xs text-pink-600 hover:text-pink-700 hover:underline"
+                          >
+                            Purchase credits
+                          </Link>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <div className="space-y-1.5 py-1">
