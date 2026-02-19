@@ -21,18 +21,18 @@ async function postTweetWithRetry(client, text) {
 async function postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title }) {
   // GitAuto company account
   const clientGitAuto = new TwitterApi({
-    appKey: process.env.TWITTER_API_KEY,
-    appSecret: process.env.TWITTER_API_SECRET,
-    accessToken: process.env.TWITTER_ACCESS_TOKEN,
-    accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
+    appKey: process.env.X_OAUTH1_CONSUMER_KEY_GITAUTO,
+    appSecret: process.env.X_OAUTH1_CONSUMER_KEY_SECRET_GITAUTO,
+    accessToken: process.env.X_OAUTH1_ACCESS_TOKEN_GITAUTO,
+    accessSecret: process.env.X_OAUTH1_ACCESS_TOKEN_SECRET_GITAUTO,
   });
 
   // Wes personal account
   const clientWes = new TwitterApi({
-    appKey: process.env.TWITTER_API_KEY_WES,
-    appSecret: process.env.TWITTER_API_SECRET_WES,
-    accessToken: process.env.TWITTER_ACCESS_TOKEN_WES,
-    accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET_WES,
+    appKey: process.env.X_OAUTH1_CONSUMER_KEY_WES,
+    appSecret: process.env.X_OAUTH1_CONSUMER_KEY_SECRET_WES,
+    accessToken: process.env.X_OAUTH1_ACCESS_TOKEN_WES,
+    accessSecret: process.env.X_OAUTH1_ACCESS_TOKEN_SECRET_WES,
   });
 
   const url = isBlog ? `${postUrl}?utm_source=x&utm_medium=referral` : null;
@@ -62,13 +62,17 @@ async function postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title }) {
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   await sleep(getRandomDelay());
 
-  // Like each other's tweets
+  // Like each other's tweets (requires paid X API access)
   // https://github.com/PLhery/node-twitter-api-v2/blob/master/doc/v2.md#like-a-tweet
   if (gitAutoTweetResult && wesTweetResult) {
-    const userGitAuto = await clientGitAuto.v2.me();
-    await clientGitAuto.v2.like(userGitAuto.data.id, wesTweetResult.data.id);
-    const userWes = await clientWes.v2.me();
-    await clientWes.v2.like(userWes.data.id, gitAutoTweetResult.data.id);
+    try {
+      const userGitAuto = await clientGitAuto.v2.me();
+      await clientGitAuto.v2.like(userGitAuto.data.id, wesTweetResult.data.id);
+      const userWes = await clientWes.v2.me();
+      await clientWes.v2.like(userWes.data.id, gitAutoTweetResult.data.id);
+    } catch (error) {
+      console.log("Failed to like tweets (free tier):", error.message);
+    }
   }
 
   // Send to Slack webhook
