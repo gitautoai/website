@@ -32,12 +32,12 @@ export const FAQS: FAQItem[] = [
   {
     category: "data",
     question: `My company also uses the OpenAI API and we have an API key. Can I use my API key with GitAuto?`,
-    answer: `Yes, while it is not supported in the Free or Standard plans, it is available in the Enterprise plan. Feel free to contact ${EMAIL} for details.`,
+    answer: `Yes, paid users can use their own API key. See the [pricing page](${RELATIVE_URLS.PRICING_DETAILS}) for details.`,
   },
   {
     category: "features",
     question: `Does GitAuto only work on GitHub? Is it not compatible with GitLab or BitBucket?`,
-    answer: `GitAuto is a GitHub app, so it can only be installed on GitHub. However, it may be possible to support other platforms as part of an enterprise plan. Please feel free to inquire: ${EMAIL}.`,
+    answer: `GitAuto is a GitHub app, so it can only be installed on GitHub. If you need support for other platforms, please [contact us](${RELATIVE_URLS.CONTACT}).`,
   },
   {
     category: "features",
@@ -76,7 +76,7 @@ export const FAQS: FAQItem[] = [
   },
   {
     category: "pricing",
-    question: `What happens to unused credits in the Standard plan?`,
+    question: `What happens to unused credits?`,
     answer: `Unused credits remain in your account and don't expire for 1 year. You simply pay $${CREDIT_PRICING.PER_PR.AMOUNT_USD} per PR as you use them. You can check your current credit balance on your [Credits Dashboard](${RELATIVE_URLS.DASHBOARD.CREDITS}).`,
   },
   {
@@ -92,12 +92,12 @@ export const FAQS: FAQItem[] = [
   {
     category: "pricing",
     question: `Can I purchase credits in bulk for volume discounts?`,
-    answer: `Currently, you can purchase up to $5,000 in credits per transaction. For larger volume purchases or enterprise pricing, please [contact us](${RELATIVE_URLS.CONTACT}) to discuss custom pricing options.`,
+    answer: `Currently, you can purchase up to $5,000 in credits per transaction. For larger volume purchases, please [contact us](${RELATIVE_URLS.CONTACT}).`,
   },
   {
     category: "pricing",
     question: "What is the minimum credit purchase amount?",
-    answer: `The minimum credit purchase is $${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD}, which gives you enough credits for ${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD / CREDIT_PRICING.PER_PR.AMOUNT_USD} PRs. You can purchase any amount between $${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD} and $${CREDIT_PRICING.PURCHASE_LIMITS.MAX_AMOUNT_USD.toLocaleString()}.`,
+    answer: `The minimum credit purchase is $${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD}, which gives you enough credits for about ${Math.floor(CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD / CREDIT_PRICING.PER_PR.AMOUNT_USD)} PR. You can purchase any amount between $${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD} and $${CREDIT_PRICING.PURCHASE_LIMITS.MAX_AMOUNT_USD.toLocaleString()}.`,
   },
   {
     category: "privacy",
@@ -122,6 +122,6 @@ export const FAQS: FAQItem[] = [
   {
     category: "support",
     question: `How can I contact GitAuto for sales inquiries or custom solutions?`,
-    answer: `For sales inquiries, custom enterprise solutions, or detailed discussions about your testing needs, please visit our [contact page](/contact) or email us at ${EMAIL}. We're here to help you achieve your test coverage goals.`,
+    answer: `For sales inquiries or detailed discussions about your testing needs, please visit our [contact page](/contact) or email us at ${EMAIL}.`,
   },
 ];

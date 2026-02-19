@@ -63,7 +63,7 @@ export const CREATOR = {
 export const OFFERS = [
   {
     "@type": "Offer",
-    name: "Free Plan",
+    name: "Free Trial",
     price: "0",
     priceCurrency: "USD",
     description: `$${FREE_CREDITS_AMOUNT_USD} free credits (~${FREE_PRS_LIMIT} PRs) per GitHub organization`,
@@ -71,18 +71,10 @@ export const OFFERS = [
   },
   {
     "@type": "Offer",
-    name: "Standard Plan",
+    name: "Paid",
     price: CREDIT_PRICING.PER_PR.AMOUNT_USD.toString(),
     priceCurrency: "USD",
     description: `$${CREDIT_PRICING.PER_PR.AMOUNT_USD} per PR with $${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD} minimum purchase`,
-    url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
-  },
-  {
-    "@type": "Offer",
-    name: "Enterprise Plan",
-    price: "Custom",
-    priceCurrency: "USD",
-    description: "Custom pricing with advanced features and dedicated support",
     url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
   },
 ] as const;

@@ -7,17 +7,17 @@ import { createPageMetadata } from "@/utils/metadata";
 import { pricingJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `${PRODUCT_NAME} Pricing - Affordable Plans for Automated Testing`,
-  description: `Choose the perfect GitAuto plan for your team. Free plan with $${FREE_CREDITS_AMOUNT_USD} credits (~${FREE_PRS_LIMIT} PRs). Standard plan at $${CREDIT_PRICING.PER_PR.AMOUNT_USD} per PR (minimum $${CREDIT_PRICING.PURCHASE_LIMITS.MIN_AMOUNT_USD} purchase). Enterprise solutions available.`,
+  title: `${PRODUCT_NAME} Pricing - $${CREDIT_PRICING.PER_PR.AMOUNT_USD} per PR, Pay-as-You-Go Credits`,
+  description: `$${CREDIT_PRICING.PER_PR.AMOUNT_USD} per PR, pay as you go. Start with $${FREE_CREDITS_AMOUNT_USD} in free credits (~${FREE_PRS_LIMIT} PRs). No subscriptions. Buy more credits when you need them.`,
   url: ABSOLUTE_URLS.GITAUTO.PRICING_DETAILS,
-  images: [{ url: THUMBNAILS.PRICING, alt: `${PRODUCT_NAME} Pricing Plans` }],
+  images: [{ url: THUMBNAILS.PRICING, alt: `${PRODUCT_NAME} Pricing` }],
   keywords: [
     "GitAuto pricing",
     "automated testing pricing",
     "unit test generation cost",
     "developer tools pricing",
     "GitHub automation pricing",
-    "testing automation plans",
+    "pay per PR testing",
   ],
 });
 
