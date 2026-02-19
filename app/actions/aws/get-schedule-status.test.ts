@@ -1,73 +1,56 @@
+import { getScheduleStatus } from "./get-schedule-status";
 
 const mockSend = jest.fn();
 
 jest.mock("@/lib/aws-scheduler", () => ({
-  schedulerClient: { send: (...args: any[]) => mockSend(...args) },
+  schedulerClient: { send: mockSend },
 }));
 
 jest.mock("@/utils/get-schedule-name", () => ({
-  getScheduleName: (ownerId: number, repoId: number) =>
-    "gitauto-repo-" + String(ownerId) + "-" + String(repoId),
+  getScheduleName: jest.fn().mockReturnValue("gitauto-repo-123-456"),
 }));
 
-// Dynamic import to ensure mocks are set up first
-const importModule = () =>
-  import("./get-schedule-status").then((m) => m.getScheduleStatus);
-
 describe("getScheduleStatus", () => {
-  const ownerId = 123;
-  const repoId = 456;
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("returns true when the schedule state is ENABLED", async () => {
-    mockSend.mockResolvedValue({ State: "ENABLED" });
-    const getScheduleStatus = await importModule();
-    const result = await getScheduleStatus(ownerId, repoId);
+    mockSend.mockResolvedValueOnce({ State: "ENABLED" });
+    const result = await getScheduleStatus(123, 456);
     expect(result).toBe(true);
     expect(mockSend).toHaveBeenCalledTimes(1);
   });
 
   it("returns false when the schedule state is DISABLED", async () => {
-    mockSend.mockResolvedValue({ State: "DISABLED" });
-    const getScheduleStatus = await importModule();
-    const result = await getScheduleStatus(ownerId, repoId);
+    mockSend.mockResolvedValueOnce({ State: "DISABLED" });
+    const result = await getScheduleStatus(123, 456);
     expect(result).toBe(false);
   });
 
   it("returns false when the schedule state is undefined", async () => {
-    mockSend.mockResolvedValue({});
-    const getScheduleStatus = await importModule();
-    const result = await getScheduleStatus(ownerId, repoId);
+    mockSend.mockResolvedValueOnce({});
+    const result = await getScheduleStatus(123, 456);
     expect(result).toBe(false);
   });
 
   it("returns false when ResourceNotFoundException is thrown", async () => {
     const error = new Error("Schedule not found");
     error.name = "ResourceNotFoundException";
-    mockSend.mockRejectedValue(error);
-    const getScheduleStatus = await importModule();
-    const result = await getScheduleStatus(ownerId, repoId);
+    mockSend.mockRejectedValueOnce(error);
+    const result = await getScheduleStatus(123, 456);
     expect(result).toBe(false);
   });
 
   it("re-throws non-ResourceNotFoundException errors", async () => {
     const error = new Error("Internal server error");
     error.name = "InternalServerException";
-    mockSend.mockRejectedValue(error);
-    const getScheduleStatus = await importModule();
-    await expect(getScheduleStatus(ownerId, repoId)).rejects.toThrow(
-      "Internal server error"
-    );
+    mockSend.mockRejectedValueOnce(error);
+    await expect(getScheduleStatus(123, 456)).rejects.toThrow("Internal server error");
   });
 
-  it("re-throws non-Error objects", async () => {
-    mockSend.mockRejectedValue("some string error");
-    const getScheduleStatus = await importModule();
-    await expect(getScheduleStatus(ownerId, repoId)).rejects.toBe(
-      "some string error"
-    );
+  it("re-throws when caught value is not an Error instance", async () => {
+    mockSend.mockRejectedValueOnce("some string error");
+    await expect(getScheduleStatus(123, 456)).rejects.toBe("some string error");
   });
 });
