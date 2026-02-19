@@ -1,4 +1,3 @@
-import { ScheduleState } from "@aws-sdk/client-scheduler";
 import { getScheduleStatus } from "./get-schedule-status";
 
 const mockSend = jest.fn();
@@ -23,7 +22,7 @@ describe("getScheduleStatus", () => {
   });
 
   it("returns true when the schedule state is ENABLED", async () => {
-    mockSend.mockResolvedValue({ State: ScheduleState.ENABLED });
+    mockSend.mockResolvedValue({ State: "ENABLED" });
 
     const result = await getScheduleStatus(ownerId, repoId);
 
@@ -32,7 +31,7 @@ describe("getScheduleStatus", () => {
   });
 
   it("returns false when the schedule state is DISABLED", async () => {
-    mockSend.mockResolvedValue({ State: ScheduleState.DISABLED });
+    mockSend.mockResolvedValue({ State: "DISABLED" });
 
     const result = await getScheduleStatus(ownerId, repoId);
 
