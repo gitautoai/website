@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 const mockSend = jest.fn();
 
 jest.mock("@/lib/aws-scheduler", () => ({
