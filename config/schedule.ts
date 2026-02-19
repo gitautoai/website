@@ -1,4 +1,5 @@
 export const MAX_EXECUTIONS = 12;
+export const MAX_SCHEDULE_REPOS_FREE = 1;
 export const ALLOWED_INTERVALS = [5, 10, 15, 20, 30, 60];
 export const DEFAULT_EXECUTION_COUNT = 3;
 export const DEFAULT_INTERVAL_MINUTES = 15;
