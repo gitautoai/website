@@ -3,24 +3,16 @@ import { getScheduleStatus } from "./get-schedule-status";
 
 const mockSend = jest.fn();
 
-jest.mock("@/lib/aws-scheduler", () => {
-  return {
-    schedulerClient: {
-      send: function () {
-        // eslint-disable-next-line prefer-rest-params
-        return mockSend.apply(null, arguments);
-      },
-    },
-  };
-});
+jest.mock("@/lib/aws-scheduler", () => ({
+  schedulerClient: {
+    send: (...args: unknown[]) => mockSend(...args),
+  },
+}));
 
-jest.mock("@/utils/get-schedule-name", () => {
-  return {
-    getScheduleName: function (ownerId: number, repoId: number): string {
-      return "gitauto-repo-" + ownerId + "-" + repoId;
-    },
-  };
-});
+jest.mock("@/utils/get-schedule-name", () => ({
+  getScheduleName: (ownerId: number, repoId: number) =>
+    "gitauto-repo-" + String(ownerId) + "-" + String(repoId),
+}));
 
 describe("getScheduleStatus", () => {
   const ownerId = 123;
