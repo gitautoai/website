@@ -1,17 +1,18 @@
-import { getScheduleStatus } from "./get-schedule-status";
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const mockSend = jest.fn();
 
 jest.mock("@/lib/aws-scheduler", () => ({
-  schedulerClient: {
-    send: (...args: unknown[]) => mockSend(...args),
-  },
+  schedulerClient: { send: (...args: any[]) => mockSend(...args) },
 }));
 
 jest.mock("@/utils/get-schedule-name", () => ({
   getScheduleName: (ownerId: number, repoId: number) =>
     "gitauto-repo-" + String(ownerId) + "-" + String(repoId),
 }));
+
+// Dynamic import to ensure mocks are set up first
+const importModule = () =>
+  import("./get-schedule-status").then((m) => m.getScheduleStatus);
 
 describe("getScheduleStatus", () => {
   const ownerId = 123;
@@ -23,26 +24,23 @@ describe("getScheduleStatus", () => {
 
   it("returns true when the schedule state is ENABLED", async () => {
     mockSend.mockResolvedValue({ State: "ENABLED" });
-
+    const getScheduleStatus = await importModule();
     const result = await getScheduleStatus(ownerId, repoId);
-
     expect(result).toBe(true);
     expect(mockSend).toHaveBeenCalledTimes(1);
   });
 
   it("returns false when the schedule state is DISABLED", async () => {
     mockSend.mockResolvedValue({ State: "DISABLED" });
-
+    const getScheduleStatus = await importModule();
     const result = await getScheduleStatus(ownerId, repoId);
-
     expect(result).toBe(false);
   });
 
   it("returns false when the schedule state is undefined", async () => {
     mockSend.mockResolvedValue({});
-
+    const getScheduleStatus = await importModule();
     const result = await getScheduleStatus(ownerId, repoId);
-
     expect(result).toBe(false);
   });
 
@@ -50,9 +48,8 @@ describe("getScheduleStatus", () => {
     const error = new Error("Schedule not found");
     error.name = "ResourceNotFoundException";
     mockSend.mockRejectedValue(error);
-
+    const getScheduleStatus = await importModule();
     const result = await getScheduleStatus(ownerId, repoId);
-
     expect(result).toBe(false);
   });
 
@@ -60,7 +57,7 @@ describe("getScheduleStatus", () => {
     const error = new Error("Internal server error");
     error.name = "InternalServerException";
     mockSend.mockRejectedValue(error);
-
+    const getScheduleStatus = await importModule();
     await expect(getScheduleStatus(ownerId, repoId)).rejects.toThrow(
       "Internal server error"
     );
@@ -68,7 +65,7 @@ describe("getScheduleStatus", () => {
 
   it("re-throws non-Error objects", async () => {
     mockSend.mockRejectedValue("some string error");
-
+    const getScheduleStatus = await importModule();
     await expect(getScheduleStatus(ownerId, repoId)).rejects.toBe(
       "some string error"
     );
