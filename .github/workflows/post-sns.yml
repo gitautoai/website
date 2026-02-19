@@ -132,14 +132,14 @@ jobs:
 
             await postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
         env:
-          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
-          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
-          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
-          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
-          TWITTER_API_KEY_WES: ${{ secrets.TWITTER_API_KEY_WES }}
-          TWITTER_API_SECRET_WES: ${{ secrets.TWITTER_API_SECRET_WES }}
-          TWITTER_ACCESS_TOKEN_WES: ${{ secrets.TWITTER_ACCESS_TOKEN_WES }}
-          TWITTER_ACCESS_TOKEN_SECRET_WES: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET_WES }}
+          X_OAUTH1_CONSUMER_KEY_GITAUTO: ${{ secrets.X_OAUTH1_CONSUMER_KEY_GITAUTO }}
+          X_OAUTH1_CONSUMER_KEY_SECRET_GITAUTO: ${{ secrets.X_OAUTH1_CONSUMER_KEY_SECRET_GITAUTO }}
+          X_OAUTH1_ACCESS_TOKEN_GITAUTO: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_GITAUTO }}
+          X_OAUTH1_ACCESS_TOKEN_SECRET_GITAUTO: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_SECRET_GITAUTO }}
+          X_OAUTH1_CONSUMER_KEY_WES: ${{ secrets.X_OAUTH1_CONSUMER_KEY_WES }}
+          X_OAUTH1_CONSUMER_KEY_SECRET_WES: ${{ secrets.X_OAUTH1_CONSUMER_KEY_SECRET_WES }}
+          X_OAUTH1_ACCESS_TOKEN_WES: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_WES }}
+          X_OAUTH1_ACCESS_TOKEN_SECRET_WES: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_SECRET_WES }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Post to LinkedIn
