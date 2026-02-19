@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { getScheduleStatus } from "./get-schedule-status";
 import { schedulerClient } from "@/lib/aws-scheduler";
 
