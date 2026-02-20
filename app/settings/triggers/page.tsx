@@ -686,14 +686,15 @@ export default function TriggersPage() {
                           <input
                             type="time"
                             value={scheduleConfig.time}
-                            onChange={(e) =>
+                            onChange={(e) => {
+                              if (!e.target.value) return;
                               updateScheduleConfig(
                                 repo.repoId,
                                 repo.repoName,
                                 "time",
                                 e.target.value,
-                              )
-                            }
+                              );
+                            }}
                             disabled={!settings.trigger_on_schedule}
                             className="w-28 px-2 py-1 text-xs text-gray-900 border border-gray-300 rounded focus:ring-1 focus:ring-pink-500 focus:border-pink-500 disabled:bg-gray-50 disabled:text-gray-400"
                             title={`Timezone: ${getTimezoneInfo()}`}
