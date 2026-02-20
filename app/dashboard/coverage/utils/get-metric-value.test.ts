@@ -1,4 +1,3 @@
- 
 import { Tables } from "@/types/supabase";
 import { Metric } from "../types";
 import { getMetricValue } from "./get-metric-value";
@@ -22,7 +21,6 @@ describe("getMetricValue", () => {
     level: "file",
     line_coverage: 80.0,
     package_name: null,
-    path_coverage: null,
     statement_coverage: 85.5,
     uncovered_branches: null,
     uncovered_functions: null,
@@ -50,13 +48,13 @@ describe("getMetricValue", () => {
       expect(result).toBe(85.5);
     });
 
-    it("should return 0 when statement_coverage is null", () => {
+    it("should return null when statement_coverage is null (not measured)", () => {
       const itemWithNullStatement = {
         ...mockCoverageItem,
         statement_coverage: null,
       };
       const result = getMetricValue(itemWithNullStatement, "statement");
-      expect(result).toBe(0);
+      expect(result).toBeNull();
     });
   });
 
@@ -66,13 +64,13 @@ describe("getMetricValue", () => {
       expect(result).toBe(90.0);
     });
 
-    it("should return 0 when function_coverage is null", () => {
+    it("should return null when function_coverage is null (not measured)", () => {
       const itemWithNullFunction = {
         ...mockCoverageItem,
         function_coverage: null,
       };
       const result = getMetricValue(itemWithNullFunction, "function");
-      expect(result).toBe(0);
+      expect(result).toBeNull();
     });
   });
 
@@ -82,13 +80,13 @@ describe("getMetricValue", () => {
       expect(result).toBe(75.5);
     });
 
-    it("should return 0 when branch_coverage is null", () => {
+    it("should return null when branch_coverage is null (not measured)", () => {
       const itemWithNullBranch = {
         ...mockCoverageItem,
         branch_coverage: null,
       };
       const result = getMetricValue(itemWithNullBranch, "branch");
-      expect(result).toBe(0);
+      expect(result).toBeNull();
     });
   });
 

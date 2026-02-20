@@ -18,14 +18,17 @@ export default function CoverageStats({ data, isDummyData = false }: CoverageSta
   };
 
   const statementChange = calculateChange(
-    latest.statement_coverage,
-    previous?.statement_coverage || null
+    latest.statement_coverage ?? 0,
+    previous?.statement_coverage ?? null,
   );
-  const functionChange = calculateChange(
-    latest.function_coverage,
-    previous?.function_coverage || null
-  );
-  const branchChange = calculateChange(latest.branch_coverage, previous?.branch_coverage || null);
+  const hasFunctionCoverage = data.some((item) => item.functions_total > 0);
+  const functionChange = hasFunctionCoverage
+    ? calculateChange(latest.function_coverage ?? 0, previous?.function_coverage ?? null)
+    : null;
+  const hasBranchCoverage = data.some((item) => item.branches_total > 0);
+  const branchChange = hasBranchCoverage
+    ? calculateChange(latest.branch_coverage ?? 0, previous?.branch_coverage ?? null)
+    : null;
 
   const formatChange = (change: number | null) => {
     if (change === null) return "";
@@ -54,7 +57,7 @@ export default function CoverageStats({ data, isDummyData = false }: CoverageSta
           <h4 className="text-sm font-medium text-gray-500 mb-1">Statement Coverage</h4>
           <div className="flex items-center">
             <span className="text-2xl font-bold">
-              {formatPercentage(latest.statement_coverage)}
+              {formatPercentage(latest.statement_coverage ?? 0)}
             </span>
             {formatChange(statementChange)}
           </div>
@@ -63,16 +66,32 @@ export default function CoverageStats({ data, isDummyData = false }: CoverageSta
         <div className="bg-white p-4 rounded-lg border">
           <h4 className="text-sm font-medium text-gray-500 mb-1">Function Coverage</h4>
           <div className="flex items-center">
-            <span className="text-2xl font-bold">{formatPercentage(latest.function_coverage)}</span>
-            {formatChange(functionChange)}
+            {hasFunctionCoverage ? (
+              <>
+                <span className="text-2xl font-bold">
+                  {formatPercentage(latest.function_coverage ?? 0)}
+                </span>
+                {formatChange(functionChange)}
+              </>
+            ) : (
+              <span className="text-sm text-gray-400">Not measured by coverage tool</span>
+            )}
           </div>
         </div>
 
         <div className="bg-white p-4 rounded-lg border">
           <h4 className="text-sm font-medium text-gray-500 mb-1">Branch Coverage</h4>
           <div className="flex items-center">
-            <span className="text-2xl font-bold">{formatPercentage(latest.branch_coverage)}</span>
-            {formatChange(branchChange)}
+            {hasBranchCoverage ? (
+              <>
+                <span className="text-2xl font-bold">
+                  {formatPercentage(latest.branch_coverage ?? 0)}
+                </span>
+                {formatChange(branchChange)}
+              </>
+            ) : (
+              <span className="text-sm text-gray-400">Not measured by coverage tool</span>
+            )}
           </div>
         </div>
       </div>
