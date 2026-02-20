@@ -1,18 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+// Third party imports
 import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
+
+// Local imports
+import { GitHubOwnerWithRepos } from "@/app/actions/github/get-installed-repos";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import { JiraSiteWithProjects } from "@/lib/jira";
-import { GitHubOwnerWithRepos } from "@/app/api/github/get-installed-repos/route";
-import { useAccountContext } from "@/components/Context/Account";
 
 export function useIntegrations() {
   const { data: session } = useSession();
-  const { installationIds } = useAccountContext();
+  const { organizations } = useAccountContext();
   const [jiraSites, setJiraSites] = useState<JiraSiteWithProjects[]>([]);
-  const [githubOwners, setGithubOwners] = useState<GitHubOwnerWithRepos[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
+
+  // Convert organizations to GitHubOwnerWithRepos format
+  const githubOwners: GitHubOwnerWithRepos[] = organizations;
 
   // Jira connection status - move async process to microtask queue
   useEffect(() => {
@@ -22,7 +27,10 @@ export function useIntegrations() {
     // setTimeout with 0ms delay to move async process to microtask queue
     setTimeout(async () => {
       try {
-        const query = new URLSearchParams({ userId: session.user.userId, serviceName: "jira" });
+        const query = new URLSearchParams({
+          userId: session.user.userId.toString(),
+          serviceName: "jira",
+        });
         const response = await fetch(`/api/supabase/get-oauth-token?${query}`);
         const data = await response.json();
         setIsConnected(!!data.accessToken);
@@ -39,7 +47,7 @@ export function useIntegrations() {
     // setTimeout to move async process to microtask queue
     setTimeout(async () => {
       try {
-        const query = new URLSearchParams({ userId: session.user.userId });
+        const query = new URLSearchParams({ userId: session.user.userId.toString() });
         const response = await fetch(`/api/jira/get-projects?${query}`);
         const sitesWithProjects: JiraSiteWithProjects[] = await response.json();
         if (!sitesWithProjects.length) return;
@@ -49,29 +57,6 @@ export function useIntegrations() {
       }
     }, 0);
   }, [session?.user?.userId]);
-
-  // Fetch GitHub repositories
-  useEffect(() => {
-    if (!installationIds.length) return;
-    console.log("API call: get-installed-repos");
-    // setTimeout to move async process to microtask queue
-    setTimeout(async () => {
-      try {
-        const response = await fetch("/api/github/get-installed-repos", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ installationIds }),
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch GitHub repositories");
-        const owners: GitHubOwnerWithRepos[] = await response.json();
-        setGithubOwners(owners);
-      } catch (error) {
-        console.error("Error fetching GitHub repositories:", error);
-        setGithubOwners([]);
-      }
-    }, 0);
-  }, [installationIds]);
 
   const handleJiraAuth = async () => {
     if (!session?.user?.userId) return;

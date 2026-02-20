@@ -1,0 +1,31 @@
+name: Post to Dev.to
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "app/blog/**/*.mdx"
+
+permissions:
+  contents: read
+
+jobs:
+  post-devto:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Post to Dev.to
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const postDevTo = require('.github/scripts/post-devto.js');
+            await postDevTo({ commits: context.payload.commits });
+        env:
+          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY_WES }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

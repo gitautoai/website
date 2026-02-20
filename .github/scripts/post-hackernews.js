@@ -3,7 +3,7 @@ const { chromium } = require("playwright");
 /**
  * Posts to Hacker News using Playwright for browser automation
  */
-async function postHackerNews({ context, isBlog, postUrl }) {
+async function postHackerNews({ isBlog, postUrl, gitautoPost, wesPost, title }) {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
@@ -26,14 +26,19 @@ async function postHackerNews({ context, isBlog, postUrl }) {
     await page.waitForLoadState("networkidle");
 
     // Submit story
-    const title = context.payload.pull_request.title.substring(0, 80);
-    const description = context.payload.pull_request.body;
+    const hnTitle = title.substring(0, 80);
 
-    await page.fill('input[name="title"]', title);
-    await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
+    await page.fill('input[name="title"]', hnTitle);
 
-    // If there's a description, submit as a "text" post with both URL and description
-    if (description) await page.fill('textarea[name="text"]', description);
+    // Blog posts: submit with URL; Non-blog: text-only post
+    if (isBlog) {
+      await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
+    }
+    // Use GitAuto post for HN (company voice is more appropriate)
+    const hnText = gitautoPost || wesPost;
+    if (hnText) {
+      await page.fill('textarea[name="text"]', hnText);
+    }
 
     await page.click('input[type="submit"]');
     await page.waitForLoadState("networkidle");

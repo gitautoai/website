@@ -10,4 +10,4 @@ This is a Nextjs website for GitAuto. It uses Vercel for deployment.
 
 1. GRANT USAGE ON SCHEMA public TO service_role;
 2. GRANT SELECT, INSERT, UPDATE, DELETE, REFERENCES ON ALL TABLES IN SCHEMA public TO service_role;
-3. GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role; 
+3. GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;

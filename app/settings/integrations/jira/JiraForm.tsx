@@ -1,10 +1,10 @@
 "use client";
 
-import { JiraSiteWithProjects } from "@/lib/jira";
-import { GitHubOwnerWithRepos } from "@/app/api/github/get-installed-repos/route";
-import { IntegrationRow } from "./useRows";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { GitHubOwnerWithRepos } from "@/app/actions/github/get-installed-repos";
+import { JiraSiteWithProjects } from "@/lib/jira";
+import { IntegrationRow } from "./useRows";
 
 interface JiraFormProps {
   integrationRows: IntegrationRow[];
@@ -58,8 +58,8 @@ export function JiraForm({
                   jiraSites.length === 0
                     ? "bg-gray-100 text-gray-400"
                     : row.siteName
-                    ? "bg-white"
-                    : "bg-red-50"
+                      ? "bg-white"
+                      : "bg-red-50"
                 }`}
                 disabled={jiraSites.length === 0}
               >
@@ -87,8 +87,8 @@ export function JiraForm({
                   !row.siteName || jiraSites.length === 0
                     ? "bg-gray-100 text-gray-400"
                     : row.projectName
-                    ? "bg-white"
-                    : "bg-red-50"
+                      ? "bg-white"
+                      : "bg-red-50"
                 }`}
                 disabled={!row.siteName}
               >
@@ -116,8 +116,8 @@ export function JiraForm({
                   githubOwners.length === 0
                     ? "bg-gray-100 text-gray-400"
                     : row.githubOwner
-                    ? "bg-white"
-                    : "bg-red-50"
+                      ? "bg-white"
+                      : "bg-red-50"
                 }`}
                 disabled={githubOwners.length === 0}
               >
@@ -143,17 +143,19 @@ export function JiraForm({
                   !row.githubOwner || githubOwners.length === 0
                     ? "bg-gray-100 text-gray-400"
                     : row.githubRepository
-                    ? "bg-white"
-                    : "bg-red-50"
+                      ? "bg-white"
+                      : "bg-red-50"
                 }`}
                 disabled={!row.githubOwner}
               >
                 <option value="">Select Repository</option>
-                {getRepositoriesForOwner(row.githubOwner).map((repo) => (
-                  <option key={repo.repoId} value={repo.repoName}>
-                    {repo.repoName}
-                  </option>
-                ))}
+                {getRepositoriesForOwner(row.githubOwner).map(
+                  (repo: { repoId: number; repoName: string }) => (
+                    <option key={repo.repoId} value={repo.repoName}>
+                      {repo.repoName}
+                    </option>
+                  )
+                )}
               </select>
             </div>
 

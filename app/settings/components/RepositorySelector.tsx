@@ -1,73 +1,83 @@
 "use client";
-import { useGitHub } from "@/components/Context/GitHub";
-import { useEffect } from "react";
-import { STORAGE_KEYS } from "@/lib/constants";
+
+// Local imports
+import { useAccountContext } from "@/app/components/contexts/Account";
+import { ABSOLUTE_URLS } from "@/config/urls";
 
 type RepositorySelectorProps = {
   onRepoChange?: (repo: string) => void;
+  ownerOnly?: boolean;
+  disableAllRepos?: boolean;
 };
 
-export default function RepositorySelector({ onRepoChange }: RepositorySelectorProps) {
+export default function RepositorySelector({
+  onRepoChange,
+  ownerOnly = false,
+  disableAllRepos = false,
+}: RepositorySelectorProps) {
   const {
     organizations,
-    currentRepoName,
-    setCurrentRepoName,
     currentOwnerName,
     setCurrentOwnerName,
+    currentRepoName,
+    setCurrentRepoName,
     isLoading,
-  } = useGitHub();
+  } = useAccountContext();
 
-  // Load saved repo from localStorage on component mount
-  useEffect(() => {
-    const savedRepo = localStorage.getItem(STORAGE_KEYS.CURRENT_REPO_NAME);
-    const savedOwner = localStorage.getItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
+  const handleOwnerChange = (ownerName: string) => {
+    const currentOrg = organizations.find((o) => o.ownerName === ownerName);
 
-    if (savedRepo && savedOwner && !currentRepoName) {
-      setCurrentRepoName(savedRepo);
-      setCurrentOwnerName(savedOwner);
-      onRepoChange?.(savedRepo);
+    if (currentOrg) {
+      setCurrentOwnerName(ownerName);
+
+      if (!ownerOnly && currentOrg.repositories.length > 0) {
+        // If "All Repositories" is currently selected and not disabled, keep it selected
+        if (currentRepoName === "__ALL__" && !disableAllRepos) {
+          handleRepoChange("__ALL__");
+        } else {
+          // Otherwise, select the first repo
+          const firstRepo = currentOrg.repositories[0];
+          handleRepoChange(firstRepo.repoName);
+        }
+      }
     }
-  }, [
-    organizations,
-    currentRepoName,
-    currentOwnerName,
-    setCurrentRepoName,
-    setCurrentOwnerName,
-    onRepoChange,
-  ]);
+  };
 
   const handleRepoChange = (repo: string) => {
     const startTime = performance.now();
     setCurrentRepoName(repo);
-    localStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, repo);
     onRepoChange?.(repo);
     const endTime = performance.now();
     console.log(`Repository selection change time: ${endTime - startTime}ms`);
   };
 
   // Find current org based on selected repo
-  const currentOrg = organizations.find((org) =>
-    org.repositories.some((repo) => repo.repoName === currentRepoName)
-  );
+  const currentOrg = organizations.find((org) => {
+    if (currentRepoName === "__ALL__") {
+      return org.ownerName === currentOwnerName;
+    }
+    return org.repositories.some((repo) => repo.repoName === currentRepoName);
+  });
 
   return (
-    <div className="flex flex-col md:flex-row md:gap-4 space-y-4 md:space-y-0">
+    <div className="grid grid-cols-2 gap-4">
       {/* Organization Selector */}
-      <div className="flex-1">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Organization</label>
+      <div>
+        <div className="flex justify-between items-center mb-2">
+          <label className="text-sm font-medium text-gray-700">Organization</label>
+          <button
+            onClick={() => {
+              window.open(ABSOLUTE_URLS.GITHUB.OAUTH_GRANT, "_blank", "noopener,noreferrer");
+            }}
+            className="text-xs text-gray-500 hover:text-gray-700 underline"
+            title="Can't see your organization? Check OAuth permissions"
+          >
+            Missing org?
+          </button>
+        </div>
         <select
           value={currentOwnerName || ""}
-          onChange={(e) => {
-            const startTime = performance.now();
-            const org = organizations.find((o) => o.ownerName === e.target.value);
-            if (org && org.repositories.length > 0) {
-              setCurrentOwnerName(e.target.value);
-              localStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, e.target.value);
-              handleRepoChange(org.repositories[0].repoName);
-            }
-            const endTime = performance.now();
-            console.log(`Organization selection change time: ${endTime - startTime}ms`);
-          }}
+          onChange={(e) => handleOwnerChange(e.target.value)}
           className={`w-full p-2 border rounded-lg ${isLoading ? "bg-gray-100" : "bg-white"}`}
           disabled={isLoading}
         >
@@ -80,25 +90,29 @@ export default function RepositorySelector({ onRepoChange }: RepositorySelectorP
         </select>
       </div>
 
-      {/* Repository Selector */}
-      <div className="flex-1">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Repository</label>
-        <select
-          value={currentRepoName || ""}
-          onChange={(e) => handleRepoChange(e.target.value)}
-          className={`w-full p-2 border rounded-lg ${
-            !currentOrg || isLoading ? "bg-gray-100" : "bg-white"
-          }`}
-          disabled={!currentOrg || isLoading}
-        >
-          <option value="">Select Repository</option>
-          {currentOrg?.repositories.map((repo) => (
-            <option key={repo.repoId} value={repo.repoName}>
-              {repo.repoName}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Repository Selector - only show if not ownerOnly */}
+      {!ownerOnly && (
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-sm font-medium text-gray-700">Repository</label>
+          </div>
+          <select
+            value={currentRepoName || "__ALL__"}
+            onChange={(e) => handleRepoChange(e.target.value)}
+            className={`w-full p-2 border rounded-lg ${
+              !currentOrg || isLoading ? "bg-gray-100" : "bg-white"
+            }`}
+            disabled={!currentOrg || isLoading}
+          >
+            {!disableAllRepos && <option value="__ALL__">All Repositories</option>}
+            {currentOrg?.repositories.map((repo) => (
+              <option key={repo.repoId} value={repo.repoName}>
+                {repo.repoName}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
     </div>
   );
 }

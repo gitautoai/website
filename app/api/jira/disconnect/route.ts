@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   try {
     const { userId } = await request.json();
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from("oauth_tokens")
       .delete()
       .eq("user_id", userId)

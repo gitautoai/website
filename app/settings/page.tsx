@@ -1,24 +1,21 @@
 "use client";
+
+// Third-party imports
 import { useEffect, useState, useMemo } from "react";
-import { useAccountContext } from "@/components/Context/Account";
-import FormField from "./components/FormField";
-import type { BaseSettingsType } from "./types";
-import LoadingSpinner from "./components/LoadingSpinner";
+
+// Local imports
+import { useAccountContext } from "@/app/components/contexts/Account";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
+import FormField from "@/app/settings/components/FormField";
+import type { BaseSettings } from "@/app/settings/types";
 
 export default function SettingsPage() {
-  const { userId, userName, email } = useAccountContext();
+  const { userId, userName, firstName, lastName, email } = useAccountContext();
 
-  const baseSettings = useMemo((): BaseSettingsType => {
-    // Handle names with parentheses: "Hiroshi (Wes) Nishio" -> ["Hiroshi", "Nishio"]
-    const nameParts =
-      userName
-        ?.replace(/\s*\([^)]*\)\s*/g, " ")
-        .trim()
-        .split(/\s+/) || [];
-
+  const baseSettings = useMemo((): BaseSettings => {
     return {
-      firstName: nameParts[0] || "",
-      lastName: nameParts[nameParts.length - 1] || "",
+      firstName: firstName || "",
+      lastName: lastName || "",
       email: email || "",
       githubUserId: userId?.toString() || "",
       githubUserName: userName || "",
@@ -27,9 +24,9 @@ export default function SettingsPage() {
       jiraUserName: "",
       jiraUserEmail: "",
     };
-  }, [userId, userName, email]);
+  }, [userId, userName, firstName, lastName, email]);
 
-  const [settings, setSettings] = useState<BaseSettingsType>(baseSettings);
+  const [settings, setSettings] = useState<BaseSettings>(baseSettings);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     // Find the installation ID for this owner
     const { data: installations } = await appOctokit.apps.listInstallations();
     const installation = installations.find(
-      (inst) => inst.account?.login?.toLowerCase() === owner.toLowerCase()
+      (inst) => inst.account?.login?.toLowerCase() === owner.toLowerCase(),
     );
 
     if (!installation) {
@@ -67,9 +67,9 @@ export async function POST(request: Request) {
 
       // If we get here, the file exists
       return NextResponse.json({ exists: true });
-    } catch (error: any) {
+    } catch (error) {
       // Check if the error is because the file doesn't exist
-      if (error.status === 404) {
+      if (error && typeof error === "object" && "status" in error && error.status === 404) {
         return NextResponse.json({ exists: false }, { status: 404 });
       }
 

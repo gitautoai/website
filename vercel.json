@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/expire-credits",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/auto-reload",
+      "schedule": "0 12 * * *"
+    }
+  ]
+}

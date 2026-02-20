@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl *)",
+      "Bash(npx tsx scripts/sentry/get-issue.ts :*)"
+    ],
+    "deny": []
+  }
+}

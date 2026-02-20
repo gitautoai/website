@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     if (!owner || !repo || !path || !installationId) {
       return NextResponse.json(
         { error: "Owner, repo, path, and installationId are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -48,9 +48,9 @@ export async function POST(request: Request) {
 
       // If we get here, the file exists
       return NextResponse.json({ exists: true });
-    } catch (error: any) {
+    } catch (error) {
       // Check if the error is because the file doesn't exist
-      if (error.status === 404) {
+      if (error && typeof error === "object" && "status" in error && error.status === 404) {
         return NextResponse.json({ exists: false }, { status: 404 });
       }
 

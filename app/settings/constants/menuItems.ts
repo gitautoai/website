@@ -1,8 +1,35 @@
+import { RELATIVE_URLS } from "@/config/urls";
+
 export const menuItems = [
-  { id: "settings", label: "General", href: "/settings" },
-  { id: "rules", label: "Rules", href: "/settings/rules" },
-  { id: "references", label: "References", href: "/settings/references" },
-  { id: "screenshots", label: "Screenshots", href: "/settings/screenshots" },
-  { id: "integrations", label: "Integrations", href: "/settings/integrations/jira" },
-  { id: "home", label: "Back to Home", href: "/" },
+  { id: "dashboard-header", label: "Dashboard", href: "#", isHeader: true },
+  { id: "coverage", label: "Coverage", href: RELATIVE_URLS.DASHBOARD.COVERAGE, isHeader: false },
+  { id: "charts", label: "Charts", href: RELATIVE_URLS.DASHBOARD.CHARTS, isHeader: false },
+  { id: "usage", label: "Usage", href: RELATIVE_URLS.DASHBOARD.USAGE, isHeader: false },
+  { id: "credits", label: "Credits", href: RELATIVE_URLS.DASHBOARD.CREDITS, isHeader: false },
+  { id: "prs", label: "Pull Requests", href: RELATIVE_URLS.DASHBOARD.PRS, isHeader: false },
+  { id: "settings-header", label: "Settings", href: "#", isHeader: true },
+  { id: "general", label: "General", href: RELATIVE_URLS.SETTINGS.INDEX, isHeader: false },
+  { id: "triggers", label: "Triggers", href: RELATIVE_URLS.SETTINGS.TRIGGERS, isHeader: false },
+  { id: "rules", label: "Rules", href: RELATIVE_URLS.SETTINGS.RULES, isHeader: false },
+  {
+    id: "references",
+    label: "References",
+    href: RELATIVE_URLS.SETTINGS.REFERENCES,
+    isHeader: false,
+  },
+  { id: "actions", label: "Actions", href: RELATIVE_URLS.SETTINGS.ACTIONS, isHeader: false },
+  { id: "integrations-header", label: "Integrations", href: "#", isHeader: true },
+  {
+    id: "circleci",
+    label: "CircleCI",
+    href: RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI,
+    isHeader: false,
+  },
+  {
+    id: "npm",
+    label: "npm",
+    href: RELATIVE_URLS.SETTINGS.INTEGRATIONS.NPM,
+    isHeader: false,
+  },
+  { id: "home", label: "Back to Home", href: RELATIVE_URLS.INDEX, isHeader: false },
 ] as const;

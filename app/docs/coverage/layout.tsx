@@ -1,0 +1,45 @@
+// Local imports
+import JsonLdScript from "@/app/components/JsonLdScript";
+import { PRODUCT_NAME } from "@/config";
+import { THUMBNAILS } from "@/config/thumbnails";
+import { ABSOLUTE_URLS } from "@/config/urls";
+import { createPageMetadata } from "@/utils/metadata";
+import { coverageDocsJsonLd } from "./jsonld";
+
+export const metadata = createPageMetadata({
+  title: `${PRODUCT_NAME} Coverage Setup - Guide for All Testing Frameworks`,
+  description: `Configure test coverage reporting for GitAuto. Setup guides for Python, JavaScript, Java, Go, PHP, Ruby, Flutter frameworks and GitHub Actions.`,
+  url: ABSOLUTE_URLS.GITAUTO.DOCS.COVERAGE.OVERVIEW,
+  images: [{ url: THUMBNAILS.DOCS.COVERAGE.INDEX, alt: `${PRODUCT_NAME} Coverage Documentation` }],
+  keywords: [
+    "test coverage documentation",
+    "LCOV setup guide",
+    "GitAuto coverage configuration",
+    "pytest coverage configuration",
+    "Jest coverage setup",
+    "JaCoCo coverage",
+    "PHPUnit coverage",
+    "SimpleCov coverage",
+    "go test coverage",
+    "Flutter test coverage",
+    "Python testing coverage",
+    "JavaScript testing coverage",
+    "Java testing coverage",
+    "PHP testing coverage",
+    "Go testing coverage",
+    "Ruby testing coverage",
+    "automated test generation",
+    "GitHub Actions coverage",
+    "coverage report artifacts",
+    "unit test automation",
+  ],
+});
+
+export default function CoverageDocsLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <JsonLdScript data={coverageDocsJsonLd} />
+      {children}
+    </>
+  );
+}

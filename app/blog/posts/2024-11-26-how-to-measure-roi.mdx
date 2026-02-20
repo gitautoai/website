@@ -1,0 +1,113 @@
+export const metadata = {
+  title: "How to Measure ROI for GitAuto?",
+  description:
+    "GitAuto's customers often ask us about ROI calculations to help them make informed decisions about adoption and expansion. Here's how we calculate it.",
+  slug: "how-to-measure-roi",
+  alternates: { canonical: "/blog/how-to-measure-roi" },
+  openGraph: { url: "/blog/how-to-measure-roi" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["solution", "roi", "value", "return"],
+  createdAt: "2024-11-26",
+  updatedAt: "2024-11-26",
+};
+
+# How to Measure ROI for GitAuto?
+
+GitAuto's customers often ask us about ROI calculations to help them make informed decisions about adoption and expansion. This post provides a standardized calculation method that has helped many of our enterprise customers demonstrate GitAuto's value within their organizations.
+
+## What is GitAuto's Value?
+
+GitAuto delivers both measurable and intangible value:
+
+- **Measurable**: Reduced lead time, increased deployment frequency, shorter Failed Deployment Recovery Time (these align with [DORA metrics](/blog/what-are-dora-metrics)).
+- **Measurable and that can be converted to monetary terms**: Time saved per ticket converted to monetary savings, calculated based on the number of times tickets are assigned to GitAuto (usage).
+- **Intangible**: Improved engineer satisfaction by focusing on important tasks, reduced burnout risk, enhanced team evaluation, and improved your own performance metrics as an Engineering Manager, Product Manager, or DevOps Manager that directly impact your personal bonuses and promotion opportunities.
+
+## How to Define ROI (Return on Investment)?
+
+Separate qualitative and quantitative values for accurate ROI calculation:
+
+- **Qualitative**: Gather feedback via surveys or interviews. While these emotional and experiential aspects can't be directly measured in numbers, they often have a profound impact on team morale, productivity, and long-term success.
+- **Quantitative**: Focus on measurable values that can be converted to monetary terms.
+
+Where:
+
+**Return** = Monetary savings per ticket × Monthly usage
+
+- Monetary savings = Engineer's daily rate × Days saved per ticket
+- Monthly usage = Number of tickets assigned to GitAuto per month
+
+**Investment** = GitAuto credit costs per month
+
+Formula:
+
+**ROI <br /> = Return ÷ Investment <br /> = (Monetary savings per ticket × Monthly usage) ÷ Credit costs**
+
+## How does GitAuto Save Time?
+
+GitAuto automates pull request creation in 2–3 minutes. In contrast, manual processes are more time-consuming:
+
+1. **Initial Assignment**: Simply assigning a ticket isn't enough - you need to notify the engineer and wait for acknowledgment to ensure they are aware of the task. Engineers often claim "I didn't know about this ticket" or "I never saw this assignment" when deadlines approach, making explicit acknowledgment crucial for accountability.
+2. **Follow-up Process**: Without active monitoring and reminders, tickets often stall
+3. **Actual Work**: Once work begins, the time to create a pull request varies based on:
+   - Ticket complexity and scope
+   - Engineer's experience level
+   - Current workload and priorities
+
+If you're tracking Cycle Time or Lead Time metrics, use your organization's average. Otherwise, even excluding the initial assignment and follow-up process overhead, based on our experience with various teams, the end-to-end process typically takes 2-3 days from initial assignment to pull request creation.
+
+Compare 3 minutes to 3 days (1440 minutes):  
+**Time efficiency = ~500x faster.**
+
+## How does GitAuto Save Money?
+
+Time saved translates directly to cost savings. To calculate this:
+
+1. **Calculate your team's average daily rate**:
+
+   - For full-time employee teams: Use a reasonable benchmark for your team
+   - For contractor teams: Use your typical contractor rates
+   - Don't worry about exact calculations - rough estimates are good enough for ROI estimation
+
+2. **Multiply the daily rate by days saved per ticket**:
+
+   - Days saved = ~3 days (typical manual time) - negligible GitAuto time
+   - Cost saved per ticket = Team's average daily rate × ~3 days
+
+## Example Calculation 1: California
+
+**Assumptions**:
+
+- Subscription cost: $1,000 for 100 tickets
+- Monthly usage: 50 tickets assigned
+- Time to open a pull request manually: 3 days
+- Engineer daily rate: $568/day for a full-time entry-level engineer in California
+
+**ROI = (50 tickets × 3 days × $568/day) ÷ $1,000 = 85x**
+
+California has some of the highest engineering salaries globally. With such premium rates, well-defined tickets or small tasks should be delegated to coding agents like GitAuto rather than consuming valuable engineer time.
+
+## Example Calculation 2: India
+
+**Assumptions**:
+
+- Subscription cost: $1,000 for 100 tickets
+- Monthly usage: 50 tickets assigned
+- Time to open a pull request manually: 3 days
+- Engineer daily rate: $91/day for an entry-level contractor in India
+
+**ROI = (50 tickets × 3 days × $91/day) ÷ $1,000 = 14x**
+
+Even compared to India's competitive contractor rates, GitAuto provides compelling ROI.
+
+## Conclusion
+
+Every organization has its own way of communicating and calculating ROI. Use this post as a starting point, and reach out if you have any questions.
+
+## Related Posts
+
+- **[How to Add a Unit Test](/blog/how-to-add-a-unit-test)** - See real examples of GitAuto's time-saving capabilities in action.
+- **[How to Add Integration Tests](/blog/how-to-add-integration-tests)** - Learn how GitAuto handles complex testing scenarios that would take engineers days to implement.
+- **[How to Detect Low Test Coverage Files in Jest](/blog/how-to-detect-low-test-coverage-files-in-jest)** - Set up systematic coverage improvement to maximize ROI.
+- **[How to Detect Low Test Coverage Files in Flutter](/blog/how-to-detect-low-test-coverage-files-in-flutter)** - Flutter/Dart coverage automation for comprehensive test strategy.

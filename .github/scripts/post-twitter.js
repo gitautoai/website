@@ -1,82 +1,90 @@
 const { TwitterApi } = require("twitter-api-v2");
 
 /**
+ * Post tweet with retry logic for 403 errors
+ */
+async function postTweetWithRetry(client, text) {
+  try {
+    return await client.v2.tweet(text);
+  } catch (error) {
+    if (text.length > 280) {
+      const truncated = text.substring(0, 277) + "...";
+      return await client.v2.tweet(truncated);
+    }
+    throw error;
+  }
+}
+
+/**
  * @see https://developer.x.com/en/docs/x-api/tweets/manage-tweets/api-reference/post-tweets
  */
-async function postTwitter({ context, isBlog, postUrl }) {
+async function postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title }) {
   // GitAuto company account
   const clientGitAuto = new TwitterApi({
-    appKey: process.env.TWITTER_API_KEY,
-    appSecret: process.env.TWITTER_API_SECRET,
-    accessToken: process.env.TWITTER_ACCESS_TOKEN,
-    accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET,
+    appKey: process.env.X_OAUTH1_CONSUMER_KEY_GITAUTO,
+    appSecret: process.env.X_OAUTH1_CONSUMER_KEY_SECRET_GITAUTO,
+    accessToken: process.env.X_OAUTH1_ACCESS_TOKEN_GITAUTO,
+    accessSecret: process.env.X_OAUTH1_ACCESS_TOKEN_SECRET_GITAUTO,
   });
 
   // Wes personal account
   const clientWes = new TwitterApi({
-    appKey: process.env.TWITTER_API_KEY_WES,
-    appSecret: process.env.TWITTER_API_SECRET_WES,
-    accessToken: process.env.TWITTER_ACCESS_TOKEN_WES,
-    accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET_WES,
+    appKey: process.env.X_OAUTH1_CONSUMER_KEY_WES,
+    appSecret: process.env.X_OAUTH1_CONSUMER_KEY_SECRET_WES,
+    accessToken: process.env.X_OAUTH1_ACCESS_TOKEN_WES,
+    accessSecret: process.env.X_OAUTH1_ACCESS_TOKEN_SECRET_WES,
   });
 
-  const message = isBlog ? "📝 New post" : "🚀 New release";
-  const url = `${postUrl}?utm_source=x&utm_medium=referral`;
-  const title = context.payload.pull_request.title;
-  const description = context.payload.pull_request.body || "";
+  const url = isBlog ? `${postUrl}?utm_source=x&utm_medium=referral` : null;
 
-  // Non-paid account, we can only post 280 characters. Paid account can post 250,000 characters.
-  const combinedText = description ? `${title} ${url}\n\n${description}` : `${title} ${url}`;
-  const tweet = `${message}: ${combinedText}`;
+  // Build tweet text for each account
+  const buildTweet = (post) => {
+    let tweet = post || title;
+    if (url) tweet += `\n\n${url}`;
+    return tweet;
+  };
 
-  // Senders have to be in the community
-  // https://x.com/hnishio0105/communities
-  const communityIds = [
-    "1670204079619055616", // AI Agents
-    "1493446837214187523", // Build in Public
-    "1699807431709041070", // Software Engineering
-    "1471580197908586507", // Startup Community
-    "1498737511241158657", // Startup founders & friends
-  ];
+  const gitautoTweet = gitautoPost ? buildTweet(gitautoPost) : buildTweet(title);
+  const wesTweet = wesPost ? buildTweet(wesPost) : buildTweet(title);
 
-  // Post tweets and get their IDs
+  if (!gitautoTweet && !wesTweet) {
+    console.log("No social media post content, skipping Twitter post");
+    return;
+  }
+
+  // Post tweets
   // https://github.com/PLhery/node-twitter-api-v2/blob/master/doc/v2.md#create-a-tweet
-  const gitAutoTweet = await clientGitAuto.v2.tweet(tweet);
-  const wesTweet = await clientWes.v2.tweet(tweet);
-
-  // https://docs.x.com/x-api/posts/creation-of-a-post
-  // const communityTweets = await Promise.all(
-  //   communityIds.map(async (communityId) => {
-  //     const response = await fetch("https://api.x.com/2/tweets", {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN_WES}`,
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ text: tweet, community_id: communityId }),
-  //     });
-
-  //     if (!response.ok) {
-  //       console.error(`Failed to post to community ${communityId}:`, await response.json());
-  //       return null;
-  //     }
-
-  //     return await response.json();
-  //   })
-  // );
+  const gitAutoTweetResult = await postTweetWithRetry(clientGitAuto, gitautoTweet);
+  const wesTweetResult = await postTweetWithRetry(clientWes, wesTweet);
 
   // Wait for a random amount of time
   const getRandomDelay = () => Math.floor(Math.random() * 55000 + 5000);
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   await sleep(getRandomDelay());
 
-  // Like each other's tweets
+  // Like each other's tweets (requires paid X API access)
   // https://github.com/PLhery/node-twitter-api-v2/blob/master/doc/v2.md#like-a-tweet
-  const userGitAuto = await clientGitAuto.v2.me();
-  await clientGitAuto.v2.like(userGitAuto.data.id, wesTweet.data.id);
-  const userWes = await clientWes.v2.me();
-  await clientWes.v2.like(userWes.data.id, gitAutoTweet.data.id);
-  // await Promise.all(communityTweets.map((tweet) => clientWes.v2.like(tweet.data.id)));
+  if (gitAutoTweetResult && wesTweetResult) {
+    try {
+      const userGitAuto = await clientGitAuto.v2.me();
+      await clientGitAuto.v2.like(userGitAuto.data.id, wesTweetResult.data.id);
+      const userWes = await clientWes.v2.me();
+      await clientWes.v2.like(userWes.data.id, gitAutoTweetResult.data.id);
+    } catch (error) {
+      console.log("Failed to like tweets (free tier):", error.message);
+    }
+  }
+
+  // Send to Slack webhook
+  const links = [
+    gitAutoTweetResult ? `https://x.com/gitautoai/status/${gitAutoTweetResult.data.id}` : null,
+    wesTweetResult ? `https://x.com/hiroshinishio/status/${wesTweetResult.data.id}` : null,
+  ].filter(Boolean).join(" and ");
+  await fetch(process.env.SLACK_WEBHOOK_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ msg: `Posted to X! ${links}` }),
+  });
 }
 
 module.exports = postTwitter;

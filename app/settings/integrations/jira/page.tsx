@@ -1,9 +1,9 @@
 "use client";
 
+import { JiraForm } from "./JiraForm";
+import { JiraHeader } from "./JiraHeader";
 import { useIntegrations } from "./useIntegrations";
 import { useRows } from "./useRows";
-import { JiraHeader } from "./JiraHeader";
-import { JiraForm } from "./JiraForm";
 
 export default function JiraIntegrationPage() {
   const { jiraSites, githubOwners, isConnected, isConnecting, handleJiraAuth } = useIntegrations();

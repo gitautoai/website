@@ -1,5 +1,5 @@
-import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
   try {
@@ -10,10 +10,10 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "owner_id is required" }, { status: 400 });
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from("installations")
       .select("installation_id")
-      .eq("owner_id", ownerId)
+      .eq("owner_id", Number(ownerId))
       .is("uninstalled_at", null)
       .order("created_at", { ascending: false })
       .limit(1)

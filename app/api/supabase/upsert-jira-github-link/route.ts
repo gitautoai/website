@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/server";
 
 interface JiraGithubLinkData {
   jira_site_id: string;
@@ -40,10 +40,10 @@ export async function POST(request: Request) {
       );
 
     // Upsert the data into the database
-    const { data, error } = await supabase.from("jira_github_links").upsert(
+    const { error } = await supabaseAdmin.from("jira_github_links").upsert(
       {
         ...body,
-        updated_at: new Date(),
+        updated_at: new Date().toISOString(),
       },
       {
         onConflict: "jira_site_id,jira_project_id,github_owner_id,github_repo_id",

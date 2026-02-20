@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "GitAuto EventBridge Scheduler"
+
+Parameters:
+  Environment:
+    Type: String
+    Default: "production"
+  LambdaFunctionName:
+    Type: String
+    Default: "pr-agent-prod"
+
+Resources:
+  EventBridgeSchedulerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "EventBridgeScheduler-${Environment}"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaInvoke
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${LambdaFunctionName}"
+
+  # Grant EventBridge Scheduler permission to invoke the Lambda
+  LambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref LambdaFunctionName
+      Action: lambda:InvokeFunction
+      Principal: scheduler.amazonaws.com
+      SourceArn: !Sub "arn:aws:scheduler:${AWS::Region}:${AWS::AccountId}:schedule/default/*"
+
+  GitAutoUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: !Sub "gitauto-scheduler-${Environment}"
+      Policies:
+        - PolicyName: SchedulerManagement
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - scheduler:*
+                Resource: "*"
+              - Effect: Allow
+                Action: iam:PassRole
+                Resource: !GetAtt EventBridgeSchedulerRole.Arn
+
+  GitAutoAccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName: !Ref GitAutoUser
+
+Outputs:
+  RoleArn:
+    Value: !GetAtt EventBridgeSchedulerRole.Arn
+  AccessKeyId:
+    Value: !Ref GitAutoAccessKey
+  SecretAccessKey:
+    Value: !GetAtt GitAutoAccessKey.SecretAccessKey

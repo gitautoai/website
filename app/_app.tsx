@@ -18,7 +18,7 @@ const lexend = Lexend({
   variable: "--font-lexend",
 });
 
-export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+export default function App({ Component, pageProps: { session: _session, ...pageProps } }: AppProps) {
   return (
     <div className={`${comfortaa.variable} ${poppins.variable} ${lexend.variable}`}>
       <Component {...pageProps} />

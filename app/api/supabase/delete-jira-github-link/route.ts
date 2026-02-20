@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase/server";
 
 export async function DELETE(request: Request) {
   try {
@@ -7,7 +7,7 @@ export async function DELETE(request: Request) {
     if (!jira_site_id || !jira_project_id || !github_owner_id || !github_repo_id)
       return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from("jira_github_links")
       .delete()
       .eq("jira_site_id", jira_site_id)

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { GitHubOwnerWithRepos } from "@/app/actions/github/get-installed-repos";
 import { JiraSiteWithProjects } from "@/lib/jira";
-import { GitHubOwnerWithRepos } from "@/app/api/github/get-installed-repos/route";
 
 export interface IntegrationRow {
   siteName: string;
@@ -34,13 +34,21 @@ export function useRows() {
         const { data } = await response.json();
 
         if (data && data.length > 0) {
-          const rows: IntegrationRow[] = data.map((link: any) => ({
-            siteName: link.jira_site_name,
-            projectName: link.jira_project_name,
-            githubOwner: link.github_owner_name,
-            githubRepository: link.github_repo_name,
-            lastSyncDate: link.updated_at || "-",
-          }));
+          const rows: IntegrationRow[] = data.map(
+            (link: {
+              jira_site_name: string;
+              jira_project_name: string;
+              github_owner_name: string;
+              github_repo_name: string;
+              updated_at?: string;
+            }) => ({
+              siteName: link.jira_site_name,
+              projectName: link.jira_project_name,
+              githubOwner: link.github_owner_name,
+              githubRepository: link.github_repo_name,
+              lastSyncDate: link.updated_at || "-",
+            })
+          );
           setIntegrationRows(rows);
         }
       } catch (error) {
@@ -60,7 +68,9 @@ export function useRows() {
     const site = jiraSites.find((s) => s.name === row.siteName);
     const project = site?.projects.find((p) => p.name === row.projectName);
     const owner = githubOwners.find((o) => o.ownerName === row.githubOwner);
-    const repo = owner?.repositories.find((r) => r.repoName === row.githubRepository);
+    const repo = owner?.repositories.find(
+      (r: { repoId: number; repoName: string }) => r.repoName === row.githubRepository
+    );
     if (!site || !project || !owner || !repo || !session?.user?.userId) return;
 
     try {
@@ -126,7 +136,9 @@ export function useRows() {
       const site = jiraSites.find((s) => s.name === row.siteName);
       const project = site?.projects.find((p) => p.name === row.projectName);
       const owner = githubOwners.find((o) => o.ownerName === row.githubOwner);
-      const repo = owner?.repositories.find((r) => r.repoName === row.githubRepository);
+      const repo = owner?.repositories.find(
+        (r: { repoId: number; repoName: string }) => r.repoName === row.githubRepository
+      );
       if (!site || !project || !owner || !repo) return;
 
       const response = await fetch("/api/supabase/delete-jira-github-link", {

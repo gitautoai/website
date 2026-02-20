@@ -1,8 +1,10 @@
 name: Post SNS
 
 on:
-  pull_request:
-    types: [closed]
+  workflow_run:
+    workflows: ["Deploy to Vercel"]
+    types:
+      - completed
     branches:
       - main
 
@@ -11,8 +13,85 @@ permissions:
   contents: read
 
 jobs:
+  check-should-post:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-22.04
+    outputs:
+      should-post: ${{ steps.check.outputs.should-post }}
+      is-blog: ${{ steps.check.outputs.is-blog }}
+      post-url: ${{ steps.check.outputs.post-url }}
+      pr-number: ${{ steps.check.outputs.pr-number }}
+      social-media-post-gitauto: ${{ steps.check.outputs.social-media-post-gitauto }}
+      social-media-post-wes: ${{ steps.check.outputs.social-media-post-wes }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check if should post to SNS
+        id: check
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { workflow_run, repository } = context.payload;
+            const owner = repository.owner.login;
+            const repo = repository.name;
+            const headSha = workflow_run.head_sha;
+
+            console.log('Owner:', owner);
+            console.log('Repo:', repo);
+            console.log('Head SHA:', headSha);
+            console.log('Workflow run pull_requests:', workflow_run.pull_requests);
+
+            // Get PRs associated with this commit
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner,
+              repo,
+              commit_sha: headSha
+            });
+
+            console.log(`Found ${prs.length} PR(s) for commit`);
+
+            if (prs.length === 0) {
+              console.log('No PR found for commit, skipping SNS post');
+              core.setOutput('should-post', false);
+              core.setOutput('is-blog', false);
+              core.setOutput('post-url', 'https://gitauto.ai');
+              return;
+            }
+
+            const pullRequest = prs[0];
+            console.log(`Using PR #${pullRequest.number}: ${pullRequest.title}`);
+
+            const { getBlogInfo } = require('.github/scripts/utils.js');
+            const triggeringContext = {
+              repo: { owner, repo },
+              payload: { pull_request: pullRequest }
+            };
+
+            // Check if it's a blog post
+            const { isBlog, postUrl } = await getBlogInfo({ github, context: triggeringContext });
+
+            // Extract Social Media Post content (supports separate GitAuto/Wes posts)
+            const extractSocialPosts = require('.github/scripts/extract-social-posts.js');
+            const prBody = pullRequest.body || '';
+            const { gitauto: gitautoPost, wes: wesPost } = extractSocialPosts(prBody);
+
+            // Should post if it's a blog post OR has Social Media Post content
+            const shouldPost = isBlog || !!gitautoPost || !!wesPost;
+
+            core.setOutput('should-post', shouldPost);
+            core.setOutput('is-blog', isBlog);
+            core.setOutput('post-url', postUrl);
+            core.setOutput('pr-number', pullRequest.number);
+            core.setOutput('social-media-post-gitauto', gitautoPost);
+            core.setOutput('social-media-post-wes', wesPost);
+
+            console.log(`Blog post detected: ${isBlog}`);
+            console.log(`GitAuto post: ${gitautoPost ? 'yes' : 'no'}`);
+            console.log(`Wes post: ${wesPost ? 'yes' : 'no'}`);
+            console.log(`Should post to SNS: ${shouldPost}`);
+
   post-sns:
-    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'sns')
+    needs: check-should-post
+    if: needs.check-should-post.outputs.should-post == 'true'
     runs-on: ubuntu-22.04
     steps:
       # https://github.com/actions/checkout
@@ -21,7 +100,7 @@ jobs:
       # https://github.com/actions/setup-node
       - uses: actions/setup-node@v4
         with:
-          node-version: "20" # Updated to latest LTS version
+          node-version: "22"
 
       # https://github.com/plhery/node-twitter-api-v2
       # https://github.com/linkedin-developers/linkedin-api-js-client#linkedin-api-javascript-client
@@ -32,74 +111,80 @@ jobs:
           npm install playwright
           npx playwright install chromium
 
-      - name: Wait for deployment
-        run: sleep 600 # Wait for 10 minutes (600 seconds)
-
-      - name: Check blog post
-        id: blog-check
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { getBlogInfo } = require('.github/scripts/utils.js');
-            const { isBlog, postUrl } = await getBlogInfo({ github, context });
-            core.setOutput('isBlog', isBlog);
-            core.setOutput('postUrl', postUrl);
-
       # https://github.com/actions/github-script
       - name: Post to X
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         continue-on-error: true
         with:
           script: |
             const postTwitter = require('.github/scripts/post-twitter.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
-            const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
-            await postTwitter({ context, isBlog, postUrl });
+            const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
+            const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
+            const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
+            const gitautoPost = `${{ needs.check-should-post.outputs.social-media-post-gitauto }}`;
+            const wesPost = `${{ needs.check-should-post.outputs.social-media-post-wes }}`;
+
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            await postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
         env:
-          TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
-          TWITTER_API_SECRET: ${{ secrets.TWITTER_API_SECRET }}
-          TWITTER_ACCESS_TOKEN: ${{ secrets.TWITTER_ACCESS_TOKEN }}
-          TWITTER_ACCESS_TOKEN_SECRET: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
-          TWITTER_API_KEY_WES: ${{ secrets.TWITTER_API_KEY_WES }}
-          TWITTER_API_SECRET_WES: ${{ secrets.TWITTER_API_SECRET_WES }}
-          TWITTER_ACCESS_TOKEN_WES: ${{ secrets.TWITTER_ACCESS_TOKEN_WES }}
-          TWITTER_ACCESS_TOKEN_SECRET_WES: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET_WES }}
+          X_OAUTH1_CONSUMER_KEY_GITAUTO: ${{ secrets.X_OAUTH1_CONSUMER_KEY_GITAUTO }}
+          X_OAUTH1_CONSUMER_KEY_SECRET_GITAUTO: ${{ secrets.X_OAUTH1_CONSUMER_KEY_SECRET_GITAUTO }}
+          X_OAUTH1_ACCESS_TOKEN_GITAUTO: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_GITAUTO }}
+          X_OAUTH1_ACCESS_TOKEN_SECRET_GITAUTO: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_SECRET_GITAUTO }}
+          X_OAUTH1_CONSUMER_KEY_WES: ${{ secrets.X_OAUTH1_CONSUMER_KEY_WES }}
+          X_OAUTH1_CONSUMER_KEY_SECRET_WES: ${{ secrets.X_OAUTH1_CONSUMER_KEY_SECRET_WES }}
+          X_OAUTH1_ACCESS_TOKEN_WES: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_WES }}
+          X_OAUTH1_ACCESS_TOKEN_SECRET_WES: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_SECRET_WES }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Post to LinkedIn
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         continue-on-error: true
         with:
           script: |
             const postLinkedIn = require('.github/scripts/post-linkedin.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
-            const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
-            await postLinkedIn({ context, isBlog, postUrl });
+            const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
+            const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
+            const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
+            const gitautoPost = `${{ needs.check-should-post.outputs.social-media-post-gitauto }}`;
+            const wesPost = `${{ needs.check-should-post.outputs.social-media-post-wes }}`;
+
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            await postLinkedIn({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
         env:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Post to Hacker News
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         continue-on-error: true
         with:
           script: |
             const postHackerNews = require('.github/scripts/post-hackernews.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
-            const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
-            await postHackerNews({ context, isBlog, postUrl });
+            const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
+            const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
+            const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
+            const gitautoPost = `${{ needs.check-should-post.outputs.social-media-post-gitauto }}`;
+            const wesPost = `${{ needs.check-should-post.outputs.social-media-post-wes }}`;
+
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+
+            await postHackerNews({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
         env:
           HN_USERNAME: ${{ secrets.HN_USERNAME }}
           HN_PASSWORD: ${{ secrets.HN_PASSWORD }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-      - name: Post to Dev.to
-        uses: actions/github-script@v7
-        continue-on-error: true
-        with:
-          script: |
-            const postDevTo = require('.github/scripts/post-devto.js');
-            const isBlog = ${{ steps.blog-check.outputs.isBlog }};
-            const postUrl = '${{ steps.blog-check.outputs.postUrl }}';
-            await postDevTo({ isBlog, postUrl });
-        env:
-          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY_WES }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,29 +1,23 @@
-import type { Metadata } from "next";
-import { Suspense } from "react";
-import Script from "next/script";
-
-// Styles
-import { Inter } from "next/font/google";
-import "@/styles/globals.css";
-import "@/styles/styles.css";
-
-// Components
-import Navbar from "@/components/Navbar";
-import { PHProvider } from "@/components/PostHog";
-import SessionProvider from "@/components/SessionProvider";
-import { AccountContextWrapper } from "@/components/Context/Account";
-import { GitHubProvider } from "@/components/Context/GitHub";
-import Footer from "@/components/Footer";
-import IntercomMessenger from "@/components/Intercom";
-
-// 3rd Party Styles
-import { Providers } from "./providers";
-
-// Analytics
-import { SpeedInsights } from "@vercel/speed-insights/next";
+// Third party imports
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { Suspense } from "react";
+
+// Local imports
+import { AccountContextWrapper } from "@/app/components/contexts/Account";
+import Footer from "@/app/components/Footer";
+import { InstallationSuccessPopup } from "@/app/components/InstallationSuccessPopup";
+// import IntercomMessenger from "@/app/components/Intercom";
+import Navbar from "@/app/components/navigations/Navbar";
+import { PostHogWrapper } from "@/app/components/PostHog";
+import SessionProvider from "@/app/components/SessionProvider";
 import { isPrd } from "@/config";
 import { defaultMetadata } from "@/config/metadata";
+import { organizationJsonLd } from "@/app/jsonld";
+import "@/styles/globals.css";
+import "@/styles/styles.css";
 
 const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = defaultMetadata;
@@ -35,35 +29,33 @@ export const metadata: Metadata = defaultMetadata;
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      {isPrd && (
-        <Script id="apollo-script">
-          {`function initApollo(){var n=Math.random().toString(36).substring(7),o=document.createElement("script");o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n,o.async=!0,o.defer=!0,o.onload=function(){window.trackingFunctions.onLoad({appId:"6631c123b9befb01c76f5219"})},document.head.appendChild(o)}initApollo();`}
-        </Script>
-      )}
-      <PHProvider>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+      </head>
+      <PostHogWrapper>
         <body className={`${inter.className} w-full min-h-screen text-base sm:text-sm md:text-xl`}>
           <Suspense>
             <SessionProvider>
               <AccountContextWrapper>
-                <GitHubProvider>
-                  <Providers>
-                    <Navbar />
-                    <main className="px-4 sm:px-8 md:px-16">{children}</main>
-                    <Footer />
-                    <IntercomMessenger />
-                    {isPrd && (
-                      <>
-                        <SpeedInsights />
-                        <Analytics mode={"production"} />
-                      </>
-                    )}
-                  </Providers>
-                </GitHubProvider>
+                <InstallationSuccessPopup />
+                <Navbar />
+                <main className="px-4 sm:px-8 md:px-16">{children}</main>
+                <Footer />
+                {/* <IntercomMessenger /> */}
+                {isPrd && (
+                  <>
+                    <SpeedInsights />
+                    <Analytics mode={"production"} />
+                  </>
+                )}
               </AccountContextWrapper>
             </SessionProvider>
           </Suspense>
         </body>
-      </PHProvider>
+      </PostHogWrapper>
     </html>
   );
 }

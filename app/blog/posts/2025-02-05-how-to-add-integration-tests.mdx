@@ -1,0 +1,144 @@
+export const metadata = {
+  title: "How to Add Integration Tests Using an AI Agent",
+  description:
+    "A real-world example of how to create integration tests using GitAuto,an AI coding agent, with practical insights and implementation details.",
+  slug: "how-to-add-integration-tests",
+  alternates: { canonical: "/blog/how-to-add-integration-tests" },
+  openGraph: { url: "/blog/how-to-add-integration-tests" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["solution", "case-study", "integration-testing", "automation"],
+  createdAt: "2025-02-05",
+  updatedAt: "2025-02-05",
+};
+
+# How to Add Integration Tests Using an AI Agent
+
+Today I'm sharing a practical experiment where we assigned integration test creation to GitAuto, our o3-mini-powered AI coding agent. Integration testing is a regular part of our development process, so we wanted to see how effectively an AI agent could handle this task.
+
+## 1. What is Integration Testing?
+
+Integration testing verifies that different modules or services used by your application work well together. Unlike unit tests that isolate individual components, integration tests examine the interaction between integrated components.
+
+There are several types of integration tests:
+
+- API Integration Tests (e.g., testing GitHub API calls)
+- Database Integration Tests (e.g., testing PostgreSQL queries)
+- Service Integration Tests (e.g., testing interaction between microservices)
+- End-to-End Tests (e.g., testing a complete user flow from UI to database)
+
+In this case study, we'll focus on API integration tests.
+
+## 2. Why are Integration Tests Important?
+
+Integration tests bridge the gap between unit tests and end-to-end tests in the testing pyramid. While the exact ratio varies by project, a common practice in modern software development follows the testing pyramid principle:
+
+- Unit tests forming the base (majority of tests)
+- Integration tests in the middle
+- End-to-end tests at the top (smallest number)
+
+Test Automation Coverage is a key metric used to measure testing effectiveness. According to [KMS Solutions](https://kms-solutions.asia/blogs/top-8-key-metrics-for-test-automation), it's calculated as:
+
+```
+Test Automation Coverage % = (# of automated tests / # of total tests) * 100
+```
+
+This metric is especially important when dealing with frequent post-release bugs. If you're spending significant time on bug fixes, low test automation coverage may be the root cause.
+
+Even if bugs aren't currently an issue, remember: testing will be necessary regardless of whether it's manual or automated. Automated tests are typically more cost-effective long-term compared to ongoing manual testing.
+
+## 3. The Setup
+
+Let's look at our testing environment. We use GitHub Actions for continuous integration, with a workflow defined in `.github/workflows/pytest.yml`:
+
+![GitHub Actions Setup Screenshot](/blog/how-to-add-integration-tests/step3-1.png)
+
+The workflow triggers automatically on pull request creation - this is particularly useful as it provides immediate validation of GitAuto's test implementations.
+
+## 4. The Challenge
+
+We created an issue titled "Add an integration test to is_repo_forked() in services/github/repo_manager.py". Here's the target function:
+
+![Issue Screenshot](/blog/how-to-add-integration-tests/step4-1.png)
+
+![Code Screenshot showing is_repo_forked function](/blog/how-to-add-integration-tests/step4-2.png)
+
+Since this function makes direct GitHub API calls, it's more practical to create integration tests rather than mocking the API for unit tests.
+
+## 5. First Attempt
+
+We initially assigned the issue to GitAuto without any specific requirements - sometimes it's more effective to see the initial output before defining detailed specifications. Within minutes, it created this pull request:
+
+![First PR Screenshot](/blog/how-to-add-integration-tests/step5-1.png)
+
+![First PR Screenshot zoomed in](/blog/how-to-add-integration-tests/step5-2.png)
+
+The first pull request was enlightening. Without any specific requirements, GitAuto naturally created tests for both forked and non-forked repositories - which makes perfect sense for this function. Looking at the implementation details, it used well-known public repositories like ["octocat/Spoon-Knife"](https://github.com/octocat/Spoon-Knife) (which is actually GitHub's official example repository for forking) and ["python/cpython"](https://github.com/python/cpython). I initially thought these choices might be hallucinated, but I was wrong - both are perfect examples for this test.
+
+While technically appropriate, I'd prefer using GitAuto's own private repositories for testing since that's where GitAuto is actually installed. This is neither right nor wrong - it's simply a requirement we need to specify explicitly.
+
+Interestingly, GitAuto used GitHub Actions tokens for authentication, which I hadn't considered. However, since GitAuto operates as a GitHub App, we should be using GitHub App Installation Tokens instead, which is different from GitHub Actions Token. This too needs to be specified in our requirements.
+
+This iterative process - seeing the initial PR and then refining requirements - proved quite effective. It's much easier to articulate specific requirements when you have a concrete example to reference.
+
+## 6. Refining Requirements
+
+Based on our initial findings, we created a parent issue with common requirements for all integration tests:
+
+![Parent Issue Screenshot](/blog/how-to-add-integration-tests/step6-1.png)
+
+1. Prefer using `Function` than `Class`
+2. Use `OWNER` in `tests/constants.py` for an owner
+3. Use `REPO` in `tests/constants.py` for a repo
+4. Use `TOKEN` in `tests/constants.py` for a token
+5. Prefer having related document URLs so that I can easily learn about them
+6. Prefer having some comments in the code
+
+Then created a sub-issue with test-specific requirements:
+
+![Sub-issue Screenshot](/blog/how-to-add-integration-tests/step6-2.png)
+
+1. Use REPO in tests/constants.py for a non-forked repo
+2. Create FORKED_REPO = "DeepSeek-R1" in tests/constants.py for a forked repo
+
+## 7. Final Implementation
+
+![Final Implementation PR Screenshot](/blog/how-to-add-integration-tests/step7-1.png)
+
+The final pull request met all our requirements! One interesting note about AI-generated code: due to the non-deterministic nature of the model (we can't set temperature to 0 for o3-mini), each PR might have variations. In this case, GitAuto added a main block:
+
+```python
+if __name__ == '__main__':
+    test_is_repo_forked_non_fork()
+    test_is_repo_forked_fork()
+    print("All integration tests passed!")
+```
+
+This block enables local test execution outside the pytest framework. While not strictly necessary for our CI/CD pipeline, it's harmless and can be useful for quick local testing. Rather than requesting its removal through review comments or generating a new PR, I decided to keep it.
+
+And in the end, the tests ran successfully in our CI pipeline! If any tests had failed, GitAuto would have analyzed the error logs and attempted to self-correct by creating additional commits with fixes. This self-healing capability is particularly valuable when dealing with integration tests, where edge cases and API behaviors might not be immediately apparent.
+
+![CI Pipeline Success Screenshot](/blog/how-to-add-integration-tests/step7-2.png)
+
+## 8. Scaling Up
+
+While this example focused on one function, you can scale this approach across your codebase:
+
+1. Create a parent issue for integration testing
+2. Create sub-issues for each API-calling function
+3. Bulk assign to GitAuto using labels
+
+![Bulk Issue Creation Screenshot](/blog/how-to-add-integration-tests/step8-1.png)
+
+While this bulk assignment approach is powerful, it's worth noting that each function might have specific requirements (like which non-forked and forked repositories to use, public or private, etc.). So while the initial assignment can be automated, some iteration might be needed for perfect results. Still, this is significantly more efficient than having engineers manually write all these tests.
+
+One limitation I've encountered is the issue creation process itself. While I'd love to apply this to all functions automatically, GitHub currently doesn't support CSV imports for issues. For large-scale automation, Jira Issues might be better suited as it offers more bulk creation options. However, note that the parent issue reference feature is currently only available for GitHub Issues (not yet supported in Jira Issues as of this writing)
+
+Let us know your thoughts and feedback [here](/contact).
+
+## Related Posts
+
+- **[How to Add a Unit Test](/blog/how-to-add-a-unit-test)** - See how GitAuto handles unit test creation with detailed mocking strategies.
+- **[How to Detect Low Test Coverage Files in Jest](/blog/how-to-detect-low-test-coverage-files-in-jest)** - Set up automated coverage reporting to identify which files need tests.
+- **[How to Detect Low Test Coverage Files in Flutter](/blog/how-to-detect-low-test-coverage-files-in-flutter)** - Flutter/Dart version of coverage detection and automation.
+- **[How to Measure ROI](/blog/how-to-measure-roi)** - Calculate the return on investment when using GitAuto for test automation.

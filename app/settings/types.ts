@@ -1,4 +1,6 @@
-export type BaseSettingsType = {
+import { StructuredRules } from "./rules/config/structured-rules";
+
+export type BaseSettings = {
   firstName: string;
   lastName: string;
   email: string;
@@ -10,25 +12,26 @@ export type BaseSettingsType = {
   jiraUserEmail: string;
 };
 
-export type RulesSettingsType = {
-  orgRules: string;
+export type RulesSettings = {
   repoRules: string;
-  userRules: string;
+  targetBranch: string;
+  structuredRules: StructuredRules;
 };
 
-export type ReferenceSettingsType = {
+export type ReferenceSettings = {
   webUrls: string[];
   filePaths: string[];
 };
 
-export type ScreenshotSettingsType = {
-  useScreenshots: boolean;
-  productionUrl: string;
-  localPort: string;
-  startupCommands: string;
+export type TriggerSettings = {
+  triggerOnReviewComment: boolean;
+  triggerOnTestFailure: boolean;
+  triggerOnSchedule: boolean;
+  scheduleTimeLocal: string; // Format: "HH:MM" (24-hour format)
+  scheduleTimeUTC: string; // Format: "HH:MM" (24-hour format)
+  scheduleIncludeWeekends: boolean;
+  scheduleExecutionCount: number;
+  scheduleIntervalMinutes: number;
 };
 
-export type AllSettingsType = BaseSettingsType &
-  RulesSettingsType &
-  ReferenceSettingsType &
-  ScreenshotSettingsType;
+export type Settings = RulesSettings | ReferenceSettings | TriggerSettings;
