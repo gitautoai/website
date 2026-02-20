@@ -12,6 +12,7 @@ e2e/.auth/
 next-env.d.ts
 npm-debug.log*
 scripts/
+!scripts/sentry/
 storybook-static
 supabase/.temp/
 test-results/

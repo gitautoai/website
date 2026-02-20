@@ -31,6 +31,8 @@ Sentry.init({
     /Non-Error promise rejection captured with value: (undefined|Object Not Found Matching Id:\d+, MethodName:\w+, ParamCount:\d+)/,
     // Browser extension errors (TronLink, MetaMask, etc.)
     /tronlinkParams/,
+    // Hydration mismatches are harmless — React recovers automatically. Usually caused by browser extensions.
+    /Hydration/,
   ],
 
   denyUrls: [
