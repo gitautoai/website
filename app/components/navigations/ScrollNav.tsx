@@ -11,6 +11,7 @@ export type Section = {
 // Default sections for home page
 export const homeSections: Section[] = [
   { id: "hero", label: "Home" },
+  { id: "stats", label: "Results" },
   { id: "why-gitauto", label: "Why" },
   { id: "what-gitauto-does", label: "What" },
   { id: "how-it-works", label: "How" },

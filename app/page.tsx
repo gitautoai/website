@@ -7,6 +7,7 @@ import Demo from "@/app/components/home/Demo";
 import HowItWorks from "@/app/components/home/HowItWorks";
 import HowToGetStarted from "@/app/components/home/HowToGetStarted";
 import Pricing from "@/app/components/home/Pricing";
+import Stats from "@/app/components/home/Stats";
 import UseCases from "@/app/components/home/UseCases";
 import WhatGitAutoDoes from "@/app/components/home/WhatGitAutoDoes";
 import WhyGitAuto from "@/app/components/home/WhyGitAuto";
@@ -23,6 +24,7 @@ export default function Home() {
       <div className="flex flex-col justify-center items-center px-0 md:px-24">
         <ScrollNav />
         <Hero />
+        <Stats />
         <Demo />
         <WhyGitAuto />
         <WhatGitAutoDoes />
