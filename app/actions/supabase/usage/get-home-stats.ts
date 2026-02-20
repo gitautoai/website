@@ -5,12 +5,20 @@ import { supabaseAdmin } from "@/lib/supabase/server";
 const FOXQUILT_OWNER_NAME = "Foxquilt";
 
 export type HomeStats = {
+  totalRepos: number;
   totalPrsCreated: number;
-  testPassRate: number;
-  mergeRate: number;
+  testPassRate: number | null;
+  mergeRate: number | null;
 };
 
 export async function getHomeStats(): Promise<HomeStats> {
+  // Get total repos connected
+  const { count: totalRepos, error: repoError } = await supabaseAdmin
+    .from("repositories")
+    .select("*", { count: "exact", head: true });
+
+  if (repoError) throw new Error(`Failed to fetch repos: ${repoError.message}`);
+
   // Get total unique PRs across all customers
   const { data: allPrs, error: allError } = await supabaseAdmin
     .from("usage")
@@ -60,8 +68,9 @@ export async function getHomeStats(): Promise<HomeStats> {
   });
 
   return {
+    totalRepos: totalRepos || 0,
     totalPrsCreated: uniqueAllPrs.size,
-    testPassRate: foxTotal > 0 ? Math.round((foxPassed / foxTotal) * 1000) / 10 : 0,
-    mergeRate: foxTotal > 0 ? Math.round((foxMerged / foxTotal) * 1000) / 10 : 0,
+    testPassRate: foxTotal > 0 ? Math.round((foxPassed / foxTotal) * 1000) / 10 : null,
+    mergeRate: foxTotal > 0 ? Math.round((foxMerged / foxTotal) * 1000) / 10 : null,
   };
 }
