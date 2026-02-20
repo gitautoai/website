@@ -1,16 +1,15 @@
- 
 import { formatPercentage } from "./format-percentage";
 
 describe("formatPercentage", () => {
   describe("null values", () => {
-    it("should return '0%' for null", () => {
-      expect(formatPercentage(null)).toBe("0%");
+    it("should return '-' for null (not measured)", () => {
+      expect(formatPercentage(null)).toBe("-");
     });
   });
 
   describe("NaN values", () => {
-    it("should return '0%' for NaN", () => {
-      expect(formatPercentage(NaN)).toBe("0%");
+    it("should return '-' for NaN", () => {
+      expect(formatPercentage(NaN)).toBe("-");
     });
   });
 

@@ -27,11 +27,16 @@ export default function CoverageChart({
   isDummyData = false,
   dateRange,
 }: CoverageChartProps) {
+  // Check which metrics are measured (total > 0 for at least one data point)
+  // e.g. PHP coverage tools (Xdebug/PCOV) don't report branch or function data
+  const hasFunctionCoverage = data.some((item) => item.functions_total > 0);
+  const hasBranchCoverage = data.some((item) => item.branches_total > 0);
+
   const chartData = data.map((item) => ({
     timestamp: new Date(item.created_at).getTime(),
-    statement: Math.round(item.statement_coverage * 100) / 100,
-    function: Math.round(item.function_coverage * 100) / 100,
-    branch: Math.round(item.branch_coverage * 100) / 100,
+    statement: Math.round((item.statement_coverage ?? 0) * 10) / 10,
+    function: hasFunctionCoverage ? Math.round((item.function_coverage ?? 0) * 10) / 10 : undefined,
+    branch: hasBranchCoverage ? Math.round((item.branch_coverage ?? 0) * 10) / 10 : undefined,
     branch_name: item.branch_name,
   }));
 
@@ -138,22 +143,34 @@ export default function CoverageChart({
             strokeWidth={2}
             name="Statement Coverage"
           />
-          <Line
-            type="monotone"
-            dataKey="function"
-            stroke="#82ca9d"
-            strokeWidth={2}
-            name="Function Coverage"
-          />
-          <Line
-            type="monotone"
-            dataKey="branch"
-            stroke="#ffc658"
-            strokeWidth={2}
-            name="Branch Coverage"
-          />
+          {hasFunctionCoverage && (
+            <Line
+              type="monotone"
+              dataKey="function"
+              stroke="#82ca9d"
+              strokeWidth={2}
+              name="Function Coverage"
+            />
+          )}
+          {hasBranchCoverage && (
+            <Line
+              type="monotone"
+              dataKey="branch"
+              stroke="#ffc658"
+              strokeWidth={2}
+              name="Branch Coverage"
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
+      {(!hasFunctionCoverage || !hasBranchCoverage) && (
+        <p className="text-sm text-gray-500 mt-2 text-center">
+          {[!hasFunctionCoverage && "Function", !hasBranchCoverage && "Branch"]
+            .filter(Boolean)
+            .join(" and ")}{" "}
+          coverage is not shown because the coverage tool does not report it.
+        </p>
+      )}
     </div>
   );
 }

@@ -15,7 +15,7 @@ export function filterAndSortData(
   hideFullCoverage: "all" | "hide",
   selectedExclusionFilter: string,
   sortField: SortField,
-  sortDirection: SortDirection
+  sortDirection: SortDirection,
 ): Tables<"coverages">[] {
   if (!data) return [];
 
@@ -54,10 +54,14 @@ export function filterAndSortData(
     filtered = filtered.filter((item) => item.is_excluded_from_testing);
   }
 
-  // Sort
+  // Sort (null values sort to the end regardless of direction)
   filtered.sort((a, b) => {
     const aValue = a[sortField];
     const bValue = b[sortField];
+
+    if (aValue === null && bValue === null) return 0;
+    if (aValue === null) return 1;
+    if (bValue === null) return -1;
 
     if (typeof aValue === "string" && typeof bValue === "string")
       return sortDirection === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
