@@ -36,20 +36,18 @@ const XMark = () => (
 
 export default function PricingTable() {
   return (
-    <div className="max-w-5xl w-full mx-auto">
+    <div className="max-w-4xl w-full mx-auto">
       <table className="w-full border-collapse">
         <colgroup>
-          <col style={{ width: "40%" }} />
-          <col style={{ width: "20%" }} />
-          <col style={{ width: "20%" }} />
-          <col style={{ width: "20%" }} />
+          <col style={{ width: "50%" }} />
+          <col style={{ width: "25%" }} />
+          <col style={{ width: "25%" }} />
         </colgroup>
         <thead>
           <tr className="border-b border-gray-200">
             <th className="py-4 px-6 text-left font-medium text-gray-500">Features</th>
-            <th className="py-4 px-6 text-center font-medium text-gray-500">Free</th>
-            <th className="py-4 px-6 text-center font-medium text-gray-500 bg-pink-50">Standard</th>
-            <th className="py-4 px-6 text-center font-medium text-gray-500">Enterprise</th>
+            <th className="py-4 px-6 text-center font-medium text-gray-500">Free Trial</th>
+            <th className="py-4 px-6 text-center font-medium text-gray-500 bg-pink-50">Paid</th>
           </tr>
         </thead>
         <tbody>
@@ -68,14 +66,6 @@ export default function PricingTable() {
             <td className="py-4 px-6 text-center bg-pink-50">
               <CreditPurchaseButton className="inline-block py-2 px-4 w-full" />
             </td>
-            <td className="py-4 px-6 text-center">
-              <Link
-                href="/contact"
-                className="inline-block py-2 px-4 rounded-lg font-medium border border-pink-600 text-pink-600 hover:bg-pink-50"
-              >
-                Contact Us
-              </Link>
-            </td>
           </tr>
 
           {/* Pricing Features */}
@@ -86,10 +76,7 @@ export default function PricingTable() {
                 <div className="text-sm text-gray-500">{feature.description}</div>
               </td>
               <td className="py-4 px-6 text-center">{feature.free}</td>
-              <td className="py-4 px-6 text-center bg-pink-50">
-                {feature.standard}
-              </td>
-              <td className="py-4 px-6 text-center">{feature.enterprise}</td>
+              <td className="py-4 px-6 text-center bg-pink-50">{feature.standard}</td>
             </tr>
           ))}
 
@@ -97,7 +84,7 @@ export default function PricingTable() {
           {TABLE_FEATURES.map((section) => (
             <Fragment key={section.category}>
               <tr className="border-b border-gray-200">
-                <td colSpan={4} className="pt-10 pb-4 px-6 font-semibold">
+                <td colSpan={3} className="pt-10 pb-4 px-6 font-semibold">
                   {section.category}
                 </td>
               </tr>
@@ -127,15 +114,6 @@ export default function PricingTable() {
                       </div>
                     )}
                   </td>
-                  <td className="py-4 px-6 text-center">
-                    {typeof item.enterprise === "string" ? (
-                      item.enterprise
-                    ) : (
-                      <div className="flex justify-center items-center">
-                        {item.enterprise ? <CheckMark /> : <XMark />}
-                      </div>
-                    )}
-                  </td>
                 </tr>
               ))}
             </Fragment>
@@ -155,14 +133,6 @@ export default function PricingTable() {
             </td>
             <td className="py-4 px-6 text-center bg-pink-50">
               <CreditPurchaseButton className="inline-block py-2 px-4 w-full" />
-            </td>
-            <td className="py-4 px-6 text-center">
-              <Link
-                href="/contact"
-                className="inline-block py-2 px-4 rounded-lg font-medium border border-pink-600 text-pink-600 hover:bg-pink-50"
-              >
-                Contact Us
-              </Link>
             </td>
           </tr>
         </tbody>
