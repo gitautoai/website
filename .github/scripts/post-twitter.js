@@ -76,15 +76,19 @@ async function postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title }) {
   }
 
   // Send to Slack webhook
-  const links = [
-    gitAutoTweetResult ? `https://x.com/gitautoai/status/${gitAutoTweetResult.data.id}` : null,
-    wesTweetResult ? `https://x.com/hiroshinishio/status/${wesTweetResult.data.id}` : null,
-  ].filter(Boolean).join(" and ");
-  await fetch(process.env.SLACK_WEBHOOK_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ msg: `Posted to X! ${links}` }),
-  });
+  if (process.env.SLACK_WEBHOOK_URL) {
+    const links = [
+      gitAutoTweetResult ? `https://x.com/gitautoai/status/${gitAutoTweetResult.data.id}` : null,
+      wesTweetResult ? `https://x.com/hiroshinishio/status/${wesTweetResult.data.id}` : null,
+    ].filter(Boolean).join(" and ");
+    await fetch(process.env.SLACK_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ msg: `Posted to X! ${links}` }),
+    });
+  } else {
+    console.log("SLACK_WEBHOOK_URL not set, skipping Slack notification");
+  }
 }
 
 module.exports = postTwitter;

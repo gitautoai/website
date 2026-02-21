@@ -186,12 +186,12 @@ export default function DashboardTriggerPage() {
 
       <DocsNavigation
         previousLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL,
-          title: "Issue Label Trigger",
-        }}
-        nextLink={{
           href: RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT,
           title: "Review Comment Trigger",
+        }}
+        nextLink={{
+          href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL,
+          title: "Issue Label Trigger",
         }}
       />
     </div>

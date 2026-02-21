@@ -173,6 +173,10 @@ export default function ScheduleTriggerPage() {
 
       <DocsNavigation
         previousLink={{
+          href: RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW,
+          title: "Triggers Overview",
+        }}
+        nextLink={{
           href: RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE,
           title: "Test Failure Trigger",
         }}

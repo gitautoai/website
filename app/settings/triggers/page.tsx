@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 // Local imports (Actions)
 import { createOrUpdateSchedule } from "@/app/actions/aws/create-or-update-schedule";
-import { deleteSchedules } from "@/app/actions/aws/delete-schedules";
+import { disableSchedules } from "@/app/actions/aws/disable-schedules";
 import { hasPurchasedCredits } from "@/app/actions/supabase/credits/has-purchased-credits";
 import { addSchedulePause } from "@/app/actions/supabase/schedule-pauses/add-schedule-pause";
 import { deleteSchedulePause } from "@/app/actions/supabase/schedule-pauses/delete-schedule-pause";
@@ -15,11 +15,14 @@ import type { SchedulePause } from "@/app/actions/supabase/schedule-pauses/get-a
 import { getAllTriggerSettings } from "@/app/actions/supabase/repositories/get-all-trigger-settings";
 import type { TriggerSettingsForRepo } from "@/app/actions/supabase/repositories/get-all-trigger-settings";
 import { upsertRepository } from "@/app/actions/supabase/repositories/upsert-repository";
+import { setupCoverageWorkflow } from "@/app/actions/setup-coverage-workflow";
+import { scheduleExists } from "@/app/actions/aws/schedule-exists";
 import { slackUs } from "@/app/actions/slack/slack-us";
 
 // Local imports (Components)
 import { useAccountContext } from "@/app/components/contexts/Account";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
+import Modal from "@/app/components/Modal";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
 import PauseModal from "@/app/settings/triggers/PauseModal";
 import ToggleSwitch from "@/app/settings/triggers/ToggleSwitch";
@@ -66,6 +69,7 @@ export default function TriggersPage() {
     Record<number, { start: string; end: string; reason: string; isOpen: boolean }>
   >({});
   const [pauseErrors, setPauseErrors] = useState<Record<number, string>>({});
+  const [showSetupModal, setShowSetupModal] = useState(false);
   const [pauseAllForm, setPauseAllForm] = useState<{
     start: string;
     end: string;
@@ -238,24 +242,36 @@ export default function TriggersPage() {
       schedule_interval_minutes: updatedSettings.scheduleIntervalMinutes,
     })
       .then(async () => {
-        // Handle AWS scheduling
+        // Handle AWS scheduling and coverage workflow setup
         if (updatedSettings.triggerOnSchedule) {
-          await createOrUpdateSchedule({
-            ownerId: currentOwnerId,
-            ownerType: currentOwnerType,
-            ownerName: currentOwnerName,
-            repoId: repoId,
-            repoName: repoName,
-            userId: userId,
-            userName: userLogin,
-            installationId: currentInstallationId,
-            scheduleTimeUTC: updatedSettings.scheduleTimeUTC,
-            includeWeekends: updatedSettings.scheduleIncludeWeekends,
-            scheduleExecutionCount: updatedSettings.scheduleExecutionCount,
-            scheduleIntervalMinutes: updatedSettings.scheduleIntervalMinutes,
-          });
+          // Check if schedule already exists — if not, this is the first time
+          const hasExistingSchedule = await scheduleExists(currentOwnerId, repoId);
+          const promises: Promise<unknown>[] = [
+            createOrUpdateSchedule({
+              ownerId: currentOwnerId,
+              ownerType: currentOwnerType,
+              ownerName: currentOwnerName,
+              repoId: repoId,
+              repoName: repoName,
+              userId: userId,
+              userName: userLogin,
+              installationId: currentInstallationId,
+              scheduleTimeUTC: updatedSettings.scheduleTimeUTC,
+              includeWeekends: updatedSettings.scheduleIncludeWeekends,
+              scheduleExecutionCount: updatedSettings.scheduleExecutionCount,
+              scheduleIntervalMinutes: updatedSettings.scheduleIntervalMinutes,
+            }),
+          ];
+          await Promise.all(promises);
+          // Fire and forget — Lambda runs setup in the background
+          if (!hasExistingSchedule) {
+            setupCoverageWorkflow(currentOwnerName, repoName, currentInstallationId, userLogin).catch(
+              () => {},
+            );
+            setShowSetupModal(true);
+          }
         } else {
-          await deleteSchedules(currentOwnerId, repoId);
+          await disableSchedules(currentOwnerId, repoId);
         }
       })
       .catch((error) => {
@@ -911,6 +927,15 @@ export default function TriggersPage() {
             )}
           </PauseModal>
         ))}
+
+      {showSetupModal && (
+        <Modal
+          title="Setting Up CI Workflow"
+          type="success"
+          message="A pull request will be created shortly with a CI workflow to upload coverage reports. Check your repository for the new PR."
+          onClose={() => setShowSetupModal(false)}
+        />
+      )}
 
       {isLoading && <LoadingSpinner />}
     </div>

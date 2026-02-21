@@ -67,23 +67,6 @@ export default function ActionsDropdown({
           <div className="absolute right-0 mt-1 bg-white border rounded-md shadow-lg py-1 min-w-[200px] z-20">
             <button
               onClick={() => {
-                onCreateIssues(false);
-                onToggleDropdown();
-              }}
-              className="w-full px-4 py-2 text-left hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap min-w-[200px]"
-              disabled={isCreatingIssues || isTogglingExclusion || selectedRows.length === 0}
-            >
-              {isCreatingIssues ? (
-                <>
-                  <SpinnerIcon />
-                  <span>Creating Issues...</span>
-                </>
-              ) : (
-                `Create Issues (${selectedRows.length})`
-              )}
-            </button>
-            <button
-              onClick={() => {
                 onCreateIssues(true);
                 onToggleDropdown();
               }}
@@ -93,10 +76,10 @@ export default function ActionsDropdown({
               {isCreatingIssues ? (
                 <>
                   <SpinnerIcon />
-                  <span>Creating Issues & PRs...</span>
+                  <span>Creating PRs...</span>
                 </>
               ) : (
-                `Create Issues & PRs (${selectedRows.length})`
+                `Create PRs (${selectedRows.length})`
               )}
             </button>
 

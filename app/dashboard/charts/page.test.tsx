@@ -22,7 +22,9 @@ jest.mock("swr", () => jest.fn(() => ({ data: undefined, error: undefined })));
 jest.mock("@/app/components/contexts/Account");
 jest.mock("@/app/actions/supabase/repo-coverage/get-repo-coverage");
 jest.mock("@/app/actions/supabase/total-repo-coverage/get-total-coverage");
-jest.mock("./utils/generate-dummy-data");
+jest.mock("@/app/actions/setup-coverage-workflow", () => ({
+  setupCoverageWorkflow: jest.fn(),
+}));
 jest.mock("@/app/components/DocsLink", () => () => null);
 jest.mock("@/app/components/ErrorBanner", () => () => null);
 jest.mock("@/app/components/LoadingSpinner", () => () => null);
@@ -43,37 +45,11 @@ import { useAccountContext } from "@/app/components/contexts/Account";
 import { getRepoCoverage } from "@/app/actions/supabase/repo-coverage/get-repo-coverage";
 import { Tables } from "@/types/supabase";
 import ChartsPage from "./page";
-import { generateDummyData } from "./utils/generate-dummy-data";
 
 const mockUseAccountContext = useAccountContext as jest.MockedFunction<typeof useAccountContext>;
 const mockGetRepoCoverage = getRepoCoverage as jest.MockedFunction<typeof getRepoCoverage>;
-const mockGenerateDummyData = generateDummyData as jest.MockedFunction<typeof generateDummyData>;
 
-describe("ChartsPage - Demo Data Logic", () => {
-  const mockDummyData: Tables<"repo_coverage">[] = [
-    {
-      id: 1,
-      owner_id: 1,
-      repo_id: 1,
-      owner_name: "test-owner",
-      repo_name: "test-repo",
-      branch_name: "main",
-      created_by: "test",
-      language: "javascript",
-      line_coverage: 80,
-      branch_coverage: 70,
-      function_coverage: 75,
-      statement_coverage: 80,
-      lines_covered: 800,
-      lines_total: 1000,
-      functions_covered: 75,
-      functions_total: 100,
-      branches_covered: 140,
-      branches_total: 200,
-      created_at: "2024-01-01T00:00:00Z",
-    },
-  ];
-
+describe("ChartsPage", () => {
   const mockRealData: Tables<"repo_coverage">[] = [
     {
       id: 2,
@@ -100,7 +76,6 @@ describe("ChartsPage - Demo Data Logic", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGenerateDummyData.mockReturnValue(mockDummyData);
 
     // Mock localStorage
     const localStorageMock = {
@@ -113,7 +88,7 @@ describe("ChartsPage - Demo Data Logic", () => {
   });
 
   describe("All Repositories mode", () => {
-    it("shows demo data for all repos when NO repos have real data", async () => {
+    it("shows setup button for repos with no data", async () => {
       mockUseAccountContext.mockReturnValue({
         currentOwnerId: "owner-1",
         currentRepoId: null,
@@ -140,12 +115,12 @@ describe("ChartsPage - Demo Data Logic", () => {
         expect(screen.getByText("repo-two")).toBeInTheDocument();
       });
 
-      // Should show demo data message for both repos
-      const demoMessages = screen.getAllByText(/Showing demo data with/);
-      expect(demoMessages).toHaveLength(2);
+      // Should show setup buttons for both repos
+      const setupButtons = screen.getAllByText(/No coverage data yet/);
+      expect(setupButtons).toHaveLength(2);
     });
 
-    it("shows real data for repos with data and 'no data' message for repos without when SOME repos have real data", async () => {
+    it("shows real data for repos with data and setup button for repos without", async () => {
       mockUseAccountContext.mockReturnValue({
         currentOwnerId: "owner-1",
         currentRepoId: null,
@@ -174,19 +149,14 @@ describe("ChartsPage - Demo Data Logic", () => {
         expect(screen.getByText("repo-two")).toBeInTheDocument();
       });
 
-      // Should show actual data message for repo-one
-      expect(screen.getByText(/Showing 1 actual data points/)).toBeInTheDocument();
+      // Should show data points message for repo-one
+      expect(screen.getByText(/Showing 1 data points/)).toBeInTheDocument();
 
-      // Should show "no data" message for repo-two (not demo data)
-      expect(
-        screen.getByText("No coverage data available for this repository yet.")
-      ).toBeInTheDocument();
-
-      // Should NOT show demo data messages
-      expect(screen.queryByText(/Showing demo data with/)).not.toBeInTheDocument();
+      // Should show setup button for repo-two
+      expect(screen.getByText(/No coverage data yet/)).toBeInTheDocument();
     });
 
-    it("shows real data for all repos when ALL repos have real data", async () => {
+    it("shows real data for all repos when all have data", async () => {
       mockUseAccountContext.mockReturnValue({
         currentOwnerId: "owner-1",
         currentRepoId: null,
@@ -213,16 +183,12 @@ describe("ChartsPage - Demo Data Logic", () => {
         expect(screen.getByText("repo-two")).toBeInTheDocument();
       });
 
-      // Should show actual data messages for both repos
-      const actualMessages = screen.getAllByText(/Showing 1 actual data points/);
-      expect(actualMessages).toHaveLength(2);
+      // Should show data points messages for both repos
+      const dataMessages = screen.getAllByText(/Showing 1 data points/);
+      expect(dataMessages).toHaveLength(2);
 
-      // Should NOT show demo data or "no data" messages
-      expect(screen.queryByText(/Showing demo data with/)).not.toBeInTheDocument();
-      expect(
-        screen.queryByText("No coverage data available for this repository yet.")
-      ).not.toBeInTheDocument();
+      // Should NOT show setup buttons
+      expect(screen.queryByText(/No coverage data yet/)).not.toBeInTheDocument();
     });
   });
-
 });

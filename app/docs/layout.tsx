@@ -1,23 +1,28 @@
 "use client";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { slackUs } from "@/app/actions/slack/slack-us";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import { RELATIVE_URLS } from "@/config/urls";
 
 const sidebarItems = [
   {
     title: "Getting Started",
-    items: [{ href: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION, label: "Installation" }],
+    items: [
+      { href: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION, label: "Installation" },
+      { href: RELATIVE_URLS.DOCS.GETTING_STARTED.SETUP, label: "Setup" },
+    ],
   },
   {
     title: "Triggers",
     items: [
       { href: RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW, label: "Overview" },
-      { href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_CHECKBOX, label: "Issue Checkbox Trigger" },
-      { href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL, label: "Issue Label Trigger" },
-      { href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD, label: "Dashboard Trigger" },
-      { href: RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT, label: "Review Comment Trigger" },
-      { href: RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE, label: "Test Failure Trigger" },
       { href: RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE, label: "Schedule Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE, label: "Test Failure Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT, label: "Review Comment Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD, label: "Dashboard Trigger" },
+      { href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL, label: "Issue Label Trigger" },
     ],
   },
   {
@@ -53,6 +58,12 @@ const sidebarItems = [
 
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { userId, userName } = useAccountContext();
+
+  useEffect(() => {
+    if (!userId || !userName) return;
+    slackUs(`${userName} (${userId}) visited docs: ${pathname}`).catch(console.error);
+  }, [userId, userName, pathname]);
 
   return (
     <div className="min-h-[calc(100vh-64px)] pt-28">

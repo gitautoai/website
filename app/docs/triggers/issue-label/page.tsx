@@ -178,10 +178,6 @@ export default function IssueLabelTriggerPage() {
 
       <DocsNavigation
         previousLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_CHECKBOX,
-          title: "Issue Checkbox Trigger",
-        }}
-        nextLink={{
           href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD,
           title: "Dashboard Trigger",
         }}

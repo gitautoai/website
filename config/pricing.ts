@@ -141,12 +141,6 @@ export const TABLE_FEATURES = [
         standard: true,
       },
       {
-        name: "Issue Checkbox",
-        description: "Trigger GitAuto by checking a box in an issue",
-        free: true,
-        standard: true,
-      },
-      {
         name: "Issue Label",
         description: "Trigger GitAuto by adding the gitauto label to an issue",
         free: true,

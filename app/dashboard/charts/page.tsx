@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { getRepoCoverage } from "@/app/actions/supabase/repo-coverage/get-repo-coverage";
 import { getTotalCoverage } from "@/app/actions/supabase/total-repo-coverage/get-total-coverage";
+import { setupCoverageWorkflow } from "@/app/actions/setup-coverage-workflow";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import DocsLink from "@/app/components/DocsLink";
 import ErrorBanner from "@/app/components/ErrorBanner";
+import Modal from "@/app/components/Modal";
 import InfoIcon from "@/app/components/InfoIcon";
 import PeriodSelector, { Period, calculatePeriodDates } from "@/app/components/PeriodSelector";
 import ReloadButton from "@/app/components/ReloadButton";
@@ -17,20 +19,20 @@ import { Tables } from "@/types/supabase";
 // Relative imports
 import CoverageChart from "./components/CoverageChart";
 import CoverageStats from "./components/CoverageStats";
-import { generateDummyData } from "./utils/generate-dummy-data";
 
 const DEFAULT_PERIOD: Period = { type: "last-6-months", label: "Last 6 Months" };
 
 export default function ChartsPage() {
-  const { currentOwnerId, organizations, currentOwnerName } = useAccountContext();
+  const { currentOwnerId, currentOwnerName, currentInstallationId, organizations, userLogin } =
+    useAccountContext();
 
   const [error, setError] = useState<string | null>(null);
-  const [allReposData, setAllReposData] = useState<
-    Record<string, { data: Tables<"repo_coverage">[]; isDummy: boolean }>
-  >({});
+  const [allReposData, setAllReposData] = useState<Record<string, Tables<"repo_coverage">[]>>({});
   const [totalCoverageData, setTotalCoverageData] = useState<Tables<"repo_coverage">[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState<Period>(DEFAULT_PERIOD);
   const [reloadingRepos, setReloadingRepos] = useState<Set<string>>(new Set());
+  const [isSettingUpWorkflow, setIsSettingUpWorkflow] = useState(false);
+  const [showSetupModal, setShowSetupModal] = useState(false);
 
   // Load saved period from localStorage on mount
   useEffect(() => {
@@ -61,7 +63,7 @@ export default function ChartsPage() {
       try {
         setError(null);
 
-        const reposData: Record<string, { data: Tables<"repo_coverage">[]; isDummy: boolean }> = {};
+        const reposData: Record<string, Tables<"repo_coverage">[]> = {};
 
         // First pass: fetch all data and group by language
         await Promise.all(
@@ -77,33 +79,23 @@ export default function ChartsPage() {
               }
               // Create separate entries for each language
               if (dataByLanguage.size === 0) {
-                reposData[repo.repoName] = { data: [], isDummy: false };
+                reposData[repo.repoName] = [];
               } else if (dataByLanguage.size === 1) {
                 // Single language - use repo name only
                 const entries = Array.from(dataByLanguage.entries());
-                reposData[repo.repoName] = { data: entries[0][1], isDummy: false };
+                reposData[repo.repoName] = entries[0][1];
               } else {
                 // Multiple languages - use "repoName (language)" format
                 Array.from(dataByLanguage.entries()).forEach(([lang, langData]) => {
-                  reposData[`${repo.repoName} (${lang})`] = { data: langData, isDummy: false };
+                  reposData[`${repo.repoName} (${lang})`] = langData;
                 });
               }
             } catch (error) {
               console.error(`Error loading coverage for ${repo.repoName}:`, error);
-              reposData[repo.repoName] = { data: [], isDummy: false };
+              reposData[repo.repoName] = [];
             }
           }),
         );
-
-        // Second pass: check if any repo has real data
-        const hasAnyRealData = Object.values(reposData).some(({ data }) => data.length > 0);
-
-        // If no real data exists, show dummy data for all repos
-        if (!hasAnyRealData) {
-          Object.keys(reposData).forEach((repoName) => {
-            reposData[repoName] = { data: generateDummyData(), isDummy: true };
-          });
-        }
 
         setAllReposData(reposData);
 
@@ -189,13 +181,13 @@ export default function ChartsPage() {
           }
           // Add new entries
           if (dataByLanguage.size === 0) {
-            next[baseRepoName] = { data: [], isDummy: false };
+            next[baseRepoName] = [];
           } else if (dataByLanguage.size === 1) {
             const entries = Array.from(dataByLanguage.entries());
-            next[baseRepoName] = { data: entries[0][1], isDummy: false };
+            next[baseRepoName] = entries[0][1];
           } else {
             Array.from(dataByLanguage.entries()).forEach(([lang, langData]) => {
-              next[`${baseRepoName} (${lang})`] = { data: langData, isDummy: false };
+              next[`${baseRepoName} (${lang})`] = langData;
             });
           }
           return next;
@@ -210,6 +202,17 @@ export default function ChartsPage() {
         return next;
       });
     }
+  };
+
+  const handleSetupWorkflow = (repoName: string) => {
+    if (!currentOwnerName || !currentInstallationId) return;
+
+    setIsSettingUpWorkflow(true);
+    setError(null);
+    // Fire and forget — Lambda runs setup in the background
+    setupCoverageWorkflow(currentOwnerName, repoName, currentInstallationId, userLogin || "").catch(() => {});
+    setShowSetupModal(true);
+    setIsSettingUpWorkflow(false);
   };
 
   return (
@@ -240,26 +243,10 @@ export default function ChartsPage() {
           </div>
         )}
 
-        {Object.entries(allReposData).map(([repoName, { data, isDummy }]) => {
+        {Object.entries(allReposData).map(([repoName, data]) => {
           const repoFilteredData = filterDataByPeriod(data);
-
-          // If no data and not showing dummy data, show "no data" message
-          if (repoFilteredData.length === 0 && !isDummy) {
-            return (
-              <div key={repoName}>
-                <h2 className="text-xl font-semibold mt-2 mb-4 flex items-center gap-2">
-                  {repoName}
-                  <ReloadButton
-                    onClick={() => handleReloadRepo(repoName)}
-                    isLoading={reloadingRepos.has(repoName)}
-                  />
-                </h2>
-                <div className="text-center py-8 text-gray-500">
-                  <p>No coverage data available for this repository yet.</p>
-                </div>
-              </div>
-            );
-          }
+          const baseRepoName = repoName.replace(/ \([^)]+\)$/, "");
+          const hasNoData = repoFilteredData.length === 0;
 
           return (
             <div key={repoName}>
@@ -270,25 +257,49 @@ export default function ChartsPage() {
                   isLoading={reloadingRepos.has(repoName)}
                 />
               </h2>
-              <div className="space-y-6">
-                <CoverageStats data={repoFilteredData} isDummyData={isDummy} />
-                <CoverageChart
-                  data={repoFilteredData}
-                  isDummyData={isDummy}
-                  dateRange={calculatePeriodDates(selectedPeriod)}
-                />
-                <div className="text-sm text-gray-500 text-center">
-                  {isDummy ? (
-                    <p>Showing demo data with {repoFilteredData.length} sample points</p>
-                  ) : (
-                    <p>Showing {repoFilteredData.length} actual data points</p>
-                  )}
+              {hasNoData ? (
+                <div className="text-center py-8">
+                  <button
+                    onClick={() => handleSetupWorkflow(baseRepoName)}
+                    disabled={isSettingUpWorkflow}
+                    className="text-sm text-pink-600 hover:text-pink-700 disabled:opacity-50"
+                  >
+                    {isSettingUpWorkflow ? (
+                      "Setting up..."
+                    ) : (
+                      <>
+                        No coverage data yet.
+                        <br />
+                        Want me to set up a CI workflow?
+                      </>
+                    )}
+                  </button>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-6">
+                  <CoverageStats data={repoFilteredData} />
+                  <CoverageChart
+                    data={repoFilteredData}
+                    dateRange={calculatePeriodDates(selectedPeriod)}
+                  />
+                  <p className="text-sm text-gray-500 text-center">
+                    Showing {repoFilteredData.length} data points
+                  </p>
+                </div>
+              )}
             </div>
           );
         })}
       </div>
+
+      {showSetupModal && (
+        <Modal
+          title="Setting Up CI Workflow"
+          type="success"
+          message="A pull request will be created shortly with a CI workflow to upload coverage reports. Check your repository for the new PR."
+          onClose={() => setShowSetupModal(false)}
+        />
+      )}
     </div>
   );
 }

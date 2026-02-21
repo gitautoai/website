@@ -186,12 +186,12 @@ export default function TestFailureTriggerPage() {
 
       <DocsNavigation
         previousLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT,
-          title: "Review Comment Trigger",
-        }}
-        nextLink={{
           href: RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE,
           title: "Schedule Trigger",
+        }}
+        nextLink={{
+          href: RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT,
+          title: "Review Comment Trigger",
         }}
       />
     </div>
