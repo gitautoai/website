@@ -15,18 +15,13 @@ import ChartLegend from "./ChartLegend";
 
 interface CoverageChartProps {
   data: Tables<"repo_coverage">[];
-  isDummyData?: boolean;
   dateRange?: {
     startDate: string | null;
     endDate: string | null;
   };
 }
 
-export default function CoverageChart({
-  data,
-  isDummyData = false,
-  dateRange,
-}: CoverageChartProps) {
+export default function CoverageChart({ data, dateRange }: CoverageChartProps) {
   // Check which metrics are measured (total > 0 for at least one data point)
   // e.g. PHP coverage tools (Xdebug/PCOV) don't report branch or function data
   const hasFunctionCoverage = data.some((item) => item.functions_total > 0);
@@ -106,14 +101,7 @@ export default function CoverageChart({
 
   return (
     <div className="bg-white p-6 rounded-lg">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Coverage Trends Over Time</h3>
-        {isDummyData && (
-          <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">
-            Demo Data
-          </span>
-        )}
-      </div>
+      <h3 className="text-lg font-semibold mb-4">Coverage Trends Over Time</h3>
 
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={chartData}>

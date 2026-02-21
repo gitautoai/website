@@ -46,6 +46,7 @@ export const RELATIVE_URLS = {
     },
     GETTING_STARTED: {
       INSTALLATION: "/docs/getting-started/installation",
+      SETUP: "/docs/getting-started/setup",
     },
     COVERAGE: {
       OVERVIEW: "/docs/coverage",
@@ -62,7 +63,6 @@ export const RELATIVE_URLS = {
     TRIGGERS: {
       OVERVIEW: "/docs/triggers",
       DASHBOARD: "/docs/triggers/dashboard",
-      ISSUE_CHECKBOX: "/docs/triggers/issue-checkbox",
       ISSUE_LABEL: "/docs/triggers/issue-label",
       REVIEW_COMMENT: "/docs/triggers/review-comment",
       SCHEDULE: "/docs/triggers/schedule",
@@ -120,7 +120,6 @@ export const ABSOLUTE_URLS = {
       TRIGGERS: {
         OVERVIEW: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW}`,
         DASHBOARD: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD}`,
-        ISSUE_CHECKBOX: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_CHECKBOX}`,
         ISSUE_LABEL: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL}`,
         REVIEW_COMMENT: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT}`,
         SCHEDULE: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE}`,

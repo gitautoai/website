@@ -86,8 +86,8 @@ export default function GettingStartedPage() {
 
       <DocsNavigation
         nextLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW,
-          title: "Triggers Overview",
+          href: RELATIVE_URLS.DOCS.GETTING_STARTED.SETUP,
+          title: "Setup",
         }}
       />
     </div>

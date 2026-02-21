@@ -3,10 +3,9 @@ import { formatPercentage } from "@/utils/format-percentage";
 
 interface CoverageStatsProps {
   data: Tables<"repo_coverage">[];
-  isDummyData?: boolean;
 }
 
-export default function CoverageStats({ data, isDummyData = false }: CoverageStatsProps) {
+export default function CoverageStats({ data }: CoverageStatsProps) {
   if (data.length === 0) return null;
 
   const latest = data[data.length - 1];
@@ -44,14 +43,6 @@ export default function CoverageStats({ data, isDummyData = false }: CoverageSta
 
   return (
     <div className="space-y-4">
-      {isDummyData && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-          <p className="text-sm text-yellow-700">
-            ⚡ Latest demo metrics - Your actual coverage data will appear here once available
-          </p>
-        </div>
-      )}
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-lg border">
           <h4 className="text-sm font-medium text-gray-500 mb-1">Statement Coverage</h4>

@@ -207,12 +207,12 @@ export default function ReviewCommentTriggerPage() {
 
       <DocsNavigation
         previousLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD,
-          title: "Dashboard Trigger",
-        }}
-        nextLink={{
           href: RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE,
           title: "Test Failure Trigger",
+        }}
+        nextLink={{
+          href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD,
+          title: "Dashboard Trigger",
         }}
       />
     </div>

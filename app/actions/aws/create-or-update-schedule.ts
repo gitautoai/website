@@ -1,10 +1,10 @@
 "use server";
 
 import {
-  CreateScheduleCommand,
-  ScheduleState,
-  FlexibleTimeWindowMode,
   ActionAfterCompletion,
+  CreateScheduleCommand,
+  FlexibleTimeWindowMode,
+  ScheduleState,
 } from "@aws-sdk/client-scheduler";
 import { schedulerClient } from "@/lib/aws-scheduler";
 import { getScheduleName } from "@/utils/get-schedule-name";
@@ -36,7 +36,7 @@ export async function createOrUpdateSchedule(config: ScheduleConfig) {
     config.scheduleTimeUTC,
     config.includeWeekends,
     config.scheduleExecutionCount,
-    intervalMinutes
+    intervalMinutes,
   );
 
   // Delete existing schedules first

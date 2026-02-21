@@ -9,7 +9,7 @@ interface CoverageStatsProps {
 
 export default function CoverageStats({ filteredData, coverageData }: CoverageStatsProps) {
   return (
-    <div className="mb-4 md:mb-2">
+    <div>
       <div className="flex flex-col gap-2 md:flex-row md:gap-4 md:items-center text-sm text-gray-600">
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           {Object.entries(getLevelCounts(filteredData)).map(([level, count]) => (

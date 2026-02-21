@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 // Local imports (Actions)
 import { toggleExclusion } from "@/app/actions/supabase/coverage/toggle-exclusion";
+import { setupCoverageWorkflow } from "@/app/actions/setup-coverage-workflow";
 import { syncRepositoryFiles } from "@/app/actions/sync-repository-files";
 
 // Local imports (Components and others)
@@ -57,6 +58,7 @@ export default function CoveragePage() {
     accessToken,
     currentInstallationId,
     userId,
+    userLogin,
     userName,
   } = useAccountContext();
 
@@ -97,6 +99,8 @@ export default function CoveragePage() {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectedExclusionFilter, setSelectedExclusionFilter] = useState<string>("");
   const [isTogglingExclusion, setIsTogglingExclusion] = useState(false);
+  const [isSettingUpWorkflow, setIsSettingUpWorkflow] = useState(false);
+  const [showSetupModal, setShowSetupModal] = useState(false);
 
   // Load sort settings from localStorage
   useEffect(() => {
@@ -255,6 +259,18 @@ export default function CoveragePage() {
   // Get selected data for actions
   const selectedData = filteredData.filter((item) => selectedRows.includes(item.id));
 
+  // Check if coverage data exists but all percentages are null (no CI workflow set up)
+  // null = never measured (no CI), 0 = measured by CI but 0% covered
+  const allCoverageEmpty =
+    coverageData.length > 0 &&
+    coverageData.every(
+      (item) =>
+        item.statement_coverage === null &&
+        item.branch_coverage === null &&
+        item.function_coverage === null &&
+        item.line_coverage === null,
+    );
+
   // Check if we have any package names to show the filter
   const hasPackages = packageNames.length > 0;
 
@@ -272,6 +288,20 @@ export default function CoveragePage() {
   const handleExclusionFilterChange = (value: string) => {
     setSelectedExclusionFilter(value);
     safeLocalStorage.setItem("selectedExclusionFilter", value);
+  };
+
+  const handleSetupWorkflow = () => {
+    if (!currentOwnerName || !currentRepoName || !currentInstallationId) {
+      setError("Missing required repository information");
+      return;
+    }
+
+    setIsSettingUpWorkflow(true);
+    setError(null);
+    // Fire and forget — Lambda runs setup in the background
+    setupCoverageWorkflow(currentOwnerName, currentRepoName, currentInstallationId, userLogin || "").catch(() => {});
+    setShowSetupModal(true);
+    setIsSettingUpWorkflow(false);
   };
 
   const handleToggleExclusion = async (isExcluded: boolean) => {
@@ -409,7 +439,26 @@ export default function CoveragePage() {
       </div>
 
       <div className="mt-4 md:mt-6">
-        <CoverageStats filteredData={filteredData} coverageData={coverageData} />
+        <div className="flex items-end justify-between mb-4 md:mb-2">
+          <CoverageStats filteredData={filteredData} coverageData={coverageData} />
+          {allCoverageEmpty && !isLoadingDB && (
+            <button
+              onClick={handleSetupWorkflow}
+              disabled={isSettingUpWorkflow}
+              className="text-sm text-pink-600 hover:text-pink-700 text-right disabled:opacity-50"
+            >
+              {isSettingUpWorkflow ? (
+                "Setting up..."
+              ) : (
+                <>
+                  No coverage results yet.
+                  <br />
+                  Want me to set up a CI workflow?
+                </>
+              )}
+            </button>
+          )}
+        </div>
 
         <div className="overflow-x-auto">
           <div className="max-h-[90vh] overflow-y-auto">
@@ -456,6 +505,15 @@ export default function CoveragePage() {
           message="Action completed successfully!"
           type="success"
           onClose={() => setActionSuccess(false)}
+        />
+      )}
+
+      {showSetupModal && (
+        <Modal
+          title="Setting Up CI Workflow"
+          type="success"
+          message="A pull request will be created shortly with a CI workflow to upload coverage reports. Check your repository for the new PR."
+          onClose={() => setShowSetupModal(false)}
         />
       )}
 
