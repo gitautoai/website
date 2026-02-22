@@ -301,13 +301,6 @@ export type Database = {
             referencedRelation: "usage";
             referencedColumns: ["id"];
           },
-          {
-            foreignKeyName: "credits_usage_id_fkey";
-            columns: ["usage_id"];
-            isOneToOne: false;
-            referencedRelation: "usage_with_issues";
-            referencedColumns: ["id"];
-          },
         ];
       };
       installations: {
@@ -348,59 +341,6 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "owners";
             referencedColumns: ["owner_id"];
-          },
-        ];
-      };
-      issues: {
-        Row: {
-          created_at: string;
-          created_by: string | null;
-          id: number;
-          installation_id: number;
-          issue_number: number;
-          merged: boolean;
-          owner_id: number;
-          owner_name: string;
-          owner_type: string;
-          repo_id: number;
-          repo_name: string;
-          run_id: number | null;
-        };
-        Insert: {
-          created_at?: string;
-          created_by?: string | null;
-          id?: number;
-          installation_id: number;
-          issue_number?: number;
-          merged?: boolean;
-          owner_id?: number;
-          owner_name?: string;
-          owner_type?: string;
-          repo_id?: number;
-          repo_name?: string;
-          run_id?: number | null;
-        };
-        Update: {
-          created_at?: string;
-          created_by?: string | null;
-          id?: number;
-          installation_id?: number;
-          issue_number?: number;
-          merged?: boolean;
-          owner_id?: number;
-          owner_name?: string;
-          owner_type?: string;
-          repo_id?: number;
-          repo_name?: string;
-          run_id?: number | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "public_issues_installation_id_fkey";
-            columns: ["installation_id"];
-            isOneToOne: false;
-            referencedRelation: "installations";
-            referencedColumns: ["installation_id"];
           },
         ];
       };
@@ -522,13 +462,6 @@ export type Database = {
             columns: ["usage_id"];
             isOneToOne: false;
             referencedRelation: "usage";
-            referencedColumns: ["id"];
-          },
-          {
-            foreignKeyName: "llm_requests_usage_id_fkey";
-            columns: ["usage_id"];
-            isOneToOne: false;
-            referencedRelation: "usage_with_issues";
             referencedColumns: ["id"];
           },
         ];
@@ -1111,28 +1044,6 @@ export type Database = {
           lines_total: number | null;
           owner_id: number | null;
           statement_coverage: number | null;
-        };
-        Relationships: [];
-      };
-      usage_with_issues: {
-        Row: {
-          created_at: string | null;
-          created_by: string | null;
-          id: number | null;
-          installation_id: number | null;
-          is_completed: boolean | null;
-          issue_number: number | null;
-          merged: boolean | null;
-          owner_id: number | null;
-          owner_name: string | null;
-          owner_type: string | null;
-          repo_id: number | null;
-          repo_name: string | null;
-          source: string | null;
-          token_input: number | null;
-          token_output: number | null;
-          total_seconds: number | null;
-          user_id: number | null;
         };
         Relationships: [];
       };
