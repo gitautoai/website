@@ -78,19 +78,6 @@ export default function TriggersOverviewPage() {
             </p>
           </div>
 
-          <div>
-            <h2 className="text-2xl font-semibold mt-0 mb-4">Issue Label Trigger</h2>
-            <p className="text-gray-700">
-              Trigger GitAuto by adding the &quot;gitauto&quot; label to GitHub issues. Works with
-              existing issues and supports API/workflow automation.{" "}
-              <Link
-                href={RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL}
-                className="text-pink-600 hover:text-pink-700"
-              >
-                Learn more →
-              </Link>
-            </p>
-          </div>
         </div>
 
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 my-8">

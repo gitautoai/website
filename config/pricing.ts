@@ -141,12 +141,6 @@ export const TABLE_FEATURES = [
         standard: true,
       },
       {
-        name: "Issue Label",
-        description: "Trigger GitAuto by adding the gitauto label to an issue",
-        free: true,
-        standard: true,
-      },
-      {
         name: "Test Failure",
         description:
           "If GitAuto-generated tests fail in a pull request, GitAuto automatically fixes them",

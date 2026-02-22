@@ -19,7 +19,6 @@ export const settingsJsonLd = {
   featureList: [
     "Account management",
     "GitHub integration",
-    "Jira integration",
     "Automation preferences",
     "Repository settings",
   ],

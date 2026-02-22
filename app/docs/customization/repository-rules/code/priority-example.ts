@@ -1,4 +1,4 @@
-export const priorityExample = `# In your GitHub issue:
+export const priorityExample = `# In your PR:
 "Create tests for auth.ts but use Jest instead of Vitest"
 
 # Your custom rules say:
@@ -7,4 +7,4 @@ export const priorityExample = `# In your GitHub issue:
 # Your structured rules say:
 "Auto-detect testing framework"
 
-# Result: GitAuto uses Jest (issue requirement wins)`;
+# Result: GitAuto uses Jest (PR requirement wins)`;

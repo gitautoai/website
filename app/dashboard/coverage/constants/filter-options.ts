@@ -29,17 +29,6 @@ export const MOBILE_METRIC_OPTIONS = [
   { value: "branch", label: "Branch Coverage" },
 ] as const;
 
-// Parent issue options
-export const createParentIssueOptions = (
-  openIssues: Array<{ id: string; number: number; title: string }>
-) => [
-  { value: "", label: "No parent issue" },
-  ...openIssues.map((issue) => ({
-    value: issue.number.toString(),
-    label: `#${issue.number} ${issue.title}`,
-  })),
-];
-
 export const EXCLUSION_FILTER_OPTIONS = [
   { value: "", label: "All Files" },
   { value: "included", label: "Included Only" },

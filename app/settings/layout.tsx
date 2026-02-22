@@ -10,14 +10,13 @@ import { settingsJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
   title: `${PRODUCT_NAME} Settings - Configure Your Account & Preferences`,
-  description: `Configure GitAuto account settings, preferences, and integrations. Manage GitHub connections, Jira integrations, and automation.`,
+  description: `Configure GitAuto account settings, preferences, and integrations. Manage GitHub connections and automation.`,
   url: ABSOLUTE_URLS.GITAUTO.SETTINGS.INDEX,
   images: [{ url: THUMBNAILS.SETTINGS.INDEX, alt: `${PRODUCT_NAME} Settings` }],
   keywords: [
     "GitAuto settings",
     "account configuration",
     "GitHub integration settings",
-    "Jira integration",
     "user preferences",
     "automation settings",
   ],

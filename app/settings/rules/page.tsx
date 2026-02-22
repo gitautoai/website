@@ -210,7 +210,7 @@ export default function RulesPage() {
         });
       }
     },
-    [currentOwnerId, currentRepoId, currentRepoName, userId, userName, formData]
+    [currentOwnerId, currentRepoId, currentRepoName, userId, userName, formData],
   );
 
   // Save handler
@@ -269,7 +269,7 @@ export default function RulesPage() {
         </div>
       </div>
     ),
-    [formData, handleFieldChange, isPending, isLoading, tokenCounts]
+    [formData, handleFieldChange, isPending, isLoading, tokenCounts],
   );
 
   return (
