@@ -153,8 +153,8 @@ export default function AutoMergePage() {
 
       <DocsNavigation
         previousLink={{
-          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES,
-          title: "Parent Issue Rules",
+          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES,
+          title: "Repository Rules",
         }}
       />
     </div>

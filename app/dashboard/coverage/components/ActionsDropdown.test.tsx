@@ -21,8 +21,8 @@ const defaultProps = {
   isOpen: false,
   onToggleDropdown: jest.fn(),
   selectedRows: [1, 2],
-  isCreatingIssues: false,
-  onCreateIssues: jest.fn(),
+  isCreatingPRs: false,
+  onCreatePRs: jest.fn(),
   onToggleExclusion: jest.fn(),
   isTogglingExclusion: false,
   selectedData: [makeCoverage()],
@@ -57,20 +57,20 @@ describe("ActionsDropdown", () => {
     expect(onToggleDropdown).toHaveBeenCalledTimes(1);
   });
 
-  it("calls onCreateIssues with true when Create PRs is clicked", () => {
-    const onCreateIssues = jest.fn();
+  it("calls onCreatePRs with true when Create PRs is clicked", () => {
+    const onCreatePRs = jest.fn();
     const onToggleDropdown = jest.fn();
     render(
       <ActionsDropdown
         {...defaultProps}
         isOpen={true}
-        onCreateIssues={onCreateIssues}
+        onCreatePRs={onCreatePRs}
         onToggleDropdown={onToggleDropdown}
       />,
     );
 
     fireEvent.click(screen.getByText("Create PRs (2)"));
-    expect(onCreateIssues).toHaveBeenCalledWith(true);
+    expect(onCreatePRs).toHaveBeenCalledWith(true);
     expect(onToggleDropdown).toHaveBeenCalled();
   });
 
@@ -110,14 +110,14 @@ describe("ActionsDropdown", () => {
     expect(screen.queryByText(/Exclude from Testing/)).not.toBeInTheDocument();
   });
 
-  it("shows spinner on Actions button when creating issues", () => {
-    render(<ActionsDropdown {...defaultProps} isCreatingIssues={true} />);
+  it("shows spinner on Actions button when creating PRs", () => {
+    render(<ActionsDropdown {...defaultProps} isCreatingPRs={true} />);
 
     expect(screen.getByTestId("spinner")).toBeInTheDocument();
   });
 
-  it("shows 'Creating PRs...' when isCreatingIssues is true and dropdown is open", () => {
-    render(<ActionsDropdown {...defaultProps} isOpen={true} isCreatingIssues={true} />);
+  it("shows 'Creating PRs...' when isCreatingPRs is true and dropdown is open", () => {
+    render(<ActionsDropdown {...defaultProps} isOpen={true} isCreatingPRs={true} />);
 
     expect(screen.getByText("Creating PRs...")).toBeInTheDocument();
   });

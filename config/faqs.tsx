@@ -11,28 +11,23 @@ export type FAQItem = {
 export const FAQS: FAQItem[] = [
   {
     category: "data",
-    question: `If I install GitAuto in my company's repository, will our entire code base be sent to OpenAI?`,
-    answer: `No, simply installing it will not send anything. When you assign an issue to GitAuto on GitHub, the file tree structure of the repository is sent, and only the necessary files are referenced as needed based on the issue's content.`,
+    question: `If I install GitAuto in my company's repository, will our entire code base be sent to the AI?`,
+    answer: `No, simply installing it will not send anything. When GitAuto creates a PR, the file tree structure of the repository is sent, and only the necessary files are referenced as needed based on the PR's context.`,
   },
   {
     category: "data",
-    question: `Do issues or code sent to OpenAI from our company's repository remain on OpenAI's servers?`,
-    answer: `No, they do not. We have a Business Associate Agreement with OpenAI, which enforces Zero Data Retention. Under normal API usage, data would be stored on OpenAI's servers for 30 days. However, with this ZDR in place, no input data is retained at all.`,
+    question: `Does code sent to the AI remain on external servers?`,
+    answer: `No. GitAuto uses Anthropic's Claude API, which does not train on or retain customer data. Your code is processed and discarded.`,
   },
   {
     category: "data",
-    question: `Will the issues and code sent to OpenAI using GitAuto in our company's repository remain on GitAuto's servers?`,
-    answer: `No, they will not remain. They do not remain on OpenAI's servers, nor do they remain on any other servers, including ours. However, in case of an error, logs that does not include contents are retained on AWS Lambda for debugging purposes only.`,
+    question: `Will code processed by GitAuto remain on GitAuto's servers?`,
+    answer: `No. Code does not remain on our servers. However, in case of an error, logs that do not include code contents are retained on AWS Lambda for debugging purposes only.`,
   },
   {
     category: "data",
-    question: `Are the issues and code sent to OpenAI from our company's repository using GitAuto subject to OpenAI's learning?`,
-    answer: `No, they are not subject to learning. Not only for GitAuto but also for any data sent via [here](${ABSOLUTE_URLS.OPENAI.PRIVACY}).`,
-  },
-  {
-    category: "data",
-    question: `My company also uses the OpenAI API and we have an API key. Can I use my API key with GitAuto?`,
-    answer: `Yes, paid users can use their own API key. See the [pricing page](${RELATIVE_URLS.PRICING_DETAILS}) for details.`,
+    question: `Is code processed by GitAuto subject to AI model training?`,
+    answer: `No. Anthropic's API does not use customer data for training. See [Anthropic's data policy](https://www.anthropic.com/policies/privacy) for details.`,
   },
   {
     category: "features",
@@ -42,12 +37,12 @@ export const FAQS: FAQItem[] = [
   {
     category: "features",
     question: `Dear GitAuto: What inputs does GitAuto use?`,
-    answer: `GitAuto utilizes the content of assigned issues, comments, the file tree of the repository, and the contents of related files. Currently, GitHub secrets are excluded. If there are any other inputs you would like us to use, please feel free to let us know at ${EMAIL}.`,
+    answer: `GitAuto utilizes the PR title, body, comments, the file tree of the repository, and the contents of related files. Currently, GitHub secrets are excluded. If there are any other inputs you would like us to use, please feel free to let us know at ${EMAIL}.`,
   },
   {
     category: "features",
     question: `What does GitAuto output?`,
-    answer: `For bug fixes, GitAuto outputs a pull request that includes the issue number, the cause of the bug, how to reproduce it, and how to fix it. For feature development, GitAuto outputs a pull request that includes the issue number, an overview of the feature, why the feature is needed, and how to implement it.`,
+    answer: `GitAuto outputs a pull request with test code for the target file. It analyzes uncovered lines and branches, writes tests to cover them, and verifies the tests pass before submitting.`,
   },
   {
     category: "features",
@@ -57,12 +52,12 @@ export const FAQS: FAQItem[] = [
   {
     category: "language",
     question: `Do you support languages other than English?`,
-    answer: `Yes, you can assign GitHub issues in languages other than English. The pull request body will also be created in the corresponding language. If it defaults to English, please specify the language in the issue. If it still doesn't work, feel free to [contact us](/contact).`,
+    answer: `Yes, GitAuto supports languages other than English. The pull request body will be created in the corresponding language. If it defaults to English, please specify the language in the repository rules. If it still doesn't work, feel free to [contact us](/contact).`,
   },
   {
     category: "language",
     question: `What are programming languages supported?`,
-    answer: `Yes, all the languages supported by ChatGPT are available. For front-end development, we support standard HTML, CSS, JavaScript, and libraries/frameworks like TypeScript, Tailwind CSS, and Next.js. For back-end development, we support major languages such as Java, Python, PHP, Ruby, as well as relatively newer ones like Go, Rust, Elixir, and Julia. We also support mobile development languages like Kotlin for Android and Swift for iOS.`,
+    answer: `Any language with a testing framework is supported - Python, JavaScript, TypeScript, Java, Go, PHP, Ruby, Rust, Kotlin, Swift, Objective-C, C#, C++, R, Julia, Elixir, Dart, Scala, and more. Even legacy languages like COBOL and Fortran work if they have a test runner.`,
   },
   {
     category: "permissions",

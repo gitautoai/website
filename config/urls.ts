@@ -28,7 +28,6 @@ export const RELATIVE_URLS = {
     TRIGGERS: "/settings/triggers",
     INTEGRATIONS: {
       CIRCLECI: "/settings/integrations/circleci",
-      JIRA: "/settings/integrations/jira",
       NPM: "/settings/integrations/npm",
     },
   },
@@ -63,13 +62,11 @@ export const RELATIVE_URLS = {
     TRIGGERS: {
       OVERVIEW: "/docs/triggers",
       DASHBOARD: "/docs/triggers/dashboard",
-      ISSUE_LABEL: "/docs/triggers/issue-label",
       REVIEW_COMMENT: "/docs/triggers/review-comment",
       SCHEDULE: "/docs/triggers/schedule",
       TEST_FAILURE: "/docs/triggers/test-failure",
     },
     CUSTOMIZATION: {
-      PARENT_ISSUE_RULES: "/docs/customization/parent-issue-rules",
       REPOSITORY_RULES: "/docs/customization/repository-rules",
     },
     INTEGRATIONS: {
@@ -120,13 +117,11 @@ export const ABSOLUTE_URLS = {
       TRIGGERS: {
         OVERVIEW: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW}`,
         DASHBOARD: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD}`,
-        ISSUE_LABEL: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL}`,
         REVIEW_COMMENT: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT}`,
         SCHEDULE: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.SCHEDULE}`,
         TEST_FAILURE: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE}`,
       },
       CUSTOMIZATION: {
-        PARENT_ISSUE_RULES: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES}`,
         REPOSITORY_RULES: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES}`,
       },
       INTEGRATIONS: {
@@ -147,7 +142,6 @@ export const ABSOLUTE_URLS = {
       TRIGGERS: `${BASE_URL}${RELATIVE_URLS.SETTINGS.TRIGGERS}`,
       INTEGRATIONS: {
         CIRCLECI: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI}`,
-        JIRA: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.JIRA}`,
         NPM: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.NPM}`,
       },
     },
@@ -162,9 +156,6 @@ export const ABSOLUTE_URLS = {
     ORGANIZATION: "https://github.com/gitautoai",
   },
   LINKEDIN: "https://www.linkedin.com/company/gitauto",
-  OPENAI: {
-    PRIVACY: "https://openai.com/enterprise-privacy/",
-  },
   TWITTER: "https://twitter.com/gitautoai",
   YOUTUBE: {
     HOME: "https://www.youtube.com/@gitauto",

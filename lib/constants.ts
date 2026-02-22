@@ -5,7 +5,6 @@ export const STORAGE_KEYS = {
   CURRENT_REPO_NAME: "currentRepoName",
   CURRENT_STRIPE_CUSTOMER_ID: "currentStripeCustomerId",
   ORGANIZATIONS: "organizations",
-  PARENT_ISSUE_NUMBER: "parentIssueNumber",
   SORT_DIRECTION: "coverageSortDirection",
   SORT_FIELD: "coverageSortField",
 };

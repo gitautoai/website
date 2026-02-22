@@ -23,7 +23,6 @@ export const THUMBNAILS = {
     TRIGGERS: `${BASE_URL}/og/settings-triggers.png`,
     INTEGRATIONS: {
       CIRCLECI: `${BASE_URL}/og/settings-integrations-circleci.png`,
-      JIRA: `${BASE_URL}/og/settings-integrations-jira.png`,
       NPM: `${BASE_URL}/og/settings-integrations-npm.png`,
     },
   },
@@ -51,13 +50,11 @@ export const THUMBNAILS = {
     TRIGGERS: {
       INDEX: `${BASE_URL}/og/docs-triggers.png`,
       DASHBOARD: `${BASE_URL}/og/docs-triggers-dashboard.png`,
-      ISSUE_LABEL: `${BASE_URL}/og/docs-triggers-issue-label.png`,
       REVIEW_COMMENT: `${BASE_URL}/og/docs-triggers-review-comment.png`,
       SCHEDULE: `${BASE_URL}/og/docs-triggers-schedule.png`,
       TEST_FAILURE: `${BASE_URL}/og/docs-triggers-test-failure.png`,
     },
     CUSTOMIZATION: {
-      PARENT_ISSUE_RULES: `${BASE_URL}/og/docs-customization-parent-issue-rules.png`,
       REPOSITORY_RULES: `${BASE_URL}/og/docs-customization-repository-rules.png`,
     },
     INTEGRATIONS: {

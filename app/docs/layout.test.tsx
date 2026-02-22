@@ -58,17 +58,6 @@ describe("DocsLayout", () => {
     expect(screen.getByText("Test Failure Trigger")).toBeInTheDocument();
     expect(screen.getByText("Review Comment Trigger")).toBeInTheDocument();
     expect(screen.getByText("Dashboard Trigger")).toBeInTheDocument();
-    expect(screen.getByText("Issue Label Trigger")).toBeInTheDocument();
-  });
-
-  it("does not include Issue Checkbox Trigger in sidebar", () => {
-    render(
-      <DocsLayout>
-        <div />
-      </DocsLayout>,
-    );
-
-    expect(screen.queryByText("Issue Checkbox Trigger")).not.toBeInTheDocument();
   });
 
   it("sends Slack notification when user visits a doc page", () => {

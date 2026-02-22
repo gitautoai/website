@@ -14,14 +14,7 @@ export type SortDirection = "asc" | "desc";
 
 export type Metric = "size" | "statement" | "function" | "branch";
 
-export type IssueResponse = {
+export type PRResponse = {
   coverageId: number;
-  issueUrl: string;
-};
-
-export type ParentIssue = {
-  id: string; // GraphQL node_id (string)
-  number: number;
-  title: string;
-  url: string;
+  prUrl: string;
 };

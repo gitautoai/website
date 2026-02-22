@@ -41,7 +41,7 @@ export const coverageJsonLd = {
     "@type": "CreativeWork",
     name: "Coverage Dashboard Usage",
     description:
-      "Upload coverage reports via GitHub Actions artifacts to view detailed coverage metrics and create issues for low coverage files",
+      "Upload coverage reports via GitHub Actions artifacts to view detailed coverage metrics and create PRs for low coverage files",
   },
   mainEntity: {
     "@type": "Dataset",

@@ -104,7 +104,7 @@ export const softwareApplicationData = {
   offers: OFFERS,
   creator: CREATOR,
   featureList:
-    "Generates unit test pull requests, Runs tests and fixes failures, Triggered by issue, PR comment, commit, merge, or schedule, No manual test writing needed",
+    "Generates unit test pull requests, Runs tests and fixes failures, Triggered by schedule, dashboard, review comment, or test failure, No manual test writing needed",
   inLanguage: "en",
   applicationSuite: "GitHub QA Automation",
 };

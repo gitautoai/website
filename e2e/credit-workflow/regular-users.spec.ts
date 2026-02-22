@@ -196,11 +196,11 @@ test.describe("Credits - Regular users", () => {
     // Mock scenario where user has insufficient credits
     await page.goto("/dashboard/coverage");
 
-    // Try to create issues (which would deduct credits)
-    const createIssuesButton = page.locator("[data-testid=create-issues-button]");
+    // Try to create PRs (which would deduct credits)
+    const createPRsButton = page.locator("[data-testid=create-prs-button]");
 
-    if (await createIssuesButton.isVisible()) {
-      await createIssuesButton.click();
+    if (await createPRsButton.isVisible()) {
+      await createPRsButton.click();
 
       // Should show insufficient credits message or redirect to purchase
       await expect(async () => {

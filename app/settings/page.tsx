@@ -20,9 +20,6 @@ export default function SettingsPage() {
       githubUserId: userId?.toString() || "",
       githubUserName: userName || "",
       githubUserEmail: email || "",
-      jiraUserId: "",
-      jiraUserName: "",
-      jiraUserEmail: "",
     };
   }, [userId, userName, firstName, lastName, email]);
 
@@ -81,15 +78,6 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Jira Information */}
-          <div>
-            <h2 className="text-xl font-medium mb-4 text-left">Jira Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <FormField label="Jira User ID" value={settings.jiraUserId} disabled />
-              <FormField label="Jira Username" value={settings.jiraUserName} disabled />
-              <FormField label="Jira Email" type="email" value={settings.jiraUserEmail} disabled />
-            </div>
-          </div>
         </form>
       </div>
       {isLoading && <LoadingSpinner />}

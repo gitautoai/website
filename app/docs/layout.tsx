@@ -22,7 +22,6 @@ const sidebarItems = [
       { href: RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE, label: "Test Failure Trigger" },
       { href: RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT, label: "Review Comment Trigger" },
       { href: RELATIVE_URLS.DOCS.TRIGGERS.DASHBOARD, label: "Dashboard Trigger" },
-      { href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL, label: "Issue Label Trigger" },
     ],
   },
   {
@@ -44,7 +43,6 @@ const sidebarItems = [
     title: "Customization",
     items: [
       { href: RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES, label: "Repository Rules" },
-      { href: RELATIVE_URLS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES, label: "Parent Issue Rules" },
     ],
   },
   {

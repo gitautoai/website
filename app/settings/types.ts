@@ -7,9 +7,6 @@ export type BaseSettings = {
   githubUserId: string;
   githubUserName: string;
   githubUserEmail: string;
-  jiraUserId: string;
-  jiraUserName: string;
-  jiraUserEmail: string;
 };
 
 export type RulesSettings = {

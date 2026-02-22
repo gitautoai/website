@@ -38,7 +38,7 @@ export default function DashboardTriggerPage() {
 
             <p className="text-gray-700">
               <span className="text-rose-600 font-semibold">Bulk Operations:</span> Select multiple
-              files at once and create issues for all of them simultaneously, saving time on large
+              files at once and create PRs for all of them simultaneously, saving time on large
               repositories.
             </p>
 
@@ -126,8 +126,7 @@ export default function DashboardTriggerPage() {
                 </h3>
                 <p className="text-gray-700 mb-3">
                   Check the boxes next to the files you want to generate tests for, then click the
-                  &quot;Actions&quot; button and select &quot;Create Issues&quot; to trigger
-                  GitAuto.
+                  &quot;Actions&quot; button and select &quot;Create PRs&quot; to trigger GitAuto.
                 </p>
                 <Image
                   src="/docs/select-files-on-dashboard.png"
@@ -190,8 +189,8 @@ export default function DashboardTriggerPage() {
           title: "Review Comment Trigger",
         }}
         nextLink={{
-          href: RELATIVE_URLS.DOCS.TRIGGERS.ISSUE_LABEL,
-          title: "Issue Label Trigger",
+          href: RELATIVE_URLS.DOCS.COVERAGE.OVERVIEW,
+          title: "Coverage Dashboard",
         }}
       />
     </div>

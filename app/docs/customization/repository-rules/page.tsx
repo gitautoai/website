@@ -391,7 +391,7 @@ export default function RulesPage() {
             <div>
               <h3 className="text-xl font-semibold mb-3">3. Test and Refine</h3>
               <p className="text-gray-700">
-                Create a test issue to see how GitAuto applies your rules. Adjust the configuration
+                Create a test PR to see how GitAuto applies your rules. Adjust the configuration
                 based on the results. Rules are meant to be iterative - you&apos;ll refine them as
                 you learn what works best for your project.
               </p>
@@ -413,8 +413,8 @@ export default function RulesPage() {
           title: "Installation",
         }}
         nextLink={{
-          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.PARENT_ISSUE_RULES,
-          title: "Parent Issue Rules",
+          href: RELATIVE_URLS.DOCS.INTEGRATIONS.CIRCLECI,
+          title: "CircleCI Integration",
         }}
       />
     </div>

@@ -4,7 +4,7 @@ import { THUMBNAILS } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 const DESCRIPTION =
-  "Configure when GitAuto automatically creates unit test pull requests. Set up issue labels, dashboard triggers, commit triggers, merge triggers, and scheduled triggers.";
+  "Configure when GitAuto automatically creates unit test pull requests. Set up dashboard triggers, review comment triggers, test failure triggers, and scheduled triggers.";
 
 export const triggersJsonLd = {
   "@context": "https://schema.org",

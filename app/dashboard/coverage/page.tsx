@@ -31,19 +31,17 @@ import TableRow from "./components/TableRow";
 import {
   createLevelOptions,
   createPackageOptions,
-  createParentIssueOptions,
   COVERAGE_FILTER_OPTIONS,
   EXCLUSION_FILTER_OPTIONS,
   MOBILE_METRIC_OPTIONS,
 } from "./constants/filter-options";
 import { SYNC_MESSAGES } from "./constants/sync-messages";
 import { fetchCoverageData } from "./handlers/fetch-coverage-data";
-import { fetchOpenIssues } from "./handlers/fetch-open-issues";
-import { handleCreateIssues } from "./handlers/handle-create-issues";
+import { handleCreatePRs } from "./handlers/handle-create-prs";
 import { handleSelectAll } from "./handlers/handle-select-all";
 import { handleSelectRow } from "./handlers/handle-select-row";
 import { handleSort } from "./handlers/handle-sort";
-import { Metric, ParentIssue, SortDirection, SortField } from "./types";
+import { Metric, SortDirection, SortField } from "./types";
 import { filterAndSortData } from "./utils/filter-and-sort-data";
 import { getSortFieldForMetric } from "./utils/get-sort-field-for-metric";
 
@@ -74,11 +72,11 @@ export default function CoveragePage() {
 
   // Loading states
   const [isLoadingDB, setIsLoadingDB] = useState(true);
-  const [isLoadingIssues, setIsLoadingIssues] = useState(false);
+
   const [gitHubSyncStatus, setGitHubSyncStatus] = useState<"loading" | "error" | null>(null);
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
-  const [isCreatingIssues, setIsCreatingIssues] = useState(false);
+  const [isCreatingPRs, setIsCreatingPRs] = useState(false);
   const [actionSuccess, setActionSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -86,13 +84,10 @@ export default function CoveragePage() {
   const [coverageData, setCoverageData] = useState<Tables<"coverages">[]>([]);
   const [packageNames, setPackageNames] = useState<string[]>([]);
   const [levels] = useState<Tables<"coverages">["level"][]>(["repository", "directory", "file"]);
-  const [openIssues, setOpenIssues] = useState<ParentIssue[]>([]);
-
   // UI states
   const [selectedPackage, setSelectedPackage] = useState<string>("");
   const [selectedLevel, setSelectedLevel] = useState("");
   const [hideFullCoverage, setHideFullCoverage] = useState<"all" | "hide">("hide");
-  const [selectedParentIssue, setSelectedParentIssue] = useState<ParentIssue | null>(null);
   const [selectedMobileMetric, setSelectedMobileMetric] = useState<Metric>("statement");
   const [sortField, setSortField] = useState<SortField>("statement_coverage");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
@@ -229,22 +224,6 @@ export default function CoveragePage() {
     userName,
   ]);
 
-  // When repository changes, update parent issue list
-  useEffect(() => {
-    if (!currentOwnerName || !currentRepoName || !currentInstallationId) return;
-    if (currentRepoName === "__ALL__") return; // Skip if "All Repositories" is selected
-
-    fetchOpenIssues(
-      currentOwnerName,
-      currentRepoName,
-      currentInstallationId,
-      setOpenIssues,
-      setSelectedParentIssue,
-      setIsLoadingIssues,
-      setError,
-    );
-  }, [currentOwnerName, currentRepoName, currentInstallationId]);
-
   // Apply filters and sorting
   const filteredData = filterAndSortData(
     coverageData,
@@ -299,7 +278,12 @@ export default function CoveragePage() {
     setIsSettingUpWorkflow(true);
     setError(null);
     // Fire and forget — Lambda runs setup in the background
-    setupCoverageWorkflow(currentOwnerName, currentRepoName, currentInstallationId, userLogin || "").catch(() => {});
+    setupCoverageWorkflow(
+      currentOwnerName,
+      currentRepoName,
+      currentInstallationId,
+      userLogin || "",
+    ).catch(() => {});
     setShowSetupModal(true);
     setIsSettingUpWorkflow(false);
   };
@@ -386,19 +370,6 @@ export default function CoveragePage() {
           />
         </div>
 
-        <div className="relative">
-          <FilterSelect
-            label="Parent Issue (Optional)"
-            value={selectedParentIssue?.number.toString() || ""}
-            onChange={(value) => {
-              const issue = openIssues.find((i) => i.number.toString() === value);
-              setSelectedParentIssue(issue || null);
-            }}
-            options={createParentIssueOptions(openIssues)}
-            disabled={isLoadingIssues}
-          />
-        </div>
-
         <FilterSelect
           label="Exclusion Status"
           value={selectedExclusionFilter}
@@ -410,26 +381,25 @@ export default function CoveragePage() {
           isOpen={isActionsOpen}
           onToggleDropdown={() => setIsActionsOpen(!isActionsOpen)}
           selectedRows={selectedRows}
-          isCreatingIssues={isCreatingIssues}
-          onCreateIssues={(hasLabel) => {
+          isCreatingPRs={isCreatingPRs}
+          onCreatePRs={(hasLabel) => {
             if (!currentOwnerName || !currentRepoName || !accessToken) {
               setError("Missing required repository information");
               return;
             }
 
-            handleCreateIssues({
+            handleCreatePRs({
               selectedRows,
               coverageData,
               currentOwnerName,
               currentRepoName,
               accessToken,
-              selectedParentIssue,
               hasLabel,
               setCoverageData,
               setSelectedRows,
               setActionSuccess,
               setError,
-              setIsCreatingIssues,
+              setIsCreatingPRs,
             });
           }}
           onToggleExclusion={handleToggleExclusion}

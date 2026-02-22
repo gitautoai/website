@@ -12,15 +12,6 @@ export const DESCRIPTION =
   "Go from 0% to 90% test coverage effortlessly. GitAuto automatically writes unit tests for your GitHub repositories. Start free today.";
 export const SHORT_DESCRIPTION = "Go from 0% to 90% test coverage effortlessly. Start free today.";
 
-// Atlassian Credentials
-export const ATLASSIAN_CLIENT_ID = process.env.ATLASSIAN_CLIENT_ID || "";
-export const ATLASSIAN_CLIENT_SECRET = process.env.ATLASSIAN_CLIENT_SECRET || "";
-export const ATLASSIAN_API_DOMAIN = "api.atlassian.com";
-export const ATLASSIAN_AUTHORIZE_URL = "https://auth.atlassian.com/authorize";
-export const ATLASSIAN_REDIRECT_URI = process.env.ATLASSIAN_REDIRECT_URI || "";
-export const ATLASSIAN_SCOPE = "read:jira-work";
-export const ATLASSIAN_TOKEN_URL = "https://auth.atlassian.com/oauth/token";
-
 // Stripe Credentials
 export const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
 export const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
