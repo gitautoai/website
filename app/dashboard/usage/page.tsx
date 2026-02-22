@@ -187,7 +187,6 @@ export default function UsagePage() {
             if (!item) return acc;
             return {
               all_time: {
-                total_issues: acc.all_time.total_issues + item.stats.all_time.total_issues,
                 total_prs: acc.all_time.total_prs + item.stats.all_time.total_prs,
                 total_merges: acc.all_time.total_merges + item.stats.all_time.total_merges,
                 total_open_prs: acc.all_time.total_open_prs + item.stats.all_time.total_open_prs,
@@ -195,8 +194,6 @@ export default function UsagePage() {
                   acc.all_time.total_passing_prs + item.stats.all_time.total_passing_prs,
               },
               selected_period: {
-                total_issues:
-                  acc.selected_period.total_issues + item.stats.selected_period.total_issues,
                 total_prs: acc.selected_period.total_prs + item.stats.selected_period.total_prs,
                 total_merges:
                   acc.selected_period.total_merges + item.stats.selected_period.total_merges,
@@ -210,14 +207,12 @@ export default function UsagePage() {
           },
           {
             all_time: {
-              total_issues: 0,
               total_prs: 0,
               total_merges: 0,
               total_open_prs: 0,
               total_passing_prs: 0,
             },
             selected_period: {
-              total_issues: 0,
               total_prs: 0,
               total_merges: 0,
               total_open_prs: 0,
@@ -338,14 +333,12 @@ export default function UsagePage() {
       const total = Object.values(updatedStats).reduce(
         (acc, stats) => ({
           all_time: {
-            total_issues: acc.all_time.total_issues + stats.all_time.total_issues,
             total_prs: acc.all_time.total_prs + stats.all_time.total_prs,
             total_merges: acc.all_time.total_merges + stats.all_time.total_merges,
             total_open_prs: acc.all_time.total_open_prs + stats.all_time.total_open_prs,
             total_passing_prs: acc.all_time.total_passing_prs + stats.all_time.total_passing_prs,
           },
           selected_period: {
-            total_issues: acc.selected_period.total_issues + stats.selected_period.total_issues,
             total_prs: acc.selected_period.total_prs + stats.selected_period.total_prs,
             total_merges: acc.selected_period.total_merges + stats.selected_period.total_merges,
             total_open_prs:
@@ -356,14 +349,12 @@ export default function UsagePage() {
         }),
         {
           all_time: {
-            total_issues: 0,
             total_prs: 0,
             total_merges: 0,
             total_open_prs: 0,
             total_passing_prs: 0,
           },
           selected_period: {
-            total_issues: 0,
             total_prs: 0,
             total_merges: 0,
             total_open_prs: 0,
@@ -551,13 +542,7 @@ export default function UsagePage() {
             {/* Total stats */}
             <div>
               <h2 className="text-xl font-semibold mt-2 mb-4">Total (All Repositories)</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                <StatBlock
-                  title="Total Issues"
-                  selectedPeriodValue={totalStats.selected_period.total_issues}
-                  showManageCredits={true}
-                  tooltip="Number of issues created by GitAuto across all repositories."
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatBlock
                   title="Total Pull Requests"
                   selectedPeriodValue={totalStats.selected_period.total_prs}
@@ -599,12 +584,7 @@ export default function UsagePage() {
                       isLoading={reloadingRepos.has(repoName)}
                     />
                   </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-                    <StatBlock
-                      title="Total Issues"
-                      selectedPeriodValue={repoStat.selected_period.total_issues}
-                      tooltip="Number of issues created by GitAuto for this repository."
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <StatBlock
                       title="Total Pull Requests"
                       selectedPeriodValue={repoStat.selected_period.total_prs}

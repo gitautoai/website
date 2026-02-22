@@ -4,14 +4,10 @@ import { THUMBNAILS } from "@/config/thumbnails";
 import { ABSOLUTE_URLS } from "@/config/urls";
 
 const DESCRIPTION =
-  "Track and monitor your GitAuto usage statistics including pull requests generated, issues processed, monthly usage information, and credit management.";
+  "Track and monitor your GitAuto usage statistics including pull requests generated, merged PRs, monthly usage information, and credit management.";
 const VARIABLE_MEASURED = [
   "Total Pull Requests",
-  "Total Issues",
   "Total Merged PRs",
-  "User Pull Requests",
-  "User Issues",
-  "User Merged PRs",
   "Monthly Usage",
   "Request Limits",
 ];
@@ -34,7 +30,7 @@ export const usageJsonLd = {
   browserRequirements: "Modern web browser with JavaScript enabled",
   featureList: [
     "View usage statistics across all repositories",
-    "Track pull requests and issues generated",
+    "Track pull requests generated",
     "Monitor monthly usage and activity",
     "Manage credits and auto-reload settings",
     "Compare all-time vs monthly metrics",

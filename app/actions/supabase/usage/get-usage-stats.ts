@@ -20,10 +20,17 @@ export async function getUsageStats({
   // Only select necessary columns to avoid transferring huge log fields
   const { data: allTimeData, error } = await supabaseAdmin
     .from("usage")
-    .select("created_at, pr_number, owner_name, repo_name, issue_number, is_merged")
+    .select("created_at, pr_number, owner_name, repo_name, is_merged")
     .eq("owner_name", ownerName)
     .eq("repo_name", repoName)
-    .in("trigger", ["issue_comment", "issue_label", "manual", "pull_request"]);
+    .in("trigger", [
+      // Legacy trigger values (historical records)
+      "issue_comment", "issue_label", "manual",
+      // Current trigger values
+      "dashboard", "schedule",
+      // Exclude review_comment and test_failure because they share the same PR
+      // as the initial trigger (dashboard/schedule) and would double-count usage
+    ]);
 
   console.log("Supabase query result:", { dataLength: allTimeData?.length, error });
 
@@ -49,7 +56,6 @@ export async function getUsageStats({
     pr_number: number | null;
     owner_name: string;
     repo_name: string;
-    issue_number: number;
     is_merged: boolean | null;
   };
 
@@ -73,11 +79,6 @@ export async function getUsageStats({
         .map((record) => `${record.owner_name}/${record.repo_name}#${record.pr_number}`),
     );
 
-    // Unique issue count is owner_name + repo_name + issue_number combination
-    const uniqueIssues = new Set(
-      data.map((record) => `${record.owner_name}/${record.repo_name}#${record.issue_number}`),
-    );
-
     // Track unique merged PRs (deduplicate by PR number) - use latest records only
     const uniqueMergedPRs = new Set(
       latestPRRecords
@@ -86,7 +87,6 @@ export async function getUsageStats({
     );
 
     return {
-      total_issues: uniqueIssues.size,
       total_prs: uniquePRs.size,
       total_merges: uniqueMergedPRs.size,
     };

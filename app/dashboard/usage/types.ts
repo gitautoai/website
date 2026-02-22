@@ -1,5 +1,4 @@
 export interface HistoricalStats {
-  total_issues: number;
   total_prs: number;
   total_merges: number;
 }
