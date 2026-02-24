@@ -31,14 +31,6 @@ export default function PRsPage() {
     setIsMounted(true);
   }, []);
 
-  // Send Slack notification on page visit
-  useEffect(() => {
-    if (!userId || !userName || !currentOwnerName) return;
-
-    const message = `${userName} (${userId}) visited PRs page for ${currentOwnerName}`;
-    slackUs(message);
-  }, [userId, userName, currentOwnerName]);
-
   // Load saved filter from localStorage on mount
   useEffect(() => {
     setStatusFilter((safeLocalStorage.getItem("pr-status-filter") as typeof statusFilter) || "all");
