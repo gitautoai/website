@@ -19,8 +19,15 @@ export async function syncRepositoryFiles(
 ) {
   // Get target branch from repository settings, fall back to GitHub default branch
   const settings = await getRepositorySettings(ownerId, repoId);
-  const targetBranch =
-    settings.target_branch || (await getDefaultBranch(ownerName, repoName, installationId));
+  const defaultBranch = await getDefaultBranch(ownerName, repoName, installationId);
+  const targetBranch = settings.target_branch || defaultBranch;
+
+  if (!targetBranch) {
+    console.error(
+      `No branch found for ${ownerName}/${repoName} (repo may be deleted or inaccessible)`,
+    );
+    throw new Error(`No branch found for ${ownerName}/${repoName}`);
+  }
 
   // Get GitHub token for Lambda to use
   const octokit = await getOctokitForInstallation(installationId);

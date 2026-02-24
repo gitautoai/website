@@ -261,16 +261,29 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
   // Auto-update repo-related states when currentRepoName changes
   useEffect(() => {
-    if (!currentRepoName || !organizations) return;
+    if (!currentRepoName || !currentOwnerName || !organizations) return;
 
-    for (const org of organizations) {
-      const repo = org.repositories.find((r) => r.repoName === currentRepoName);
-      if (repo) {
-        setCurrentRepoId(repo.repoId);
-        break;
+    const org = organizations.find((o) => o.ownerName === currentOwnerName);
+    if (!org) return;
+
+    const repo = org.repositories.find((r) => r.repoName === currentRepoName);
+    if (repo) {
+      setCurrentRepoId(repo.repoId);
+    } else {
+      // Repo doesn't belong to current owner — reset to first repo
+      console.error(`Repo "${currentRepoName}" not found in "${currentOwnerName}", resetting`);
+      if (org.repositories.length > 0) {
+        const firstRepo = org.repositories[0];
+        setCurrentRepoName(firstRepo.repoName);
+        setCurrentRepoId(firstRepo.repoId);
+        safeLocalStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, firstRepo.repoName);
+      } else {
+        setCurrentRepoName(null);
+        setCurrentRepoId(null);
+        safeLocalStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);
       }
     }
-  }, [currentRepoName, organizations]);
+  }, [currentRepoName, currentOwnerName, organizations]);
 
   // Handle owner selection
   const handleOwnerSelection = (ownerName: string | null) => {
@@ -278,6 +291,19 @@ export function AccountContextWrapper({ children }: { children: React.ReactNode 
 
     if (ownerName) {
       safeLocalStorage.setItem(STORAGE_KEYS.CURRENT_OWNER_NAME, ownerName);
+
+      // Reset repo to the first repo of the new owner
+      const org = organizations.find((o) => o.ownerName === ownerName);
+      if (org && org.repositories.length > 0) {
+        const firstRepo = org.repositories[0];
+        setCurrentRepoName(firstRepo.repoName);
+        setCurrentRepoId(firstRepo.repoId);
+        safeLocalStorage.setItem(STORAGE_KEYS.CURRENT_REPO_NAME, firstRepo.repoName);
+      } else {
+        setCurrentRepoName(null);
+        setCurrentRepoId(null);
+        safeLocalStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);
+      }
     } else {
       safeLocalStorage.removeItem(STORAGE_KEYS.CURRENT_OWNER_NAME);
       safeLocalStorage.removeItem(STORAGE_KEYS.CURRENT_REPO_NAME);

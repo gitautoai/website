@@ -90,7 +90,6 @@ describe("syncRepositoryFiles", () => {
     );
 
     expect(mockGetRepositorySettings).toHaveBeenCalledWith(ownerId, repoId);
-    expect(mockGetDefaultBranch).not.toHaveBeenCalled();
 
     expect(global.fetch).toHaveBeenCalledWith(
       `https://test-api.example.com/api/${ownerName}/${repoName}/sync_files_from_github_to_coverage`,

@@ -37,19 +37,18 @@ describe("getDefaultBranch", () => {
     });
   });
 
-  it("should throw error when repository is not found", async () => {
-    const mockError = new Error("Not Found");
+  it("should return null when repository is not found", async () => {
     const mockOctokit = {
       rest: {
         repos: {
-          get: jest.fn().mockRejectedValue(mockError),
+          get: jest.fn().mockRejectedValue(new Error("Not Found")),
         },
       },
     };
     mockGetOctokitForInstallation.mockResolvedValue(mockOctokit);
 
-    await expect(getDefaultBranch(ownerName, repoName, installationId)).rejects.toThrow(
-      "Not Found"
-    );
+    const result = await getDefaultBranch(ownerName, repoName, installationId);
+
+    expect(result).toBeNull();
   });
 });
