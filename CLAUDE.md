@@ -144,7 +144,7 @@ Check screenshots first: When a test failure includes a screenshot, ALWAYS exami
 
 ## Architecture Overview
 
-This is a Next.js 16 application using App Router for GitAuto - a SaaS platform for automated test generation with GitHub/Jira integration.
+This is a Next.js 16 application using App Router for GitAuto - a SaaS platform for automated unit test generation with GitHub/Jira integration.
 
 ### Tech Stack
 
@@ -290,11 +290,14 @@ Show results from each sub-agent before proceeding to the next step.
 - **Functions over classes** - Always prefer functional programming over OOP classes
 - **Arrow functions** - Prefer arrow functions over regular function declarations
 - **Minimal syntax** - Remove {} brackets for single-line if statements and single-expression arrow functions
-- **Single responsibility** - One file, one function, one responsibility where possible
+- **Single responsibility** - One file, one exported function. Don't create 2+ functions in a file. If a helper is used multiple times within the file, keep it as a private function in that file. If it's used only once, inline it. If it's needed by other files, move it to its own file.
 - **Type safety** - Use Supabase generated types whenever possible
-- **Avoid any** - Never use `any` type, always use proper TypeScript types
+- **Avoid any** - Never use `any` type, always use proper TypeScript types. When an API returns `any` (e.g., `response.json()`), always assign it to a fully typed variable (e.g., `const data: { id: number; name: string } = await response.json()`) so downstream code is properly typed instead of propagating `any`. Similarly, chaining 2+ property accesses on untyped objects propagates `any` - break the chain into separate typed variables.
+- **No silent defaults** - Don't hide missing data with fallback defaults (e.g., `?? {}`, `|| ""`). Handle `null`/`undefined` explicitly. Defaults mask bugs.
 - **NEVER use `as any`** - Never use `as any` type assertions, always use proper type guards or interfaces
 - **Avoid non-null assertions** - Never use `!` operator; instead use proper type guards or extract to variables after validation
+- **No explicit return types** - Do not add return type annotations (e.g., `: Promise<string>`, `: void`, `: string`). They overwrite the inferred return type without validating the implementation actually returns that type. Return type annotations are PROHIBITED. Let TypeScript infer return types.
+- **Log on early return/throw** - Always `console.log` or `console.error` before returning early or throwing, so we can see why in production logs
 - **Solve problems fundamentally** - Never work around issues with hacks or type assertions; always find and fix the root cause. If TypeScript complains, understand why and fix the underlying issue properly
 - **Best practices first** - Prioritize modern best practices over existing codebase patterns when they conflict
 - **Explain reasoning** - Always explain WHY you chose a specific approach/solution over alternatives (e.g., "I used useMemo here instead of useCallback because we're memoizing a computed value, not a function" or "I chose Map over Object because we need insertion order preservation") outside of the code change suggestions. Do not include this in the code change suggestions.
