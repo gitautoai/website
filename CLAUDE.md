@@ -256,6 +256,13 @@ When the user says "LGTM", execute these commands in order:
       - **Tell the story when there's a real failure** - When you find a real flaw or failure, be transparent. Tell the story: what happened, what went wrong (e.g. Claude misunderstood X, our pipeline missed Y), what the impact was, and how we improved. Developers respect honesty and the story resonates more than hiding it. Frame it as "we found a flaw → it caused X → we improved" not "we fixed a bug".
       - **Sound like a human wrote it** - AI-generated posts are obvious and get ignored. Write like a real dev sharing something they built. Be casual, imperfect, opinionated. No polished marketing tone.
       - **Vary the opening every time** - NEVER use patterns like "GitAuto now...", "We just...", or any formula that gets stale. Start with the substance — what changed, why it matters, or a hook.
+      - **Wes post: don't repeat openers** - Before writing, run `scripts/git/recent_social_posts.sh wes` and make sure your opening sentence doesn't use the same structure as any recent post.
+    - If the PR includes a Social Media Post section, check recent posts to avoid repeating patterns:
+      ```bash
+      scripts/git/recent_social_posts.sh gitauto  # GitAuto posts only
+      scripts/git/recent_social_posts.sh wes      # Wes posts only
+      ```
+      Read the output and ensure your new post uses a different sentence structure and opener.
 
 **Note**: E2E tests (`npx playwright test`) are skipped during LGTM to save time. Run them manually when needed.
 
