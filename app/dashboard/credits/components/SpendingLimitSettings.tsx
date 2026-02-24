@@ -7,9 +7,9 @@ import { updateSpendingLimit } from "@/app/actions/supabase/owners/update-spendi
 import { CREDIT_PRICING } from "@/config/pricing";
 
 export default function SpendingLimitSettings() {
-  const { currentOwnerId: ownerId } = useAccountContext();
+  const { currentOwnerId: ownerId, userId, userName } = useAccountContext();
   const [spendingLimit, setSpendingLimit] = useState<number | null>(
-    CREDIT_PRICING.SPENDING_LIMIT.DEFAULT_AMOUNT_USD
+    CREDIT_PRICING.SPENDING_LIMIT.DEFAULT_AMOUNT_USD,
   );
   const [hasLimit, setHasLimit] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -45,6 +45,7 @@ export default function SpendingLimitSettings() {
       await updateSpendingLimit({
         ownerId,
         maxSpendingLimitUsd: hasLimit ? spendingLimit : null,
+        updatedBy: `${userId}:${userName}`,
       });
       console.log("Spending limit settings saved successfully");
     } catch (error) {
@@ -63,6 +64,7 @@ export default function SpendingLimitSettings() {
     updateSpendingLimit({
       ownerId,
       maxSpendingLimitUsd: newHasLimit ? spendingLimit : null,
+      updatedBy: `${userId}:${userName}`,
     }).catch((error) => {
       console.error("Error saving spending limit toggle:", error);
       // Revert toggle on error

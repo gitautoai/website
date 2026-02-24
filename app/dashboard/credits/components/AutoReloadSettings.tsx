@@ -7,7 +7,7 @@ import { getOwner } from "@/app/actions/supabase/owners/get-owner";
 import { useAccountContext } from "@/app/components/contexts/Account";
 
 export default function AutoReloadSettings() {
-  const { currentOwnerId: ownerId } = useAccountContext();
+  const { currentOwnerId: ownerId, userId, userName } = useAccountContext();
   const [enabled, setEnabled] = useState(false);
   const [threshold, setThreshold] = useState(CREDIT_PRICING.AUTO_RELOAD.DEFAULT_TRIGGER_USD);
   const [target, setTarget] = useState(CREDIT_PRICING.AUTO_RELOAD.DEFAULT_TARGET_USD);
@@ -46,6 +46,7 @@ export default function AutoReloadSettings() {
         enabled: newEnabled !== undefined ? newEnabled : enabled,
         thresholdUsd: newThreshold !== undefined ? newThreshold : threshold,
         amountUsd: newTarget !== undefined ? newTarget : target,
+        updatedBy: `${userId}:${userName}`,
       });
       console.log("Auto-reload settings saved successfully");
     } catch (error) {
@@ -66,6 +67,7 @@ export default function AutoReloadSettings() {
       enabled: newEnabled,
       thresholdUsd: threshold,
       amountUsd: target,
+      updatedBy: `${userId}:${userName}`,
     }).catch((error) => {
       console.error("Error saving auto-reload toggle:", error);
       // Revert toggle on error

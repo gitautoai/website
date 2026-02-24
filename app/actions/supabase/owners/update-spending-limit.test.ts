@@ -31,11 +31,14 @@ describe("updateSpendingLimit", () => {
       mockSelect.mockResolvedValue({ data: [], error: null });
 
       await expect(
-        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100 })
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100, updatedBy: "42:testuser" }),
       ).rejects.toThrow("Owner with ID 123 not found");
 
       expect(mockFrom).toHaveBeenCalledWith("owners");
-      expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 100 });
+      expect(mockUpdate).toHaveBeenCalledWith({
+        max_spending_limit_usd: 100,
+        updated_by: "42:testuser",
+      });
       expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
       expect(mockSelect).toHaveBeenCalled();
     });
@@ -46,7 +49,7 @@ describe("updateSpendingLimit", () => {
       mockSelect.mockResolvedValue({ data: [], error: null });
 
       await expect(
-        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: null })
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: null, updatedBy: "42:testuser" }),
       ).rejects.toThrow("Owner with ID 123 not found");
 
       expect(mockFrom).toHaveBeenCalledWith("owners");
@@ -56,7 +59,7 @@ describe("updateSpendingLimit", () => {
       mockSelect.mockResolvedValue({ data: [], error: null });
 
       await expect(
-        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 50 })
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 50, updatedBy: "42:testuser" }),
       ).rejects.toThrow("Owner with ID 123 not found");
 
       expect(mockFrom).toHaveBeenCalledWith("owners");
@@ -85,11 +88,14 @@ describe("updateSpendingLimit", () => {
       mockSelect.mockResolvedValue({ data: [mockOwner], error: null });
 
       await expect(
-        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100 })
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100, updatedBy: "42:testuser" }),
       ).resolves.toBeUndefined();
 
       expect(mockFrom).toHaveBeenCalledWith("owners");
-      expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 100 });
+      expect(mockUpdate).toHaveBeenCalledWith({
+        max_spending_limit_usd: 100,
+        updated_by: "42:testuser",
+      });
       expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
       expect(mockSelect).toHaveBeenCalled();
     });
@@ -101,11 +107,14 @@ describe("updateSpendingLimit", () => {
       });
 
       await expect(
-        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100 })
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100, updatedBy: "42:testuser" }),
       ).rejects.toThrow("Failed to update spending limit: Database error");
 
       expect(mockFrom).toHaveBeenCalledWith("owners");
-      expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 100 });
+      expect(mockUpdate).toHaveBeenCalledWith({
+        max_spending_limit_usd: 100,
+        updated_by: "42:testuser",
+      });
       expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
       expect(mockSelect).toHaveBeenCalled();
     });
@@ -114,11 +123,14 @@ describe("updateSpendingLimit", () => {
       mockSelect.mockResolvedValue({ data: [], error: null });
 
       await expect(
-        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100 })
+        updateSpendingLimit({ ownerId: 123, maxSpendingLimitUsd: 100, updatedBy: "42:testuser" }),
       ).rejects.toThrow("Owner with ID 123 not found");
 
       expect(mockFrom).toHaveBeenCalledWith("owners");
-      expect(mockUpdate).toHaveBeenCalledWith({ max_spending_limit_usd: 100 });
+      expect(mockUpdate).toHaveBeenCalledWith({
+        max_spending_limit_usd: 100,
+        updated_by: "42:testuser",
+      });
       expect(mockEq).toHaveBeenCalledWith("owner_id", 123);
       expect(mockSelect).toHaveBeenCalled();
     });
