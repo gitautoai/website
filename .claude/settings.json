@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(curl *)",
-      "Bash(npx tsx scripts/sentry/get-issue.ts :*)"
+      "Bash(npx tsx scripts/sentry/get-issue.ts :*)",
+      "Bash(bash scripts/git/recent_social_posts.sh *)"
     ],
     "deny": []
   }
