@@ -7,6 +7,7 @@ export const PRODUCT_ID = process.env.NEXT_PUBLIC_PRODUCT_ID;
 export const PRODUCT_NAME = "GitAuto";
 export const LEGAL_NAME = "GitAuto, Inc.";
 export const TEAM_NAME = "GitAuto Team";
+export const EMAIL_SIGN_OFF = `Wes\nFounder, ${PRODUCT_NAME}`;
 export const TITLE = `${PRODUCT_NAME} - Automated Unit Testing for GitHub`;
 export const DESCRIPTION =
   "Go from 0% to 90% test coverage effortlessly. GitAuto automatically writes unit tests for your GitHub repositories. Start free today.";

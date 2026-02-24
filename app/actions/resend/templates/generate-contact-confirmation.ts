@@ -3,7 +3,7 @@ import { Tables } from "@/types/supabase";
 
 export function generateContactConfirmation(data: Tables<"contacts">): string {
   const sections = [
-    `Hey ${data.first_name}!`,
+    `Hi ${data.first_name}!`,
     ``,
     `Got your message. Here's what you submitted:`,
     ``,
