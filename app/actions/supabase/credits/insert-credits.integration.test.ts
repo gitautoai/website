@@ -63,6 +63,7 @@ describe("insertCredits integration", () => {
         installation_id: 12345,
         owner_id: testOwnerId,
         owner_name: `test-user-${testOwnerId}`,
+        owner_type: "User" as const,
         repo_id: 67890,
         repo_name: "test-repo",
         issue_number: 1,

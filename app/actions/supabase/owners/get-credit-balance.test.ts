@@ -15,7 +15,7 @@ describe("getCreditBalance", () => {
       const mockOwner = {
         owner_id: 123,
         owner_name: "test-owner",
-        owner_type: "User",
+        owner_type: "User" as const,
         stripe_customer_id: "cus_test123",
         credit_balance_usd: 100.5,
         auto_reload_enabled: false,
@@ -42,7 +42,7 @@ describe("getCreditBalance", () => {
       const mockOwner = {
         owner_id: 456,
         owner_name: "test-owner-2",
-        owner_type: "Organization",
+        owner_type: "Organization" as const,
         stripe_customer_id: "cus_test456",
         credit_balance_usd: 0,
         auto_reload_enabled: true,
@@ -68,7 +68,7 @@ describe("getCreditBalance", () => {
       const mockOwner = {
         owner_id: 789,
         owner_name: "test-owner-3",
-        owner_type: "User",
+        owner_type: "User" as const,
         stripe_customer_id: "cus_test789",
         credit_balance_usd: 9999.99,
         auto_reload_enabled: false,
@@ -124,7 +124,7 @@ describe("getCreditBalance", () => {
       const mockOwner = {
         owner_id: 111,
         owner_name: "test-owner-small",
-        owner_type: "User",
+        owner_type: "User" as const,
         stripe_customer_id: "cus_test111",
         credit_balance_usd: 0.01,
         auto_reload_enabled: false,
@@ -170,7 +170,7 @@ describe("getCreditBalance", () => {
       const mockOwner = {
         owner_id: 222,
         owner_name: "test-owner-full",
-        owner_type: "Organization",
+        owner_type: "Organization" as const,
         stripe_customer_id: "cus_test222",
         credit_balance_usd: 250.75,
         auto_reload_enabled: true,
@@ -196,7 +196,7 @@ describe("getCreditBalance", () => {
       const mockOwner = {
         owner_id: 333,
         owner_name: "",
-        owner_type: "User",
+        owner_type: "User" as const,
         stripe_customer_id: "",
         credit_balance_usd: 50,
         auto_reload_enabled: false,
