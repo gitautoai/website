@@ -11,7 +11,8 @@
 e2e/.auth/
 next-env.d.ts
 npm-debug.log*
-scripts/
+scripts/*
+!scripts/git/
 !scripts/sentry/
 storybook-static
 supabase/.temp/
