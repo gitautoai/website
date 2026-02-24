@@ -30,6 +30,7 @@ describe("updateAutoReloadSettings integration", () => {
       enabled: true,
       thresholdUsd: 20,
       amountUsd: 100,
+      updatedBy: "test",
     });
 
     const { data: owner } = await supabaseAdmin
@@ -50,6 +51,7 @@ describe("updateAutoReloadSettings integration", () => {
       enabled: true,
       thresholdUsd: 15,
       amountUsd: 75,
+      updatedBy: "test",
     });
 
     // Then disable it
@@ -58,6 +60,7 @@ describe("updateAutoReloadSettings integration", () => {
       enabled: false,
       thresholdUsd: 25,
       amountUsd: 125,
+      updatedBy: "test",
     });
 
     const { data: owner } = await supabaseAdmin
@@ -77,6 +80,7 @@ describe("updateAutoReloadSettings integration", () => {
       enabled: true,
       thresholdUsd: 5,
       amountUsd: 100,
+      updatedBy: "test",
     });
 
     const { data: owner } = await supabaseAdmin
@@ -98,7 +102,8 @@ describe("updateAutoReloadSettings integration", () => {
         enabled: true,
         thresholdUsd: 10,
         amountUsd: 50,
-      })
+        updatedBy: "test",
+      }),
     ).rejects.toThrow("Owner with ID 999999999 not found");
   });
 
@@ -114,6 +119,7 @@ describe("updateAutoReloadSettings integration", () => {
       enabled: true,
       thresholdUsd: 30,
       amountUsd: 150,
+      updatedBy: "test",
     });
 
     const { data: updatedOwner } = await supabaseAdmin

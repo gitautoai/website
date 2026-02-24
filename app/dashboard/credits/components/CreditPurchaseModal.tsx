@@ -20,13 +20,13 @@ export default function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseM
   const posthog = usePostHog();
   const [isLoading, setIsLoading] = useState(false);
   const [purchaseAmountUsd, setPurchaseAmountUsd] = useState(
-    CREDIT_PRICING.PURCHASE_LIMITS.DEFAULT_AMOUNT_USD
+    CREDIT_PRICING.PURCHASE_LIMITS.DEFAULT_AMOUNT_USD,
   );
   const [autoReloadThreshold, setAutoReloadThreshold] = useState(
-    CREDIT_PRICING.AUTO_RELOAD.DEFAULT_TRIGGER_USD
+    CREDIT_PRICING.AUTO_RELOAD.DEFAULT_TRIGGER_USD,
   );
   const [autoReloadTarget, setAutoReloadTarget] = useState(
-    CREDIT_PRICING.AUTO_RELOAD.DEFAULT_TARGET_USD
+    CREDIT_PRICING.AUTO_RELOAD.DEFAULT_TARGET_USD,
   );
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -96,6 +96,7 @@ export default function CreditPurchaseModal({ isOpen, onClose }: CreditPurchaseM
         enabled: true, // Auto-reload is always enabled in the modal
         thresholdUsd: autoReloadThreshold,
         amountUsd: autoReloadTarget,
+        updatedBy: `${userId}:${userName}`,
       });
 
       const session = await createCheckoutSession({

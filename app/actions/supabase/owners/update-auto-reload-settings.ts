@@ -7,11 +7,13 @@ export async function updateAutoReloadSettings({
   enabled,
   thresholdUsd,
   amountUsd,
+  updatedBy,
 }: {
   ownerId: number;
   enabled: boolean;
   thresholdUsd: number;
   amountUsd: number;
+  updatedBy: string;
 }) {
   const { data, error } = await supabaseAdmin
     .from("owners")
@@ -19,6 +21,7 @@ export async function updateAutoReloadSettings({
       auto_reload_enabled: enabled,
       auto_reload_threshold_usd: thresholdUsd,
       auto_reload_target_usd: amountUsd,
+      updated_by: updatedBy,
     })
     .eq("owner_id", ownerId)
     .select();
