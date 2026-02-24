@@ -1,5 +1,3 @@
-"use server";
-
 const MIN_BENCHMARK_LINES = 5_000;
 const MIN_BENCHMARK_PCT = 80;
 const MIN_GAP_PCT = 5;

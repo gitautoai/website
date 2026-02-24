@@ -1,5 +1,3 @@
-"use server";
-
 import { findBenchmark } from "./find-benchmark";
 import { parseName } from "@/utils/parse-name";
 import type { OwnerContext } from "@/types/drip-emails";
