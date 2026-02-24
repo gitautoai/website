@@ -60,7 +60,7 @@ export default function RepositorySelector({
   });
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className={`grid ${ownerOnly ? "grid-cols-1" : "grid-cols-2"} gap-4`}>
       {/* Organization Selector */}
       <div>
         <div className="flex justify-between items-center mb-2">

@@ -30,8 +30,9 @@ const PREDEFINED_PERIODS: Period[] = [
   { type: "last-6-months", label: "Last 6 Months" },
   { type: "this-year", label: "This Year" },
   { type: "all-time", label: "All Time" },
-  { type: "custom", label: "Custom Range" },
 ];
+
+const CUSTOM_PERIOD: Period = { type: "custom", label: "Custom Range" };
 
 export function calculatePeriodDates(period: Period): {
   startDate: string | null;
@@ -110,6 +111,15 @@ export default function PeriodSelector({ selectedPeriod, onPeriodChange }: Perio
   const [customStartDate, setCustomStartDate] = useState(savedCustomDates.start);
   const [customEndDate, setCustomEndDate] = useState(savedCustomDates.end);
   const [showCustom, setShowCustom] = useState(selectedPeriod.type === "custom");
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   useEffect(() => {
     if (selectedPeriod.type === "custom") {
@@ -158,19 +168,20 @@ export default function PeriodSelector({ selectedPeriod, onPeriodChange }: Perio
           <select
             value={selectedPeriod.type}
             onChange={(e) => handlePeriodTypeChange(e.target.value as PeriodType)}
-            className="w-[calc(50%-0.5rem)] p-2 border rounded-lg bg-white"
+            className="w-full p-2 border rounded-lg bg-white"
           >
             {PREDEFINED_PERIODS.map((period) => (
               <option key={period.type} value={period.type}>
                 {period.label}
               </option>
             ))}
+            {isDesktop && <option value={CUSTOM_PERIOD.type}>{CUSTOM_PERIOD.label}</option>}
           </select>
         </div>
       )}
 
       {showCustom && (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-2">Time Period</label>
             <select
@@ -183,54 +194,59 @@ export default function PeriodSelector({ selectedPeriod, onPeriodChange }: Perio
                   {period.label}
                 </option>
               ))}
+              {isDesktop && <option value={CUSTOM_PERIOD.type}>{CUSTOM_PERIOD.label}</option>}
             </select>
           </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">Start Date</label>
-            <input
-              type="date"
-              value={customStartDate}
-              onChange={(e) => {
-                const newStartDate = e.target.value;
-                setCustomStartDate(newStartDate);
-                if (newStartDate && customEndDate) {
-                  const startDate = newStartDate + "T00:00:00.000Z";
-                  const endDate = customEndDate + "T23:59:59.999Z";
-                  setSavedCustomDates({ start: newStartDate, end: customEndDate });
-                  onPeriodChange({
-                    type: "custom",
-                    label: "Custom Range",
-                    startDate,
-                    endDate,
-                  });
-                }
-              }}
-              className="w-full p-2 border rounded-lg"
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">End Date</label>
-            <input
-              type="date"
-              value={customEndDate}
-              onChange={(e) => {
-                const newEndDate = e.target.value;
-                setCustomEndDate(newEndDate);
-                if (customStartDate && newEndDate) {
-                  const startDate = customStartDate + "T00:00:00.000Z";
-                  const endDate = newEndDate + "T23:59:59.999Z";
-                  setSavedCustomDates({ start: customStartDate, end: newEndDate });
-                  onPeriodChange({
-                    type: "custom",
-                    label: "Custom Range",
-                    startDate,
-                    endDate,
-                  });
-                }
-              }}
-              className="w-full p-2 border rounded-lg"
-            />
-          </div>
+          {isDesktop && (
+            <>
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-2">Start Date</label>
+                <input
+                  type="date"
+                  value={customStartDate}
+                  onChange={(e) => {
+                    const newStartDate = e.target.value;
+                    setCustomStartDate(newStartDate);
+                    if (newStartDate && customEndDate) {
+                      const startDate = newStartDate + "T00:00:00.000Z";
+                      const endDate = customEndDate + "T23:59:59.999Z";
+                      setSavedCustomDates({ start: newStartDate, end: customEndDate });
+                      onPeriodChange({
+                        type: "custom",
+                        label: "Custom Range",
+                        startDate,
+                        endDate,
+                      });
+                    }
+                  }}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-2">End Date</label>
+                <input
+                  type="date"
+                  value={customEndDate}
+                  onChange={(e) => {
+                    const newEndDate = e.target.value;
+                    setCustomEndDate(newEndDate);
+                    if (customStartDate && newEndDate) {
+                      const startDate = customStartDate + "T00:00:00.000Z";
+                      const endDate = newEndDate + "T23:59:59.999Z";
+                      setSavedCustomDates({ start: customStartDate, end: newEndDate });
+                      onPeriodChange({
+                        type: "custom",
+                        label: "Custom Range",
+                        startDate,
+                        endDate,
+                      });
+                    }
+                  }}
+                  className="w-full p-2 border rounded-lg"
+                />
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>

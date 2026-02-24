@@ -210,21 +210,25 @@ export default function ChartsPage() {
     setIsSettingUpWorkflow(true);
     setError(null);
     // Fire and forget — Lambda runs setup in the background
-    setupCoverageWorkflow(currentOwnerName, repoName, currentInstallationId, userLogin || "").catch(() => {});
+    setupCoverageWorkflow(currentOwnerName, repoName, currentInstallationId, userLogin || "").catch(
+      () => {},
+    );
     setShowSetupModal(true);
     setIsSettingUpWorkflow(false);
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col gap-6">
-      <div className="w-7/12 md:w-auto flex items-center gap-2">
+    <div className="relative min-h-screen flex flex-col gap-6 overflow-hidden">
+      <div className="flex items-center gap-2">
         <h1 className="text-3xl font-bold">Coverage Charts</h1>
         <DocsLink href={RELATIVE_URLS.DOCS.COVERAGE.CHARTS} />
       </div>
 
       <ErrorBanner error={error} />
-      <RepositorySelector ownerOnly={true} />
-      <PeriodSelector selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
+      <div className="grid grid-cols-2 gap-4 items-end">
+        <RepositorySelector ownerOnly={true} />
+        <PeriodSelector selectedPeriod={selectedPeriod} onPeriodChange={setSelectedPeriod} />
+      </div>
 
       <div className="space-y-8">
         {totalCoverageData.length > 0 && (
@@ -233,7 +237,7 @@ export default function ChartsPage() {
               Total Coverage (All Repositories)
               <InfoIcon tooltip="Weighted average across all repositories. Each metric is weighted by its own total (lines for statements, functions for function coverage, branches for branch coverage). Uses forward-fill: each day shows the latest known value for every repo." />
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-2 md:space-y-6">
               <CoverageStats data={filterDataByPeriod(totalCoverageData)} />
               <CoverageChart
                 data={filterDataByPeriod(totalCoverageData)}
@@ -276,7 +280,7 @@ export default function ChartsPage() {
                   </button>
                 </div>
               ) : (
-                <div className="space-y-6">
+                <div className="space-y-2 md:space-y-6">
                   <CoverageStats data={repoFilteredData} />
                   <CoverageChart
                     data={repoFilteredData}
