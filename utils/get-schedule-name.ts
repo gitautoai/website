@@ -1,3 +1,6 @@
+import { isPrd } from "@/config";
+
 export function getScheduleName(ownerId: number, repoId: number): string {
-  return `gitauto-repo-${ownerId}-${repoId}`;
+  const suffix = isPrd ? "" : "-dev";
+  return `gitauto-repo-${ownerId}-${repoId}${suffix}`;
 }
