@@ -2,30 +2,33 @@
 
 import { isPrd } from "@/config";
 
-export async function slackUs(message: string) {
-  // Only send Slack notifications in production
+const SLACK_CHANNEL_ID = "C08PHH352S3";
+
+export async function slackUs(message: string, threadTs?: string) {
   if (!isPrd) return { success: true, skipped: true };
 
-  const webhookUrl = process.env.SLACK_WEBHOOK_URL;
-
-  if (!webhookUrl) {
-    console.warn("SLACK_WEBHOOK_URL is not set. Skipping Slack notification.");
-    return { success: false, error: "Webhook URL not configured" };
+  const token = process.env.SLACK_BOT_TOKEN;
+  if (!token) {
+    console.warn("SLACK_BOT_TOKEN is not set. Skipping Slack notification.");
+    return { success: false, error: "SLACK_BOT_TOKEN not set" };
   }
 
+  console.log(`Slack: ${message}`);
+
   try {
-    const response = await fetch(webhookUrl, {
+    const body: Record<string, string> = { channel: SLACK_CHANNEL_ID, text: message };
+    if (threadTs) body.thread_ts = threadTs;
+
+    const response = await fetch("https://slack.com/api/chat.postMessage", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: message }),
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify(body),
     });
 
-    if (!response.ok)
-      throw new Error(
-        `Failed to send Slack notification: ${response.status} ${response.statusText}`
-      );
+    const data = await response.json();
+    if (!data.ok) throw new Error(`Slack API error: ${data.error}`);
 
-    return { success: true };
+    return { success: true, threadTs: data.ts };
   } catch (error) {
     console.error("Error sending Slack notification:", error);
     return { success: false, error: String(error) };

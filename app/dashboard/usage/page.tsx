@@ -60,14 +60,6 @@ export default function UsagePage() {
     setIsMounted(true);
   }, []);
 
-  // Send Slack notification on page visit
-  useEffect(() => {
-    if (!userId || !userName || !currentOwnerName) return;
-
-    const message = `${userName} (${userId}) visited Usage page for ${currentOwnerName}`;
-    slackUs(message);
-  }, [userId, userName, currentOwnerName]);
-
   // Load saved period from localStorage on mount
   useEffect(() => {
     const savedPeriod = safeLocalStorage.getItem("usage-period");

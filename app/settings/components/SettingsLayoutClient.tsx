@@ -6,7 +6,9 @@ import { useSession, signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
 
 // Local imports
+import { slackUs } from "@/app/actions/slack/slack-us";
 import AuthControls from "@/app/components/AuthControls";
+import { useAccountContext } from "@/app/components/contexts/Account";
 import MobileSettingsMenu from "@/app/settings/components/MobileSettingsMenu";
 
 export default function SettingsLayoutClient({ children }: { children: React.ReactNode }) {
@@ -14,6 +16,7 @@ export default function SettingsLayoutClient({ children }: { children: React.Rea
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { status } = useSession();
+  const { userId, userName, currentOwnerName } = useAccountContext();
 
   // Check if this is OG image generation
   const isOgGeneration = searchParams.get("og-generation") === "true";
@@ -24,6 +27,13 @@ export default function SettingsLayoutClient({ children }: { children: React.Rea
       signIn("github", { callbackUrl: pathname });
     }
   }, [status, pathname, isOgGeneration]);
+
+  // Notify on page visit
+  useEffect(() => {
+    if (!userId || !userName || !currentOwnerName) return;
+    const pageName = pathname.split("/").pop() || "home";
+    slackUs(`${userName} (${userId}) visited ${pageName} page for ${currentOwnerName}`);
+  }, [userId, userName, currentOwnerName, pathname]);
 
   return (
     <>

@@ -152,14 +152,6 @@ export default function TriggersPage() {
     loadAllSettings();
   }, [currentOwnerId, currentOwnerName, organizations]);
 
-  // Notify on page visit
-  useEffect(() => {
-    if (!userId || !userName || !currentOwnerName) return;
-
-    const message = `${userName} (${userId}) visited Triggers page for ${currentOwnerName}`;
-    slackUs(message);
-  }, [userId, userName, currentOwnerName]);
-
   const updateSetting = async (
     repoId: number,
     repoName: string,
