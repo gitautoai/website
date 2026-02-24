@@ -64,9 +64,9 @@ export function CommonConfiguration({
         <h2 className="text-2xl font-semibold mb-4 text-left">Viewing Coverage Reports</h2>
         <p className="text-gray-600 mb-4">
           After your workflow runs successfully, GitAuto automatically processes the coverage
-          reports and displays them in the Coverage Dashboard. GitAuto only saves coverage data
-          when the workflow runs on your target branch (configurable in your repository&apos;s{" "}
-          <a href="/dashboard/settings/rules" className="text-pink-600 hover:underline">
+          reports and displays them in the Coverage Dashboard. GitAuto only saves coverage data when
+          the workflow runs on your target branch (configurable in your repository&apos;s{" "}
+          <a href="/settings/rules" className="text-pink-600 hover:underline">
             Rules page
           </a>
           , defaults to your repository&apos;s default branch, e.g.,{" "}

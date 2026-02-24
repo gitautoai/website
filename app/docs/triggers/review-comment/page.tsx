@@ -186,14 +186,18 @@ export default function ReviewCommentTriggerPage() {
       <div className="mt-8">
         <p className="text-gray-700">
           Ready to collaborate with GitAuto?{" "}
-          <Link
-            href={`https://github.com/${currentOwnerName}/${currentRepoName}/pulls`}
-            className="text-pink-600 hover:text-pink-700 underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Find a GitAuto PR in your repository
-          </Link>{" "}
+          {currentOwnerName && currentRepoName ? (
+            <Link
+              href={`https://github.com/${currentOwnerName}/${currentRepoName}/pulls`}
+              className="text-pink-600 hover:text-pink-700 underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Find a GitAuto PR in your repository
+            </Link>
+          ) : (
+            <span>Find a GitAuto PR in your repository</span>
+          )}{" "}
           and start leaving review comments to fine-tune your tests.
         </p>
       </div>
