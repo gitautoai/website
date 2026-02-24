@@ -4,14 +4,17 @@ import GithubProvider from "next-auth/providers/github";
 import { sign } from "jsonwebtoken";
 
 // Local imports
-import { config, EMAIL_FROM, PRODUCT_NAME } from "@/config";
+import { config, PRODUCT_NAME } from "@/config";
+import { generateRandomDelay } from "@/utils/generate-random-delay";
 import { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET } from "@/config/github";
-import { sendEmail } from "@/app/actions/resend/send-email";
+import { getUserPrimaryEmail } from "@/app/actions/github/get-user-emails";
+import { sendAndRecord } from "@/app/actions/cron/drip-emails/send-and-record";
 import { generateWelcomeEmail } from "@/app/actions/resend/templates/generate-welcome-email";
 import { slackUs } from "@/app/actions/slack/slack-us";
 import { getUser } from "@/app/actions/supabase/users/get-user";
 import { upsertUser } from "@/app/actions/supabase/users/upsert-user";
-import { generateRandomDelay } from "@/utils/generate-random-delay";
+
+import { normalizeDisplayName } from "@/utils/normalize-display-name";
 import { parseName } from "@/utils/parse-name";
 
 const handler = NextAuth({
@@ -57,8 +60,13 @@ const handler = NextAuth({
         token.login = user.login;
 
         // Upsert user in Supabase
-        const userName = user.name || "Unknown User";
-        const userEmail = user.email || null;
+        const userLogin = user.login || "";
+        // Cross-ref: gitauto/services/github/users/get_user_public_email.py
+        const displayName = normalizeDisplayName(user.name || "");
+        // Fallback: if GitHub profile email is private, use the emails API (requires user:email scope)
+        const userEmail =
+          user.email ||
+          (account.access_token ? await getUserPrimaryEmail(account.access_token) : null);
 
         // Check if user already exists using server action
         const existingUser = await getUser(userId);
@@ -66,26 +74,28 @@ const handler = NextAuth({
         const hadEmailBefore = existingUser?.email;
 
         // Upsert user in Supabase
-        const result = await upsertUser(userId, userName, userEmail);
+        const result = await upsertUser(userId, userLogin, displayName, userEmail);
         if (!result.success) console.error("Failed to upsert user:", result.message);
 
         // Send welcome email if this is the first time we have their email
         if (!hadEmailBefore && userEmail) {
-          const { firstName } = parseName(userName);
-          const emailResult = await sendEmail({
-            from: EMAIL_FROM,
-            to: [userEmail],
-            subject: `Welcome to ${PRODUCT_NAME}, ${firstName}!`,
-            text: generateWelcomeEmail(firstName),
-            scheduledAt: generateRandomDelay(),
-          });
+          const { firstName } = parseName(displayName || userLogin);
+          const result = await sendAndRecord(
+            userId,
+            userLogin,
+            "welcome",
+            userEmail,
+            `Welcome to ${PRODUCT_NAME}, ${firstName}!`,
+            generateWelcomeEmail(firstName),
+            // Welcome email: soon after sign-up but not instant (feels less automated)
+            generateRandomDelay(30, 60),
+          );
 
-          if (!emailResult.success)
-            console.error("Failed to send welcome email:", emailResult.error);
+          if (!result.success) console.error("Failed to send welcome email for user:", userId);
         }
 
         // Send Slack notification with correct user status
-        const slackMessage = `${isNewUser ? "🎉 New user" : "👋 Returning user"} signed in: ${userName} ${userEmail ? `(${userEmail})` : ""}`;
+        const slackMessage = `${isNewUser ? "🎉 New user" : "👋 Returning user"} signed in: ${displayName || userLogin} ${userEmail ? `(${userEmail})` : ""}`;
         const slackResult = await slackUs(slackMessage);
         if (!slackResult.success)
           console.error("Failed to send Slack notification:", slackResult.error);
