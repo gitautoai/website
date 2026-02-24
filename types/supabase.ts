@@ -303,6 +303,33 @@ export type Database = {
           },
         ];
       };
+      email_sends: {
+        Row: {
+          created_at: string;
+          email_type: string;
+          id: number;
+          owner_id: number;
+          owner_name: string;
+          resend_email_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          email_type: string;
+          id?: number;
+          owner_id: number;
+          owner_name: string;
+          resend_email_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          email_type?: string;
+          id?: number;
+          owner_id?: number;
+          owner_name?: string;
+          resend_email_id?: string | null;
+        };
+        Relationships: [];
+      };
       installations: {
         Row: {
           created_at: string;
@@ -310,7 +337,7 @@ export type Database = {
           installation_id: number;
           owner_id: number;
           owner_name: string;
-          owner_type: string;
+          owner_type: Database["public"]["Enums"]["owner_type_enum"];
           uninstalled_at: string | null;
           uninstalled_by: string | null;
         };
@@ -320,7 +347,7 @@ export type Database = {
           installation_id: number;
           owner_id?: number;
           owner_name: string;
-          owner_type?: string;
+          owner_type: Database["public"]["Enums"]["owner_type_enum"];
           uninstalled_at?: string | null;
           uninstalled_by?: string | null;
         };
@@ -330,7 +357,7 @@ export type Database = {
           installation_id?: number;
           owner_id?: number;
           owner_name?: string;
-          owner_type?: string;
+          owner_type?: Database["public"]["Enums"]["owner_type_enum"];
           uninstalled_at?: string | null;
           uninstalled_by?: string | null;
         };
@@ -343,54 +370,6 @@ export type Database = {
             referencedColumns: ["owner_id"];
           },
         ];
-      };
-      jira_github_links: {
-        Row: {
-          created_at: string | null;
-          created_by: number;
-          github_owner_id: number;
-          github_owner_name: string;
-          github_repo_id: number;
-          github_repo_name: string;
-          id: number;
-          jira_project_id: number;
-          jira_project_name: string;
-          jira_site_id: string;
-          jira_site_name: string;
-          updated_at: string | null;
-          updated_by: number | null;
-        };
-        Insert: {
-          created_at?: string | null;
-          created_by: number;
-          github_owner_id: number;
-          github_owner_name: string;
-          github_repo_id: number;
-          github_repo_name: string;
-          id?: number;
-          jira_project_id: number;
-          jira_project_name: string;
-          jira_site_id: string;
-          jira_site_name: string;
-          updated_at?: string | null;
-          updated_by?: number | null;
-        };
-        Update: {
-          created_at?: string | null;
-          created_by?: number;
-          github_owner_id?: number;
-          github_owner_name?: string;
-          github_repo_id?: number;
-          github_repo_name?: string;
-          id?: number;
-          jira_project_id?: number;
-          jira_project_name?: string;
-          jira_site_id?: string;
-          jira_site_name?: string;
-          updated_at?: string | null;
-          updated_by?: number | null;
-        };
-        Relationships: [];
       };
       llm_requests: {
         Row: {
@@ -504,48 +483,6 @@ export type Database = {
           },
         ];
       };
-      oauth_tokens: {
-        Row: {
-          access_token: string;
-          created_at: string;
-          created_by: number;
-          expires_at: string;
-          id: number;
-          refresh_token: string | null;
-          scope: string;
-          service_name: string;
-          updated_at: string;
-          updated_by: number | null;
-          user_id: number;
-        };
-        Insert: {
-          access_token: string;
-          created_at?: string;
-          created_by: number;
-          expires_at: string;
-          id?: number;
-          refresh_token?: string | null;
-          scope: string;
-          service_name: string;
-          updated_at?: string;
-          updated_by?: number | null;
-          user_id: number;
-        };
-        Update: {
-          access_token?: string;
-          created_at?: string;
-          created_by?: number;
-          expires_at?: string;
-          id?: number;
-          refresh_token?: string | null;
-          scope?: string;
-          service_name?: string;
-          updated_at?: string;
-          updated_by?: number | null;
-          user_id?: number;
-        };
-        Relationships: [];
-      };
       owners: {
         Row: {
           auto_reload_enabled: boolean;
@@ -558,7 +495,7 @@ export type Database = {
           org_rules: string;
           owner_id: number;
           owner_name: string;
-          owner_type: string;
+          owner_type: Database["public"]["Enums"]["owner_type_enum"];
           stripe_customer_id: string;
           updated_at: string;
           updated_by: string | null;
@@ -574,7 +511,7 @@ export type Database = {
           org_rules?: string;
           owner_id: number;
           owner_name?: string;
-          owner_type?: string;
+          owner_type: Database["public"]["Enums"]["owner_type_enum"];
           stripe_customer_id: string;
           updated_at?: string;
           updated_by?: string | null;
@@ -590,7 +527,7 @@ export type Database = {
           org_rules?: string;
           owner_id?: number;
           owner_name?: string;
-          owner_type?: string;
+          owner_type?: Database["public"]["Enums"]["owner_type_enum"];
           stripe_customer_id?: string;
           updated_at?: string;
           updated_by?: string | null;
@@ -908,7 +845,7 @@ export type Database = {
           original_error_log: string | null;
           owner_id: number;
           owner_name: string;
-          owner_type: string;
+          owner_type: Database["public"]["Enums"]["owner_type_enum"];
           pr_number: number | null;
           repo_id: number;
           repo_name: string;
@@ -936,7 +873,7 @@ export type Database = {
           original_error_log?: string | null;
           owner_id?: number;
           owner_name?: string;
-          owner_type?: string;
+          owner_type: Database["public"]["Enums"]["owner_type_enum"];
           pr_number?: number | null;
           repo_id?: number;
           repo_name?: string;
@@ -964,7 +901,7 @@ export type Database = {
           original_error_log?: string | null;
           owner_id?: number;
           owner_name?: string;
-          owner_type?: string;
+          owner_type?: Database["public"]["Enums"]["owner_type_enum"];
           pr_number?: number | null;
           repo_id?: number;
           repo_name?: string;
@@ -982,6 +919,8 @@ export type Database = {
         Row: {
           created_at: string;
           created_by: string | null;
+          deleted_at: string | null;
+          display_name: string;
           email: string | null;
           id: number;
           user_id: number;
@@ -991,6 +930,8 @@ export type Database = {
         Insert: {
           created_at?: string;
           created_by?: string | null;
+          deleted_at?: string | null;
+          display_name?: string;
           email?: string | null;
           id?: number;
           user_id: number;
@@ -1000,6 +941,8 @@ export type Database = {
         Update: {
           created_at?: string;
           created_by?: string | null;
+          deleted_at?: string | null;
+          display_name?: string;
           email?: string | null;
           id?: number;
           user_id?: number;
@@ -1052,7 +995,7 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
-      [_ in never]: never;
+      owner_type_enum: "User" | "Organization";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -1182,6 +1125,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      owner_type_enum: ["User", "Organization"],
+    },
   },
 } as const;

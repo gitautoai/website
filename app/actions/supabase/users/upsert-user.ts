@@ -3,11 +3,18 @@
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { TablesInsert } from "@/types/supabase";
 
-export async function upsertUser(userId: number, userName: string, email: string | null) {
+// Cross-ref: gitauto/services/supabase/users/upsert_user.py
+export async function upsertUser(
+  userId: number,
+  userName: string,
+  displayName: string,
+  email: string | null,
+) {
   try {
     const upsertData: TablesInsert<"users"> = {
       user_id: userId,
       user_name: userName,
+      display_name: displayName,
       email,
       created_by: userName,
     };
