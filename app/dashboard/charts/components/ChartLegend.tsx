@@ -1,12 +1,13 @@
 interface LegendItem {
   name: string;
+  shortName: string;
   color: string;
 }
 
 const COVERAGE_LEGEND_ITEMS: LegendItem[] = [
-  { name: "Statement Coverage", color: "#8884d8" },
-  { name: "Function Coverage", color: "#82ca9d" },
-  { name: "Branch Coverage", color: "#ffc658" },
+  { name: "Statement Coverage", shortName: "Statement", color: "#8884d8" },
+  { name: "Function Coverage", shortName: "Function", color: "#82ca9d" },
+  { name: "Branch Coverage", shortName: "Branch", color: "#ffc658" },
 ];
 
 const LegendIcon = ({ color }: { color: string }) => (
@@ -28,15 +29,23 @@ const LegendIcon = ({ color }: { color: string }) => (
 
 export default function ChartLegend() {
   return (
-    <ul className="recharts-default-legend" style={{ padding: 0, margin: 0, textAlign: "center" }}>
+    <ul
+      className="recharts-default-legend flex flex-wrap justify-center gap-x-3 gap-y-1"
+      style={{ padding: 0, margin: 0 }}
+    >
       {COVERAGE_LEGEND_ITEMS.map((item) => (
-        <li
-          key={item.name}
-          className="recharts-legend-item"
-          style={{ display: "inline-block", marginRight: 10 }}
-        >
+        <li key={item.name} className="recharts-legend-item flex items-center">
           <LegendIcon color={item.color} />
-          <span className="recharts-legend-item-text" style={{ color: item.color }}>
+          <span
+            className="recharts-legend-item-text text-xs md:text-sm md:hidden"
+            style={{ color: item.color }}
+          >
+            {item.shortName}
+          </span>
+          <span
+            className="recharts-legend-item-text text-sm hidden md:inline"
+            style={{ color: item.color }}
+          >
             {item.name}
           </span>
         </li>

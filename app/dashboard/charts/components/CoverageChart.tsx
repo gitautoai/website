@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -22,6 +23,16 @@ interface CoverageChartProps {
 }
 
 export default function CoverageChart({ data, dateRange }: CoverageChartProps) {
+  const [isDesktop, setIsDesktop] = useState(true);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   // Check which metrics are measured (total > 0 for at least one data point)
   // e.g. PHP coverage tools (Xdebug/PCOV) don't report branch or function data
   const hasFunctionCoverage = data.some((item) => item.functions_total > 0);
@@ -100,10 +111,10 @@ export default function CoverageChart({ data, dateRange }: CoverageChartProps) {
   const xAxisTicks = generateTicks();
 
   return (
-    <div className="bg-white p-6 rounded-lg">
+    <div className="bg-white py-4 md:p-6 rounded-lg">
       <h3 className="text-lg font-semibold mb-4">Coverage Trends Over Time</h3>
 
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={isDesktop ? 400 : 300}>
         <LineChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
@@ -113,10 +124,17 @@ export default function CoverageChart({ data, dateRange }: CoverageChartProps) {
             domain={xAxisDomain}
             ticks={xAxisTicks}
             tickFormatter={formatXAxis}
-            tick={{ fontSize: 12 }}
+            tick={{ fontSize: isDesktop ? 12 : 11 }}
+            angle={isDesktop ? 0 : -45}
+            textAnchor={isDesktop ? "middle" : "end"}
+            height={isDesktop ? undefined : 20}
             allowDataOverflow={true}
           />
-          <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
+          <YAxis
+            domain={[0, 100]}
+            tick={{ fontSize: isDesktop ? 12 : 11 }}
+            width={isDesktop ? undefined : 25}
+          />
           <Tooltip
             formatter={(value) => [`${value}%`, ""]}
             labelFormatter={(label) =>

@@ -1,3 +1,11 @@
+Object.defineProperty(window, "matchMedia", {
+  value: (query: string) => ({
+    matches: query === "(min-width: 768px)",
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+  }),
+});
+
 jest.mock("recharts", () => ({
   LineChart: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="line-chart">{children}</div>

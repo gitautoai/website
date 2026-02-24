@@ -34,7 +34,7 @@ export default function CoverageStats({ data }: CoverageStatsProps) {
     const sign = change >= 0 ? "+" : "";
     const color = change >= 0 ? "text-green-600" : "text-red-600";
     return (
-      <span className={`text-sm ml-2 ${color}`}>
+      <span className={`hidden md:inline text-sm ml-2 ${color}`}>
         ({sign}
         {formatPercentage(change)} vs last)
       </span>
@@ -42,49 +42,52 @@ export default function CoverageStats({ data }: CoverageStatsProps) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-lg border">
-          <h4 className="text-sm font-medium text-gray-500 mb-1">Statement Coverage</h4>
+    <div className="grid grid-cols-3 gap-2 md:gap-4">
+      <div className="bg-white p-2 md:p-4 rounded-lg border">
+        <h4 className="text-xs md:text-sm font-medium text-gray-500 mb-1">
+          <span className="md:hidden">Statement Cov.</span>
+          <span className="hidden md:inline">Statement Coverage</span>
+        </h4>
+        <div className="flex items-center">
+          <span className="text-lg md:text-2xl font-bold">
+            {formatPercentage(latest.statement_coverage ?? 0)}
+          </span>
+          {formatChange(statementChange)}
+        </div>
+      </div>
+
+      <div className="bg-white p-2 md:p-4 rounded-lg border">
+        <h4 className="text-xs md:text-sm font-medium text-gray-500 mb-1">
+          <span className="md:hidden">Function Cov.</span>
+          <span className="hidden md:inline">Function Coverage</span>
+        </h4>
+        {hasFunctionCoverage ? (
           <div className="flex items-center">
-            <span className="text-2xl font-bold">
-              {formatPercentage(latest.statement_coverage ?? 0)}
+            <span className="text-lg md:text-2xl font-bold">
+              {formatPercentage(latest.function_coverage ?? 0)}
             </span>
-            {formatChange(statementChange)}
+            {formatChange(functionChange)}
           </div>
-        </div>
+        ) : (
+          <span className="text-xs text-gray-400">Not measured by coverage tool</span>
+        )}
+      </div>
 
-        <div className="bg-white p-4 rounded-lg border">
-          <h4 className="text-sm font-medium text-gray-500 mb-1">Function Coverage</h4>
+      <div className="bg-white p-2 md:p-4 rounded-lg border">
+        <h4 className="text-xs md:text-sm font-medium text-gray-500 mb-1">
+          <span className="md:hidden">Branch Cov.</span>
+          <span className="hidden md:inline">Branch Coverage</span>
+        </h4>
+        {hasBranchCoverage ? (
           <div className="flex items-center">
-            {hasFunctionCoverage ? (
-              <>
-                <span className="text-2xl font-bold">
-                  {formatPercentage(latest.function_coverage ?? 0)}
-                </span>
-                {formatChange(functionChange)}
-              </>
-            ) : (
-              <span className="text-sm text-gray-400">Not measured by coverage tool</span>
-            )}
+            <span className="text-lg md:text-2xl font-bold">
+              {formatPercentage(latest.branch_coverage ?? 0)}
+            </span>
+            {formatChange(branchChange)}
           </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-lg border">
-          <h4 className="text-sm font-medium text-gray-500 mb-1">Branch Coverage</h4>
-          <div className="flex items-center">
-            {hasBranchCoverage ? (
-              <>
-                <span className="text-2xl font-bold">
-                  {formatPercentage(latest.branch_coverage ?? 0)}
-                </span>
-                {formatChange(branchChange)}
-              </>
-            ) : (
-              <span className="text-sm text-gray-400">Not measured by coverage tool</span>
-            )}
-          </div>
-        </div>
+        ) : (
+          <span className="text-xs text-gray-400">Not measured by coverage tool</span>
+        )}
       </div>
     </div>
   );
