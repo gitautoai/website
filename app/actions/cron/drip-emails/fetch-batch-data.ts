@@ -52,6 +52,9 @@ export interface BatchQueryResults {
 }
 
 export const fetchBatchData = async (ownerIds: number[]): Promise<BatchQueryResults> => {
+  console.log(`[drip] fetchBatchData: ownerIds=${JSON.stringify(ownerIds)}`);
+  const round1Start = Date.now();
+
   // Round 1: Fetch owners, sent emails, repos, credits, usage, subscriptions
   const [ownersResult, sentEmails, reposResult, creditsResult, usageResult, activeSubCustomerIds] =
     await Promise.all([
@@ -78,6 +81,10 @@ export const fetchBatchData = async (ownerIds: number[]): Promise<BatchQueryResu
       getActiveSubscriptionCustomerIds(),
     ]);
 
+  console.log(
+    `[drip] Round 1 done in ${Date.now() - round1Start}ms: owners=${ownersResult.data?.length} repos=${reposResult.data?.length} usage=${usageResult.data?.length}`,
+  );
+
   if (ownersResult.error) throw new Error(`Failed to fetch owners: ${ownersResult.error.message}`);
   if (reposResult.error) throw new Error(`Failed to fetch repos: ${reposResult.error.message}`);
   if (creditsResult.error)
@@ -93,6 +100,7 @@ export const fetchBatchData = async (ownerIds: number[]): Promise<BatchQueryResu
   }
   const uniqueUserIds = [...new Set(userIds)];
 
+  const round2Start = Date.now();
   // Round 2: Fetch users (depends on owner data) and coverage data
   const [usersResult, totalCovResult, repoCovResult, globalRepoCovResult] = await Promise.all([
     uniqueUserIds.length > 0
@@ -119,6 +127,10 @@ export const fetchBatchData = async (ownerIds: number[]): Promise<BatchQueryResu
       .gt("lines_total", 0)
       .order("created_at", { ascending: false }),
   ]);
+
+  console.log(
+    `[drip] Round 2 done in ${Date.now() - round2Start}ms: users=${usersResult.data?.length} totalCov=${totalCovResult.data?.length} repoCov=${repoCovResult.data?.length} globalRepoCov=${globalRepoCovResult.data?.length}`,
+  );
 
   if (usersResult.error) throw new Error(`Failed to fetch users: ${usersResult.error.message}`);
   if (totalCovResult.error)

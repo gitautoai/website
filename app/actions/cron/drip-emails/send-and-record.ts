@@ -20,6 +20,7 @@ export const sendAndRecord = async (
   text: string,
   scheduledAt: Date,
 ) => {
+  console.log(`[drip] Sending ${emailType} to ${to} for owner ${ownerId} (${ownerName})`);
   const result = await sendEmail({
     from: EMAIL_FROM,
     to: [to],
@@ -29,7 +30,10 @@ export const sendAndRecord = async (
   });
 
   if (result.success) {
+    console.log(`[drip] Sent ${emailType} for owner ${ownerId}, recording to DB`);
     await insertEmailSend({ ownerId, ownerName, emailType, resendEmailId: result.emailId });
+  } else {
+    console.error(`[drip] Failed to send ${emailType} for owner ${ownerId}:`, result);
   }
 
   return { ownerId, emailType, success: result.success };
