@@ -2,22 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { expireCredits } from "@/app/actions/cron/expire-credits";
 import { verifyVercelCron } from "@/utils/auth/vercel-cron";
 
-export async function POST(req: NextRequest) {
+// Vercel cron sends GET requests
+export async function GET(req: NextRequest) {
   try {
-    // Verify the request is from Vercel cron
     const authError = verifyVercelCron(req);
     if (authError) return authError;
 
-    // Run the credit expiration job
+    console.log("[expire-credits] Cron triggered");
     const result = await expireCredits();
+    console.log(`[expire-credits] Done: expired=${result.expired}`);
 
-    return NextResponse.json({
-      success: true,
-      message: `Expired credits for ${result.expired} owners`,
-      ...result,
-    });
+    return NextResponse.json({ success: true, ...result });
   } catch (error) {
-    console.error("Credit expiration API error:", error);
+    console.error("[expire-credits] Failed:", error);
 
     return NextResponse.json(
       {
@@ -27,13 +24,4 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
-}
-
-// Allow GET for health checks
-export async function GET() {
-  return NextResponse.json({
-    service: "credit-expiration",
-    status: "healthy",
-    timestamp: new Date().toISOString(),
-  });
 }
