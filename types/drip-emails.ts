@@ -29,6 +29,7 @@ export interface OwnerContext {
   unscheduledRepoNames: string[];
   repoMostNeedingCoverage: string | null;
   repoMostNeedingCoveragePct: number | null;
+  repoMostNeedingCoverageLines: number | null;
   /** Anonymized similar-sized repo from another owner with higher coverage (>= 80%) */
   coverageBenchmark: { linesTotal: number; coveragePct: number } | null;
   hasSetupPr: boolean;
