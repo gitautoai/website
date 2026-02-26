@@ -7,7 +7,7 @@ import { formatLines } from "@/utils/format-lines";
  * Single repo (with benchmark):
  *   Subject: Your test coverage is 15%
  *   Body:
- *     Hi Alice - your test coverage is 15% for acme/backend. A 5K-line project on GitAuto has 89% coverage. See the chart:
+ *     Hi Alice - I just measured your test coverage at 15% for acme/backend (~8K lines). For reference, a 5K-line project on GitAuto reached 89% coverage. See the chart:
  *
  *     https://gitauto.ai/dashboard/charts
  *
@@ -17,7 +17,7 @@ import { formatLines } from "@/utils/format-lines";
  * Multi-repo (no benchmark):
  *   Subject: Your test coverage across 3 repos is 72%
  *   Body:
- *     Hi Alice - your weighted test coverage is 72% across 3 repos like acme/backend. See the chart:
+ *     Hi Alice - I just measured your weighted test coverage at 72% across 3 repos like acme/backend (~8K lines). See the chart:
  *
  *     https://gitauto.ai/dashboard/charts
  *
@@ -37,17 +37,21 @@ export const generateCoverageChartsEmail = (
 ) => {
   const pct = Math.round(ctx.ownerCoveragePct!);
   const multi = ctx.coverageRepoCount > 1;
-  const repo = ctx.repoMostNeedingCoverage ? `${ownerName}/${ctx.repoMostNeedingCoverage}` : "";
+  const repoName = ctx.repoMostNeedingCoverage ? `${ownerName}/${ctx.repoMostNeedingCoverage}` : "";
+  const repoWithLines =
+    repoName && ctx.repoMostNeedingCoverageLines
+      ? `${repoName} (~${formatLines(ctx.repoMostNeedingCoverageLines)} lines)`
+      : repoName;
   const repoDetail = multi
-    ? ` across ${ctx.coverageRepoCount} repos${repo ? ` like ${repo}` : ""}`
-    : repo
-      ? ` for ${repo}`
+    ? ` across ${ctx.coverageRepoCount} repos${repoWithLines ? ` like ${repoWithLines}` : ""}`
+    : repoWithLines
+      ? ` for ${repoWithLines}`
       : "";
   const benchmarkLine = ctx.coverageBenchmark
-    ? ` A ${formatLines(ctx.coverageBenchmark.linesTotal)}-line project on GitAuto has ${ctx.coverageBenchmark.coveragePct}% coverage.`
+    ? ` For reference, a ${formatLines(ctx.coverageBenchmark.linesTotal)}-line project on GitAuto reached ${ctx.coverageBenchmark.coveragePct}% coverage.`
     : "";
 
-  return `Hi ${firstName} - your ${multi ? "weighted " : ""}test coverage is ${pct}%${repoDetail}.${benchmarkLine} See the chart:
+  return `Hi ${firstName} - your ${multi ? "weighted " : ""}test coverage just came in at ${pct}%${repoDetail}.${benchmarkLine} See the chart:
 
 ${ABSOLUTE_URLS.GITAUTO.DASHBOARD.CHARTS}
 

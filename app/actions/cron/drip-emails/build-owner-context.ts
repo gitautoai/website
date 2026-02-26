@@ -117,6 +117,7 @@ export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
   const coverageRepoCountByOwner: Record<number, number> = {};
   const repoMostNeedingCoverageByOwner: Record<number, string | null> = {};
   const repoMostNeedingCoveragePctByOwner: Record<number, number | null> = {};
+  const repoMostNeedingCoverageLinesByOwner: Record<number, number | null> = {};
   for (const [ownerIdStr, repos] of Object.entries(latestRepoCov)) {
     const ownerId = Number(ownerIdStr);
     coverageRepoCountByOwner[ownerId] = Object.keys(repos).length;
@@ -135,6 +136,7 @@ export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
       repoMostNeedingCoveragePctByOwner[ownerId] = Math.round(
         (r.lines_covered / r.lines_total) * 100,
       );
+      repoMostNeedingCoverageLinesByOwner[ownerId] = r.lines_total;
     }
   }
 
@@ -188,6 +190,7 @@ export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
         unscheduledRepoNames: ownerUnscheduledRepoNames[ownerId] || [],
         repoMostNeedingCoverage: repoMostNeedingCoverageByOwner[ownerId] ?? null,
         repoMostNeedingCoveragePct: repoMostNeedingCoveragePctByOwner[ownerId] ?? null,
+        repoMostNeedingCoverageLines: repoMostNeedingCoverageLinesByOwner[ownerId] ?? null,
         coverageBenchmark: (() => {
           const repo = repoMostNeedingCoverageByOwner[ownerId];
           const ownerRepos = latestRepoCov[ownerId];

@@ -23,6 +23,7 @@ const makeCtx = (overrides: Partial<OwnerContext> = {}): OwnerContext => ({
   unscheduledRepoNames: ["api", "web"],
   repoMostNeedingCoverage: null,
   repoMostNeedingCoveragePct: null,
+  repoMostNeedingCoverageLines: null,
   coverageBenchmark: null,
   hasSetupPr: false,
   hasSetupPrMerged: false,
@@ -67,14 +68,15 @@ describe("drip email templates", () => {
       ownerCoveragePct: 42.7,
       coverageRepoCount: 1,
       repoMostNeedingCoverage: "backend",
+      repoMostNeedingCoverageLines: 8200,
       coverageBenchmark: { linesTotal: 5303, coveragePct: 89 },
     });
     const text = generateCoverageChartsEmail("acme", "Alice", ctx);
     expect(text).toContain("Hi Alice");
     expect(text).toContain("43%");
-    expect(text).toContain("acme/backend");
+    expect(text).toContain("acme/backend (~8K lines)");
     expect(text).not.toContain("across");
-    expect(text).toContain("5K-line project on GitAuto has 89% coverage");
+    expect(text).toContain("5K-line project on GitAuto reached 89% coverage");
     expect(text).toContain("/dashboard/charts");
     expect(text).toContain("Wes");
   });
@@ -85,12 +87,13 @@ describe("drip email templates", () => {
       ownerCoveragePct: 72,
       coverageRepoCount: 5,
       repoMostNeedingCoverage: "backend",
+      repoMostNeedingCoverageLines: 12000,
     });
     const text = generateCoverageChartsEmail("acme", "Alice", ctx);
     expect(text).toContain("Hi Alice");
     expect(text).toContain("72%");
     expect(text).toContain("across 5 repos");
-    expect(text).toContain("acme/backend");
+    expect(text).toContain("acme/backend (~12K lines)");
     expect(text).toContain("/dashboard/charts");
     expect(text).toContain("Wes");
   });
@@ -220,6 +223,7 @@ describe("drip email templates", () => {
         ownerCoveragePct: 99.9,
         coverageRepoCount: 99,
         repoMostNeedingCoverage: "long-repo-name",
+        repoMostNeedingCoverageLines: 999000,
       });
       const text = generateCoverageChartsEmail("long-org-name", "Maximilian", ctx);
       expect(text.length).toBeLessThanOrEqual(CHAR_LIMIT);
