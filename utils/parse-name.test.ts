@@ -1,340 +1,335 @@
- 
 import { parseName } from "./parse-name";
 
 describe("parseName", () => {
-  describe("single name", () => {
-    it("should handle a single name", () => {
-      const result = parseName("John");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "John",
-      });
-    });
-
-    it("should handle a single name with leading/trailing spaces", () => {
-      const result = parseName("  John  ");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "John",
-      });
+  describe("real display names from production", () => {
+    it.each([
+      // Simple first + last
+      ["Ringo De Smet", "Ringo"],
+      ["Narek Gevorgyan", "Narek"],
+      ["Eduardo Gonzalez", "Eduardo"],
+      ["Noah Zoschke", "Noah"],
+      ["Jameson Nash", "Jameson"],
+      ["Dan Haber", "Dan"],
+      ["Hai Rao", "Hai"],
+      ["Alex Chaplinsky", "Alex"],
+      ["Alexander Shapiotko", "Alexander"],
+      ["Tadeu Maia", "Tadeu"],
+      ["Lacy Morrow", "Lacy"],
+      ["Andrew Coven", "Andrew"],
+      ["Nirdesh Dwa", "Nirdesh"],
+      ["Almaz Murzabekov", "Almaz"],
+      ["Misha Druzhinin", "Misha"],
+      ["Chad Pritchett", "Chad"],
+      ["Ariel Kanterewicz", "Ariel"],
+      ["Ronak Bansal", "Ronak"],
+      ["Atouch Mohamed", "Atouch"],
+      ["Masahiro Nakahashi", "Masahiro"],
+      ["Ankit Tolia", "Ankit"],
+      ["Eling Pramuatmaja", "Eling"],
+      ["Josh VanAllen", "Josh"],
+      ["Shlomy Sheps", "Shlomy"],
+      ["Marco Fernandez", "Marco"],
+      ["Tatsuya Nakamura", "Tatsuya"],
+      ["Vladimir de Turckheim", "Vladimir"],
+      ["Peter Somerville", "Peter"],
+      ["Camila Macedo", "Camila"],
+      ["Shinya Takada", "Shinya"],
+      ["Alexander Shcherbakov", "Alexander"],
+      ["Greg Harris", "Greg"],
+      ["Alexey Kuznetsov", "Alexey"],
+      ["Siddhant Badola", "Siddhant"],
+      ["Matt Healy", "Matt"],
+      ["Mayuresh Jakhotia", "Mayuresh"],
+      ["Sushnata Sarkar", "Sushnata"],
+      ["Pierre Collinet", "Pierre"],
+      ["Aleksandr Smyshliaev", "Aleksandr"],
+      ["Ryutaro Sugiyama", "Ryutaro"],
+      ["Aran Leite", "Aran"],
+      ["Brandon Hosley", "Brandon"],
+      ["Mohammad Hossine Rezazadeh", "Mohammad"],
+      ["Zhipeng Luo", "Zhipeng"],
+      ["Adit Chawdhary", "Adit"],
+      ["Thomas Bouffard", "Thomas"],
+      ["Hiroki Tashima", "Hiroki"],
+      ["Satyam Singh Niranjan", "Satyam"],
+      ["Eder Ramos", "Eder"],
+      ["Oersted Brion", "Oersted"],
+      ["Xavier Defrang", "Xavier"],
+      ["Nemoto Masaya", "Nemoto"],
+      ["Matas Mat", "Matas"],
+      ["Arturo Navarro", "Arturo"],
+      ["Marek Küthe", "Marek"],
+      ["Klaudijus Mackonis", "Klaudijus"],
+      ["Pedro Henrique Diniz", "Pedro"],
+      ["Ryo Kobashiri", "Ryo"],
+      ["Sagi Faumi", "Sagi"],
+      ["Keita Katahira", "Keita"],
+      ["Albert Pangilinan", "Albert"],
+      ["Batuhan Celasun", "Batuhan"],
+      ["Sunil Kumar HS", "Sunil"],
+      ["Ohira Shunpei", "Ohira"],
+      ["Chaker Ben Said", "Chaker"],
+      ["David Brochero", "David"],
+      ["Suraj Bhattarai", "Suraj"],
+      ["Nikita Malinovsky", "Nikita"],
+      ["Isaac Kearse", "Isaac"],
+      ["Webster Alk", "Webster"],
+      ["Rohit Mane", "Rohit"],
+      ["Mitsuhiko Yamamoto", "Mitsuhiko"],
+      ["Michael Yao", "Michael"],
+      ["Tai Dang", "Tai"],
+      ["Eita Nawaji", "Eita"],
+      ["Hoàng Phi Hùng", "Hoàng"],
+      ["Ammar Ahmed Butt", "Ammar"],
+      ["Omkar Hankare", "Omkar"],
+      ["Satyam Raj", "Satyam"],
+      ["Marco Kazama", "Marco"],
+      ["Davi Souza", "Davi"],
+      ["Naman Joshi", "Naman"],
+      ["Soo Kim", "Soo"],
+      ["Erick Bueno", "Erick"],
+      ["Ryan Mudryk", "Ryan"],
+      ["Takumi Sasada", "Takumi"],
+      ["Yang Qu", "Yang"],
+      ["Honda Jun", "Honda"],
+      ["Robin Junior Rodriguez Henao", "Robin"],
+      ["Joshua Chennault", "Joshua"],
+      ["Yuma Nunoya", "Yuma"],
+      ["Jeko Paul", "Jeko"],
+      ["Hamza Rebb", "Hamza"],
+      ["Ryan Townsend", "Ryan"],
+      ["Jakhangir Esanov", "Jakhangir"],
+      ["Shuhei Hikosaka", "Shuhei"],
+      ["Mike Harrison", "Mike"],
+      ["Yuya Takemasa", "Yuya"],
+      ["Takahiro Nakagawa", "Takahiro"],
+      ["Matan Coiffman", "Matan"],
+      ["Taichi Masakazu", "Taichi"],
+      ["Masakiyo Nishikawa", "Masakiyo"],
+      ["Akshay Nair A", "Akshay"],
+      ["Girma  Wakeyo", "Girma"],
+      ["Yoshiharu Hirose", "Yoshiharu"],
+      ["Ashley Casey", "Ashley"],
+      ["Kawata Hiroki", "Kawata"],
+      ["Hideaki Shiina", "Hideaki"],
+      ["Oladoye Heritage", "Oladoye"],
+      ["Anadi Mishra", "Anadi"],
+      ["Andrew Li", "Andrew"],
+      ["Diksha Wagh", "Diksha"],
+      ["Calvin Fernandes", "Calvin"],
+      ["Pamela Ardana", "Pamela"],
+      ["Manuel Carter", "Manuel"],
+      ["Débora Lutz", "Débora"],
+      ["Artem Filin", "Artem"],
+      ["Richard Kindler", "Richard"],
+      ["Mirza Asadullah", "Mirza"],
+      ["David Burns", "David"],
+      ["Alex Scott", "Alex"],
+      ["Muhammad Anas", "Muhammad"],
+      ["Mohammad Al Amin Sheikh", "Mohammad"],
+      ["David Chen", "David"],
+      ["Fre Dy", "Fre"],
+      ["Alexis Placencia - the schizo", "Alexis"],
+    ])("%s → %s", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
     });
   });
 
-  describe("full name with first and last", () => {
-    it("should parse a simple first and last name", () => {
-      const result = parseName("John Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
-    });
-
-    it("should handle names with extra spaces", () => {
-      const result = parseName("John   Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
-    });
-
-    it("should handle names with leading and trailing spaces", () => {
-      const result = parseName("  John Doe  ");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
-    });
-  });
-
-  describe("full name with middle names", () => {
-    it("should parse first, middle, and last name", () => {
-      const result = parseName("John Michael Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
-    });
-
-    it("should parse multiple middle names", () => {
-      const result = parseName("John Michael James Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
+  describe("single display names", () => {
+    it.each([
+      ["Memory", "Memory"],
+      ["Glow", "Glow"],
+      ["Yumenosuke", "Yumenosuke"],
+      ["Holden", "Holden"],
+      ["Roman", "Roman"],
+      ["Yaovi", "Yaovi"],
+      ["Nils", "Nils"],
+      ["David", "David"],
+      ["Lg", "Lg"],
+      ["Sam", "Sam"],
+      ["Samzong", "Samzong"],
+      ["Daemon", "Daemon"],
+      ["Yuns", "Yuns"],
+      ["Flasic", "Flasic"],
+      ["Miguel", "Miguel"],
+      ["Specs", "Specs"],
+      ["Azit", "Azit"],
+      ["Vandy", "Vandy"],
+      ["Armand", "Armand"],
+      ["Young", "Young"],
+      ["Abhi", "Abhi"],
+      ["Brandon", "Brandon"],
+      ["Kazumi", "Kazumi"],
+      ["Kit", "Kit"],
+      ["Mathis", "Mathis"],
+      ["Corazon", "Corazon"],
+      ["Death", "Death"],
+      ["Eric", "Eric"],
+      ["Yuta", "Yuta"],
+      ["Jenny", "Jenny"],
+      ["Cody", "Cody"],
+      ["Victor", "Victor"],
+      ["Mat", "Mat"],
+      ["Oriya", "Oriya"],
+    ])("%s → %s", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
     });
   });
 
-  describe("names with parentheses", () => {
-    it("should remove content in parentheses", () => {
-      const result = parseName("John (Johnny) Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
+  describe("CJK and unicode names", () => {
+    it.each([
+      ["嘤嘤", "嘤嘤"],
+      ["何鑫", "何鑫"],
+      ["纯粹", "纯粹"],
+      ["高森松太郎", "高森松太郎"],
+      ["André Goulart Nogueira", "André"],
+      ["José María García", "José"],
+      ["Müller Schmidt", "Müller"],
+      ["Nendō", "Nendō"],
+    ])("%s → %s", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
     });
+  });
 
-    it("should remove multiple parentheses", () => {
-      const result = parseName("John (Johnny) Michael (Mike) Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
+  describe("parentheses stripping", () => {
+    it.each([
+      ["Hiroshi (Wes) Nishio", "Hiroshi"],
+      ["(Mr.) Noah Zoschke", "Noah"],
+      ["Dan Haber (Jr.)", "Dan"],
+      ["(Nickname)", "there"],
+    ])("%s → %s", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
     });
+  });
 
-    it("should handle parentheses at the beginning", () => {
-      const result = parseName("(Mr.) John Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
+  describe("title/initial prefix skipping", () => {
+    it.each([
+      ["Dr. John Doe", "John"],
+      ["L. Dayrit", "Dayrit"],
+      ["Milind A. Joshi", "Milind"],
+    ])("%s → %s", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
     });
+  });
 
-    it("should handle parentheses at the end", () => {
-      const result = parseName("John Doe (Jr.)");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
+  describe("dot-separated handles", () => {
+    it.each([
+      ["Frater.nul", "Frater"],
+      ["M.Rama Karthik", "Rama"],
+    ])("%s → %s", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
     });
+  });
 
-    it("should handle only parentheses content", () => {
-      const result = parseName("(Nickname)");
-      expect(result).toEqual({
-        firstName: "(Nickname)",
-        lastName: "",
-      });
+  describe("usernames without display name — title-cased", () => {
+    it.each([
+      ["fourcolors", "Fourcolors"],
+      ["sree", "Sree"],
+      ["Carsaig", "Carsaig"],
+      ["Efreak", "Efreak"],
+      ["Hexaf", "Hexaf"],
+      ["scherenhaenden", "Scherenhaenden"],
+      ["atriede", "Atriede"],
+      ["keeeener", "Keeeener"],
+      ["Jellebels", "Jellebels"],
+      ["lordmage", "Lordmage"],
+      ["seigot", "Seigot"],
+      ["koheitech", "Koheitech"],
+      ["mozzaru", "Mozzaru"],
+    ])("%s → %s", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
     });
+  });
 
-    it("should handle name with spaces around parentheses", () => {
-      const result = parseName("John  (Johnny)  Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
+  describe("hyphenated usernames — take first segment", () => {
+    it.each([
+      ["cuong-tran", "Cuong"],
+      ["toshimasa-sekine", "Toshimasa"],
+      ["kana-shii", "Kana"],
+      ["hazem-hosny", "Hazem"],
+      ["matthew-heartful", "Matthew"],
+      ["ken-shiozawa", "Ken"],
+      ["airi-nakamura", "Airi"],
+      ["kawaguchi-ryosuke", "Kawaguchi"],
+      ["Three-summers", "Three"],
+    ])("%s → %s", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
+    });
+  });
+
+  describe("multi-token hyphenated names — keep hyphen", () => {
+    it.each([
+      ["Kaelig Deloumeau-Prigent", "Kaelig"],
+      ["Mary-Jane Watson", "Mary-Jane"],
+      ["Jean-Pierre Dupont", "Jean-Pierre"],
+      ["O'Connor Smith", "O'Connor"],
+    ])("%s → %s", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
+    });
+  });
+
+  describe("usernames with digits — return 'there'", () => {
+    it.each([
+      ["afc163", "there"],
+      ["apis3445", "there"],
+      ["parthi2929", "there"],
+      ["w7989363", "there"],
+      ["tbowman01", "there"],
+      ["Dark25", "there"],
+      ["broli95", "there"],
+      ["St119848", "there"],
+      ["RyoFuji619", "there"],
+      ["Khan285", "there"],
+      ["Guts98", "there"],
+      ["Itz4Blitz", "there"],
+      ["Gugan22", "there"],
+      ["Coldtrigon66", "there"],
+      ["ONE223", "there"],
+      ["niraj876", "there"],
+      ["Mr2Cool", "there"],
+      ["Elegy233", "there"],
+      ["93Pd9s8Jt", "there"],
+      ["AhJi26", "there"],
+      ["NoFace33", "there"],
+      ["curry798", "there"],
+      ["Sket1374@Gmail.Com", "there"],
+      ["Coolguy1211", "there"],
+      ["Toyro967", "there"],
+      ["devils6669", "there"],
+      ["R4fa3l2008", "there"],
+      ["Mehandsome9", "there"],
+      ["psluca911", "there"],
+      ["Esequiel122", "there"],
+      ["Da3m0N0", "there"],
+      ["MilosKerkez123", "there"],
+      ["2025ss", "there"],
+      ["Lamed12", "there"],
+      ["alzaem3000", "there"],
+    ])("%s → %s", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
     });
   });
 
   describe("edge cases", () => {
-    it("should handle empty string", () => {
-      const result = parseName("");
-      expect(result).toEqual({
-        firstName: "",
-        lastName: "",
-      });
-    });
-
-    it("should handle string with only spaces", () => {
-      const result = parseName("   ");
-      expect(result).toEqual({
-        firstName: "   ",
-        lastName: "",
-      });
-    });
-
-    it("should handle string with only parentheses", () => {
-      const result = parseName("()");
-      expect(result).toEqual({
-        firstName: "()",
-        lastName: "",
-      });
-    });
-
-    it("should handle string with spaces and parentheses", () => {
-      const result = parseName("  (test)  ");
-      expect(result).toEqual({
-        firstName: "  (test)  ",
-        lastName: "",
-      });
+    it.each([
+      ["", "there"],
+      ["   ", "there"],
+      ["()", "there"],
+      ["  (test)  ", "there"],
+    ])("'%s' → '%s'", (input, expected) => {
+      expect(parseName(input).firstName).toBe(expected);
     });
   });
 
-  describe("special characters", () => {
-    it("should handle hyphenated names", () => {
-      const result = parseName("Mary-Jane Watson");
-      expect(result).toEqual({
-        firstName: "Mary-Jane",
-        lastName: "Watson",
-      });
-    });
-
-    it("should handle apostrophes", () => {
-      const result = parseName("O'Brien Smith");
-      expect(result).toEqual({
-        firstName: "O'Brien",
-        lastName: "Smith",
-      });
-    });
-
-    it("should handle names with dots", () => {
-      const result = parseName("Dr. John Doe");
-      expect(result).toEqual({
-        firstName: "Dr.",
-        lastName: "Doe",
-      });
-    });
-
-    it("should handle names with commas", () => {
-      const result = parseName("Doe, John");
-      expect(result).toEqual({
-        firstName: "Doe,",
-        lastName: "John",
-      });
-    });
-  });
-
-  describe("unicode and international names", () => {
-    it("should handle names with accents", () => {
-      const result = parseName("José García");
-      expect(result).toEqual({
-        firstName: "José",
-        lastName: "García",
-      });
-    });
-
-    it("should handle names with umlauts", () => {
-      const result = parseName("Müller Schmidt");
-      expect(result).toEqual({
-        firstName: "Müller",
-        lastName: "Schmidt",
-      });
-    });
-
-    it("should handle Chinese names", () => {
-      const result = parseName("李 明");
-      expect(result).toEqual({
-        firstName: "李",
-        lastName: "明",
-      });
-    });
-
-    it("should handle Arabic names", () => {
-      const result = parseName("محمد علي");
-      expect(result).toEqual({
-        firstName: "محمد",
-        lastName: "علي",
-      });
-    });
-  });
-
-  describe("corner cases", () => {
-    it("should handle very long names", () => {
-      const longName = "John Michael James Robert William David Richard Charles Joseph Thomas";
-      const result = parseName(longName);
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Thomas",
-      });
-    });
-
-    it("should handle single character name", () => {
-      const result = parseName("J");
-      expect(result).toEqual({
-        firstName: "J",
-        lastName: "J",
-      });
-    });
-
-    it("should handle two single character names", () => {
-      const result = parseName("J D");
-      expect(result).toEqual({
-        firstName: "J",
-        lastName: "D",
-      });
-    });
-
-    it("should handle name with multiple consecutive spaces", () => {
-      const result = parseName("John     Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
-    });
-
-    it("should handle name with tabs", () => {
-      const result = parseName("John\tDoe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
-    });
-
-    it("should handle name with newlines", () => {
-      const result = parseName("John\nDoe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
-    });
-
-    it("should handle mixed whitespace", () => {
-      const result = parseName("John \t\n Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
-    });
-  });
-
-  describe("branch coverage for fallback values", () => {
-    it("should use fullName as firstName when nameParts[0] is undefined", () => {
-      // This happens when the string becomes empty after processing
-      const result = parseName("");
-      expect(result.firstName).toBe("");
-    });
-
-    it("should use empty string as lastName when last element is undefined", () => {
-      const result = parseName("");
-      expect(result.lastName).toBe("");
-    });
-
-    it("should handle case where trim results in empty string", () => {
-      const result = parseName("   ");
-      // After trim, split will create an array with one empty string
-      // nameParts[0] will be "" (falsy), so it falls back to fullName "   "
-      expect(result.firstName).toBe("   ");
-      expect(result.lastName).toBe("");
-    });
-  });
-
-  describe("parentheses edge cases", () => {
-    it("should handle nested parentheses", () => {
-      const result = parseName("John (Nick (Johnny)) Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
-    });
-
-    it("should handle unmatched opening parenthesis", () => {
-      const result = parseName("John (Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "(Doe",
-      });
-    });
-
-    it("should handle unmatched closing parenthesis", () => {
-      const result = parseName("John Doe)");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe)",
-      });
-    });
-
-    it("should handle empty parentheses", () => {
-      const result = parseName("John () Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
-    });
-
-    it("should handle multiple spaces in parentheses", () => {
-      const result = parseName("John (  test  ) Doe");
-      expect(result).toEqual({
-        firstName: "John",
-        lastName: "Doe",
-      });
+  describe("lastName", () => {
+    it.each([
+      ["Ringo De Smet", "Smet"],
+      ["Kaelig Deloumeau-Prigent", "Deloumeau-Prigent"],
+      ["Hiroshi (Wes) Nishio", "Nishio"],
+      ["Glow", "Glow"],
+      ["", ""],
+    ])("%s → lastName: %s", (input, expected) => {
+      expect(parseName(input).lastName).toBe(expected);
     });
   });
 });

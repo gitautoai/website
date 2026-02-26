@@ -1,11 +1,9 @@
 import { EMAIL_SIGN_OFF, PRODUCT_NAME } from "@/config";
 import { ABSOLUTE_URLS } from "@/config/urls";
+import { formatPrUrl } from "@/utils/format-pr-url";
 import type { OwnerContext } from "@/types/drip-emails";
 
 const MAX_PR_LINKS = 3;
-
-const formatPrUrl = (pr: { ownerName: string; repoName: string; prNumber: number }) =>
-  `https://github.com/${pr.ownerName}/${pr.repoName}/pull/${pr.prNumber}`;
 
 /**
  * Subject: You have 3 PRs adding unit tests - merge if CI passes
@@ -35,7 +33,7 @@ export const generateMergeTestPrSubject = (ctx: OwnerContext) =>
 export const generateMergeTestPrEmail = (firstName: string, ctx: OwnerContext) => {
   const shown = ctx.openTestPrs.slice(0, MAX_PR_LINKS);
   const rest = ctx.openTestPrs.slice(MAX_PR_LINKS);
-  const prLinks = shown.map(formatPrUrl).join("\n");
+  const prLinks = shown.map((pr) => formatPrUrl(pr.ownerName, pr.repoName, pr.prNumber)).join("\n");
 
   let moreLine = "";
   if (rest.length > 0) {

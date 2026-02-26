@@ -16,43 +16,53 @@ import {
   generateReviewSetupPrSubject,
 } from "@/app/actions/resend/templates/drip/onboarding/01-review-setup-pr";
 import {
+  generateDormantReintroEmail,
+  generateDormantReintroSubject,
+} from "@/app/actions/resend/templates/drip/re-engage/01-dormant-reintro";
+import {
   generateSetTargetBranchEmail,
   generateSetTargetBranchSubject,
 } from "@/app/actions/resend/templates/drip/onboarding/03-set-target-branch";
 import type { DripScheduleItem } from "@/types/drip-emails";
 
 // Order follows the natural user journey:
-// Setup → See baseline → Configure branch & automate → First PR tips → Buy credits
+// Re-engage (dormant only) → Setup → See baseline → Configure branch & automate → First PR tips → Buy credits
 // Timing is slot-based: skipped emails don't take a slot, so the next email moves up.
 export const DRIP_SCHEDULE: DripScheduleItem[] = [
+  {
+    emailType: "dormant_reintro",
+    subject: (ownerName) => generateDormantReintroSubject(ownerName),
+    body: (ownerName, firstName, ctx) => generateDormantReintroEmail(ownerName, firstName, ctx),
+    shouldSkip: (ctx) => !ctx.isDormant || ctx.hasReceivedOnboarding,
+    shouldPause: () => false,
+  },
   {
     emailType: "onboarding_review_setup_pr",
     subject: (ownerName, _firstName, ctx) => generateReviewSetupPrSubject(ownerName, ctx),
     body: (ownerName, firstName, ctx) => generateReviewSetupPrEmail(ownerName, firstName, ctx),
     shouldSkip: (ctx) => ctx.hasSetupPrMerged || ctx.hasOwnerCoverage,
-    shouldPause: () => false,
+    shouldPause: (ctx) => ctx.isDormant,
   },
   {
     emailType: "onboarding_coverage_charts",
     subject: (_ownerName, _firstName, ctx) => generateCoverageChartsSubject(ctx),
     body: (ownerName, firstName, ctx) => generateCoverageChartsEmail(ownerName, firstName, ctx),
     shouldSkip: () => false,
-    shouldPause: (ctx) => !ctx.hasOwnerCoverage,
+    shouldPause: (ctx) => ctx.isDormant || !ctx.hasOwnerCoverage,
   },
   {
     emailType: "onboarding_set_target_branch",
     subject: () => generateSetTargetBranchSubject(),
     body: (ownerName, firstName, ctx) => generateSetTargetBranchEmail(ownerName, firstName, ctx),
     shouldSkip: (ctx) => ctx.scheduledRepoCount > 0,
-    // Wait until they have coverage data before nudging about scheduling
-    shouldPause: (ctx) => !ctx.hasOwnerCoverage,
+    shouldPause: (ctx) => ctx.isDormant || !ctx.hasOwnerCoverage,
   },
   {
     emailType: "onboarding_merge_test_pr",
     subject: (_ownerName, _firstName, ctx) => generateMergeTestPrSubject(ctx),
     body: (_ownerName, firstName, ctx) => generateMergeTestPrEmail(firstName, ctx),
     shouldSkip: (ctx) => ctx.hasMergedPr,
-    shouldPause: (ctx) => !ctx.hasPrs,
+    shouldPause: (ctx) => ctx.isDormant || !ctx.hasPrs,
   },
   {
     emailType: "onboarding_purchase_credits",
@@ -60,6 +70,7 @@ export const DRIP_SCHEDULE: DripScheduleItem[] = [
     body: (_ownerName, firstName, ctx) => generatePurchaseCreditsEmail(firstName, ctx),
     shouldSkip: () => false,
     shouldPause: (ctx) =>
+      ctx.isDormant ||
       !ctx.hasPrs ||
       ctx.hasActiveSubscription ||
       ctx.hasAutoReloadEnabled ||

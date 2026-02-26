@@ -9,7 +9,7 @@ import { ABSOLUTE_URLS } from "@/config/urls";
  *
  *     https://gitauto.ai/dashboard/charts
  *
- *     Know someone who'd benefit? Forward this email - we'd appreciate it.
+ *     Know someone who'd benefit? Forward this email - I'd appreciate it.
  *
  *     Wes
  *     Founder, GitAuto
@@ -21,7 +21,7 @@ import { ABSOLUTE_URLS } from "@/config/urls";
  *
  *     https://gitauto.ai/dashboard/charts
  *
- *     Know someone who'd benefit? Forward this email - we'd appreciate it.
+ *     Know someone who'd benefit? Forward this email - I'd appreciate it.
  *
  *     Wes
  *     Founder, GitAuto
@@ -50,7 +50,7 @@ export const generateOwnerCoverage90Email = (
 
 ${ABSOLUTE_URLS.GITAUTO.DASHBOARD.CHARTS}
 
-Know someone who'd benefit? Forward this email - we'd appreciate it.
+Know someone who'd benefit? Forward this email - I'd appreciate it.
 
 ${EMAIL_SIGN_OFF}`;
 };

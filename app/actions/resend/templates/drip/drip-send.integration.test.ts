@@ -43,10 +43,11 @@ describeIf("drip email send integration", () => {
     // Onboarding - call real schedule subject/body with a representative context
     // We need a context object for the schedule functions. Build one from real data.
     const { fetchBatchData } = await import("@/app/actions/cron/drip-emails/fetch-batch-data");
-    const { buildOwnerContext } = await import("@/app/actions/cron/drip-emails/build-owner-context");
+    const { buildOwnerContext } =
+      await import("@/app/actions/cron/drip-emails/build-owner-context");
     const batchData = await fetchBatchData([OWNER_ID]);
     const { buildContext } = buildOwnerContext(batchData);
-    const ctx = buildContext(OWNER_ID);
+    const ctx = buildContext(OWNER_ID, new Date().toISOString());
 
     for (const schedule of DRIP_SCHEDULE) {
       // Bypass shouldSkip - send every template
