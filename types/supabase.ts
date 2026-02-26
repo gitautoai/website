@@ -1011,6 +1011,7 @@ export type Database = {
           display_name_override: string | null;
           email: string | null;
           id: number;
+          skip_drip_emails: boolean;
           user_id: number;
           user_name: string;
           user_rules: string;
@@ -1023,6 +1024,7 @@ export type Database = {
           display_name_override?: string | null;
           email?: string | null;
           id?: number;
+          skip_drip_emails?: boolean;
           user_id: number;
           user_name: string;
           user_rules?: string;
@@ -1035,6 +1037,7 @@ export type Database = {
           display_name_override?: string | null;
           email?: string | null;
           id?: number;
+          skip_drip_emails?: boolean;
           user_id?: number;
           user_name?: string;
           user_rules?: string;

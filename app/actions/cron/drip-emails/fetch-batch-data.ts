@@ -111,6 +111,7 @@ export const fetchBatchData = async (ownerIds: number[]): Promise<BatchQueryResu
           .select("user_id, email, user_name, display_name, display_name_override")
           .in("user_id", uniqueUserIds)
           .not("email", "is", null)
+          .eq("skip_drip_emails", false)
       : Promise.resolve({ data: [], error: null }),
     supabaseAdmin
       .from("total_repo_coverage")
