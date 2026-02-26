@@ -1,11 +1,10 @@
 "use server";
 
+import { DAILY_SEND_LIMIT } from "@/config/drip-emails";
 import { isBusinessDay } from "@/utils/is-business-day";
 import { processBatch } from "./process-batch";
 import { slackUs } from "@/app/actions/slack/slack-us";
 import { supabaseAdmin } from "@/lib/supabase/server";
-
-const DAILY_SEND_LIMIT = 30;
 
 /**
  * Main drip email cron job. Processes all active installations in batches.
@@ -47,12 +46,13 @@ export const processDripEmails = async () => {
     hasMore = installations.length === DAILY_SEND_LIMIT;
     offset += installations.length;
 
-    const batchResults = await processBatch(installations);
+    const sentSoFar = results.filter((r) => r.success).length;
+    const remaining = DAILY_SEND_LIMIT - sentSoFar;
+    const batchResults = await processBatch(installations, remaining);
     results.push(...batchResults);
     console.log(`[drip] Batch done: ${batchResults.length} results`);
 
-    const sentSoFar = results.filter((r) => r.success).length;
-    if (sentSoFar >= DAILY_SEND_LIMIT) {
+    if (results.filter((r) => r.success).length >= DAILY_SEND_LIMIT) {
       console.log(`[drip] Daily send limit (${DAILY_SEND_LIMIT}) reached, stopping`);
       break;
     }

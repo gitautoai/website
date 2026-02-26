@@ -1,3 +1,4 @@
+import { DORMANCY_THRESHOLD_DAYS } from "@/config/drip-emails";
 import { findBenchmark } from "./find-benchmark";
 import { parseName } from "@/utils/parse-name";
 import type { OwnerContext } from "@/types/drip-emails";
@@ -11,7 +12,7 @@ export interface UserInfo {
 export interface OwnerLookups {
   getUserInfo: (ownerId: number) => UserInfo | null;
   getSentEmails: (ownerId: number) => Set<string>;
-  buildContext: (ownerId: number) => OwnerContext;
+  buildContext: (ownerId: number, installCreatedAt: string) => OwnerContext;
 }
 
 export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
@@ -48,6 +49,9 @@ export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
   // Purchased credits
   const ownerHasPurchased = new Set(data.purchaseOwnerIds);
 
+  // Usage: track latest activity (PR creation) per owner
+  const ownerLatestActivity: Record<number, string> = {};
+
   // Usage: split by trigger type, deduplicate PRs
   const ownerHasSetupPr = new Set<number>();
   const ownerHasSetupPrMerged = new Set<number>();
@@ -55,6 +59,10 @@ export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
   const prSets: Record<number, Set<string>> = {};
   const mergedPrKeys: Record<number, Set<string>> = {};
   for (const row of data.usageRows) {
+    // Track latest activity timestamp per owner
+    if (!ownerLatestActivity[row.owner_id] || row.created_at > ownerLatestActivity[row.owner_id])
+      ownerLatestActivity[row.owner_id] = row.created_at;
+
     if (row.trigger === "setup") {
       ownerHasSetupPr.add(row.owner_id);
       if (!row.is_merged && row.pr_number) {
@@ -79,10 +87,10 @@ export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
   // User emails
   const userEmailMap: Record<number, { email: string; displayName: string }> = {};
   for (const user of data.users) {
-    if (user.email)
+    if (user.email && !user.user_name.endsWith("[bot]"))
       userEmailMap[user.user_id] = {
         email: user.email,
-        displayName: user.display_name || user.user_name,
+        displayName: user.display_name_override || user.display_name || user.user_name,
       };
   }
 
@@ -95,8 +103,10 @@ export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
   }
 
   // Coverage: latest per owner+repo (rows ordered by created_at DESC)
-  const latestRepoCov: Record<number, Record<string, { lines_total: number; lines_covered: number }>> =
-    {};
+  const latestRepoCov: Record<
+    number,
+    Record<string, { lines_total: number; lines_covered: number }>
+  > = {};
   for (const row of data.repoCoverageRows) {
     if (!latestRepoCov[row.owner_id]) latestRepoCov[row.owner_id] = {};
     if (!latestRepoCov[row.owner_id][row.repo_name])
@@ -129,8 +139,10 @@ export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
   }
 
   // Global repo stats for benchmark comparison (latest row per owner+repo)
-  const globalLatest: Record<string, { ownerId: number; linesTotal: number; linesCovered: number }> =
-    {};
+  const globalLatest: Record<
+    string,
+    { ownerId: number; linesTotal: number; linesCovered: number }
+  > = {};
   for (const row of data.globalRepoCoverageRows) {
     const key = `${row.owner_id}:${row.repo_name}`;
     if (!globalLatest[key])
@@ -154,13 +166,19 @@ export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
       const user = userEmailMap[userId];
       if (!user) return null;
       const { firstName } = parseName(user.displayName);
+
       return { email: user.email, firstName };
     },
 
     getSentEmails: (ownerId) => data.sentEmails[ownerId] || new Set(),
 
-    buildContext: (ownerId) => {
+    buildContext: (ownerId, installCreatedAt) => {
       const prCount = prSets[ownerId]?.size || 0;
+      const lastActivityAt = ownerLatestActivity[ownerId] ?? null;
+      const referenceDate = lastActivityAt ?? installCreatedAt;
+      const daysSinceLastActivity = Math.floor(
+        (Date.now() - new Date(referenceDate).getTime()) / (1000 * 60 * 60 * 24),
+      );
       return {
         hasOwnerCoverage: latestCoverageByOwner[ownerId] !== undefined,
         ownerCoveragePct: latestCoverageByOwner[ownerId] ?? null,
@@ -195,6 +213,13 @@ export const buildOwnerContext = (data: BatchQueryResults): OwnerLookups => {
         hasActiveSubscription: ownerHasActiveSub.has(ownerId),
         hasAutoReloadEnabled: ownerHasAutoReload.has(ownerId),
         creditBalanceUsd: ownerCreditBalance[ownerId] ?? null,
+        installedAt: installCreatedAt,
+        lastActivityAt,
+        daysSinceLastActivity,
+        isDormant: daysSinceLastActivity >= DORMANCY_THRESHOLD_DAYS,
+        hasReceivedOnboarding: [...(data.sentEmails[ownerId] || new Set())].some((t) =>
+          t.startsWith("onboarding_"),
+        ),
       };
     },
   };

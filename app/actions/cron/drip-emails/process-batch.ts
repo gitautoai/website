@@ -1,6 +1,7 @@
 "use server";
 
 import { buildOwnerContext } from "./build-owner-context";
+import { DRY_RUN_TO, EMAIL_GAP_DAYS, FIRST_EMAIL_DAY } from "@/config/drip-emails";
 import { fetchBatchData } from "./fetch-batch-data";
 import { generateRandomDelay } from "@/utils/generate-random-delay";
 import { insertEmailSend } from "@/app/actions/supabase/email-sends/insert-email-send";
@@ -9,12 +10,6 @@ import { DRIP_SCHEDULE } from "./schedule";
 import { sendAndRecord } from "./send-and-record";
 import type { SendResult } from "./send-and-record";
 
-// TODO: Remove after dry run
-const DRY_RUN_TO = "hnishio0105@gmail.com";
-
-const FIRST_EMAIL_DAY = 1;
-const EMAIL_GAP_DAYS = 2;
-
 export const processBatch = async (
   installations: {
     installation_id: number;
@@ -22,6 +17,7 @@ export const processBatch = async (
     owner_name: string;
     created_at: string;
   }[],
+  sendBudget: number,
 ) => {
   const ownerIds = [...new Set(installations.map((inst) => inst.owner_id))];
   const data = await fetchBatchData(ownerIds);
@@ -33,7 +29,12 @@ export const processBatch = async (
   // so they don't get bombarded. Oldest installation is processed first.
   const emailedUsers = new Set<string>();
 
+  let sendCount = 0;
   for (const inst of installations) {
+    if (sendCount >= sendBudget) {
+      console.log(`[drip] Send budget (${sendBudget}) exhausted, stopping batch`);
+      break;
+    }
     const ownerId = inst.owner_id;
     const userInfo = lookups.getUserInfo(ownerId);
     if (!userInfo) {
@@ -49,7 +50,7 @@ export const processBatch = async (
       (now - new Date(inst.created_at).getTime()) / (1000 * 60 * 60 * 24),
     );
     const alreadySent = lookups.getSentEmails(ownerId);
-    const ctx = lookups.buildContext(ownerId);
+    const ctx = lookups.buildContext(ownerId, inst.created_at);
 
     // Max one email per owner per run (cron runs daily)
     let sentThisRun = false;
@@ -93,6 +94,7 @@ export const processBatch = async (
       if (result.success) {
         alreadySent.add(schedule.emailType);
         sentThisRun = true;
+        sendCount++;
         emailedUsers.add(userInfo.email);
       }
       slot++;
@@ -145,6 +147,7 @@ export const processBatch = async (
         if (result.success) {
           alreadySent.add(highestCovThreshold.emailType);
           sentThisRun = true;
+          sendCount++;
           emailedUsers.add(userInfo.email);
           // Mark all lower thresholds as sent so we don't send "congrats on 50%" after celebrating 80%
           for (const lower of OWNER_COVERAGE_THRESHOLDS) {

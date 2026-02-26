@@ -8,6 +8,7 @@ import { generateCoverageChartsEmail } from "./onboarding/02-coverage-charts";
 import { generateMergeTestPrEmail } from "./onboarding/04-merge-test-pr";
 import { generatePurchaseCreditsEmail } from "./onboarding/05-purchase-credits";
 import { generateReviewSetupPrEmail } from "./onboarding/01-review-setup-pr";
+import { generateDormantReintroEmail } from "./re-engage/01-dormant-reintro";
 import { generateSetTargetBranchEmail } from "./onboarding/03-set-target-branch";
 import type { OwnerContext } from "@/types/drip-emails";
 
@@ -34,6 +35,11 @@ const makeCtx = (overrides: Partial<OwnerContext> = {}): OwnerContext => ({
   hasActiveSubscription: false,
   hasAutoReloadEnabled: false,
   creditBalanceUsd: null,
+  installedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+  lastActivityAt: null,
+  daysSinceLastActivity: 30,
+  isDormant: true,
+  hasReceivedOnboarding: false,
   ...overrides,
 });
 
@@ -181,6 +187,18 @@ describe("drip email templates", () => {
     expect(text).toContain("weighted coverage across 5 repos");
     expect(text).toContain("/dashboard/charts");
     expect(text).toContain("Forward");
+    expect(text).toContain("Wes");
+  });
+
+  it("generateDormantReintroEmail re-introduces GitAuto with demo and onboarding teaser", () => {
+    const ctx = makeCtx();
+    const text = generateDormantReintroEmail("test-org", "Alice", ctx);
+    expect(text).toContain("Alice");
+    expect(text).toContain("test-org");
+    expect(text).toContain("Remember? Sorry I didn't follow up sooner");
+    expect(text).toContain("hit 90% coverage");
+    expect(text).toContain("youtube.com");
+    expect(text).toContain("walk you through getting set up");
     expect(text).toContain("Wes");
   });
 

@@ -110,7 +110,7 @@ describe("processDripEmails", () => {
   it("should send auto-setup prompt when no setup PRs and no coverage", async () => {
     mockTables({
       installations: [
-        { installation_id: 1, owner_id: 100, owner_name: "test-org", created_at: daysAgo(10) },
+        { installation_id: 1, owner_id: 100, owner_name: "test-org", created_at: daysAgo(5) },
       ],
       owners: [{ owner_id: 100, created_by: "42:testuser" }],
       users: [{ user_id: 42, email: "test@example.com", user_name: "Test User" }],
@@ -132,7 +132,7 @@ describe("processDripEmails", () => {
   it("should pause at coverage_charts when coverage data is missing", async () => {
     mockTables({
       installations: [
-        { installation_id: 1, owner_id: 100, owner_name: "test-org", created_at: daysAgo(10) },
+        { installation_id: 1, owner_id: 100, owner_name: "test-org", created_at: daysAgo(5) },
       ],
       owners: [{ owner_id: 100, created_by: "42:testuser" }],
       users: [{ user_id: 42, email: "test@example.com", user_name: "Test User" }],
@@ -230,6 +230,7 @@ describe("processDripEmails", () => {
           repo_name: "api",
           pr_number: 1,
           is_merged: true,
+          created_at: daysAgo(1),
         },
       ],
     });
@@ -271,6 +272,47 @@ describe("processDripEmails", () => {
     expect(result.sent).toBe(0);
   });
 
+  it("should send dormant reintro email for dormant user with no activity", async () => {
+    mockTables({
+      installations: [
+        { installation_id: 1, owner_id: 100, owner_name: "test-org", created_at: daysAgo(30) },
+      ],
+      owners: [{ owner_id: 100, created_by: "42:testuser" }],
+      users: [{ user_id: 42, email: "test@example.com", user_name: "Test User" }],
+    });
+    mockGetSentEmails.mockResolvedValue({});
+
+    const result = await processDripEmails();
+
+    // Dormant (30 days, no PRs) → dormant reintro sent before onboarding
+    expect(mockSendEmail).toHaveBeenCalledTimes(1);
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        subject: expect.stringContaining("Still interested"),
+      }),
+    );
+    expect(result.sent).toBe(1);
+  });
+
+  it("should skip onboarding for dormant user when reintro already sent", async () => {
+    mockTables({
+      installations: [
+        { installation_id: 1, owner_id: 100, owner_name: "test-org", created_at: daysAgo(30) },
+      ],
+      owners: [{ owner_id: 100, created_by: "42:testuser" }],
+      users: [{ user_id: 42, email: "test@example.com", user_name: "Test User" }],
+    });
+    mockGetSentEmails.mockResolvedValue({
+      100: new Set(["dormant_reintro"]),
+    });
+
+    const result = await processDripEmails();
+
+    // Dormant + reintro already sent → skip all emails
+    expect(mockSendEmail).not.toHaveBeenCalled();
+    expect(result.sent).toBe(0);
+  });
+
   it("subscriber: purchase_credits NOT sent even with $0 balance", async () => {
     mockGetActiveSubCustomerIds.mockResolvedValue(new Set(["cus_spiderplus"]));
     mockTables({
@@ -290,6 +332,17 @@ describe("processDripEmails", () => {
           user_id: 106721599,
           email: "jun.honda@spiderplus.co.jp",
           user_name: "jun-honda-spiderplus",
+        },
+      ],
+      usage: [
+        {
+          owner_id: 300,
+          trigger: "issue",
+          owner_name: "spiderplus",
+          repo_name: "api",
+          pr_number: 1,
+          is_merged: true,
+          created_at: daysAgo(1),
         },
       ],
     });

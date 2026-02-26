@@ -921,6 +921,7 @@ export type Database = {
           created_by: string | null;
           deleted_at: string | null;
           display_name: string;
+          display_name_override: string | null;
           email: string | null;
           id: number;
           user_id: number;
@@ -932,6 +933,7 @@ export type Database = {
           created_by?: string | null;
           deleted_at?: string | null;
           display_name?: string;
+          display_name_override?: string | null;
           email?: string | null;
           id?: number;
           user_id: number;
@@ -943,6 +945,7 @@ export type Database = {
           created_by?: string | null;
           deleted_at?: string | null;
           display_name?: string;
+          display_name_override?: string | null;
           email?: string | null;
           id?: number;
           user_id?: number;

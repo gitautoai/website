@@ -22,6 +22,7 @@ export interface BatchQueryResults {
     repo_name: string;
     pr_number: number | null;
     is_merged: boolean;
+    created_at: string;
   }[];
   activeSubCustomerIds: Set<string>;
   users: {
@@ -29,6 +30,7 @@ export interface BatchQueryResults {
     email: string | null;
     user_name: string;
     display_name: string | null;
+    display_name_override: string | null;
   }[];
   totalCoverageRows: {
     owner_id: number | null;
@@ -74,7 +76,7 @@ export const fetchBatchData = async (ownerIds: number[]): Promise<BatchQueryResu
         .in("transaction_type", ["purchase", "auto_reload"]),
       supabaseAdmin
         .from("usage")
-        .select("owner_id, trigger, owner_name, repo_name, pr_number, is_merged")
+        .select("owner_id, trigger, owner_name, repo_name, pr_number, is_merged, created_at")
         .in("owner_id", ownerIds)
         .not("pr_number", "is", null)
         .gt("pr_number", 0),
@@ -106,7 +108,7 @@ export const fetchBatchData = async (ownerIds: number[]): Promise<BatchQueryResu
     uniqueUserIds.length > 0
       ? supabaseAdmin
           .from("users")
-          .select("user_id, email, user_name, display_name")
+          .select("user_id, email, user_name, display_name, display_name_override")
           .in("user_id", uniqueUserIds)
           .not("email", "is", null)
       : Promise.resolve({ data: [], error: null }),

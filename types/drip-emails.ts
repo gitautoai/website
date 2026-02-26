@@ -1,6 +1,7 @@
 export type WelcomeEmailType = "welcome";
 
-export type OnboardingEmailType =
+export type DripEmailType =
+  | "dormant_reintro"
   | "onboarding_review_setup_pr"
   | "onboarding_coverage_charts"
   | "onboarding_set_target_branch"
@@ -13,7 +14,7 @@ export type CoverageThresholdEmailType =
   | "owner_coverage_80_pct"
   | "owner_coverage_90_pct";
 
-export type EmailType = WelcomeEmailType | OnboardingEmailType | CoverageThresholdEmailType;
+export type EmailType = WelcomeEmailType | DripEmailType | CoverageThresholdEmailType;
 
 /**
  * Pre-fetched owner context passed to each email's shouldSkip condition.
@@ -42,10 +43,20 @@ export interface OwnerContext {
   hasActiveSubscription: boolean;
   hasAutoReloadEnabled: boolean;
   creditBalanceUsd: number | null;
+  /** ISO timestamp of when the GitHub App was installed */
+  installedAt: string;
+  /** ISO timestamp of most recent activity (PR created), or null if no PRs */
+  lastActivityAt: string | null;
+  /** Days since last activity (falls back to install date if no PRs) */
+  daysSinceLastActivity: number;
+  /** True if user has been inactive >= 7 days */
+  isDormant: boolean;
+  /** True if user has already received at least one onboarding email */
+  hasReceivedOnboarding: boolean;
 }
 
 export interface DripScheduleItem {
-  emailType: OnboardingEmailType;
+  emailType: DripEmailType;
   subject: (ownerName: string, firstName: string, ctx: OwnerContext) => string;
   body: (ownerName: string, firstName: string, ctx: OwnerContext) => string;
   /** Return true to skip this email permanently (e.g., user already completed the action) */
