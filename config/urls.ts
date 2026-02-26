@@ -163,8 +163,6 @@ export const ABSOLUTE_URLS = {
     DEMO: "https://www.youtube.com/watch?v=jmTQuuJAs38",
     DEMO_EMBED:
       "https://www.youtube.com/embed/jmTQuuJAs38?autoplay=1&mute=1&loop=1&playlist=jmTQuuJAs38&rel=0&cc_load_policy=1",
-    INTRO_1MIN: "https://www.youtube.com/watch?v=oOzhH1rnVIk",
-    INTRO_3MIN: "https://www.youtube.com/watch?v=QvzEzJ9GJzU&t=6s",
   },
   ATLASSIAN: {
     MARKETPLACE: "https://marketplace.atlassian.com/apps/1236220/gitauto",

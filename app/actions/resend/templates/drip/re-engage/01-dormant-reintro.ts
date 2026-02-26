@@ -9,7 +9,7 @@ import type { OwnerContext } from "@/types/drip-emails";
  *   Body:
  *     Hi Alice - you installed GitAuto for acme back in Jan 2025. Remember? Sorry I didn't follow up sooner.
  *
- *     GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=oOzhH1rnVIk
+ *     GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
  *
  *     I'll walk you through getting set up over the next few emails.
  *
@@ -21,7 +21,7 @@ import type { OwnerContext } from "@/types/drip-emails";
  *   Body:
  *     Hi Alice - you installed GitAuto for acme back in Jan. Remember? Sorry I didn't follow up sooner.
  *
- *     GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=oOzhH1rnVIk
+ *     GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
  *
  *     I'll walk you through getting set up over the next few emails.
  *
@@ -33,7 +33,7 @@ import type { OwnerContext } from "@/types/drip-emails";
  *   Body:
  *     Hi Alice - you installed GitAuto for acme a few weeks ago. Remember? Sorry I didn't follow up sooner.
  *
- *     GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=oOzhH1rnVIk
+ *     GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
  *
  *     I'll walk you through getting set up over the next few emails.
  *
@@ -52,7 +52,7 @@ export const generateDormantReintroEmail = (
 
   return `Hi ${firstName} - you installed GitAuto for ${ownerName} ${when}. Remember? Sorry I didn't follow up sooner.
 
-GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: ${ABSOLUTE_URLS.YOUTUBE.INTRO_1MIN}
+GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: ${ABSOLUTE_URLS.YOUTUBE.DEMO}
 
 I'll walk you through getting set up over the next few emails.
 

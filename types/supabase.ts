@@ -445,6 +445,93 @@ export type Database = {
           },
         ];
       };
+      marketing_coverage: {
+        Row: {
+          created_at: string;
+          id: number;
+          line_coverage: number | null;
+          lines: number | null;
+          owner_id: number;
+          owner_name: string;
+          repo_id: number;
+          repo_name: string;
+          source: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          line_coverage?: number | null;
+          lines?: number | null;
+          owner_id: number;
+          owner_name: string;
+          repo_id: number;
+          repo_name: string;
+          source: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          line_coverage?: number | null;
+          lines?: number | null;
+          owner_id?: number;
+          owner_name?: string;
+          repo_id?: number;
+          repo_name?: string;
+          source?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      marketing_users: {
+        Row: {
+          created_at: string;
+          email: string;
+          email_source: string;
+          first_name: string | null;
+          id: number;
+          last_name: string | null;
+          owner_id: number;
+          owner_name: string;
+          repo_id: number;
+          repo_name: string;
+          updated_at: string;
+          user_id: number;
+          username: string;
+        };
+        Insert: {
+          created_at?: string;
+          email: string;
+          email_source: string;
+          first_name?: string | null;
+          id?: number;
+          last_name?: string | null;
+          owner_id: number;
+          owner_name: string;
+          repo_id: number;
+          repo_name: string;
+          updated_at?: string;
+          user_id: number;
+          username: string;
+        };
+        Update: {
+          created_at?: string;
+          email?: string;
+          email_source?: string;
+          first_name?: string | null;
+          id?: number;
+          last_name?: string | null;
+          owner_id?: number;
+          owner_name?: string;
+          repo_id?: number;
+          repo_name?: string;
+          updated_at?: string;
+          user_id?: number;
+          username?: string;
+        };
+        Relationships: [];
+      };
       npm_tokens: {
         Row: {
           created_at: string;
