@@ -4,8 +4,8 @@ export const FIRST_EMAIL_DAY = 1;
 /** Days between consecutive onboarding email slots */
 export const EMAIL_GAP_DAYS = 2;
 
-/** Max emails sent per cron run across all users */
-export const DAILY_SEND_LIMIT = 30;
+/** Max emails sent per cron run across all users (randomized to look natural) */
+export const DAILY_SEND_LIMIT = Math.floor(Math.random() * 18) + 8;
 
 /** Days of inactivity (no PRs) before a user is considered dormant */
 export const DORMANCY_THRESHOLD_DAYS = 7;
