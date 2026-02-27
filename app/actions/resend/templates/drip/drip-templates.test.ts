@@ -9,6 +9,27 @@ import { generateMergeTestPrEmail } from "./onboarding/04-merge-test-pr";
 import { generatePurchaseCreditsEmail } from "./onboarding/05-purchase-credits";
 import { generateReviewSetupPrEmail } from "./onboarding/01-review-setup-pr";
 import { generateDormantReintroEmail } from "./re-engage/01-dormant-reintro";
+import {
+  generateSalvageHadSubscriptionEmail,
+  generateSalvageHadSubscriptionSubject,
+} from "@/app/actions/resend/templates/drip/re-engage/01-salvage-had-subscription";
+import {
+  generateSalvageMergedPrEmail,
+  generateSalvageMergedPrSubject,
+} from "@/app/actions/resend/templates/drip/re-engage/02-salvage-merged-pr";
+import {
+  generateSalvageHadPrEmail,
+  generateSalvageHadPrSubject,
+} from "@/app/actions/resend/templates/drip/re-engage/03-salvage-had-pr";
+import {
+  generateSalvageNoEngagementEmail,
+  generateSalvageNoEngagementSubject,
+} from "@/app/actions/resend/templates/drip/re-engage/04-salvage-no-engagement";
+import {
+  generateSalvageUninstallEmail,
+  generateSalvageUninstallSubject,
+} from "@/app/actions/cron/drip-emails/salvage-schedule";
+import type { SalvageContext } from "@/app/actions/cron/drip-emails/salvage-schedule";
 import { generateSetTargetBranchEmail } from "./onboarding/03-set-target-branch";
 import type { OwnerContext } from "@/types/drip-emails";
 
@@ -205,6 +226,78 @@ describe("drip email templates", () => {
     expect(text).toContain("Wes");
   });
 
+  describe("salvage uninstall email variants", () => {
+    const baseSalvageCtx: SalvageContext = {
+      uninstalledAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
+      canceledAt: null,
+      hadMergedPr: false,
+      hadPr: false,
+      hadSubscription: false,
+      mergedPrCount: 0,
+      prCount: 0,
+    };
+
+    it("all variants show reinstall link and value prop", () => {
+      const text = generateSalvageNoEngagementEmail("Alice", baseSalvageCtx);
+      expect(text).toContain("Alice");
+      expect(text).toContain("youtube.com");
+      expect(text).toContain("github.com/apps/gitauto-ai");
+      expect(text).toContain("Wes");
+    });
+
+    it("merged PR variant mentions count and improving", () => {
+      const text = generateSalvageMergedPrEmail("Alice", {
+        ...baseSalvageCtx,
+        hadMergedPr: true,
+        mergedPrCount: 3,
+      });
+      expect(text).toContain("merged 3 GitAuto PRs");
+      expect(text).toContain("improved");
+    });
+
+    it("all variants include value prop", () => {
+      const text = generateSalvageHadPrEmail("Alice", {
+        ...baseSalvageCtx,
+        hadPr: true,
+        prCount: 5,
+      });
+      expect(text).toContain("fire-and-forget");
+      expect(text).toContain("hit 90% coverage");
+      expect(text).toContain("youtube.com");
+    });
+
+    it("each variant has a distinct subject", () => {
+      expect(generateSalvageHadSubscriptionSubject("acme")).toContain("changed");
+      expect(generateSalvageMergedPrSubject("acme")).toContain("coverage");
+      expect(
+        generateSalvageHadPrSubject("acme", { ...baseSalvageCtx, hadPr: true, prCount: 4 }),
+      ).toContain("better");
+      expect(generateSalvageNoEngagementSubject("acme")).toContain("quick look");
+    });
+
+    it("subject router picks correct variant based on context", () => {
+      expect(
+        generateSalvageUninstallSubject("acme", { ...baseSalvageCtx, hadSubscription: true }),
+      ).toContain("changed");
+      expect(
+        generateSalvageUninstallSubject("acme", { ...baseSalvageCtx, hadMergedPr: true }),
+      ).toContain("coverage");
+      expect(
+        generateSalvageUninstallSubject("acme", { ...baseSalvageCtx, hadPr: true, prCount: 3 }),
+      ).toContain("better");
+      expect(generateSalvageUninstallSubject("acme", baseSalvageCtx)).toContain("quick look");
+    });
+
+    it("body router picks correct variant based on context", () => {
+      const mergedText = generateSalvageUninstallEmail("Alice", {
+        ...baseSalvageCtx,
+        hadMergedPr: true,
+        mergedPrCount: 5,
+      });
+      expect(mergedText).toContain("merged 5 GitAuto PRs");
+    });
+  });
+
   describe("character limit", () => {
     it(`generateReviewSetupPrEmail with setup PRs is within ${CHAR_LIMIT} chars`, () => {
       const ctx = makeCtx({
@@ -264,5 +357,8 @@ describe("drip email templates", () => {
       const text = generateOwnerCoverage90Email("long-org-name", "Maximilian", 92, 99, null);
       expect(text.length).toBeLessThanOrEqual(CHAR_LIMIT);
     });
+
+    // Salvage emails include the full value prop paragraph (like dormant reintro)
+    // so they exceed the 250 char limit used for onboarding drips. No char limit test needed.
   });
 });

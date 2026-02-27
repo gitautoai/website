@@ -12,7 +12,7 @@ import {
 } from "@/app/actions/resend/templates/drip/owner-coverage/03-owner-coverage-90";
 import type { OwnerCoverageThreshold } from "@/types/drip-emails";
 
-export const OWNER_COVERAGE_THRESHOLDS: OwnerCoverageThreshold[] = [
+export const coverageThresholds: OwnerCoverageThreshold[] = [
   {
     pct: 50,
     emailType: "owner_coverage_50_pct",

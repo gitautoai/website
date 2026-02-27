@@ -25,6 +25,22 @@ jest.mock("@/app/actions/stripe/get-active-subscription-customer-ids", () => ({
   getActiveSubscriptionCustomerIds: jest.fn(() => Promise.resolve(new Set<string>())),
 }));
 
+jest.mock("@/app/actions/stripe/get-canceled-subscription-customer-ids", () => ({
+  getCanceledSubscriptionCustomerIds: jest.fn(() => Promise.resolve(new Map<string, string>())),
+}));
+
+jest.mock("@/app/actions/stripe/get-owner-ids-had-subscription", () => ({
+  getOwnerIdsHadSubscription: jest.fn(() => Promise.resolve(new Map<number, string>())),
+}));
+
+jest.mock("./process-salvage", () => ({
+  processSalvage: jest.fn(() => Promise.resolve([])),
+}));
+
+jest.mock("@/app/actions/github/is-pr-open", () => ({
+  isPrOpen: jest.fn(() => Promise.resolve(true)),
+}));
+
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { sendEmail } from "@/app/actions/resend/send-email";
 import { getSentEmails } from "@/app/actions/supabase/email-sends/get-sent-emails";

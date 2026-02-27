@@ -28,7 +28,7 @@ import type { DripScheduleItem } from "@/types/drip-emails";
 // Order follows the natural user journey:
 // Re-engage (dormant only) → Setup → See baseline → Configure branch & automate → First PR tips → Buy credits
 // Timing is slot-based: skipped emails don't take a slot, so the next email moves up.
-export const DRIP_SCHEDULE: DripScheduleItem[] = [
+export const onboardingSchedule: DripScheduleItem[] = [
   {
     emailType: "dormant_reintro",
     subject: (ownerName) => generateDormantReintroSubject(ownerName),

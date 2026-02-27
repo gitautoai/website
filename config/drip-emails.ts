@@ -1,3 +1,8 @@
+import { ABSOLUTE_URLS } from "@/config/urls";
+
+/** Value proposition for re-engagement emails (dormant reintro, salvage, etc.) */
+export const EMAIL_VALUE_PROP = `GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: ${ABSOLUTE_URLS.YOUTUBE.DEMO}`;
+
 /** Days since install before sending the first onboarding email */
 export const FIRST_EMAIL_DAY = 1;
 

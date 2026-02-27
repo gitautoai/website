@@ -1,14 +1,16 @@
 "use server";
 
 import { DAILY_SEND_LIMIT } from "@/config/drip-emails";
+import { getOwnerIdsHadSubscription } from "@/app/actions/stripe/get-owner-ids-had-subscription";
 import { isBusinessDay } from "@/utils/is-business-day";
-import { processBatch } from "./process-batch";
+import { fetchAllDripData } from "./fetch-batch-data";
+import { processOnboarding } from "./process-onboarding";
+import { processSalvage } from "./process-salvage";
 import { slackUs } from "@/app/actions/slack/slack-us";
-import { supabaseAdmin } from "@/lib/supabase/server";
 
 /**
- * Main drip email cron job. Processes all active installations in batches.
- * Sends onboarding drip and coverage thresholds.
+ * Main drip email cron job. Processes all active installations,
+ * then sends salvage emails to churned users (uninstalled or canceled subscription).
  */
 export const processDripEmails = async () => {
   console.log("[drip] Starting processDripEmails");
@@ -19,43 +21,32 @@ export const processDripEmails = async () => {
   }
 
   const startResult = await slackUs("Drip email job started");
-  console.log("[drip] Slack start notification sent");
   const threadTs = startResult.threadTs;
-  const results: { ownerId: number; emailType: string; success: boolean }[] = [];
-  let offset = 0;
-  let hasMore = true;
 
-  while (hasMore) {
-    console.log(`[drip] Fetching installations offset=${offset} limit=${DAILY_SEND_LIMIT}`);
-    const query = supabaseAdmin
-      .from("installations")
-      .select("installation_id, owner_id, owner_name, created_at")
-      .is("uninstalled_at", null)
-      .order("created_at", { ascending: true })
-      .range(offset, offset + DAILY_SEND_LIMIT - 1);
+  const { activeInstallations, data, uninstalled } = await fetchAllDripData();
 
-    const { data: installations, error: instError } = await query;
+  // Canceled-sub users should get salvage emails, not onboarding
+  const canceledSubOwnerIds = await getOwnerIdsHadSubscription(
+    activeInstallations.map((i) => i.owner_id),
+  );
+  const onboardingInstallations = activeInstallations.filter(
+    (i) => !canceledSubOwnerIds.has(i.owner_id),
+  );
 
-    if (instError) throw new Error(`Failed to fetch installations: ${instError.message}`);
-    if (!installations || installations.length === 0) {
-      console.log(`[drip] No installations at offset=${offset}`);
-      break;
-    }
+  // Process active installations (excluding canceled-sub users)
+  const results = await processOnboarding(onboardingInstallations, data, DAILY_SEND_LIMIT);
+  console.log(`[drip] Batch done: ${results.length} results`);
 
-    console.log(`[drip] Got ${installations.length} installations, processing batch`);
-    hasMore = installations.length === DAILY_SEND_LIMIT;
-    offset += installations.length;
-
-    const sentSoFar = results.filter((r) => r.success).length;
-    const remaining = DAILY_SEND_LIMIT - sentSoFar;
-    const batchResults = await processBatch(installations, remaining);
-    results.push(...batchResults);
-    console.log(`[drip] Batch done: ${batchResults.length} results`);
-
-    if (results.filter((r) => r.success).length >= DAILY_SEND_LIMIT) {
-      console.log(`[drip] Daily send limit (${DAILY_SEND_LIMIT}) reached, stopping`);
-      break;
-    }
+  // Salvage emails for churned users (one-time, shares daily budget)
+  const salvageBudget = DAILY_SEND_LIMIT - results.filter((r) => r.success).length;
+  if (salvageBudget > 0) {
+    const salvageResults = await processSalvage(
+      uninstalled,
+      activeInstallations,
+      data,
+      salvageBudget,
+    );
+    results.push(...salvageResults);
   }
 
   const successCount = results.filter((r) => r.success).length;

@@ -1,7 +1,15 @@
 "use server";
 
 import { getActiveSubscriptionCustomerIds } from "@/app/actions/stripe/get-active-subscription-customer-ids";
+import { getCanceledSubscriptionCustomerIds } from "@/app/actions/stripe/get-canceled-subscription-customer-ids";
+import { getPayingOwnerIds } from "@/app/actions/supabase/credits/get-paying-owner-ids";
 import { getSentEmails } from "@/app/actions/supabase/email-sends/get-sent-emails";
+import { getActiveInstallations } from "@/app/actions/supabase/installations/get-active-installations";
+import { getAllOwnerIds } from "@/app/actions/supabase/installations/get-all-owner-ids";
+import { getUninstalledInstallations } from "@/app/actions/supabase/installations/get-uninstalled-installations";
+import { getOwners } from "@/app/actions/supabase/owners/get-owners";
+import { getUsageByOwnerIds } from "@/app/actions/supabase/usage/get-usage-by-owner-ids";
+import { getUsersByIds } from "@/app/actions/supabase/users/get-users-by-ids";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
 export interface BatchQueryResults {
@@ -25,6 +33,7 @@ export interface BatchQueryResults {
     created_at: string;
   }[];
   activeSubCustomerIds: Set<string>;
+  canceledSubCustomerIds: Map<string, string>;
   users: {
     user_id: number;
     email: string | null;
@@ -53,76 +62,75 @@ export interface BatchQueryResults {
   }[];
 }
 
-export const fetchBatchData = async (ownerIds: number[]): Promise<BatchQueryResults> => {
-  console.log(`[drip] fetchBatchData: ownerIds=${JSON.stringify(ownerIds)}`);
-  const round1Start = Date.now();
+export interface AllDripData {
+  activeInstallations: Awaited<ReturnType<typeof getActiveInstallations>>;
+  data: BatchQueryResults;
+  uninstalled: Awaited<ReturnType<typeof getUninstalledInstallations>>;
+}
+
+/** Fetch all data needed for the drip email cron job in one place. */
+export const fetchAllDripData = async (): Promise<AllDripData> => {
+  // Fetch installations and owner IDs in parallel
+  const [activeInstallations, uninstalled, allOwnerIds] = await Promise.all([
+    getActiveInstallations(),
+    getUninstalledInstallations(),
+    getAllOwnerIds(),
+  ]);
+
+  if (allOwnerIds.length === 0) return { activeInstallations, data: emptyBatchData(), uninstalled };
 
   // Round 1: Fetch owners, sent emails, repos, credits, usage, subscriptions
-  const [ownersResult, sentEmails, reposResult, creditsResult, usageResult, activeSubCustomerIds] =
-    await Promise.all([
-      supabaseAdmin
-        .from("owners")
-        .select("owner_id, created_by, credit_balance_usd, stripe_customer_id, auto_reload_enabled")
-        .in("owner_id", ownerIds),
-      getSentEmails(ownerIds),
-      supabaseAdmin
-        .from("repositories")
-        .select("owner_id, repo_name, trigger_on_schedule")
-        .in("owner_id", ownerIds),
-      supabaseAdmin
-        .from("credits")
-        .select("owner_id, transaction_type")
-        .in("owner_id", ownerIds)
-        .in("transaction_type", ["purchase", "auto_reload"]),
-      supabaseAdmin
-        .from("usage")
-        .select("owner_id, trigger, owner_name, repo_name, pr_number, is_merged, created_at")
-        .in("owner_id", ownerIds)
-        .not("pr_number", "is", null)
-        .gt("pr_number", 0),
-      getActiveSubscriptionCustomerIds(),
-    ]);
+  const round1Start = Date.now();
+  const [
+    owners,
+    sentEmails,
+    reposResult,
+    purchaseOwnerIds,
+    usageRows,
+    activeSubCustomerIds,
+    canceledSubCustomerIds,
+  ] = await Promise.all([
+    getOwners(allOwnerIds),
+    getSentEmails(allOwnerIds),
+    supabaseAdmin
+      .from("repositories")
+      .select("owner_id, repo_name, trigger_on_schedule")
+      .in("owner_id", allOwnerIds),
+    getPayingOwnerIds(allOwnerIds),
+    getUsageByOwnerIds(allOwnerIds),
+    getActiveSubscriptionCustomerIds(),
+    getCanceledSubscriptionCustomerIds(),
+  ]);
 
   console.log(
-    `[drip] Round 1 done in ${Date.now() - round1Start}ms: owners=${ownersResult.data?.length} repos=${reposResult.data?.length} usage=${usageResult.data?.length}`,
+    `[drip] Round 1 done in ${Date.now() - round1Start}ms: owners=${owners.length} repos=${reposResult.data?.length} usage=${usageRows.length}`,
   );
 
-  if (ownersResult.error) throw new Error(`Failed to fetch owners: ${ownersResult.error.message}`);
   if (reposResult.error) throw new Error(`Failed to fetch repos: ${reposResult.error.message}`);
-  if (creditsResult.error)
-    throw new Error(`Failed to fetch credits: ${creditsResult.error.message}`);
-  if (usageResult.error) throw new Error(`Failed to fetch usage: ${usageResult.error.message}`);
 
   // Extract user IDs from owner created_by ("user_id:user_name" format)
   const userIds: number[] = [];
-  for (const owner of ownersResult.data || []) {
+  for (const owner of owners) {
     if (!owner.created_by) continue;
     const userId = parseInt(owner.created_by.split(":")[0], 10);
     if (!isNaN(userId)) userIds.push(userId);
   }
   const uniqueUserIds = [...new Set(userIds)];
 
-  const round2Start = Date.now();
   // Round 2: Fetch users (depends on owner data) and coverage data
-  const [usersResult, totalCovResult, repoCovResult, globalRepoCovResult] = await Promise.all([
-    uniqueUserIds.length > 0
-      ? supabaseAdmin
-          .from("users")
-          .select("user_id, email, user_name, display_name, display_name_override")
-          .in("user_id", uniqueUserIds)
-          .not("email", "is", null)
-          .eq("skip_drip_emails", false)
-      : Promise.resolve({ data: [], error: null }),
+  const round2Start = Date.now();
+  const [users, totalCovResult, repoCovResult, globalRepoCovResult] = await Promise.all([
+    getUsersByIds(uniqueUserIds),
     supabaseAdmin
       .from("total_repo_coverage")
       .select("owner_id, statement_coverage, coverage_date")
-      .in("owner_id", ownerIds)
+      .in("owner_id", allOwnerIds)
       .not("statement_coverage", "is", null)
       .order("coverage_date", { ascending: false }),
     supabaseAdmin
       .from("repo_coverage")
       .select("owner_id, repo_name, lines_total, lines_covered, created_at")
-      .in("owner_id", ownerIds)
+      .in("owner_id", allOwnerIds)
       .order("created_at", { ascending: false }),
     supabaseAdmin
       .from("repo_coverage")
@@ -132,10 +140,9 @@ export const fetchBatchData = async (ownerIds: number[]): Promise<BatchQueryResu
   ]);
 
   console.log(
-    `[drip] Round 2 done in ${Date.now() - round2Start}ms: users=${usersResult.data?.length} totalCov=${totalCovResult.data?.length} repoCov=${repoCovResult.data?.length} globalRepoCov=${globalRepoCovResult.data?.length}`,
+    `[drip] Round 2 done in ${Date.now() - round2Start}ms: users=${users.length} totalCov=${totalCovResult.data?.length} repoCov=${repoCovResult.data?.length} globalRepoCov=${globalRepoCovResult.data?.length}`,
   );
 
-  if (usersResult.error) throw new Error(`Failed to fetch users: ${usersResult.error.message}`);
   if (totalCovResult.error)
     throw new Error(`Failed to fetch total coverage: ${totalCovResult.error.message}`);
   if (repoCovResult.error)
@@ -143,16 +150,33 @@ export const fetchBatchData = async (ownerIds: number[]): Promise<BatchQueryResu
   if (globalRepoCovResult.error)
     throw new Error(`Failed to fetch global repo coverage: ${globalRepoCovResult.error.message}`);
 
-  return {
-    owners: ownersResult.data || [],
+  const data: BatchQueryResults = {
+    owners,
     sentEmails,
     repos: reposResult.data || [],
-    purchaseOwnerIds: (creditsResult.data || []).map((c) => c.owner_id),
-    usageRows: usageResult.data || [],
+    purchaseOwnerIds,
+    usageRows,
     activeSubCustomerIds,
-    users: usersResult.data || [],
+    canceledSubCustomerIds,
+    users,
     totalCoverageRows: totalCovResult.data || [],
     repoCoverageRows: repoCovResult.data || [],
     globalRepoCoverageRows: globalRepoCovResult.data || [],
   };
+
+  return { activeInstallations, data, uninstalled };
 };
+
+const emptyBatchData = (): BatchQueryResults => ({
+  owners: [],
+  sentEmails: {},
+  repos: [],
+  purchaseOwnerIds: [],
+  usageRows: [],
+  activeSubCustomerIds: new Set(),
+  canceledSubCustomerIds: new Map(),
+  users: [],
+  totalCoverageRows: [],
+  repoCoverageRows: [],
+  globalRepoCoverageRows: [],
+});
