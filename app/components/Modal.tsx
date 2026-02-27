@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 import CheckIcon from "@/app/components/icons/CheckIcon";
 import SpinnerIcon from "@/app/components/icons/SpinnerIcon";
 import XIcon from "@/app/components/icons/XIcon";
@@ -5,7 +7,7 @@ import XIcon from "@/app/components/icons/XIcon";
 interface ModalProps {
   title: string;
   type: "loading" | "success" | "error";
-  message: string;
+  message: ReactNode;
   onClose?: () => void;
 }
 

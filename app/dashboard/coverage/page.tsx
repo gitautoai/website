@@ -17,6 +17,7 @@ import LoadingSpinner from "@/app/components/LoadingSpinner";
 import Modal from "@/app/components/Modal";
 import Toast from "@/app/components/Toast";
 import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import { CREDIT_PRICING } from "@/config/pricing";
 import { RELATIVE_URLS } from "@/config/urls";
 import { STORAGE_KEYS } from "@/lib/constants";
 import { safeLocalStorage } from "@/lib/local-storage";
@@ -37,7 +38,7 @@ import {
 } from "./constants/filter-options";
 import { SYNC_MESSAGES } from "./constants/sync-messages";
 import { fetchCoverageData } from "./handlers/fetch-coverage-data";
-import { handleCreatePRs } from "./handlers/handle-create-prs";
+import { handleCreatePRs, InsufficientCreditsInfo } from "./handlers/handle-create-prs";
 import { handleSelectAll } from "./handlers/handle-select-all";
 import { handleSelectRow } from "./handlers/handle-select-row";
 import { handleSort } from "./handlers/handle-sort";
@@ -55,6 +56,7 @@ export default function CoveragePage() {
     organizations,
     accessToken,
     currentInstallationId,
+    installations,
     userId,
     userLogin,
     userName,
@@ -96,6 +98,9 @@ export default function CoveragePage() {
   const [isTogglingExclusion, setIsTogglingExclusion] = useState(false);
   const [isSettingUpWorkflow, setIsSettingUpWorkflow] = useState(false);
   const [showSetupModal, setShowSetupModal] = useState(false);
+  const [insufficientCredits, setInsufficientCredits] = useState<InsufficientCreditsInfo | null>(
+    null,
+  );
 
   // Load sort settings from localStorage
   useEffect(() => {
@@ -383,7 +388,7 @@ export default function CoveragePage() {
           selectedRows={selectedRows}
           isCreatingPRs={isCreatingPRs}
           onCreatePRs={(hasLabel) => {
-            if (!currentOwnerName || !currentRepoName || !accessToken) {
+            if (!currentOwnerName || !currentRepoName || !accessToken || !currentOwnerId) {
               setError("Missing required repository information");
               return;
             }
@@ -395,11 +400,14 @@ export default function CoveragePage() {
               currentRepoName,
               accessToken,
               hasLabel,
+              ownerId: currentOwnerId,
+              installations,
               setCoverageData,
               setSelectedRows,
               setActionSuccess,
               setError,
               setIsCreatingPRs,
+              setInsufficientCredits,
             });
           }}
           onToggleExclusion={handleToggleExclusion}
@@ -484,6 +492,25 @@ export default function CoveragePage() {
           type="success"
           message="A pull request will be created shortly with a CI workflow to upload coverage reports. Check your repository for the new PR."
           onClose={() => setShowSetupModal(false)}
+        />
+      )}
+
+      {insufficientCredits && (
+        <Modal
+          title="Insufficient Credits"
+          type="error"
+          message={
+            <>
+              Your balance is ${insufficientCredits.balance.toFixed(2)}, but creating{" "}
+              {insufficientCredits.numPRs} PR{insufficientCredits.numPRs === 1 ? "" : "s"} requires
+              ${insufficientCredits.required.toFixed(2)} (${CREDIT_PRICING.PER_PR.AMOUNT_USD}/PR).{" "}
+              <a href="/dashboard/credits" className="text-pink-600 hover:underline font-medium">
+                Purchase credits
+              </a>{" "}
+              to continue.
+            </>
+          }
+          onClose={() => setInsufficientCredits(null)}
         />
       )}
 
