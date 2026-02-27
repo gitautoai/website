@@ -1,15 +1,15 @@
-import { ABSOLUTE_URLS } from "@/config/urls";
 import { EMAIL_SIGN_OFF } from "@/config";
+import { EMAIL_VALUE_PROP } from "@/config/drip-emails";
 import { formatRelativeTime } from "@/utils/format-relative-time";
 import type { OwnerContext } from "@/types/drip-emails";
 
 /**
  * Installed back in Jan 2025 (different year):
- *   Subject: Remember installing GitAuto for acme?
+ *   Subject: Still interested in test coverage for acme?
  *   Body:
  *     Hi Alice - you installed GitAuto for acme back in Jan 2025. Remember? Sorry I didn't follow up sooner.
  *
- *     GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
+ *     Since then, GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
  *
  *     I'll walk you through getting set up over the next few emails.
  *
@@ -17,11 +17,11 @@ import type { OwnerContext } from "@/types/drip-emails";
  *     Founder, GitAuto
  *
  * Installed back in Jan (same year):
- *   Subject: Remember installing GitAuto for acme?
+ *   Subject: Still interested in test coverage for acme?
  *   Body:
  *     Hi Alice - you installed GitAuto for acme back in Jan. Remember? Sorry I didn't follow up sooner.
  *
- *     GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
+ *     Since then, GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
  *
  *     I'll walk you through getting set up over the next few emails.
  *
@@ -29,11 +29,11 @@ import type { OwnerContext } from "@/types/drip-emails";
  *     Founder, GitAuto
  *
  * Installed a few weeks ago (same month):
- *   Subject: Remember installing GitAuto for acme?
+ *   Subject: Still interested in test coverage for acme?
  *   Body:
  *     Hi Alice - you installed GitAuto for acme a few weeks ago. Remember? Sorry I didn't follow up sooner.
  *
- *     GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
+ *     Since then, GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
  *
  *     I'll walk you through getting set up over the next few emails.
  *
@@ -52,7 +52,7 @@ export const generateDormantReintroEmail = (
 
   return `Hi ${firstName} - you installed GitAuto for ${ownerName} ${when}. Remember? Sorry I didn't follow up sooner.
 
-GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: ${ABSOLUTE_URLS.YOUTUBE.DEMO}
+Since then, ${EMAIL_VALUE_PROP}
 
 I'll walk you through getting set up over the next few emails.
 

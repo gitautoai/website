@@ -2,25 +2,25 @@
 
 import { buildOwnerContext } from "./build-owner-context";
 import { DRY_RUN_TO, EMAIL_GAP_DAYS, FIRST_EMAIL_DAY } from "@/config/drip-emails";
-import { fetchBatchData } from "./fetch-batch-data";
+import type { BatchQueryResults } from "./fetch-batch-data";
+import { isPrOpen } from "@/app/actions/github/is-pr-open";
 import { generateRandomDelay } from "@/utils/generate-random-delay";
 import { insertEmailSend } from "@/app/actions/supabase/email-sends/insert-email-send";
-import { OWNER_COVERAGE_THRESHOLDS } from "./owner-coverage-thresholds";
-import { DRIP_SCHEDULE } from "./schedule";
+import { coverageThresholds } from "./owner-coverage-schedule";
+import { onboardingSchedule } from "./onboarding-schedule";
 import { sendAndRecord } from "./send-and-record";
 import type { SendResult } from "./send-and-record";
 
-export const processBatch = async (
+export const processOnboarding = async (
   installations: {
     installation_id: number;
     owner_id: number;
     owner_name: string;
     created_at: string;
   }[],
+  data: BatchQueryResults,
   sendBudget: number,
 ) => {
-  const ownerIds = [...new Set(installations.map((inst) => inst.owner_id))];
-  const data = await fetchBatchData(ownerIds);
   const lookups = buildOwnerContext(data);
 
   const results: SendResult[] = [];
@@ -52,12 +52,22 @@ export const processBatch = async (
     const alreadySent = lookups.getSentEmails(ownerId);
     const ctx = lookups.buildContext(ownerId, inst.created_at);
 
+    // Filter setup PRs to only include ones still open on GitHub
+    if (ctx.setupPrs.length > 0) {
+      const openChecks = await Promise.all(
+        ctx.setupPrs.map((pr) =>
+          isPrOpen(inst.installation_id, inst.owner_name, pr.repoName, pr.prNumber),
+        ),
+      );
+      ctx.setupPrs = ctx.setupPrs.filter((_, i) => openChecks[i]);
+    }
+
     // Max one email per owner per run (cron runs daily)
     let sentThisRun = false;
 
     // Onboarding drip emails (slot-based: skipped emails don't take a slot)
     let slot = 0;
-    for (const schedule of DRIP_SCHEDULE) {
+    for (const schedule of onboardingSchedule) {
       if (sentThisRun) break;
       if (schedule.shouldPause(ctx)) {
         console.log(`Paused drip at ${schedule.emailType} for owner ${ownerId}`);
@@ -104,7 +114,7 @@ export const processBatch = async (
     // e.g. coverage 83%, 80% paused (no purchase yet) → fall through to 50% if eligible.
     if (!sentThisRun && ctx.ownerCoveragePct !== null) {
       let highestCovThreshold = null;
-      for (const t of [...OWNER_COVERAGE_THRESHOLDS].reverse()) {
+      for (const t of [...coverageThresholds].reverse()) {
         if (ctx.ownerCoveragePct < t.pct) continue;
         if (alreadySent.has(t.emailType)) continue;
         if (t.shouldSkip(ctx)) {
@@ -150,7 +160,7 @@ export const processBatch = async (
           sendCount++;
           emailedUsers.add(userInfo.email);
           // Mark all lower thresholds as sent so we don't send "congrats on 50%" after celebrating 80%
-          for (const lower of OWNER_COVERAGE_THRESHOLDS) {
+          for (const lower of coverageThresholds) {
             if (lower.pct >= highestCovThreshold.pct) continue;
             if (alreadySent.has(lower.emailType)) continue;
             alreadySent.add(lower.emailType);

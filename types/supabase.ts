@@ -484,6 +484,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      marketing_search_history: {
+        Row: {
+          created_at: string;
+          id: number;
+          owner_id: number;
+          owner_name: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          owner_id: number;
+          owner_name: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          owner_id?: number;
+          owner_name?: string;
+        };
+        Relationships: [];
+      };
       marketing_users: {
         Row: {
           created_at: string;

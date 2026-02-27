@@ -7,7 +7,8 @@ export type DripEmailType =
   | "onboarding_set_target_branch"
   | "onboarding_schedule_triggers"
   | "onboarding_merge_test_pr"
-  | "onboarding_purchase_credits";
+  | "onboarding_purchase_credits"
+  | "salvage_uninstall";
 
 export type CoverageThresholdEmailType =
   | "owner_coverage_50_pct"

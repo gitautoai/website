@@ -1,12 +1,12 @@
 /**
- * Integration test: calls processBatch with real Supabase data for gitautoai.
+ * Integration test: calls processDripEmails with real Supabase data for gitautoai.
  * Mocks shouldSkip (bypass) and sendAndRecord (send via Resend with [TEST] prefix).
  * Run manually: npx jest drip-send.integration --no-cache
  */
 import { Resend } from "resend";
 
-import { OWNER_COVERAGE_THRESHOLDS } from "@/app/actions/cron/drip-emails/owner-coverage-thresholds";
-import { DRIP_SCHEDULE } from "@/app/actions/cron/drip-emails/schedule";
+import { coverageThresholds } from "@/app/actions/cron/drip-emails/owner-coverage-schedule";
+import { onboardingSchedule } from "@/app/actions/cron/drip-emails/onboarding-schedule";
 import { generateWelcomeEmail } from "@/app/actions/resend/templates/generate-welcome-email";
 import { parseName } from "@/utils/parse-name";
 import { sleep } from "@/utils/sleep";
@@ -22,8 +22,8 @@ const describeIf = process.env.RESEND_API_KEY ? describe : describe.skip;
 describeIf("drip email send integration", () => {
   const resend = new Resend(process.env.RESEND_API_KEY);
 
-  it("sends all email templates using real processBatch data", async () => {
-    // Fetch user info (same query as process-batch.ts)
+  it("sends all email templates using real processDripEmails data", async () => {
+    // Fetch user info (same query as process-onboarding.ts)
     const { data: user } = await supabaseAdmin
       .from("users")
       .select("email, display_name, user_name")
@@ -42,14 +42,14 @@ describeIf("drip email send integration", () => {
 
     // Onboarding - call real schedule subject/body with a representative context
     // We need a context object for the schedule functions. Build one from real data.
-    const { fetchBatchData } = await import("@/app/actions/cron/drip-emails/fetch-batch-data");
+    const { fetchAllDripData } = await import("@/app/actions/cron/drip-emails/fetch-batch-data");
     const { buildOwnerContext } =
       await import("@/app/actions/cron/drip-emails/build-owner-context");
-    const batchData = await fetchBatchData([OWNER_ID]);
-    const { buildContext } = buildOwnerContext(batchData);
+    const { data } = await fetchAllDripData();
+    const { buildContext } = buildOwnerContext(data);
     const ctx = buildContext(OWNER_ID, new Date().toISOString());
 
-    for (const schedule of DRIP_SCHEDULE) {
+    for (const schedule of onboardingSchedule) {
       // Bypass shouldSkip - send every template
       emails.push({
         subject: schedule.subject(OWNER_NAME, firstName, ctx),
@@ -58,7 +58,7 @@ describeIf("drip email send integration", () => {
     }
 
     // Coverage thresholds
-    for (const threshold of OWNER_COVERAGE_THRESHOLDS) {
+    for (const threshold of coverageThresholds) {
       emails.push({
         subject: threshold.subject(
           OWNER_NAME,

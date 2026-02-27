@@ -1,0 +1,166 @@
+"use server";
+
+import { DRY_RUN_TO } from "@/config/drip-emails";
+import { generateRandomDelay } from "@/utils/generate-random-delay";
+import { generateSalvageUninstallEmail, generateSalvageUninstallSubject } from "./salvage-schedule";
+import type { SalvageContext } from "./salvage-schedule";
+import type { BatchQueryResults } from "./fetch-batch-data";
+import type { getActiveInstallations } from "@/app/actions/supabase/installations/get-active-installations";
+import type { getUninstalledInstallations } from "@/app/actions/supabase/installations/get-uninstalled-installations";
+import { getOwnerIdsHadMergedPr } from "@/app/actions/supabase/usage/get-owner-ids-had-merged-pr";
+import { getOwnerIdsHadPr } from "@/app/actions/supabase/usage/get-owner-ids-had-pr";
+import { getOwnerIdsHadSubscription } from "@/app/actions/stripe/get-owner-ids-had-subscription";
+import { getOwnerIdsWithActiveSubscription } from "@/app/actions/stripe/get-owner-ids-with-active-subscription";
+import { parseName } from "@/utils/parse-name";
+import { sendAndRecord } from "./send-and-record";
+import type { SendResult } from "./send-and-record";
+
+interface SalvageTarget {
+  owner_id: number;
+  owner_name: string;
+  uninstalled_at: string | null;
+}
+
+/**
+ * Send one-time salvage emails to churned users:
+ * 1. Users who uninstalled the GitHub App
+ * 2. Users who canceled their subscription but are still installed
+ * Each user gets exactly one email (tracked via email_sends table).
+ * Email content varies based on how far they got before churning.
+ */
+export const processSalvage = async (
+  uninstalled: Awaited<ReturnType<typeof getUninstalledInstallations>>,
+  activeInstallations: Awaited<ReturnType<typeof getActiveInstallations>>,
+  data: BatchQueryResults,
+  budget: number,
+) => {
+  console.log(`[drip] Starting salvage loop with budget=${budget}`);
+  const results: SendResult[] = [];
+
+  // Collect all owner IDs for context lookups
+  const allOwnerIds = [
+    ...new Set([
+      ...uninstalled.map((i) => i.owner_id),
+      ...activeInstallations.map((i) => i.owner_id),
+    ]),
+  ];
+
+  if (allOwnerIds.length === 0) return results;
+
+  // Fetch context flags in parallel
+  const [ownerHadPr, ownerHadMergedPr, ownerHasActiveSub, ownerHadSub] = await Promise.all([
+    getOwnerIdsHadPr(allOwnerIds),
+    getOwnerIdsHadMergedPr(allOwnerIds),
+    getOwnerIdsWithActiveSubscription(allOwnerIds),
+    getOwnerIdsHadSubscription(allOwnerIds),
+  ]);
+
+  // Build targets: uninstalled users + active users with canceled subscriptions
+  const targets: SalvageTarget[] = [];
+  const seenOwnerIds = new Set<number>();
+
+  for (const inst of uninstalled) {
+    if (!inst.uninstalled_at) continue;
+    if (seenOwnerIds.has(inst.owner_id)) continue;
+    seenOwnerIds.add(inst.owner_id);
+    targets.push({
+      owner_id: inst.owner_id,
+      owner_name: inst.owner_name,
+      uninstalled_at: inst.uninstalled_at,
+    });
+  }
+
+  for (const inst of activeInstallations) {
+    if (seenOwnerIds.has(inst.owner_id)) continue;
+    if (!ownerHadSub.has(inst.owner_id)) continue;
+    seenOwnerIds.add(inst.owner_id);
+    targets.push({
+      owner_id: inst.owner_id,
+      owner_name: inst.owner_name,
+      uninstalled_at: null,
+    });
+  }
+
+  console.log(
+    `[drip] Salvage targets: ${targets.length} (${uninstalled.length} uninstalled + canceled-sub active)`,
+  );
+
+  if (targets.length === 0) return results;
+
+  const alreadySentIds = new Set(
+    Object.entries(data.sentEmails)
+      .filter(([, types]) => types.has("salvage_uninstall"))
+      .map(([id]) => Number(id)),
+  );
+
+  // Build owner → user mapping
+  const ownerUserMap: Record<number, number> = {};
+  for (const o of data.owners) {
+    if (!o.created_by) continue;
+    const userId = parseInt(o.created_by.split(":")[0], 10);
+    if (!isNaN(userId)) ownerUserMap[o.owner_id] = userId;
+  }
+
+  const userMap: Record<number, { email: string; displayName: string }> = {};
+  for (const u of data.users) {
+    if (u.email && !u.user_name.endsWith("[bot]"))
+      userMap[u.user_id] = {
+        email: u.email,
+        displayName: u.display_name_override || u.display_name || u.user_name,
+      };
+  }
+
+  let salvageSent = 0;
+  const emailedUsers = new Set<string>();
+  for (const target of targets) {
+    if (salvageSent >= budget) break;
+    if (alreadySentIds.has(target.owner_id)) continue;
+    if (ownerHasActiveSub.has(target.owner_id)) {
+      console.log(
+        `[drip] Skipping salvage for owner ${target.owner_id}: still has active subscription`,
+      );
+      continue;
+    }
+
+    const userId = ownerUserMap[target.owner_id];
+    if (!userId) continue;
+    const user = userMap[userId];
+    if (!user) continue;
+    if (emailedUsers.has(user.email)) continue;
+
+    const { firstName } = parseName(user.displayName);
+    const ctx: SalvageContext = {
+      uninstalledAt: target.uninstalled_at,
+      canceledAt: ownerHadSub.get(target.owner_id) || null,
+      hadPr: ownerHadPr.has(target.owner_id),
+      hadMergedPr: ownerHadMergedPr.has(target.owner_id),
+      hadSubscription: ownerHadSub.has(target.owner_id),
+      mergedPrCount: ownerHadMergedPr.get(target.owner_id) || 0,
+      prCount: ownerHadPr.get(target.owner_id) || 0,
+    };
+
+    const emailTo = DRY_RUN_TO || user.email;
+    const subject = DRY_RUN_TO
+      ? `[TEST ${target.owner_name} → ${user.email}] ${generateSalvageUninstallSubject(target.owner_name, ctx)}`
+      : generateSalvageUninstallSubject(target.owner_name, ctx);
+    const body = generateSalvageUninstallEmail(firstName, ctx);
+
+    const result = await sendAndRecord(
+      target.owner_id,
+      target.owner_name,
+      "salvage_uninstall",
+      emailTo,
+      subject,
+      body,
+      DRY_RUN_TO ? generateRandomDelay(1, 3) : generateRandomDelay(30, 180),
+    );
+    results.push(result);
+    if (result.success) {
+      salvageSent++;
+      emailedUsers.add(user.email);
+    }
+  }
+  console.log(`[drip] Salvage loop done: ${salvageSent} sent`);
+
+  return results;
+};
