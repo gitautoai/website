@@ -1,5 +1,6 @@
 "use server";
 
+import { FREE_CREDITS_AMOUNT_USD } from "@/config/pricing";
 import { DRY_RUN_TO } from "@/config/drip-emails";
 import { generateRandomDelay } from "@/utils/generate-random-delay";
 import { generateSalvageUninstallEmail, generateSalvageUninstallSubject } from "./salvage-schedule";
@@ -7,6 +8,7 @@ import type { SalvageContext } from "./salvage-schedule";
 import type { BatchQueryResults } from "./fetch-batch-data";
 import type { getActiveInstallations } from "@/app/actions/supabase/installations/get-active-installations";
 import type { getUninstalledInstallations } from "@/app/actions/supabase/installations/get-uninstalled-installations";
+import { insertCredits } from "@/app/actions/supabase/credits/insert-credits";
 import { getOwnerIdsHadMergedPr } from "@/app/actions/supabase/usage/get-owner-ids-had-merged-pr";
 import { getOwnerIdsHadPr } from "@/app/actions/supabase/usage/get-owner-ids-had-pr";
 import { getOwnerIdsHadSubscription } from "@/app/actions/stripe/get-owner-ids-had-subscription";
@@ -93,9 +95,11 @@ export const processSalvage = async (
       .map(([id]) => Number(id)),
   );
 
-  // Build owner → user mapping
+  // Build owner → user mapping and credit balance lookup
   const ownerUserMap: Record<number, number> = {};
+  const ownerBalance: Record<number, number> = {};
   for (const o of data.owners) {
+    ownerBalance[o.owner_id] = o.credit_balance_usd || 0;
     if (!o.created_by) continue;
     const userId = parseInt(o.created_by.split(":")[0], 10);
     if (!isNaN(userId)) ownerUserMap[o.owner_id] = userId;
@@ -158,6 +162,25 @@ export const processSalvage = async (
     if (result.success) {
       salvageSent++;
       emailedUsers.add(user.email);
+
+      // Top up credits so they can actually try GitAuto again
+      const balance = ownerBalance[target.owner_id] || 0;
+      const topUp = FREE_CREDITS_AMOUNT_USD - balance;
+      if (topUp > 0) {
+        try {
+          await insertCredits({
+            owner_id: target.owner_id,
+            amount_usd: topUp,
+            transaction_type: "salvage",
+            expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+          });
+          console.log(
+            `[drip] Granted $${topUp} salvage credits to owner ${target.owner_id} (${target.owner_name}), balance was $${balance}`,
+          );
+        } catch (e) {
+          console.error(`[drip] Failed to grant salvage credits to owner ${target.owner_id}:`, e);
+        }
+      }
     }
   }
   console.log(`[drip] Salvage loop done: ${salvageSent} sent`);

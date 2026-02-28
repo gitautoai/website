@@ -79,13 +79,15 @@ export default function CreditTransactionHistory() {
                   {transaction.transaction_type === "refund" && "Refund"}
                   {transaction.transaction_type === "trial" && "Trial credits"}
                   {transaction.transaction_type === "grant" && "Granted credits"}
+                  {transaction.transaction_type === "salvage" && "Welcome back credits"}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   <span
                     className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
                       transaction.transaction_type === "purchase" ||
                       transaction.transaction_type === "trial" ||
-                      transaction.transaction_type === "grant"
+                      transaction.transaction_type === "grant" ||
+                      transaction.transaction_type === "salvage"
                         ? "bg-green-100 text-green-800"
                         : transaction.transaction_type === "usage" ||
                             transaction.transaction_type === "expiration"
