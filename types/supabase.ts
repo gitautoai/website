@@ -1,10 +1,4 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -263,7 +257,7 @@ export type Database = {
           id: number;
           owner_id: number;
           stripe_payment_intent_id: string | null;
-          transaction_type: string;
+          transaction_type: Database["public"]["Enums"]["credit_transaction_type"];
           usage_id: number | null;
         };
         Insert: {
@@ -273,7 +267,7 @@ export type Database = {
           id?: number;
           owner_id: number;
           stripe_payment_intent_id?: string | null;
-          transaction_type: string;
+          transaction_type: Database["public"]["Enums"]["credit_transaction_type"];
           usage_id?: number | null;
         };
         Update: {
@@ -283,7 +277,7 @@ export type Database = {
           id?: number;
           owner_id?: number;
           stripe_payment_intent_id?: string | null;
-          transaction_type?: string;
+          transaction_type?: Database["public"]["Enums"]["credit_transaction_type"];
           usage_id?: number | null;
         };
         Relationships: [
@@ -1109,6 +1103,15 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
+      credit_transaction_type:
+        | "purchase"
+        | "usage"
+        | "expiration"
+        | "refund"
+        | "auto_reload"
+        | "trial"
+        | "grant"
+        | "salvage";
       owner_type_enum: "User" | "Organization";
     };
     CompositeTypes: {
@@ -1119,10 +1122,7 @@ export type Database = {
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<
-  keyof Database,
-  "public"
->];
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
@@ -1143,10 +1143,8 @@ export type Tables<
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R;
       }
       ? R
@@ -1240,6 +1238,16 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      credit_transaction_type: [
+        "purchase",
+        "usage",
+        "expiration",
+        "refund",
+        "auto_reload",
+        "trial",
+        "grant",
+        "salvage",
+      ],
       owner_type_enum: ["User", "Organization"],
     },
   },
