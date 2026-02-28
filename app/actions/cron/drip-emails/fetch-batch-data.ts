@@ -1,9 +1,11 @@
 "use server";
 
+import { checkReplies } from "@/app/actions/gmail/check-replies";
 import { getActiveSubscriptionCustomerIds } from "@/app/actions/stripe/get-active-subscription-customer-ids";
 import { getCanceledSubscriptionCustomerIds } from "@/app/actions/stripe/get-canceled-subscription-customer-ids";
 import { getPayingOwnerIds } from "@/app/actions/supabase/credits/get-paying-owner-ids";
 import { getSentEmails } from "@/app/actions/supabase/email-sends/get-sent-emails";
+import { markReplied } from "@/app/actions/supabase/email-sends/mark-replied";
 import { getActiveInstallations } from "@/app/actions/supabase/installations/get-active-installations";
 import { getAllOwnerIds } from "@/app/actions/supabase/installations/get-all-owner-ids";
 import { getUninstalledInstallations } from "@/app/actions/supabase/installations/get-uninstalled-installations";
@@ -60,6 +62,7 @@ export interface BatchQueryResults {
     lines_covered: number;
     created_at: string;
   }[];
+  repliedOwnerIds: Set<number>;
 }
 
 export interface AllDripData {
@@ -150,6 +153,36 @@ export const fetchAllDripData = async (): Promise<AllDripData> => {
   if (globalRepoCovResult.error)
     throw new Error(`Failed to fetch global repo coverage: ${globalRepoCovResult.error.message}`);
 
+  // Round 3: Check Gmail for replies and persist
+  const round3Start = Date.now();
+  const emailToOwnerIds: Record<string, number[]> = {};
+  for (const owner of owners) {
+    if (!owner.created_by) continue;
+    const userId = parseInt(owner.created_by.split(":")[0], 10);
+    if (isNaN(userId)) continue;
+    const user = users.find((u) => u.user_id === userId);
+    if (!user?.email) continue;
+    if (!emailToOwnerIds[user.email]) emailToOwnerIds[user.email] = [];
+    emailToOwnerIds[user.email].push(owner.owner_id);
+  }
+
+  const uniqueEmails = Object.keys(emailToOwnerIds);
+  const repliedEmails = await checkReplies(uniqueEmails);
+  const repliedOwnerIds = new Set<number>();
+  const markEntries: { ownerId: number; repliedAt: string }[] = [];
+  for (const [email, repliedAt] of repliedEmails) {
+    for (const ownerId of emailToOwnerIds[email]) {
+      repliedOwnerIds.add(ownerId);
+      markEntries.push({ ownerId, repliedAt });
+    }
+  }
+
+  if (markEntries.length > 0) await markReplied(markEntries);
+
+  console.log(
+    `[drip] Round 3 done in ${Date.now() - round3Start}ms: checked ${uniqueEmails.length} emails, ${repliedOwnerIds.size} replied`,
+  );
+
   const data: BatchQueryResults = {
     owners,
     sentEmails,
@@ -162,6 +195,7 @@ export const fetchAllDripData = async (): Promise<AllDripData> => {
     totalCoverageRows: totalCovResult.data || [],
     repoCoverageRows: repoCovResult.data || [],
     globalRepoCoverageRows: globalRepoCovResult.data || [],
+    repliedOwnerIds,
   };
 
   return { activeInstallations, data, uninstalled };
@@ -179,4 +213,5 @@ const emptyBatchData = (): BatchQueryResults => ({
   totalCoverageRows: [],
   repoCoverageRows: [],
   globalRepoCoverageRows: [],
+  repliedOwnerIds: new Set(),
 });

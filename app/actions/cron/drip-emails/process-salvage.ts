@@ -119,6 +119,12 @@ export const processSalvage = async (
   for (const target of targets) {
     if (salvageSent >= budget) break;
     if (alreadySentIds.has(target.owner_id)) continue;
+    if (data.repliedOwnerIds.has(target.owner_id)) {
+      console.log(
+        `[drip] Skipping salvage for owner ${target.owner_id}: recipient replied to a previous email`,
+      );
+      continue;
+    }
     if (ownerHasActiveSub.has(target.owner_id)) {
       console.log(
         `[drip] Skipping salvage for owner ${target.owner_id}: still has active subscription`,
