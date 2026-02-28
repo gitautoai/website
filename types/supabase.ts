@@ -310,7 +310,9 @@ export type Database = {
           id: number;
           owner_id: number;
           owner_name: string;
+          replied_at: string | null;
           resend_email_id: string | null;
+          updated_at: string | null;
         };
         Insert: {
           created_at?: string;
@@ -318,7 +320,9 @@ export type Database = {
           id?: number;
           owner_id: number;
           owner_name: string;
+          replied_at?: string | null;
           resend_email_id?: string | null;
+          updated_at?: string | null;
         };
         Update: {
           created_at?: string;
@@ -326,7 +330,9 @@ export type Database = {
           id?: number;
           owner_id?: number;
           owner_name?: string;
+          replied_at?: string | null;
           resend_email_id?: string | null;
+          updated_at?: string | null;
         };
         Relationships: [];
       };

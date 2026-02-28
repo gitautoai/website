@@ -36,6 +36,10 @@ export const processOnboarding = async (
       break;
     }
     const ownerId = inst.owner_id;
+    if (data.repliedOwnerIds.has(ownerId)) {
+      console.log(`Skipping owner ${ownerId}: recipient replied to a previous email`);
+      continue;
+    }
     const userInfo = lookups.getUserInfo(ownerId);
     if (!userInfo) {
       console.log(`Skipping owner ${ownerId}: no user or email`);
@@ -130,7 +134,12 @@ export const processOnboarding = async (
           inst.owner_name,
           highestCovThreshold.emailType,
           userInfo.email,
-          highestCovThreshold.subject(inst.owner_name, ctx.ownerCoveragePct!, ctx.coverageRepoCount, ctx.repoMostNeedingCoverage),
+          highestCovThreshold.subject(
+            inst.owner_name,
+            ctx.ownerCoveragePct!,
+            ctx.coverageRepoCount,
+            ctx.repoMostNeedingCoverage,
+          ),
           highestCovThreshold.body(
             inst.owner_name,
             userInfo.firstName,
