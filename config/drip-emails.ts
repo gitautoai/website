@@ -15,5 +15,5 @@ export const DAILY_SEND_LIMIT = Math.floor(Math.random() * 18) + 8;
 /** Days of inactivity (no PRs) before a user is considered dormant */
 export const DORMANCY_THRESHOLD_DAYS = 7;
 
-/** Override recipient for dry-run testing. Set to "" to send to real users. TODO: Remove after dry run */
-export const DRY_RUN_TO = "hnishio0105@gmail.com";
+/** When true, creates Gmail drafts for review instead of sending via Resend. Set to false to send to real users. */
+export const IS_DRY_RUN = true;

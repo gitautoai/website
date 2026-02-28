@@ -9,6 +9,10 @@ jest.mock("@/app/actions/resend/send-email", () => ({
   sendEmail: jest.fn(),
 }));
 
+jest.mock("@/app/actions/gmail/create-draft", () => ({
+  createGmailDraft: jest.fn(),
+}));
+
 jest.mock("@/app/actions/supabase/email-sends/get-sent-emails", () => ({
   getSentEmails: jest.fn(),
 }));
@@ -45,12 +49,14 @@ jest.mock("@/utils/is-business-day", () => ({
   isBusinessDay: jest.fn(() => true),
 }));
 
+import { createGmailDraft } from "@/app/actions/gmail/create-draft";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { sendEmail } from "@/app/actions/resend/send-email";
 import { getSentEmails } from "@/app/actions/supabase/email-sends/get-sent-emails";
 import { getActiveSubscriptionCustomerIds } from "@/app/actions/stripe/get-active-subscription-customer-ids";
 import { insertEmailSend } from "@/app/actions/supabase/email-sends/insert-email-send";
 
+const mockCreateGmailDraft = createGmailDraft as jest.Mock;
 const mockFrom = supabaseAdmin.from as jest.Mock;
 const mockSendEmail = sendEmail as jest.Mock;
 const mockGetSentEmails = getSentEmails as jest.Mock;
@@ -89,6 +95,8 @@ const mockTables = (overrides: Record<string, unknown[]> = {}) => {
 describe("processDripEmails", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // DRY_RUN_TO is set, so createGmailDraft is used instead of sendEmail
+    mockCreateGmailDraft.mockResolvedValue("draft_123");
     mockSendEmail.mockResolvedValue({ success: true, emailId: "re_123" });
     mockInsertEmailSend.mockResolvedValue(true);
   });
@@ -99,7 +107,7 @@ describe("processDripEmails", () => {
     const result = await processDripEmails();
 
     expect(result.sent).toBe(0);
-    expect(mockSendEmail).not.toHaveBeenCalled();
+    expect(mockCreateGmailDraft).not.toHaveBeenCalled();
   });
 
   it("should send onboarding email on correct day", async () => {
@@ -117,12 +125,12 @@ describe("processDripEmails", () => {
     const result = await processDripEmails();
 
     // Day 2 >= slot 0 day (1), hasOwnerCoverage=true → review_setup_pr skipped, coverage_charts sent
-    expect(mockSendEmail).toHaveBeenCalledTimes(1);
+    expect(mockCreateGmailDraft).toHaveBeenCalledTimes(1);
     // TODO: Restore to: ["test@example.com"] after dry run
-    expect(mockSendEmail).toHaveBeenCalledWith(
-      expect.objectContaining({
-        subject: expect.stringContaining("coverage"),
-      }),
+    expect(mockCreateGmailDraft).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining("coverage"),
+      expect.any(String),
     );
     expect(result.sent).toBe(1);
   });
@@ -140,11 +148,11 @@ describe("processDripEmails", () => {
     const result = await processDripEmails();
 
     // No coverage, no setup PRs → review_setup_pr sends auto-setup prompt, then coverage_charts pauses
-    expect(mockSendEmail).toHaveBeenCalledTimes(1);
-    expect(mockSendEmail).toHaveBeenCalledWith(
-      expect.objectContaining({
-        subject: expect.stringContaining("Set up test coverage"),
-      }),
+    expect(mockCreateGmailDraft).toHaveBeenCalledTimes(1);
+    expect(mockCreateGmailDraft).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining("Set up test coverage"),
+      expect.any(String),
     );
     expect(result.sent).toBe(1);
   });
@@ -164,7 +172,7 @@ describe("processDripEmails", () => {
     const result = await processDripEmails();
 
     // review_setup_pr already sent, coverage_charts pauses (no coverage) → no email
-    expect(mockSendEmail).not.toHaveBeenCalled();
+    expect(mockCreateGmailDraft).not.toHaveBeenCalled();
     expect(result.sent).toBe(0);
   });
 
@@ -186,7 +194,7 @@ describe("processDripEmails", () => {
     const result = await processDripEmails();
 
     // Day 2, slot 0 = coverage_charts (already sent), slot 1 = set_target_branch (day 3) → too early
-    expect(mockSendEmail).not.toHaveBeenCalled();
+    expect(mockCreateGmailDraft).not.toHaveBeenCalled();
     expect(result.sent).toBe(0);
   });
 
@@ -202,7 +210,7 @@ describe("processDripEmails", () => {
 
     const result = await processDripEmails();
 
-    expect(mockSendEmail).not.toHaveBeenCalled();
+    expect(mockCreateGmailDraft).not.toHaveBeenCalled();
     expect(result.sent).toBe(0);
   });
 
@@ -223,11 +231,11 @@ describe("processDripEmails", () => {
     const result = await processDripEmails();
 
     // review_setup_pr already sent, coverage_charts already sent, set_target_branch moves to slot 1 (day 3)
-    expect(mockSendEmail).toHaveBeenCalledTimes(1);
-    expect(mockSendEmail).toHaveBeenCalledWith(
-      expect.objectContaining({
-        subject: expect.stringContaining("branch"),
-      }),
+    expect(mockCreateGmailDraft).toHaveBeenCalledTimes(1);
+    expect(mockCreateGmailDraft).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining("branch"),
+      expect.any(String),
     );
     expect(result.sent).toBe(1);
   });
@@ -267,11 +275,11 @@ describe("processDripEmails", () => {
     const result = await processDripEmails();
 
     // coverage_50_pct (76.5 >= 50, < 80)
-    expect(mockSendEmail).toHaveBeenCalledTimes(1);
-    expect(mockSendEmail).toHaveBeenCalledWith(
-      expect.objectContaining({
-        subject: expect.stringContaining("77%"),
-      }),
+    expect(mockCreateGmailDraft).toHaveBeenCalledTimes(1);
+    expect(mockCreateGmailDraft).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining("77%"),
+      expect.any(String),
     );
     expect(result.sent).toBe(1);
   });
@@ -288,7 +296,7 @@ describe("processDripEmails", () => {
 
     const result = await processDripEmails();
 
-    expect(mockSendEmail).not.toHaveBeenCalled();
+    expect(mockCreateGmailDraft).not.toHaveBeenCalled();
     expect(result.sent).toBe(0);
   });
 
@@ -305,11 +313,11 @@ describe("processDripEmails", () => {
     const result = await processDripEmails();
 
     // Dormant (30 days, no PRs) → dormant reintro sent before onboarding
-    expect(mockSendEmail).toHaveBeenCalledTimes(1);
-    expect(mockSendEmail).toHaveBeenCalledWith(
-      expect.objectContaining({
-        subject: expect.stringContaining("Still interested"),
-      }),
+    expect(mockCreateGmailDraft).toHaveBeenCalledTimes(1);
+    expect(mockCreateGmailDraft).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.stringContaining("Still interested"),
+      expect.any(String),
     );
     expect(result.sent).toBe(1);
   });
@@ -329,7 +337,7 @@ describe("processDripEmails", () => {
     const result = await processDripEmails();
 
     // Dormant + reintro already sent → skip all emails
-    expect(mockSendEmail).not.toHaveBeenCalled();
+    expect(mockCreateGmailDraft).not.toHaveBeenCalled();
     expect(result.sent).toBe(0);
   });
 
@@ -378,7 +386,7 @@ describe("processDripEmails", () => {
     const result = await processDripEmails();
 
     // purchase_credits is the only onboarding left, but skipped due to subscription
-    expect(mockSendEmail).not.toHaveBeenCalled();
+    expect(mockCreateGmailDraft).not.toHaveBeenCalled();
     expect(result.sent).toBe(0);
   });
 });

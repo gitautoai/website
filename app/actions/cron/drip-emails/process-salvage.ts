@@ -1,7 +1,7 @@
 "use server";
 
 import { FREE_CREDITS_AMOUNT_USD } from "@/config/pricing";
-import { DRY_RUN_TO } from "@/config/drip-emails";
+import { IS_DRY_RUN } from "@/config/drip-emails";
 import { generateRandomDelay } from "@/utils/generate-random-delay";
 import { generateSalvageUninstallEmail, generateSalvageUninstallSubject } from "./salvage-schedule";
 import type { SalvageContext } from "./salvage-schedule";
@@ -143,20 +143,17 @@ export const processSalvage = async (
       prCount: ownerHadPr.get(target.owner_id) || 0,
     };
 
-    const emailTo = DRY_RUN_TO || user.email;
-    const subject = DRY_RUN_TO
-      ? `[TEST ${target.owner_name} → ${user.email}] ${generateSalvageUninstallSubject(target.owner_name, ctx)}`
-      : generateSalvageUninstallSubject(target.owner_name, ctx);
+    const subject = generateSalvageUninstallSubject(target.owner_name, ctx);
     const body = generateSalvageUninstallEmail(firstName, ctx);
 
     const result = await sendAndRecord(
       target.owner_id,
       target.owner_name,
       "salvage_uninstall",
-      emailTo,
+      user.email,
       subject,
       body,
-      DRY_RUN_TO ? generateRandomDelay(1, 3) : generateRandomDelay(30, 180),
+      IS_DRY_RUN ? new Date() : generateRandomDelay(30, 180),
     );
     results.push(result);
     if (result.success) {
