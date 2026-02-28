@@ -5,7 +5,7 @@ import { getOctokitForInstallation } from "@/app/api/github";
 /**
  * Check if a PR is still open on GitHub.
  * Returns false for closed/merged PRs.
- * On API failure, returns true (conservative - assume open).
+ * On API failure, returns false (skip rather than email about a closed PR).
  */
 export const isPrOpen = async (
   installationId: number,
@@ -26,6 +26,6 @@ export const isPrOpen = async (
       `Failed to check PR state for ${ownerName}/${repoName}#${prNumber}:`,
       error instanceof Error ? error.message : error,
     );
-    return true;
+    return false;
   }
 };

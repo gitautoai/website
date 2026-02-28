@@ -218,11 +218,11 @@ describe("drip email templates", () => {
     const ctx = makeCtx();
     const text = generateDormantReintroEmail("test-org", "Alice", ctx);
     expect(text).toContain("Alice");
-    expect(text).toContain("test-org");
+    expect(text).toContain("your GitHub account test-org");
     expect(text).toContain("Remember? Sorry I didn't follow up sooner");
     expect(text).toContain("hit 90% coverage");
     expect(text).toContain("youtube.com");
-    expect(text).toContain("walk you through getting set up");
+    expect(text).toContain("share a few tips to get you set up");
     expect(text).toContain("Wes");
   });
 

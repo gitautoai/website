@@ -7,11 +7,11 @@ import type { OwnerContext } from "@/types/drip-emails";
  * Installed back in Jan 2025 (different year):
  *   Subject: Still interested in test coverage for acme?
  *   Body:
- *     Hi Alice - you installed GitAuto for acme back in Jan 2025. Remember? Sorry I didn't follow up sooner.
+ *     Hi Alice - you installed GitAuto for your GitHub account acme back in Jan 2025. Remember? Sorry I didn't follow up sooner.
  *
  *     Since then, GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
  *
- *     I'll walk you through getting set up over the next few emails.
+ *     If you're up for it, I'll share a few tips to get you set up over the next few emails.
  *
  *     Wes
  *     Founder, GitAuto
@@ -19,11 +19,11 @@ import type { OwnerContext } from "@/types/drip-emails";
  * Installed back in Jan (same year):
  *   Subject: Still interested in test coverage for acme?
  *   Body:
- *     Hi Alice - you installed GitAuto for acme back in Jan. Remember? Sorry I didn't follow up sooner.
+ *     Hi Alice - you installed GitAuto for your GitHub account acme back in Jan. Remember? Sorry I didn't follow up sooner.
  *
  *     Since then, GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
  *
- *     I'll walk you through getting set up over the next few emails.
+ *     If you're up for it, I'll share a few tips to get you set up over the next few emails.
  *
  *     Wes
  *     Founder, GitAuto
@@ -31,11 +31,11 @@ import type { OwnerContext } from "@/types/drip-emails";
  * Installed a few weeks ago (same month):
  *   Subject: Still interested in test coverage for acme?
  *   Body:
- *     Hi Alice - you installed GitAuto for acme a few weeks ago. Remember? Sorry I didn't follow up sooner.
+ *     Hi Alice - you installed GitAuto for your GitHub account acme a few weeks ago. Remember? Sorry I didn't follow up sooner.
  *
  *     Since then, GitAuto opens unit test PRs to help you hit 90% coverage. It's fire-and-forget, not a tool you sit and prompt. PRs just show up - you review and merge. Here's a quick look: https://www.youtube.com/watch?v=jmTQuuJAs38
  *
- *     I'll walk you through getting set up over the next few emails.
+ *     If you're up for it, I'll share a few tips to get you set up over the next few emails.
  *
  *     Wes
  *     Founder, GitAuto
@@ -50,11 +50,11 @@ export const generateDormantReintroEmail = (
 ) => {
   const when = formatRelativeTime(ctx.installedAt);
 
-  return `Hi ${firstName} - you installed GitAuto for ${ownerName} ${when}. Remember? Sorry I didn't follow up sooner.
+  return `Hi ${firstName} - you installed GitAuto for your GitHub account ${ownerName} ${when}. Remember? Sorry I didn't follow up sooner.
 
 Since then, ${EMAIL_VALUE_PROP}
 
-I'll walk you through getting set up over the next few emails.
+If you're up for it, I'll share a few tips to get you set up over the next few emails.
 
 ${EMAIL_SIGN_OFF}`;
 };
