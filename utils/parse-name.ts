@@ -17,11 +17,18 @@ export const parseName = (fullName: string) => {
     raw = dotParts.reduce((a, b) => (b.length > a.length ? b : a));
 
   // Single-token hyphenated names are firstname-lastname (e.g. "cuong-tran" → "cuong")
+  // But preserve Japanese honorifics (e.g. "Nishio-san" stays "Nishio-san")
   // Multi-token keeps hyphens (e.g. "Mary-Jane Watson" → "Mary-Jane")
-  if (nameParts.length === 1 && raw?.includes("-")) raw = raw.split("-")[0];
+  const honorifics = new Set(["san", "sama"]);
+  if (nameParts.length === 1 && raw?.includes("-")) {
+    const parts = raw.split("-");
+    const suffix = parts[parts.length - 1].toLowerCase();
+    if (!honorifics.has(suffix)) raw = parts[0];
+  }
 
   // Names containing digits are likely GitHub usernames (e.g. "St119848"), not real names
-  const firstName = raw && !/\d/.test(raw) ? capitalize(raw) : "there";
+  const resolved = raw && !/\d/.test(raw) ? capitalize(raw) : null;
+  const firstName = resolved && resolved.toLowerCase() !== "there" ? resolved : "there";
 
   return {
     firstName,
