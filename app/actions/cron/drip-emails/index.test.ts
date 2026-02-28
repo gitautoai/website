@@ -41,6 +41,10 @@ jest.mock("@/app/actions/github/is-pr-open", () => ({
   isPrOpen: jest.fn(() => Promise.resolve(true)),
 }));
 
+jest.mock("@/utils/is-business-day", () => ({
+  isBusinessDay: jest.fn(() => true),
+}));
+
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { sendEmail } from "@/app/actions/resend/send-email";
 import { getSentEmails } from "@/app/actions/supabase/email-sends/get-sent-emails";
