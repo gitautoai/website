@@ -1,7 +1,7 @@
 "use server";
 
 import { buildOwnerContext } from "./build-owner-context";
-import { DRY_RUN_TO, EMAIL_GAP_DAYS, FIRST_EMAIL_DAY } from "@/config/drip-emails";
+import { EMAIL_GAP_DAYS, FIRST_EMAIL_DAY, IS_DRY_RUN } from "@/config/drip-emails";
 import type { BatchQueryResults } from "./fetch-batch-data";
 import { isPrOpen } from "@/app/actions/github/is-pr-open";
 import { generateRandomDelay } from "@/utils/generate-random-delay";
@@ -87,18 +87,14 @@ export const processOnboarding = async (
 
       if (daysSinceInstall < emailDay) break;
 
-      const emailTo = DRY_RUN_TO || userInfo.email;
-      const emailSubject = DRY_RUN_TO
-        ? `[TEST ${inst.owner_name} → ${userInfo.email}] ${schedule.subject(inst.owner_name, userInfo.firstName, ctx)}`
-        : schedule.subject(inst.owner_name, userInfo.firstName, ctx);
       const result = await sendAndRecord(
         ownerId,
         inst.owner_name,
         schedule.emailType,
-        emailTo,
-        emailSubject,
+        userInfo.email,
+        schedule.subject(inst.owner_name, userInfo.firstName, ctx),
         schedule.body(inst.owner_name, userInfo.firstName, ctx),
-        DRY_RUN_TO ? generateRandomDelay(1, 3) : generateRandomDelay(30, 180),
+        IS_DRY_RUN ? new Date() : generateRandomDelay(30, 180),
       );
       results.push(result);
       if (result.success) {
@@ -129,21 +125,12 @@ export const processOnboarding = async (
         break;
       }
       if (highestCovThreshold) {
-        const covTo = DRY_RUN_TO || userInfo.email;
-        const covSubject = DRY_RUN_TO
-          ? `[TEST ${inst.owner_name} → ${userInfo.email}] ${highestCovThreshold.subject(inst.owner_name, ctx.ownerCoveragePct!, ctx.coverageRepoCount, ctx.repoMostNeedingCoverage)}`
-          : highestCovThreshold.subject(
-              inst.owner_name,
-              ctx.ownerCoveragePct!,
-              ctx.coverageRepoCount,
-              ctx.repoMostNeedingCoverage,
-            );
         const result = await sendAndRecord(
           ownerId,
           inst.owner_name,
           highestCovThreshold.emailType,
-          covTo,
-          covSubject,
+          userInfo.email,
+          highestCovThreshold.subject(inst.owner_name, ctx.ownerCoveragePct!, ctx.coverageRepoCount, ctx.repoMostNeedingCoverage),
           highestCovThreshold.body(
             inst.owner_name,
             userInfo.firstName,
@@ -151,7 +138,7 @@ export const processOnboarding = async (
             ctx.coverageRepoCount,
             ctx.repoMostNeedingCoverage,
           ),
-          DRY_RUN_TO ? generateRandomDelay(1, 3) : generateRandomDelay(30, 180),
+          IS_DRY_RUN ? new Date() : generateRandomDelay(30, 180),
         );
         results.push(result);
         if (result.success) {
