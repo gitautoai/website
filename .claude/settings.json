@@ -3,7 +3,11 @@
     "allow": [
       "Bash(curl *)",
       "Bash(npx tsx scripts/sentry/get-issue.ts :*)",
-      "Bash(bash scripts/git/recent_social_posts.sh *)"
+      "Bash(bash scripts/git/recent_social_posts.sh *)",
+      "Bash(gh repo view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr view *)",
+      "Bash(gh issue list *)"
     ],
     "deny": []
   }
