@@ -9,7 +9,7 @@ export const metadata = {
   authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
   tags: ["solution", "case-study", "code-review", "automation"], // Up to 4 tags
   createdAt: "2025-01-05",
-  updatedAt: "2025-01-05",
+  updatedAt: "2026-03-02",
 };
 
 # Case Study: Requesting Changes to GitAuto's Pull Requests
@@ -18,89 +18,65 @@ We've just released one of our most requested features - the ability to review a
 
 ## The Challenge
 
-I created an issue titled ["Make our sitemap dynamically updated using a library"](https://github.com/gitautoai/website/issues/167). Our website's sitemap was static, meaning new blog posts weren't automatically included - a minor but persistent annoyance. Being somewhat lazy (in a good way!), I only provided the title without any detailed requirements, letting GitAuto figure out the implementation details.
+GitAuto's [coverage dashboard](https://gitauto.ai/dashboard/coverage) detected that `calculator.py` in our [sample-calculator](https://github.com/gitautoai/sample-calculator) repo had 0% test coverage. GitAuto automatically created [a pull request](https://github.com/gitautoai/sample-calculator/pull/4) to add tests. The initial test suite covered the basics well - but was it thorough enough?
 
 ## First Attempt
 
-Within minutes, GitAuto created [this pull request](https://github.com/gitautoai/website/pull/172/files). Since the PR's "Files changed" tab only shows the final state after all iterations, let's look at each commit individually. Here's the [initial commit](https://github.com/gitautoai/website/pull/172/commits/dc38d323436a2dcca12e92108cdac8fa59381d24):
+Within minutes, GitAuto created a comprehensive test file covering all four operations (add, subtract, multiply, divide) plus the main function. Here's a snippet of the [initial test structure](https://github.com/gitautoai/sample-calculator/pull/4/commits/d878b715dd7ad850c8be251069f86f1f6d8d0d2b):
 
-```diff:package.json
--    "build": "next build",
-+    "build": "next build && next-sitemap",
-•
-•
-•
-     "uuid": "^11.0.3",
-+    "next-sitemap": "^4.2.3",
+```diff:test_calculator.py
++ class TestAdd:
++     def test_positive_numbers(self):
++         assert add(2, 3) == 5
++     def test_negative_numbers(self):
++         assert add(-1, -2) == -3
++     def test_zeros(self):
++         assert add(0, 0) == 0
++     def test_floats(self):
++         assert add(1.5, 2.5) == 4.0
 ```
 
-Interesting! GitAuto discovered the `next-sitemap` library - something I wasn't even aware of. While this looked promising, I quickly checked the library's documentation and noticed it required a configuration file (`next-sitemap.config.js`). Time for our first review comment!
+GitAuto also covered error cases like division by zero:
 
-## Iteration 1: Configuration File
-
-After receiving my feedback, GitAuto promptly [added the configuration file](https://github.com/gitautoai/website/pull/172/commits/7ccc8a8828d4c9f4dff9900b6c484276cfdacbbc).
-
-```diff:next-sitemap.config.js
-+ module.exports = {
-+   siteUrl: 'https://www.yourwebsite.com',
-+   generateRobotsTxt: true,
-+ };
+```diff:test_calculator.py
++ class TestDivide:
++     def test_even_division(self):
++         assert divide(10, 2) == 5.0
++     def test_fractional_result(self):
++         assert divide(7, 2) == 3.5
++     def test_divide_by_zero_raises(self):
++         with pytest.raises(ValueError, match="Cannot divide by zero"):
++             divide(1, 0)
 ```
 
-Only after seeing this did I realize we needed to specify how to obtain the site URL (these kinds of realizations often happen during review!). After pointing this out, GitAuto made [this change](https://github.com/gitautoai/website/pull/172/commits/05e02345b2ca8c39cfd9a48e0e44ecbb5f2d1302):
+It even tested the interactive `main()` function using mocks for user input and print output. Solid start, but I noticed a missing edge case.
 
-```diff:next-sitemap.config.js
--  siteUrl: 'https://www.yourwebsite.com',
-+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL,
+## Requesting Changes: Repeating Decimals
+
+While reviewing, I noticed the divide tests only covered clean divisions (10/2, 7/2). What about repeating decimals like 10/3? I left a [review comment](https://github.com/gitautoai/sample-calculator/pull/4#discussion_r2861391905):
+
+> "test patterns you cant divide like 10 / 3 too"
+
+GitAuto picked up the feedback and [added the requested tests](https://github.com/gitautoai/sample-calculator/pull/4/commits/124ecba547a8b62d37026aa0260fe0dc0569438f):
+
+```diff:test_calculator.py
++     def test_repeating_decimal(self):
++         assert divide(10, 3) == pytest.approx(10 / 3)
 ```
 
-## Iteration 2: Robots.txt Configuration
+It also added an integration test for the main function with repeating decimal input:
 
-I noticed `generateRobotsTxt` was set to `true` (most likely because that's what the library's documentation shows), but we already had a `robots.txt` file. While GitAuto had access to the file tree and theoretically could have noticed this, it didn't - a limitation we'll improve over time. After my review comment, it made [the fix](https://github.com/gitautoai/website/pull/172/commits/05dd9e5d8e44c8e375b3d138da5c3d2fb03cd825):
-
-```diff:next-sitemap.config.js
--  generateRobotsTxt: true,
-+  generateRobotsTxt: false,
+```diff:test_calculator.py
++     @patch("builtins.input", side_effect=["10", "/", "3"])
++     @patch("builtins.print")
++     def test_division_repeating_decimal_operation(self, mock_print, _mock_input):
++         main()
++         mock_print.assert_any_call(f"10.0 / 3.0 = {10.0 / 3.0}")
 ```
 
-## Iteration 3: Build Script Best Practices
+Notice how GitAuto used `pytest.approx` for the unit test to handle floating point comparison correctly, and tested the full end-to-end flow in the integration test. You can see the complete PR with all review comments [here](https://github.com/gitautoai/sample-calculator/pull/4).
 
-The documentation recommended using `postbuild` instead of modifying the `build` script directly. While both approaches seem to work, I requested we follow the documentation's recommendation. GitAuto immediately [updated the configuration](https://github.com/gitautoai/website/pull/172/commits/4cfc815bd25c2e105a42a4b08742554e4e2fa9c0).
-
-```diff:package.json
--    "build": "next build && next-sitemap",
-+    "build": "next build",
-+    "postbuild": "next-sitemap",
-```
-
-## Final Polish: Package Order
-
-As a minor point, I noticed the `next-sitemap` dependency wasn't alphabetically ordered in `package.json`.
-
-```diff:package.json
-     "swr": "^2.2.5",
-     "uuid": "^11.0.3",
-+    "next-sitemap": "^4.2.3",
-     "zod": "^3.23.8"
-```
-
-While not a functional issue, it's worth noting that current AI models often struggle with ordering tasks - whether it's alphabetical or numerical ordering, it's just not their strong suit. Still, just like with human teammates, it's important to be patient and provide clear feedback. GitAuto [fixed this](https://github.com/gitautoai/website/pull/172/commits/f28a7ef493575929ede2c12b92ed4864e14037ca) after receiving feedback.
-
-```diff:package.json
-     "next-auth": "^4.24.10",
-+    "next-sitemap": "^4.2.3",
-     "playwright": "^1.49.0",
-...
-     "uuid": "^11.0.3",
--    "next-sitemap": "^4.2.3",
-     "zod": "^3.23.8"
-```
-
-You can see the complete journey, including all review comments and the final merged pull request, [here](https://github.com/gitautoai/website/pull/172). I've intentionally left the review comments unresolved to make it easier for you to follow the conversation flow and see how the iterative process worked.
-
-## Caveats to this example
-
-I've skipped introducing some intermediate commits where my own instructions weren't entirely clear or where I changed my mind about requirements. This was a real, live development session, and I actually learned some things from GitAuto's PR, which caused some of my requirements to evolve. That's why there might be more back-and-forth than strictly necessary, but that's also what makes this example authentic!
+For a step-by-step guide on setting up and using this feature, check out our [Review Comment Trigger documentation](/docs/triggers/review-comment).
 
 ## The Power of Asynchronous Development
 
@@ -118,7 +94,7 @@ The real power of GitAuto's approach is asynchronous development:
 
 As someone who uses both GitAuto and Cursor, I've noticed some key differences:
 
-1. Cursor requires explicit file references - you'd need to provide `package.json` upfront in this case
+1. Cursor requires explicit file references - you'd need to provide `calculator.py` and `test_calculator.py` upfront in this case
 2. In long conversations, Cursor sometimes loses track of the latest file contents for some reason
 3. GitAuto refreshes its context with each interaction, leading to more consistent responses (and expensive for us actually... lol)
 

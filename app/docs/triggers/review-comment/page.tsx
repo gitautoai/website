@@ -173,6 +173,19 @@ export default function ReviewCommentTriggerPage() {
           </div>
         </div>
 
+        {/* Example */}
+        <div>
+          <h2 className="text-2xl font-semibold mt-0 mb-4">See It in Action</h2>
+          <p className="text-gray-700">
+            Want to see a real-world example? Check out our{" "}
+            <Link href="/blog/how-to-request-changes" className="text-pink-600 hover:text-pink-700">
+              case study on requesting changes
+            </Link>{" "}
+            where we walk through reviewing a test coverage PR and requesting additional edge case
+            tests.
+          </p>
+        </div>
+
         {/* Usage Cost */}
         <div>
           <h2 className="text-2xl font-semibold mt-0 mb-4">Usage Cost</h2>
