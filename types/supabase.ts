@@ -490,24 +490,75 @@ export type Database = {
         };
         Relationships: [];
       };
-      marketing_search_history: {
+      marketing_email_queue: {
+        Row: {
+          created_at: string;
+          draft_id: string;
+          id: number;
+          owner_name: string;
+          repo_name: string;
+          scheduled_at: string;
+          sent_at: string | null;
+          slack_thread_ts: string | null;
+          subject: string;
+          to_email: string;
+        };
+        Insert: {
+          created_at?: string;
+          draft_id?: string;
+          id?: number;
+          owner_name: string;
+          repo_name: string;
+          scheduled_at: string;
+          sent_at?: string | null;
+          slack_thread_ts?: string | null;
+          subject: string;
+          to_email: string;
+        };
+        Update: {
+          created_at?: string;
+          draft_id?: string;
+          id?: number;
+          owner_name?: string;
+          repo_name?: string;
+          scheduled_at?: string;
+          sent_at?: string | null;
+          slack_thread_ts?: string | null;
+          subject?: string;
+          to_email?: string;
+        };
+        Relationships: [];
+      };
+      marketing_repo_search_history: {
         Row: {
           created_at: string;
           id: number;
           owner_id: number;
           owner_name: string;
+          repo_id: number;
+          repo_name: string;
+          stars: number | null;
+          status: string;
         };
         Insert: {
           created_at?: string;
           id?: number;
           owner_id: number;
           owner_name: string;
+          repo_id: number;
+          repo_name: string;
+          stars?: number | null;
+          status?: string;
         };
         Update: {
           created_at?: string;
           id?: number;
           owner_id?: number;
           owner_name?: string;
+          repo_id?: number;
+          repo_name?: string;
+          stars?: number | null;
+          status?: string;
         };
         Relationships: [];
       };

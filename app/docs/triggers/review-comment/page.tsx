@@ -18,8 +18,8 @@ export default function ReviewCommentTriggerPage() {
         <div>
           <p className="text-lg text-gray-700">
             The Review Comment Trigger allows you to request fixes on GitAuto-created PRs by leaving
-            review comments, just like you would with human team members. GitAuto will analyze your
-            feedback and create fix commits automatically.
+            inline review comments or general PR comments, just like you would with human team
+            members. GitAuto will analyze your feedback and create fix commits automatically.
           </p>
         </div>
 
@@ -35,9 +35,9 @@ export default function ReviewCommentTriggerPage() {
             </p>
 
             <p className="text-gray-700">
-              <span className="text-rose-600 font-semibold">Flexible Feedback:</span> Leave comments
-              on specific lines, entire files, or the PR as a whole. GitAuto understands all types
-              of review feedback.
+              <span className="text-rose-600 font-semibold">Flexible Feedback:</span> Leave inline
+              review comments on specific lines or files, or post a general PR comment. GitAuto
+              understands both types of feedback.
             </p>
 
             <p className="text-gray-700">
@@ -106,11 +106,15 @@ export default function ReviewCommentTriggerPage() {
                 3
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-2">Leave a Review Comment</h3>
+                <h3 className="text-lg font-semibold mb-2">Leave Feedback</h3>
+                <p className="text-gray-700 mb-3">
+                  There are two ways to leave feedback on a GitAuto PR:
+                </p>
+
+                <h4 className="text-base font-semibold mb-2 mt-4">Option A: Inline Review Comments</h4>
                 <p className="text-gray-700 mb-3">
                   Click &quot;Start a review&quot; and select &quot;Request changes&quot;. Leave
-                  your feedback as comments. You can comment on specific lines, files, or the entire
-                  PR.
+                  comments on specific lines or files for targeted feedback.
                 </p>
                 <Image
                   src="/docs/triggers/add-review-comment-to-a-line.png"
@@ -137,7 +141,22 @@ export default function ReviewCommentTriggerPage() {
                   <p className="text-blue-800 text-sm">
                     <strong>Important:</strong> Make sure to select &quot;Request changes&quot; when
                     submitting your review. Comments without this selection won&apos;t trigger
-                    GitAuto.
+                    GitAuto. No need to tag or mention GitAuto.
+                  </p>
+                </div>
+
+                <h4 className="text-base font-semibold mb-2 mt-6">Option B: General PR Comment</h4>
+                <p className="text-gray-700 mb-3">
+                  Post a regular comment in the PR conversation tab for general feedback that
+                  isn&apos;t tied to a specific line. This is useful for high-level requests like
+                  &quot;you didn&apos;t complete the task&quot; or &quot;please also handle the error
+                  case&quot;.
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3">
+                  <p className="text-blue-800 text-sm">
+                    <strong>Tip:</strong> General PR comments don&apos;t require the &quot;Request
+                    changes&quot; review flow - just type your comment and submit. No need to
+                    tag or mention GitAuto. GitAuto will respond with a linked reply.
                   </p>
                 </div>
               </div>
