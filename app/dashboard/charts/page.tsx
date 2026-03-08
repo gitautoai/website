@@ -33,6 +33,8 @@ export default function ChartsPage() {
   const [reloadingRepos, setReloadingRepos] = useState<Set<string>>(new Set());
   const [isSettingUpWorkflow, setIsSettingUpWorkflow] = useState(false);
   const [showSetupModal, setShowSetupModal] = useState(false);
+  const [showVisitModal, setShowVisitModal] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   // Load saved period from localStorage on mount
   useEffect(() => {
@@ -126,14 +128,27 @@ export default function ChartsPage() {
             created_by: "",
           }));
         setTotalCoverageData(transformedTotalData);
+        setDataLoaded(true);
       } catch (error) {
         setError("Failed to load coverage history");
         console.error("Error loading coverage history:", error);
+        setDataLoaded(true);
       }
     };
 
     fetchData();
   }, [currentOwnerId, organizations, currentOwnerName]);
+
+  // Show visit modal when all repos have no coverage data
+  const allReposEmpty =
+    dataLoaded &&
+    Object.keys(allReposData).length > 0 &&
+    Object.values(allReposData).every((data) => data.length === 0) &&
+    totalCoverageData.length === 0;
+
+  useEffect(() => {
+    if (allReposEmpty) setShowVisitModal(true);
+  }, [allReposEmpty]);
 
   // Filter data based on selected period (client-side)
   const filterDataByPeriod = (data: Tables<"repo_coverage">[]) => {
@@ -302,6 +317,15 @@ export default function ChartsPage() {
           type="success"
           message="A pull request will be created shortly with a CI workflow to upload coverage reports. Check your repository for the new PR."
           onClose={() => setShowSetupModal(false)}
+        />
+      )}
+
+      {showVisitModal && (
+        <Modal
+          title="No Coverage Data"
+          type="success"
+          message="No coverage results have been reported for any repository. Click 'Set up a CI workflow' on each repo below to get started."
+          onClose={() => setShowVisitModal(false)}
         />
       )}
     </div>
