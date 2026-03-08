@@ -1,0 +1,56 @@
+# GitAuto
+
+> GitAuto is a set-and-forget coding agent that opens unit test PRs to help dev teams hit 80%+ code coverage.
+
+Install it, configure your schedule and rules, and test PRs start showing up automatically. Developers just review and merge - no prompting or manual interaction needed. GitAuto analyzes your codebase and coverage gaps, writes the tests, runs them, fixes failures, and opens a PR. It supports Python, JavaScript, TypeScript, Java, Go, PHP, Ruby, and Flutter.
+
+## Getting Started
+
+- [Install GitAuto](https://github.com/apps/gitauto-ai/installations/new): Install GitAuto on your GitHub repositories
+- [Installation Guide](https://gitauto.ai/docs/getting-started/installation): Step-by-step installation walkthrough
+- [Setup](https://gitauto.ai/docs/getting-started/setup): Configure GitAuto for your repositories
+
+## Coverage
+
+- [Coverage Overview](https://gitauto.ai/docs/coverage): How GitAuto tracks and improves test coverage
+- [Python](https://gitauto.ai/docs/coverage/python): Set up coverage reporting for Python projects
+- [JavaScript](https://gitauto.ai/docs/coverage/javascript): Set up coverage reporting for JavaScript projects
+- [Java](https://gitauto.ai/docs/coverage/java): Set up coverage reporting for Java projects
+- [Go](https://gitauto.ai/docs/coverage/go): Set up coverage reporting for Go projects
+- [PHP](https://gitauto.ai/docs/coverage/php): Set up coverage reporting for PHP projects
+- [Ruby](https://gitauto.ai/docs/coverage/ruby): Set up coverage reporting for Ruby projects
+- [Flutter](https://gitauto.ai/docs/coverage/flutter): Set up coverage reporting for Flutter projects
+- [Multi-Language](https://gitauto.ai/docs/coverage/multi-language): Set up coverage for polyglot repositories
+- [Charts](https://gitauto.ai/docs/coverage/charts): Visualize coverage trends over time
+
+## Triggers
+
+- [Triggers Overview](https://gitauto.ai/docs/triggers): Ways to trigger GitAuto to generate tests
+- [Dashboard](https://gitauto.ai/docs/triggers/dashboard): Trigger test generation from the dashboard
+- [Review Comment](https://gitauto.ai/docs/triggers/review-comment): Trigger via PR review comments
+- [Schedule](https://gitauto.ai/docs/triggers/schedule): Schedule automatic test generation
+- [Test Failure](https://gitauto.ai/docs/triggers/test-failure): Auto-generate tests when CI detects failures
+
+## Customization
+
+- [Repository Rules](https://gitauto.ai/docs/customization/repository-rules): Configure rules for how tests are generated per repository
+
+## Actions
+
+- [Auto-Merge](https://gitauto.ai/docs/actions/auto-merge): Automatically merge test PRs that pass CI
+
+## Integrations
+
+- [CircleCI](https://gitauto.ai/docs/integrations/circleci): Integrate GitAuto with CircleCI pipelines
+- [npm](https://gitauto.ai/docs/integrations/npm): Integrate GitAuto with npm projects
+
+## Pricing
+
+- [Pricing](https://gitauto.ai/pricing): $7 per PR with free credits to start
+
+## Optional
+
+- [Blog](https://gitauto.ai/blog): Articles on testing, coverage, and developer productivity
+- [Contact](https://gitauto.ai/contact): Get in touch with the GitAuto team
+- [Privacy Policy](https://gitauto.ai/privacy-policy): Privacy policy
+- [Terms of Service](https://gitauto.ai/terms-of-service): Terms of service
