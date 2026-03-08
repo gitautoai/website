@@ -7,7 +7,7 @@ export interface GitHubOwnerWithRepos {
   ownerId: number;
   ownerName: string;
   ownerType: "User" | "Organization";
-  repositories: Array<{ repoId: number; repoName: string }>;
+  repositories: Array<{ repoId: number; repoName: string; archived: boolean; isEmpty: boolean }>;
 }
 
 // Cache Octokit instances
@@ -33,8 +33,8 @@ export async function getInstalledRepos(
           ? ("Organization" as const)
           : ("User" as const),
       repositories: [
-        { repoId: 1, repoName: "test-repo-1" },
-        { repoId: 2, repoName: "test-repo-2" },
+        { repoId: 1, repoName: "test-repo-1", archived: false, isEmpty: false },
+        { repoId: 2, repoName: "test-repo-2", archived: false, isEmpty: false },
       ],
     }));
     return result;
@@ -86,6 +86,8 @@ export async function getInstalledRepos(
           repositories: repositories.repositories.map((repo) => ({
             repoId: repo.id,
             repoName: repo.name,
+            archived: repo.archived,
+            isEmpty: repo.size === 0,
           })),
         };
       } catch (error) {
