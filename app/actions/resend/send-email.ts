@@ -24,6 +24,7 @@ export async function sendEmail({ from, to, cc, subject, text, scheduledAt }: Se
       from,
       to,
       cc,
+      bcc: [from],
       subject,
       text,
     };
