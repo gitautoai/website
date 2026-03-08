@@ -13,6 +13,8 @@ export interface Installation {
 export interface Repository {
   repoId: number;
   repoName: string;
+  archived: boolean;
+  isEmpty: boolean;
 }
 
 export interface Organization {

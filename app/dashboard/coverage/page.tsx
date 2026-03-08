@@ -1,6 +1,7 @@
 "use client";
 
 // Third-party imports
+import confetti from "canvas-confetti";
 import { useEffect, useState } from "react";
 
 // Local imports (Actions)
@@ -98,6 +99,7 @@ export default function CoveragePage() {
   const [isTogglingExclusion, setIsTogglingExclusion] = useState(false);
   const [isSettingUpWorkflow, setIsSettingUpWorkflow] = useState(false);
   const [showSetupModal, setShowSetupModal] = useState(false);
+  const [showVisitModal, setShowVisitModal] = useState(false);
   const [insufficientCredits, setInsufficientCredits] = useState<InsufficientCreditsInfo | null>(
     null,
   );
@@ -254,6 +256,15 @@ export default function CoveragePage() {
         item.function_coverage === null &&
         item.line_coverage === null,
     );
+
+  // Look up current repo to check archived/empty status
+  const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+  const currentRepo = currentOrg?.repositories.find((repo) => repo.repoName === currentRepoName);
+
+  // Show modal automatically when coverage data has all null values (no CI workflow)
+  useEffect(() => {
+    if (allCoverageEmpty && !isLoadingDB) setShowVisitModal(true);
+  }, [allCoverageEmpty, isLoadingDB]);
 
   // Check if we have any package names to show the filter
   const hasPackages = packageNames.length > 0;
@@ -492,6 +503,47 @@ export default function CoveragePage() {
           type="success"
           message="A pull request will be created shortly with a CI workflow to upload coverage reports. Check your repository for the new PR."
           onClose={() => setShowSetupModal(false)}
+        />
+      )}
+
+      {showVisitModal && (
+        <Modal
+          title={
+            currentRepo?.archived || currentRepo?.isEmpty
+              ? "Coverage Unavailable"
+              : "No Coverage Data"
+          }
+          type={currentRepo?.archived || currentRepo?.isEmpty ? "error" : "success"}
+          message={
+            currentRepo?.archived || currentRepo?.isEmpty
+              ? `This repository is ${currentRepo?.archived ? "archived" : "empty"} and cannot produce coverage reports.`
+              : "No coverage results have been reported yet. Want me to set up a CI workflow?"
+          }
+          onClose={
+            currentRepo?.archived || currentRepo?.isEmpty
+              ? () => setShowVisitModal(false)
+              : undefined
+          }
+          actions={
+            currentRepo?.archived || currentRepo?.isEmpty
+              ? undefined
+              : [
+                  {
+                    label: isSettingUpWorkflow ? "Setting up..." : "Set Up",
+                    onClick: () => {
+                      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                      setShowVisitModal(false);
+                      handleSetupWorkflow();
+                    },
+                    disabled: isSettingUpWorkflow,
+                  },
+                  {
+                    label: "Later",
+                    onClick: () => setShowVisitModal(false),
+                    variant: "secondary" as const,
+                  },
+                ]
+          }
         />
       )}
 
