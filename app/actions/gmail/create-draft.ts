@@ -1,5 +1,6 @@
 "use server";
 
+import { EMAIL_FROM } from "@/config";
 import { refreshAccessToken } from "./refresh-access-token";
 
 const DRAFTS_URL = "https://gmail.googleapis.com/gmail/v1/users/me/drafts";
@@ -14,6 +15,7 @@ export const createGmailDraft = async (to: string, subject: string, text: string
   // Build RFC 2822 MIME message
   const mime = [
     `To: ${to}`,
+    `Bcc: ${EMAIL_FROM}`,
     `Subject: ${subject}`,
     "Content-Type: text/plain; charset=UTF-8",
     "",
