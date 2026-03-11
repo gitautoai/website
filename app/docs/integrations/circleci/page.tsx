@@ -167,8 +167,8 @@ export default function CircleCIIntegrationPage() {
 
       <DocsNavigation
         previousLink={{
-          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES,
-          title: "Repository Rules",
+          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD,
+          title: "GITAUTO.md",
         }}
         nextLink={{
           href: RELATIVE_URLS.DOCS.INTEGRATIONS.NPM,

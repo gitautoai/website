@@ -2,7 +2,7 @@
 
 > GitAuto is a set-and-forget coding agent that opens unit test PRs to help dev teams hit 80%+ code coverage.
 
-Install it, configure your schedule and rules, and test PRs start showing up automatically. Developers just review and merge - no prompting or manual interaction needed. GitAuto analyzes your codebase and coverage gaps, writes the tests, runs them, fixes failures, and opens a PR. It supports Python, JavaScript, TypeScript, Java, Go, PHP, Ruby, and Flutter.
+Install it, configure your schedule and rules, and test PRs start showing up automatically. Developers just review and merge - no prompting or manual interaction needed. GitAuto analyzes your codebase and coverage gaps, writes the tests, runs them, fixes failures, and opens a PR. It learns from reviewer feedback and CI failures, persisting reusable rules in a GITAUTO.md file in your repo so it doesn't repeat the same mistakes. It supports Python, JavaScript, TypeScript, Java, Go, PHP, Ruby, and Flutter.
 
 ## Getting Started
 
@@ -33,7 +33,8 @@ Install it, configure your schedule and rules, and test PRs start showing up aut
 
 ## Customization
 
-- [Repository Rules](https://gitauto.ai/docs/customization/repository-rules): Configure rules for how tests are generated per repository
+- [Repository Rules](https://gitauto.ai/docs/customization/repository-rules): Configure rules for how tests are generated per repository (user-managed, GitAuto never modifies)
+- [GITAUTO.md](https://gitauto.ai/docs/customization/gitauto-md): A version-controlled file in your repo where GitAuto persists learnings from reviewer feedback and CI failures (both users and GitAuto can edit)
 
 ## Actions
 

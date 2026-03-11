@@ -43,6 +43,7 @@ const sidebarItems = [
     title: "Customization",
     items: [
       { href: RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES, label: "Repository Rules" },
+      { href: RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD, label: "GITAUTO.md" },
     ],
   },
   {

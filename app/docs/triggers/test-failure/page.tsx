@@ -111,7 +111,15 @@ export default function TestFailureTriggerPage() {
                 <p className="text-gray-700 mb-3">
                   GitAuto analyzes the error logs, identifies the root cause, and creates a fix
                   commit. It also attempts to cancel any running workflows to prevent resource
-                  waste.
+                  waste. If the failure reveals a repo-specific pattern (e.g., a required env var or
+                  a type convention), GitAuto records it in{" "}
+                  <Link
+                    href={RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}
+                    className="text-pink-600 hover:text-pink-700"
+                  >
+                    GITAUTO.md
+                  </Link>{" "}
+                  to avoid the same mistake in future PRs.
                 </p>
                 <Image
                   src="/docs/triggers/error-analysis-fix-commit.png"

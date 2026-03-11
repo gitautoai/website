@@ -105,9 +105,16 @@ export const TABLE_FEATURES = [
       },
       {
         name: "Repository Rules",
-        description: "Customize how GitAuto generates tests",
+        description: "Customize how GitAuto generates tests via web UI",
         free: "Default only",
         standard: "Customizable",
+      },
+      {
+        name: "GITAUTO.md",
+        description:
+          "GitAuto learns from reviewer feedback and CI failures, persisting rules in a version-controlled file in your repo",
+        free: true,
+        standard: true,
       },
       {
         name: "Reference URLs",
