@@ -208,6 +208,19 @@ export default function SetupPage() {
               changes, and merge if they look good. Repeat this cycle until you reach your target
               coverage.
             </p>
+            <p className="text-gray-700 mb-4">
+              When you leave review comments, GitAuto learns from your feedback. It persists
+              reusable patterns in a{" "}
+              <Link
+                href={RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}
+                className="text-pink-600 hover:text-pink-700 underline"
+              >
+                GITAUTO.md
+              </Link>{" "}
+              file in your repo, so it won&#39;t repeat the same mistakes. Over time, you&#39;ll
+              need to leave fewer review comments as GitAuto accumulates your team&#39;s
+              conventions.
+            </p>
           </div>
 
           {/* Step 5 */}

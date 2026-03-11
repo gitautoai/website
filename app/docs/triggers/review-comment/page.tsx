@@ -111,7 +111,9 @@ export default function ReviewCommentTriggerPage() {
                   There are two ways to leave feedback on a GitAuto PR:
                 </p>
 
-                <h4 className="text-base font-semibold mb-2 mt-4">Option A: Inline Review Comments</h4>
+                <h4 className="text-base font-semibold mb-2 mt-4">
+                  Option A: Inline Review Comments
+                </h4>
                 <p className="text-gray-700 mb-3">
                   Click &quot;Start a review&quot; and select &quot;Request changes&quot;. Leave
                   comments on specific lines or files for targeted feedback.
@@ -149,14 +151,14 @@ export default function ReviewCommentTriggerPage() {
                 <p className="text-gray-700 mb-3">
                   Post a regular comment in the PR conversation tab for general feedback that
                   isn&apos;t tied to a specific line. This is useful for high-level requests like
-                  &quot;you didn&apos;t complete the task&quot; or &quot;please also handle the error
-                  case&quot;.
+                  &quot;you didn&apos;t complete the task&quot; or &quot;please also handle the
+                  error case&quot;.
                 </p>
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-3">
                   <p className="text-blue-800 text-sm">
                     <strong>Tip:</strong> General PR comments don&apos;t require the &quot;Request
-                    changes&quot; review flow - just type your comment and submit. No need to
-                    tag or mention GitAuto. GitAuto will respond with a linked reply.
+                    changes&quot; review flow - just type your comment and submit. No need to tag or
+                    mention GitAuto. GitAuto will respond with a linked reply.
                   </p>
                 </div>
               </div>
@@ -172,6 +174,17 @@ export default function ReviewCommentTriggerPage() {
                   GitAuto will analyze your feedback and automatically create commits addressing
                   your concerns. You can continue this process with additional review rounds if
                   needed.
+                </p>
+                <p className="text-gray-700 mb-3">
+                  When your feedback represents a reusable pattern (e.g., &quot;always use our
+                  shared test helpers&quot;), GitAuto also records it in a{" "}
+                  <Link
+                    href={RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}
+                    className="text-pink-600 hover:text-pink-700"
+                  >
+                    GITAUTO.md
+                  </Link>{" "}
+                  file in your repo so it won&apos;t repeat the same mistake on future PRs.
                 </p>
                 <Image
                   src="/docs/triggers/fix-commit-example.png"

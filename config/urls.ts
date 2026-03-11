@@ -67,6 +67,7 @@ export const RELATIVE_URLS = {
       TEST_FAILURE: "/docs/triggers/test-failure",
     },
     CUSTOMIZATION: {
+      GITAUTO_MD: "/docs/customization/gitauto-md",
       REPOSITORY_RULES: "/docs/customization/repository-rules",
     },
     INTEGRATIONS: {
@@ -123,6 +124,7 @@ export const ABSOLUTE_URLS = {
         TEST_FAILURE: `${BASE_URL}${RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE}`,
       },
       CUSTOMIZATION: {
+        GITAUTO_MD: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}`,
         REPOSITORY_RULES: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES}`,
       },
       INTEGRATIONS: {

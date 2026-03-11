@@ -69,6 +69,17 @@ export default function RulesPage() {
               </a>
               <span className="text-gray-600 text-sm ml-2">- Free-form rules</span>
             </li>
+            <li>
+              <Link
+                href={RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}
+                className="text-pink-600 hover:text-pink-700 underline"
+              >
+                GITAUTO.md
+              </Link>
+              <span className="text-gray-600 text-sm ml-2">
+                - Repo-level rules learned from feedback (separate page)
+              </span>
+            </li>
           </ul>
         </section>
 
@@ -352,6 +363,27 @@ export default function RulesPage() {
           <CodeBlock code={customRulesExample} language="text" filename="Example custom rules" />
         </section>
 
+        {/* GITAUTO.md reference */}
+        <section>
+          <h2 className="text-3xl font-semibold mt-0 mb-6">GITAUTO.md - Automatic Learning</h2>
+          <p className="text-gray-700 mb-4">
+            Both Repository Rules and GITAUTO.md are repo-specific. The difference is who writes
+            them: the rules on this page are yours - GitAuto reads them but never modifies them.
+            GitAuto can automatically learn from reviewer feedback and CI failures, persisting
+            reusable lessons in a{" "}
+            <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">GITAUTO.md</code> file at
+            your repo root. GITAUTO.md is a git-managed file that both you and GitAuto can edit. See
+            the{" "}
+            <Link
+              href={RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}
+              className="text-pink-600 hover:text-pink-700 underline"
+            >
+              GITAUTO.md documentation
+            </Link>{" "}
+            for details.
+          </p>
+        </section>
+
         {/* How Repository Rules Are Applied */}
         <section id="how-repository-rules-are-applied">
           <h2 className="text-3xl font-semibold mt-0 mb-6">How Repository Rules Are Applied</h2>
@@ -413,8 +445,8 @@ export default function RulesPage() {
           title: "Installation",
         }}
         nextLink={{
-          href: RELATIVE_URLS.DOCS.INTEGRATIONS.CIRCLECI,
-          title: "CircleCI Integration",
+          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD,
+          title: "GITAUTO.md",
         }}
       />
     </div>

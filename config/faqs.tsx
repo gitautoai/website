@@ -37,7 +37,7 @@ export const FAQS: FAQItem[] = [
   {
     category: "features",
     question: `Dear GitAuto: What inputs does GitAuto use?`,
-    answer: `GitAuto utilizes the PR title, body, comments, the file tree of the repository, and the contents of related files. Currently, GitHub secrets are excluded. If there are any other inputs you would like us to use, please feel free to let us know at ${EMAIL}.`,
+    answer: `GitAuto utilizes the PR title, body, comments, the file tree of the repository, the contents of related files, your [repository rules](${RELATIVE_URLS.SETTINGS.RULES}), and a [GITAUTO.md](${RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}) file if present (where GitAuto persists learnings from past feedback). Currently, GitHub secrets are excluded. If there are any other inputs you would like us to use, please feel free to let us know at ${EMAIL}.`,
   },
   {
     category: "features",
