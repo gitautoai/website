@@ -1,4 +1,5 @@
 import { ANTHROPIC_MODEL_CLAUDE_OPUS, ANTHROPIC_MODEL_CLAUDE_SONNET } from "./anthropic";
+import { LANGUAGE_COUNT_LABEL } from "./languages";
 
 // https://dashboard.stripe.com/test/prices/price_1QHCpnKUN3yUNaHzXNhxtQ8A
 export const TEST_STANDARD_PLAN_PRICE_ID = "price_1QHCpnKUN3yUNaHzXNhxtQ8A";
@@ -135,6 +136,13 @@ export const TABLE_FEATURES = [
         description: "Branch used as base for new PRs",
         free: "Default branch only",
         standard: "Any branch",
+      },
+      {
+        name: "Output Language",
+        description:
+          "Language for GitAuto's code comments and GitHub comments (e.g. Japanese, French, Korean)",
+        free: "English only",
+        standard: `${LANGUAGE_COUNT_LABEL} languages`,
       },
     ],
   },

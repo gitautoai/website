@@ -203,8 +203,8 @@ export default function GitAutoMdPage() {
 
       <DocsNavigation
         previousLink={{
-          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES,
-          title: "Repository Rules",
+          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.OUTPUT_LANGUAGE,
+          title: "Output Language",
         }}
         nextLink={{
           href: RELATIVE_URLS.DOCS.INTEGRATIONS.CIRCLECI,

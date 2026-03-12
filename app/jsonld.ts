@@ -1,4 +1,5 @@
 import { PRODUCT_NAME, EMAIL, DESCRIPTION, LEGAL_NAME } from "@/config";
+import { LANGUAGE_COUNT_LABEL } from "@/config/languages";
 import { CREDIT_PRICING, FREE_CREDITS_AMOUNT_USD, FREE_PRS_LIMIT } from "@/config/pricing";
 import { BASE_URL, ABSOLUTE_URLS } from "@/config/urls";
 
@@ -103,8 +104,7 @@ export const softwareApplicationData = {
   url: BASE_URL,
   offers: OFFERS,
   creator: CREATOR,
-  featureList:
-    "Generates unit test pull requests, Runs tests and fixes failures, Triggered by schedule, dashboard, review comment, or test failure, Learns from reviewer feedback and persists rules in GITAUTO.md, No manual test writing needed",
+  featureList: `Generates unit test pull requests, Runs tests and fixes failures, Triggered by schedule, dashboard, review comment, or test failure, Learns from reviewer feedback and persists rules in GITAUTO.md, No manual test writing needed, Configurable output language for code comments and GitHub comments (${LANGUAGE_COUNT_LABEL} languages)`,
   inLanguage: "en",
   applicationSuite: "GitHub QA Automation",
 };

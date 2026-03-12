@@ -777,6 +777,7 @@ export type Database = {
           id: number;
           local_port: number | null;
           owner_id: number;
+          preferred_language: string | null;
           production_url: string | null;
           repo_id: number;
           repo_name: string;
@@ -814,6 +815,7 @@ export type Database = {
           id?: number;
           local_port?: number | null;
           owner_id: number;
+          preferred_language?: string | null;
           production_url?: string | null;
           repo_id: number;
           repo_name: string;
@@ -851,6 +853,7 @@ export type Database = {
           id?: number;
           local_port?: number | null;
           owner_id?: number;
+          preferred_language?: string | null;
           production_url?: string | null;
           repo_id?: number;
           repo_name?: string;

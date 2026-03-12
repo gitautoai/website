@@ -68,6 +68,7 @@ export const RELATIVE_URLS = {
     },
     CUSTOMIZATION: {
       GITAUTO_MD: "/docs/customization/gitauto-md",
+      OUTPUT_LANGUAGE: "/docs/customization/output-language",
       REPOSITORY_RULES: "/docs/customization/repository-rules",
     },
     INTEGRATIONS: {
@@ -125,6 +126,7 @@ export const ABSOLUTE_URLS = {
       },
       CUSTOMIZATION: {
         GITAUTO_MD: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}`,
+        OUTPUT_LANGUAGE: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.OUTPUT_LANGUAGE}`,
         REPOSITORY_RULES: `${BASE_URL}${RELATIVE_URLS.DOCS.CUSTOMIZATION.REPOSITORY_RULES}`,
       },
       INTEGRATIONS: {
