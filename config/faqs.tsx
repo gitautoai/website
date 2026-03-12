@@ -1,5 +1,6 @@
 import { EMAIL } from "@/config";
 import { CREDIT_PRICING } from "@/config/pricing";
+import { LANGUAGE_COUNT_LABEL } from "@/config/languages";
 import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config/urls";
 
 export type FAQItem = {
@@ -52,7 +53,7 @@ export const FAQS: FAQItem[] = [
   {
     category: "language",
     question: `Do you support languages other than English?`,
-    answer: `Yes, GitAuto supports languages other than English. The pull request body will be created in the corresponding language. If it defaults to English, please specify the language in the repository rules. If it still doesn't work, feel free to [contact us](/contact).`,
+    answer: `Yes, GitAuto supports ${LANGUAGE_COUNT_LABEL} output languages including Japanese, Chinese, Korean, French, German, Spanish, and more. You can configure the language per repository in your [Rules Settings](${RELATIVE_URLS.SETTINGS.RULES}). GitAuto will write code comments and GitHub comments in your chosen language, while PR titles and bodies remain in English.`,
   },
   {
     category: "language",

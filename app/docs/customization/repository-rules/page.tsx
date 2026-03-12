@@ -71,6 +71,17 @@ export default function RulesPage() {
             </li>
             <li>
               <Link
+                href={RELATIVE_URLS.DOCS.CUSTOMIZATION.OUTPUT_LANGUAGE}
+                className="text-pink-600 hover:text-pink-700 underline"
+              >
+                Output Language
+              </Link>
+              <span className="text-gray-600 text-sm ml-2">
+                - Configure the language for comments (separate page)
+              </span>
+            </li>
+            <li>
+              <Link
                 href={RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}
                 className="text-pink-600 hover:text-pink-700 underline"
               >
@@ -445,8 +456,8 @@ export default function RulesPage() {
           title: "Installation",
         }}
         nextLink={{
-          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD,
-          title: "GITAUTO.md",
+          href: RELATIVE_URLS.DOCS.CUSTOMIZATION.OUTPUT_LANGUAGE,
+          title: "Output Language",
         }}
       />
     </div>

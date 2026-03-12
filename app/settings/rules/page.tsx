@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState, useRef, useTransition } from "react";
 
 // Local imports
 import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
+import { updateRepoLanguage } from "@/app/actions/supabase/repositories/update-repo-language";
 import { upsertRepository } from "@/app/actions/supabase/repositories/upsert-repository";
 import { Branch } from "@/app/api/github/get-branches/route";
 import { useAccountContext } from "@/app/components/contexts/Account";
@@ -13,6 +14,7 @@ import SaveButton from "@/app/settings/components/SaveButton";
 import StructuredRulesSection from "@/app/settings/rules/StructuredRulesSection";
 import { PLAN_LIMITS } from "@/app/settings/constants/plans";
 import { RULES_CONTENT } from "@/app/settings/rules/config/freeform-rules";
+import { SUPPORTED_LANGUAGES } from "@/config/languages";
 import {
   DEFAULT_STRUCTURED_RULES,
   StructuredRules,
@@ -57,6 +59,9 @@ export default function RulesPage() {
     targetBranch: "",
   });
 
+  // Language state
+  const [preferredLanguage, setPreferredLanguage] = useState("en");
+
   // Other state
   const [branches, setBranches] = useState<Branch[]>([]);
   const [tokenCounts, setTokenCounts] = useState<Record<string, number>>({ repoRules: 0 });
@@ -76,6 +81,8 @@ export default function RulesPage() {
         setIsLoading(true);
         const data = await getRepositorySettings(currentOwnerId, currentRepoId);
         if (data) {
+          const lang = "preferred_language" in data ? data.preferred_language : null;
+          if (lang) setPreferredLanguage(lang);
           const newSettings: RulesSettings = {
             repoRules: data.repo_rules || "",
             targetBranch: data.target_branch || "",
@@ -201,7 +208,7 @@ export default function RulesPage() {
                 repo_rules: updatedFormData.repoRules,
                 structured_rules: updatedFormData.structuredRules,
                 target_branch: updatedFormData.targetBranch,
-              }
+              },
             );
           } catch (error) {
             setError("Failed to auto-save settings. Please try again later.");
@@ -231,6 +238,13 @@ export default function RulesPage() {
         console.error("Error saving settings:", error);
       }
     });
+  };
+
+  // Language change handler (auto-saves)
+  const handleLanguageChange = async (languageCode: string) => {
+    setPreferredLanguage(languageCode);
+    if (!currentOwnerId || !currentRepoId) return;
+    await updateRepoLanguage(currentOwnerId, currentRepoId, languageCode);
   };
 
   // Memoized rule section renderer
@@ -282,22 +296,40 @@ export default function RulesPage() {
       )}
       <RepositorySelector disableAllRepos={true} />
 
-      {/* Branch selector */}
-      <div className="mt-4 mb-6 md:mb-0 w-48">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Target Branch</label>
-        <select
-          value={formData.targetBranch}
-          onChange={(e) => handleFieldChange("targetBranch", e.target.value)}
-          className={`w-full p-2 border rounded-lg ${isBranchLoading ? "bg-gray-100" : "bg-white"}`}
-          disabled={isBranchLoading || !currentRepoName || !currentOwnerName}
-        >
-          <option value="">Select Branch</option>
-          {branches.map((branch) => (
-            <option key={branch.name} value={branch.name}>
-              {branch.name} {branch.isDefault ? "(default)" : ""}
-            </option>
-          ))}
-        </select>
+      {/* Branch selector and language */}
+      <div className="mt-4 mb-6 md:mb-0 flex gap-4">
+        <div className="w-48">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Target Branch</label>
+          <select
+            value={formData.targetBranch}
+            onChange={(e) => handleFieldChange("targetBranch", e.target.value)}
+            className={`w-full p-2 border rounded-lg ${isBranchLoading ? "bg-gray-100" : "bg-white"}`}
+            disabled={isBranchLoading || !currentRepoName || !currentOwnerName}
+          >
+            <option value="">Select Branch</option>
+            {branches.map((branch) => (
+              <option key={branch.name} value={branch.name}>
+                {branch.name} {branch.isDefault ? "(default)" : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="w-48">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+          <select
+            value={preferredLanguage}
+            onChange={(e) => handleLanguageChange(e.target.value)}
+            className="w-full p-2 border rounded-lg bg-white"
+            disabled={!currentRepoName || !currentOwnerName}
+          >
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <option key={lang.code} value={lang.code}>
+                {lang.name}
+                {"nativeName" in lang ? ` (${lang.nativeName})` : ""}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="space-y-6">
