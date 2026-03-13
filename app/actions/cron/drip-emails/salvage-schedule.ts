@@ -25,11 +25,11 @@ export interface SalvageContext {
   prCount: number;
 }
 
-export const generateSalvageUninstallSubject = (ownerName: string, ctx: SalvageContext) => {
-  if (ctx.hadSubscription) return generateSalvageHadSubscriptionSubject(ownerName);
-  if (ctx.hadMergedPr) return generateSalvageMergedPrSubject(ownerName);
-  if (ctx.hadPr) return generateSalvageHadPrSubject(ownerName, ctx);
-  return generateSalvageNoEngagementSubject(ownerName);
+export const generateSalvageUninstallSubject = (ctx: SalvageContext) => {
+  if (ctx.hadSubscription) return generateSalvageHadSubscriptionSubject();
+  if (ctx.hadMergedPr) return generateSalvageMergedPrSubject();
+  if (ctx.hadPr) return generateSalvageHadPrSubject(ctx);
+  return generateSalvageNoEngagementSubject();
 };
 
 export const generateSalvageUninstallEmail = (firstName: string, ctx: SalvageContext) => {

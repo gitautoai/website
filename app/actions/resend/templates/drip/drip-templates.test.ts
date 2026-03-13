@@ -267,25 +267,25 @@ describe("drip email templates", () => {
     });
 
     it("each variant has a distinct subject", () => {
-      expect(generateSalvageHadSubscriptionSubject("acme")).toContain("changed");
-      expect(generateSalvageMergedPrSubject("acme")).toContain("coverage");
+      expect(generateSalvageHadSubscriptionSubject()).toContain("changed");
+      expect(generateSalvageMergedPrSubject()).toContain("coverage");
       expect(
-        generateSalvageHadPrSubject("acme", { ...baseSalvageCtx, hadPr: true, prCount: 4 }),
+        generateSalvageHadPrSubject({ ...baseSalvageCtx, hadPr: true, prCount: 4 }),
       ).toContain("better");
-      expect(generateSalvageNoEngagementSubject("acme")).toContain("quick look");
+      expect(generateSalvageNoEngagementSubject()).toContain("Quick look");
     });
 
     it("subject router picks correct variant based on context", () => {
       expect(
-        generateSalvageUninstallSubject("acme", { ...baseSalvageCtx, hadSubscription: true }),
+        generateSalvageUninstallSubject({ ...baseSalvageCtx, hadSubscription: true }),
       ).toContain("changed");
       expect(
-        generateSalvageUninstallSubject("acme", { ...baseSalvageCtx, hadMergedPr: true }),
+        generateSalvageUninstallSubject({ ...baseSalvageCtx, hadMergedPr: true }),
       ).toContain("coverage");
       expect(
-        generateSalvageUninstallSubject("acme", { ...baseSalvageCtx, hadPr: true, prCount: 3 }),
+        generateSalvageUninstallSubject({ ...baseSalvageCtx, hadPr: true, prCount: 3 }),
       ).toContain("better");
-      expect(generateSalvageUninstallSubject("acme", baseSalvageCtx)).toContain("quick look");
+      expect(generateSalvageUninstallSubject(baseSalvageCtx)).toContain("Quick look");
     });
 
     it("body router picks correct variant based on context", () => {

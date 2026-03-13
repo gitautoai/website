@@ -6,7 +6,7 @@ import type { SalvageContext } from "@/app/actions/cron/drip-emails/salvage-sche
 
 /**
  * Had merged PRs, may or may not have uninstalled:
- *   Subject: acme's coverage could keep growing
+ *   Subject: Your coverage could keep growing
  *   Body (uninstalled, 3 PRs):
  *     Hi Alice - you merged 3 GitAuto PRs before you uninstalled back in Jan 2025. A lot has improved since then.
  *   Body (still installed, 1 PR):
@@ -19,8 +19,7 @@ import type { SalvageContext } from "@/app/actions/cron/drip-emails/salvage-sche
  *     Wes
  *     Founder, GitAuto
  */
-export const generateSalvageMergedPrSubject = (ownerName: string) =>
-  `${ownerName}'s coverage could keep growing`;
+export const generateSalvageMergedPrSubject = () => "Your coverage could keep growing";
 
 export const generateSalvageMergedPrEmail = (firstName: string, ctx: SalvageContext) => {
   const n = ctx.mergedPrCount;

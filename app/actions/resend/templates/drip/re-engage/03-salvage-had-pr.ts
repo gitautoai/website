@@ -6,7 +6,7 @@ import type { SalvageContext } from "@/app/actions/cron/drip-emails/salvage-sche
 
 /**
  * Had PRs (not merged), may or may not have uninstalled:
- *   Subject: acme - GitAuto opened 5 PRs, and they've gotten way better
+ *   Subject: GitAuto opened 5 PRs, and they've gotten way better
  *   Body (uninstalled, 5 PRs):
  *     Hi Alice - GitAuto opened 5 PRs for you before you uninstalled back in Jan 2025. They've gotten a lot better since then.
  *   Body (still installed, 1 PR):
@@ -19,10 +19,10 @@ import type { SalvageContext } from "@/app/actions/cron/drip-emails/salvage-sche
  *     Wes
  *     Founder, GitAuto
  */
-export const generateSalvageHadPrSubject = (ownerName: string, ctx: SalvageContext) => {
+export const generateSalvageHadPrSubject = (ctx: SalvageContext) => {
   const n = ctx.prCount;
   const prs = n === 1 ? "a PR" : `${n} PRs`;
-  return `${ownerName} - GitAuto opened ${prs}, and they've gotten way better`;
+  return `GitAuto opened ${prs}, and they've gotten way better`;
 };
 
 export const generateSalvageHadPrEmail = (firstName: string, ctx: SalvageContext) => {

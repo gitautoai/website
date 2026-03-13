@@ -6,7 +6,7 @@ import type { SalvageContext } from "@/app/actions/cron/drip-emails/salvage-sche
 
 /**
  * Uninstalled back in Jan 2025:
- *   Subject: acme - quick look at what GitAuto does
+ *   Subject: Quick look at what GitAuto does
  *   Body:
  *     Hi Alice - since you uninstalled GitAuto back in Jan 2025, it got a lot better.
  *
@@ -17,8 +17,7 @@ import type { SalvageContext } from "@/app/actions/cron/drip-emails/salvage-sche
  *     Wes
  *     Founder, GitAuto
  */
-export const generateSalvageNoEngagementSubject = (ownerName: string) =>
-  `${ownerName} - quick look at what GitAuto does`;
+export const generateSalvageNoEngagementSubject = () => "Quick look at what GitAuto does";
 
 export const generateSalvageNoEngagementEmail = (firstName: string, ctx: SalvageContext) => {
   const opener = ctx.uninstalledAt

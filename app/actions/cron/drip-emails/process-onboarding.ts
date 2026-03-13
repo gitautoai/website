@@ -1,7 +1,7 @@
 "use server";
 
 import { buildOwnerContext } from "./build-owner-context";
-import { EMAIL_GAP_DAYS, FIRST_EMAIL_DAY, IS_DRY_RUN } from "@/config/drip-emails";
+import { EMAIL_GAP_DAYS, FIRST_EMAIL_DAY } from "@/config/drip-emails";
 import type { BatchQueryResults } from "./fetch-batch-data";
 import { isPrOpen } from "@/app/actions/github/is-pr-open";
 import { generateRandomDelay } from "@/utils/generate-random-delay";
@@ -98,7 +98,7 @@ export const processOnboarding = async (
         userInfo.email,
         schedule.subject(inst.owner_name, userInfo.firstName, ctx),
         schedule.body(inst.owner_name, userInfo.firstName, ctx),
-        IS_DRY_RUN ? new Date() : generateRandomDelay(30, 180),
+        generateRandomDelay(30, 180),
       );
       results.push(result);
       if (result.success) {
@@ -147,7 +147,7 @@ export const processOnboarding = async (
             ctx.coverageRepoCount,
             ctx.repoMostNeedingCoverage,
           ),
-          IS_DRY_RUN ? new Date() : generateRandomDelay(30, 180),
+          generateRandomDelay(30, 180),
         );
         results.push(result);
         if (result.success) {

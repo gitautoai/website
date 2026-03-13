@@ -6,7 +6,7 @@ import type { SalvageContext } from "@/app/actions/cron/drip-emails/salvage-sche
 
 /**
  * Had subscription (now canceled), may or may not have uninstalled:
- *   Subject: acme - a lot has changed with GitAuto
+ *   Subject: A lot has changed with GitAuto
  *   Body (uninstalled):
  *     Hi Alice - a lot has changed with GitAuto since you uninstalled back in Jan 2025.
  *   Body (still installed):
@@ -19,8 +19,7 @@ import type { SalvageContext } from "@/app/actions/cron/drip-emails/salvage-sche
  *     Wes
  *     Founder, GitAuto
  */
-export const generateSalvageHadSubscriptionSubject = (ownerName: string) =>
-  `${ownerName} - a lot has changed with GitAuto`;
+export const generateSalvageHadSubscriptionSubject = () => "A lot has changed with GitAuto";
 
 export const generateSalvageHadSubscriptionEmail = (firstName: string, ctx: SalvageContext) => {
   const when = ctx.uninstalledAt
