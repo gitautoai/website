@@ -47,6 +47,8 @@ export default function RulesPage() {
   }, [currentRepoName, currentOwnerName, organizations, setCurrentRepoName]);
 
   // UI states
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const [isLoading, setIsLoading] = useState(false);
   const [isBranchLoading, setIsBranchLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -304,7 +306,7 @@ export default function RulesPage() {
             value={formData.targetBranch}
             onChange={(e) => handleFieldChange("targetBranch", e.target.value)}
             className={`w-full p-2 border rounded-lg ${isBranchLoading ? "bg-gray-100" : "bg-white"}`}
-            disabled={isBranchLoading || !currentRepoName || !currentOwnerName}
+            disabled={!mounted || isBranchLoading || !currentRepoName || !currentOwnerName}
           >
             <option value="">Select Branch</option>
             {branches.map((branch) => (
@@ -320,7 +322,7 @@ export default function RulesPage() {
             value={preferredLanguage}
             onChange={(e) => handleLanguageChange(e.target.value)}
             className="w-full p-2 border rounded-lg bg-white"
-            disabled={!currentRepoName || !currentOwnerName}
+            disabled={!mounted || !currentRepoName || !currentOwnerName}
           >
             {SUPPORTED_LANGUAGES.map((lang) => (
               <option key={lang.code} value={lang.code}>
