@@ -20,7 +20,8 @@ jobs:
       - name: Deploy to Vercel
         id: deploy
         run: |
-          git config user.email "info@gitauto.ai"
+          # Vercel CLI reads .git to detect the commit author and blocks deploys on the Hobby plan if the author isn't the team owner (info@gitauto.ai)
+          rm -rf .git
           deployment_url=$(vercel --yes --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref == 'refs/heads/main' && '--prod' || '' }})
           echo "deployment_url=$deployment_url" >> $GITHUB_OUTPUT
 
