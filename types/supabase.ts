@@ -1017,7 +1017,7 @@ export type Database = {
           pr_number: number | null;
           repo_id: number;
           repo_name: string;
-          retry_workflow_id_hash_pairs: string[] | null;
+          retry_error_hashes: string[] | null;
           source: string;
           token_input: number | null;
           token_output: number | null;
@@ -1045,7 +1045,7 @@ export type Database = {
           pr_number?: number | null;
           repo_id?: number;
           repo_name?: string;
-          retry_workflow_id_hash_pairs?: string[] | null;
+          retry_error_hashes?: string[] | null;
           source?: string;
           token_input?: number | null;
           token_output?: number | null;
@@ -1073,7 +1073,7 @@ export type Database = {
           pr_number?: number | null;
           repo_id?: number;
           repo_name?: string;
-          retry_workflow_id_hash_pairs?: string[] | null;
+          retry_error_hashes?: string[] | null;
           source?: string;
           token_input?: number | null;
           token_output?: number | null;
