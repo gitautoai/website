@@ -19,8 +19,8 @@ jobs:
 
       - name: Deploy to Vercel
         id: deploy
-        # https://vercel.com/guides/branch-variables-and-domains-not-linked-to-cli-deployments
         run: |
+          git config user.email "info@gitauto.ai"
           deployment_url=$(vercel --yes --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref == 'refs/heads/main' && '--prod' || '' }})
           echo "deployment_url=$deployment_url" >> $GITHUB_OUTPUT
 
