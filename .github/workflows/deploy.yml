@@ -21,7 +21,7 @@ jobs:
         id: deploy
         # https://vercel.com/guides/branch-variables-and-domains-not-linked-to-cli-deployments
         run: |
-          deployment_url=$(vercel --yes --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --meta githubDeployment="1" --meta githubCommitRef="${GITHUB_REF#refs/heads/}")
+          deployment_url=$(vercel --yes --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref == 'refs/heads/main' && '--prod' || '' }})
           echo "deployment_url=$deployment_url" >> $GITHUB_OUTPUT
 
       - name: Notify Slack on Failure
