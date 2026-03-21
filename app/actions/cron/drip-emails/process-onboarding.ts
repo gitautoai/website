@@ -3,9 +3,10 @@
 import { buildOwnerContext } from "./build-owner-context";
 import { EMAIL_GAP_DAYS, FIRST_EMAIL_DAY } from "@/config/drip-emails";
 import type { BatchQueryResults } from "./fetch-batch-data";
-import { isPrOpen } from "@/app/actions/github/is-pr-open";
 import { generateRandomDelay } from "@/utils/generate-random-delay";
+import { grantReEngageCredits } from "@/app/actions/supabase/credits/grant-re-engage-credits";
 import { insertEmailSend } from "@/app/actions/supabase/email-sends/insert-email-send";
+import { isPrOpen } from "@/app/actions/github/is-pr-open";
 import { coverageThresholds } from "./owner-coverage-schedule";
 import { onboardingSchedule } from "./onboarding-schedule";
 import { sendAndRecord } from "./send-and-record";
@@ -32,12 +33,16 @@ export const processOnboarding = async (
   let sendCount = 0;
   for (const inst of installations) {
     if (sendCount >= sendBudget) {
-      console.log(`[drip] Send budget (${sendBudget}) exhausted, stopping batch`);
+      console.log(
+        `[drip] Send budget (${sendBudget}) exhausted, stopping batch`,
+      );
       break;
     }
     const ownerId = inst.owner_id;
     if (data.repliedOwnerIds.has(ownerId)) {
-      console.log(`Skipping owner ${ownerId}: recipient replied to a previous email`);
+      console.log(
+        `Skipping owner ${ownerId}: recipient replied to a previous email`,
+      );
       continue;
     }
     const userInfo = lookups.getUserInfo(ownerId);
@@ -46,7 +51,9 @@ export const processOnboarding = async (
       continue;
     }
     if (emailedUsers.has(userInfo.email)) {
-      console.log(`Skipping owner ${ownerId}: already emailed ${userInfo.email} this run`);
+      console.log(
+        `Skipping owner ${ownerId}: already emailed ${userInfo.email} this run`,
+      );
       continue;
     }
 
@@ -60,7 +67,12 @@ export const processOnboarding = async (
     if (ctx.setupPrs.length > 0) {
       const openChecks = await Promise.all(
         ctx.setupPrs.map((pr) =>
-          isPrOpen(inst.installation_id, inst.owner_name, pr.repoName, pr.prNumber),
+          isPrOpen(
+            inst.installation_id,
+            inst.owner_name,
+            pr.repoName,
+            pr.prNumber,
+          ),
         ),
       );
       ctx.setupPrs = ctx.setupPrs.filter((_, i) => openChecks[i]);
@@ -74,7 +86,9 @@ export const processOnboarding = async (
     for (const schedule of onboardingSchedule) {
       if (sentThisRun) break;
       if (schedule.shouldPause(ctx)) {
-        console.log(`Paused drip at ${schedule.emailType} for owner ${ownerId}`);
+        console.log(
+          `Paused drip at ${schedule.emailType} for owner ${ownerId}`,
+        );
         break;
       }
       if (schedule.shouldSkip(ctx)) {
@@ -106,6 +120,14 @@ export const processOnboarding = async (
         sentThisRun = true;
         sendCount++;
         emailedUsers.add(userInfo.email);
+
+        // Top up credits for dormant users so they can try GitAuto again
+        if (schedule.emailType === "dormant_reintro") {
+          const balance =
+            data.owners.find((o) => o.owner_id === ownerId)
+              ?.credit_balance_usd || 0;
+          await grantReEngageCredits(ownerId, inst.owner_name, balance);
+        }
       }
       slot++;
     }
