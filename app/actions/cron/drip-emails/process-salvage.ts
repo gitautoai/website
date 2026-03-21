@@ -1,13 +1,15 @@
 "use server";
 
-import { FREE_CREDITS_AMOUNT_USD } from "@/config/pricing";
 import { generateRandomDelay } from "@/utils/generate-random-delay";
-import { generateSalvageUninstallEmail, generateSalvageUninstallSubject } from "./salvage-schedule";
+import {
+  generateSalvageUninstallEmail,
+  generateSalvageUninstallSubject,
+} from "./salvage-schedule";
+import { grantReEngageCredits } from "@/app/actions/supabase/credits/grant-re-engage-credits";
 import type { SalvageContext } from "./salvage-schedule";
 import type { BatchQueryResults } from "./fetch-batch-data";
 import type { getActiveInstallations } from "@/app/actions/supabase/installations/get-active-installations";
 import type { getUninstalledInstallations } from "@/app/actions/supabase/installations/get-uninstalled-installations";
-import { insertCredits } from "@/app/actions/supabase/credits/insert-credits";
 import { getOwnerIdsHadMergedPr } from "@/app/actions/supabase/usage/get-owner-ids-had-merged-pr";
 import { getOwnerIdsHadPr } from "@/app/actions/supabase/usage/get-owner-ids-had-pr";
 import { getOwnerIdsHadSubscription } from "@/app/actions/stripe/get-owner-ids-had-subscription";
@@ -49,12 +51,13 @@ export const processSalvage = async (
   if (allOwnerIds.length === 0) return results;
 
   // Fetch context flags in parallel
-  const [ownerHadPr, ownerHadMergedPr, ownerHasActiveSub, ownerHadSub] = await Promise.all([
-    getOwnerIdsHadPr(allOwnerIds),
-    getOwnerIdsHadMergedPr(allOwnerIds),
-    getOwnerIdsWithActiveSubscription(allOwnerIds),
-    getOwnerIdsHadSubscription(allOwnerIds),
-  ]);
+  const [ownerHadPr, ownerHadMergedPr, ownerHasActiveSub, ownerHadSub] =
+    await Promise.all([
+      getOwnerIdsHadPr(allOwnerIds),
+      getOwnerIdsHadMergedPr(allOwnerIds),
+      getOwnerIdsWithActiveSubscription(allOwnerIds),
+      getOwnerIdsHadSubscription(allOwnerIds),
+    ]);
 
   // Build targets: uninstalled users + active users with canceled subscriptions
   const targets: SalvageTarget[] = [];
@@ -167,22 +170,7 @@ export const processSalvage = async (
 
       // Top up credits so they can actually try GitAuto again
       const balance = ownerBalance[target.owner_id] || 0;
-      const topUp = FREE_CREDITS_AMOUNT_USD - balance;
-      if (topUp > 0) {
-        try {
-          await insertCredits({
-            owner_id: target.owner_id,
-            amount_usd: topUp,
-            transaction_type: "salvage",
-            expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-          });
-          console.log(
-            `[drip] Granted $${topUp} salvage credits to owner ${target.owner_id} (${target.owner_name}), balance was $${balance}`,
-          );
-        } catch (e) {
-          console.error(`[drip] Failed to grant salvage credits to owner ${target.owner_id}:`, e);
-        }
-      }
+      await grantReEngageCredits(target.owner_id, target.owner_name, balance);
     }
   }
   console.log(`[drip] Salvage loop done: ${salvageSent} sent`);
