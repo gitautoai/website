@@ -23,7 +23,6 @@ jobs:
         run: |
           deployment_url=$(vercel --yes --token=${{ secrets.VERCEL_TOKEN }} ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --meta githubDeployment="1" --meta githubCommitRef="${GITHUB_REF#refs/heads/}")
           echo "deployment_url=$deployment_url" >> $GITHUB_OUTPUT
-        continue-on-error: true
 
       - name: Notify Slack on Failure
         if: failure()
