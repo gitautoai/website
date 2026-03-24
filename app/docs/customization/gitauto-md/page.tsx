@@ -178,6 +178,22 @@ export default function GitAutoMdPage() {
         </section>
 
         <section>
+          <h2 className="text-3xl font-semibold mt-0 mb-6">How It Works</h2>
+          <p className="text-gray-700 mb-4">
+            For a deeper look at the guardrails that keep GITAUTO.md manageable, see{" "}
+            <Link
+              href={
+                RELATIVE_URLS.DOCS.HOW_IT_WORKS.HALLUCINATION_PREVENTION.GITAUTO_MD_RESTRICTIONS
+              }
+              className="text-pink-600 hover:text-pink-700 underline"
+            >
+              GITAUTO.md Restrictions
+            </Link>{" "}
+            - rules that prevent the file from growing out of control.
+          </p>
+        </section>
+
+        <section>
           <h2 className="text-3xl font-semibold mt-0 mb-6">Getting Started</h2>
           <p className="text-gray-700 mb-4">
             You do not need to create{" "}

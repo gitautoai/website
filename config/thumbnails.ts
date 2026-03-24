@@ -61,6 +61,16 @@ export const THUMBNAILS = {
       CIRCLECI: `${BASE_URL}/og/docs-integrations-circleci.png`,
       NPM: `${BASE_URL}/og/docs-integrations-npm.png`,
     },
+    HOW_IT_WORKS: {
+      INDEX: `${BASE_URL}/og/docs-how-it-works.png`,
+      CONTEXT_ENRICHMENT: `${BASE_URL}/og/docs-how-it-works-context-enrichment.png`,
+      OUTPUT_AUTO_CORRECTION: `${BASE_URL}/og/docs-how-it-works-output-auto-correction.png`,
+      QUALITY_VERIFICATION: `${BASE_URL}/og/docs-how-it-works-quality-verification.png`,
+      SAFETY_GUARDRAILS: `${BASE_URL}/og/docs-how-it-works-safety-guardrails.png`,
+      TOKEN_COST_MANAGEMENT: `${BASE_URL}/og/docs-how-it-works-token-cost-management.png`,
+      RESILIENCE_RECOVERY: `${BASE_URL}/og/docs-how-it-works-resilience-recovery.png`,
+      HALLUCINATION_PREVENTION: `${BASE_URL}/og/docs-how-it-works-hallucination-prevention.png`,
+    },
   },
 
   // Blog
