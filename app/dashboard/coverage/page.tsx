@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 
 // Local imports (Actions)
 import { toggleExclusion } from "@/app/actions/supabase/coverage/toggle-exclusion";
-import { setupCoverageWorkflow } from "@/app/actions/setup-coverage-workflow";
 import { syncRepositoryFiles } from "@/app/actions/sync-repository-files";
 
 // Local imports (Components and others)
 import { useAccountContext } from "@/app/components/contexts/Account";
 import DocsLink from "@/app/components/DocsLink";
+import { useSetupWorkflow } from "@/app/hooks/use-setup-workflow";
 import ErrorBanner from "@/app/components/ErrorBanner";
 import FilterSelect from "@/app/components/FilterSelect";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
@@ -97,9 +97,9 @@ export default function CoveragePage() {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectedExclusionFilter, setSelectedExclusionFilter] = useState<string>("");
   const [isTogglingExclusion, setIsTogglingExclusion] = useState(false);
-  const [isSettingUpWorkflow, setIsSettingUpWorkflow] = useState(false);
-  const [showSetupModal, setShowSetupModal] = useState(false);
   const [showVisitModal, setShowVisitModal] = useState(false);
+  const { isSettingUp, getRepoStatus, checkSetupPR, triggerSetup, SetupModals } =
+    useSetupWorkflow();
   const [insufficientCredits, setInsufficientCredits] = useState<InsufficientCreditsInfo | null>(
     null,
   );
@@ -266,6 +266,17 @@ export default function CoveragePage() {
     if (allCoverageEmpty && !isLoadingDB) setShowVisitModal(true);
   }, [allCoverageEmpty, isLoadingDB]);
 
+  // Check for existing setup PR when coverage is empty
+  useEffect(() => {
+    if (!allCoverageEmpty || !currentOwnerName || !currentRepoName || !currentInstallationId)
+      return;
+    checkSetupPR({
+      ownerName: currentOwnerName,
+      repoName: currentRepoName,
+      installationId: currentInstallationId,
+    });
+  }, [allCoverageEmpty, currentOwnerName, currentRepoName, currentInstallationId, checkSetupPR]);
+
   // Check if we have any package names to show the filter
   const hasPackages = packageNames.length > 0;
 
@@ -290,18 +301,12 @@ export default function CoveragePage() {
       setError("Missing required repository information");
       return;
     }
-
-    setIsSettingUpWorkflow(true);
-    setError(null);
-    // Fire and forget — Lambda runs setup in the background
-    setupCoverageWorkflow(
-      currentOwnerName,
-      currentRepoName,
-      currentInstallationId,
-      userLogin || "",
-    ).catch(() => {});
-    setShowSetupModal(true);
-    setIsSettingUpWorkflow(false);
+    triggerSetup({
+      ownerName: currentOwnerName,
+      repoName: currentRepoName,
+      installationId: currentInstallationId,
+      senderName: userLogin || "",
+    });
   };
 
   const handleToggleExclusion = async (isExcluded: boolean) => {
@@ -430,23 +435,38 @@ export default function CoveragePage() {
       <div className="mt-4 md:mt-6">
         <div className="flex items-end justify-between mb-4 md:mb-2">
           <CoverageStats filteredData={filteredData} coverageData={coverageData} />
-          {allCoverageEmpty && !isLoadingDB && (
-            <button
-              onClick={handleSetupWorkflow}
-              disabled={isSettingUpWorkflow}
-              className="text-sm text-pink-600 hover:text-pink-700 text-right disabled:opacity-50"
-            >
-              {isSettingUpWorkflow ? (
-                "Setting up..."
-              ) : (
-                <>
-                  No coverage results yet.
-                  <br />
-                  Want me to set up a CI workflow?
-                </>
-              )}
-            </button>
-          )}
+          {allCoverageEmpty &&
+            !isLoadingDB &&
+            (() => {
+              const status = getRepoStatus(currentRepoName || "");
+              if (status?.status === "open")
+                return (
+                  <p className="text-sm text-gray-500 text-right">
+                    CI workflow setup in progress.
+                    <br />
+                    Merge the PR and wait for CI to run.
+                  </p>
+                );
+              if (status?.status === "closed")
+                return <p className="text-sm text-gray-500 text-right">{status.message}</p>;
+              return (
+                <button
+                  onClick={handleSetupWorkflow}
+                  disabled={isSettingUp}
+                  className="text-sm text-pink-600 hover:text-pink-700 text-right disabled:opacity-50"
+                >
+                  {isSettingUp ? (
+                    "Setting up..."
+                  ) : (
+                    <>
+                      No coverage results yet.
+                      <br />
+                      Want me to set up a CI workflow?
+                    </>
+                  )}
+                </button>
+              );
+            })()}
         </div>
 
         <div className="overflow-x-auto">
@@ -497,14 +517,7 @@ export default function CoveragePage() {
         />
       )}
 
-      {showSetupModal && (
-        <Modal
-          title="Setting Up CI Workflow"
-          type="success"
-          message="A pull request will be created shortly with a CI workflow to upload coverage reports. Check your repository for the new PR."
-          onClose={() => setShowSetupModal(false)}
-        />
-      )}
+      <SetupModals />
 
       {showVisitModal && (
         <Modal
@@ -529,13 +542,13 @@ export default function CoveragePage() {
               ? undefined
               : [
                   {
-                    label: isSettingUpWorkflow ? "Setting up..." : "Set Up",
+                    label: isSettingUp ? "Setting up..." : "Set Up",
                     onClick: () => {
                       confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
                       setShowVisitModal(false);
                       handleSetupWorkflow();
                     },
-                    disabled: isSettingUpWorkflow,
+                    disabled: isSettingUp,
                   },
                   {
                     label: "Later",

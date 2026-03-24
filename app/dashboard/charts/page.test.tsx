@@ -22,8 +22,8 @@ jest.mock("swr", () => jest.fn(() => ({ data: undefined, error: undefined })));
 jest.mock("@/app/components/contexts/Account");
 jest.mock("@/app/actions/supabase/repo-coverage/get-repo-coverage");
 jest.mock("@/app/actions/supabase/total-repo-coverage/get-total-coverage");
-jest.mock("@/app/actions/setup-coverage-workflow", () => ({
-  setupCoverageWorkflow: jest.fn(),
+jest.mock("@/app/hooks/use-setup-workflow", () => ({
+  useSetupWorkflow: jest.fn(),
 }));
 jest.mock("@/app/components/DocsLink", () => () => null);
 jest.mock("@/app/components/ErrorBanner", () => () => null);
@@ -43,11 +43,16 @@ jest.mock("./components/CoverageStats", () => () => null);
 import { render, screen, waitFor } from "@testing-library/react";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import { getRepoCoverage } from "@/app/actions/supabase/repo-coverage/get-repo-coverage";
+import { useSetupWorkflow } from "@/app/hooks/use-setup-workflow";
 import { Tables } from "@/types/supabase";
 import ChartsPage from "./page";
 
 const mockUseAccountContext = useAccountContext as jest.MockedFunction<typeof useAccountContext>;
 const mockGetRepoCoverage = getRepoCoverage as jest.MockedFunction<typeof getRepoCoverage>;
+const mockUseSetupWorkflow = useSetupWorkflow as jest.MockedFunction<typeof useSetupWorkflow>;
+
+const mockTriggerSetup = jest.fn();
+const mockCheckSetupPR = jest.fn();
 
 describe("ChartsPage", () => {
   const mockRealData: Tables<"repo_coverage">[] = [
@@ -74,8 +79,35 @@ describe("ChartsPage", () => {
     },
   ];
 
+  const defaultAccountContext = {
+    currentOwnerId: "owner-1",
+    currentRepoId: null,
+    currentRepoName: "__ALL__",
+    currentOwnerName: "test-owner",
+    currentInstallationId: 123,
+    organizations: [
+      {
+        ownerName: "test-owner",
+        repositories: [
+          { repoId: "repo-1", repoName: "repo-one" },
+          { repoId: "repo-2", repoName: "repo-two" },
+        ],
+      },
+    ],
+    userLogin: "user1",
+  } as any;
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Default: no setup PRs for any repo
+    mockUseSetupWorkflow.mockReturnValue({
+      isSettingUp: false,
+      getRepoStatus: jest.fn(() => null),
+      checkSetupPR: mockCheckSetupPR,
+      triggerSetup: mockTriggerSetup,
+      SetupModals: () => <></>,
+    });
 
     // Mock localStorage
     const localStorageMock = {
@@ -89,23 +121,7 @@ describe("ChartsPage", () => {
 
   describe("All Repositories mode", () => {
     it("shows setup button for repos with no data", async () => {
-      mockUseAccountContext.mockReturnValue({
-        currentOwnerId: "owner-1",
-        currentRepoId: null,
-        currentRepoName: "__ALL__",
-        currentOwnerName: "test-owner",
-        organizations: [
-          {
-            ownerName: "test-owner",
-            repositories: [
-              { repoId: "repo-1", repoName: "repo-one" },
-              { repoId: "repo-2", repoName: "repo-two" },
-            ],
-          },
-        ],
-      } as any);
-
-      // Both repos return no data
+      mockUseAccountContext.mockReturnValue(defaultAccountContext);
       mockGetRepoCoverage.mockResolvedValue([]);
 
       render(<ChartsPage />);
@@ -121,23 +137,7 @@ describe("ChartsPage", () => {
     });
 
     it("shows real data for repos with data and setup button for repos without", async () => {
-      mockUseAccountContext.mockReturnValue({
-        currentOwnerId: "owner-1",
-        currentRepoId: null,
-        currentRepoName: "__ALL__",
-        currentOwnerName: "test-owner",
-        organizations: [
-          {
-            ownerName: "test-owner",
-            repositories: [
-              { repoId: "repo-1", repoName: "repo-one" },
-              { repoId: "repo-2", repoName: "repo-two" },
-            ],
-          },
-        ],
-      } as any);
-
-      // repo-one has real data, repo-two has no data
+      mockUseAccountContext.mockReturnValue(defaultAccountContext);
       mockGetRepoCoverage
         .mockResolvedValueOnce(mockRealData) // repo-one
         .mockResolvedValueOnce([]); // repo-two
@@ -149,31 +149,12 @@ describe("ChartsPage", () => {
         expect(screen.getByText("repo-two")).toBeInTheDocument();
       });
 
-      // Should show data points message for repo-one
       expect(screen.getByText(/Showing 1 data points/)).toBeInTheDocument();
-
-      // Should show setup button for repo-two
       expect(screen.getByText(/No coverage data yet/)).toBeInTheDocument();
     });
 
     it("shows real data for all repos when all have data", async () => {
-      mockUseAccountContext.mockReturnValue({
-        currentOwnerId: "owner-1",
-        currentRepoId: null,
-        currentRepoName: "__ALL__",
-        currentOwnerName: "test-owner",
-        organizations: [
-          {
-            ownerName: "test-owner",
-            repositories: [
-              { repoId: "repo-1", repoName: "repo-one" },
-              { repoId: "repo-2", repoName: "repo-two" },
-            ],
-          },
-        ],
-      } as any);
-
-      // Both repos have real data
+      mockUseAccountContext.mockReturnValue(defaultAccountContext);
       mockGetRepoCoverage.mockResolvedValue(mockRealData);
 
       render(<ChartsPage />);
@@ -183,12 +164,89 @@ describe("ChartsPage", () => {
         expect(screen.getByText("repo-two")).toBeInTheDocument();
       });
 
-      // Should show data points messages for both repos
       const dataMessages = screen.getAllByText(/Showing 1 data points/);
       expect(dataMessages).toHaveLength(2);
-
-      // Should NOT show setup buttons
       expect(screen.queryByText(/No coverage data yet/)).not.toBeInTheDocument();
+    });
+  });
+
+  describe("setup PR status", () => {
+    it("shows 'in progress' message when repo has open setup PR", async () => {
+      mockUseAccountContext.mockReturnValue(defaultAccountContext);
+      mockGetRepoCoverage.mockResolvedValue([]);
+      mockUseSetupWorkflow.mockReturnValue({
+        isSettingUp: false,
+        getRepoStatus: jest.fn((repoName: string) =>
+          repoName === "repo-one"
+            ? {
+                status: "open" as const,
+                url: "https://github.com/pr/1",
+                number: 1,
+                title: "Set up test coverage workflow",
+              }
+            : null,
+        ),
+        checkSetupPR: mockCheckSetupPR,
+        triggerSetup: mockTriggerSetup,
+        SetupModals: () => <></>,
+      });
+
+      render(<ChartsPage />);
+
+      await waitFor(() => {
+        expect(screen.getByText("repo-one")).toBeInTheDocument();
+      });
+
+      // repo-one should show "in progress", repo-two should show setup button
+      expect(screen.getByText(/CI workflow setup in progress/)).toBeInTheDocument();
+      expect(screen.getByText(/No coverage data yet/)).toBeInTheDocument();
+    });
+
+    it("shows bot message when repo has closed setup PR", async () => {
+      mockUseAccountContext.mockReturnValue(defaultAccountContext);
+      mockGetRepoCoverage.mockResolvedValue([]);
+      mockUseSetupWorkflow.mockReturnValue({
+        isSettingUp: false,
+        getRepoStatus: jest.fn((repoName: string) =>
+          repoName === "repo-one"
+            ? { status: "closed" as const, message: "No testable code found in this repository." }
+            : null,
+        ),
+        checkSetupPR: mockCheckSetupPR,
+        triggerSetup: mockTriggerSetup,
+        SetupModals: () => <></>,
+      });
+
+      render(<ChartsPage />);
+
+      await waitFor(() => {
+        expect(screen.getByText("repo-one")).toBeInTheDocument();
+      });
+
+      // repo-one should show the bot's message
+      expect(screen.getByText("No testable code found in this repository.")).toBeInTheDocument();
+      // repo-two should still show setup button
+      expect(screen.getByText(/No coverage data yet/)).toBeInTheDocument();
+    });
+
+    it("checks setup PRs on load for repos with no data", async () => {
+      mockUseAccountContext.mockReturnValue(defaultAccountContext);
+      mockGetRepoCoverage.mockResolvedValue([]);
+
+      render(<ChartsPage />);
+
+      await waitFor(() => {
+        expect(mockCheckSetupPR).toHaveBeenCalledWith({
+          ownerName: "test-owner",
+          repoName: "repo-one",
+          installationId: 123,
+        });
+        expect(mockCheckSetupPR).toHaveBeenCalledWith({
+          ownerName: "test-owner",
+          repoName: "repo-two",
+          installationId: 123,
+        });
+      });
     });
   });
 });
