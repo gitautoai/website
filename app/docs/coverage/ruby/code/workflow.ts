@@ -10,6 +10,14 @@ on:
       - '**/*.rb'
       - Gemfile
       - Gemfile.lock
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.rb'
+      - Gemfile
+      - Gemfile.lock
+      - '!.github/workflows/**'
   workflow_dispatch:
 
 # Auto-cancel outdated runs on the same branch
@@ -32,12 +40,19 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
+      # PR: tests only, Push: tests with coverage
+      - name: Run tests
+        if: github.event_name == 'pull_request'
+        run: bundle exec rspec
+
       - name: Run tests with coverage
+        if: github.event_name == 'push'
         run: bundle exec rspec
         env:
           COVERAGE: true
 
       - name: Upload coverage reports
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v6
         with:
           name: coverage-report

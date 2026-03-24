@@ -105,12 +105,26 @@ export default function MultiLanguageCoveragePage() {
             <CodeBlock code={jsWorkflow} language="yaml" filename="js-coverage.yml" />
           </div>
 
+          <div className="bg-blue-50 p-4 rounded-lg mb-6">
+            <h3 className="text-lg font-medium text-blue-900 mb-2">
+              Why <code className="bg-blue-100 px-1 rounded">!.github/workflows/**</code> on PRs
+              Only?
+            </h3>
+            <p className="text-blue-800">
+              On <strong>pull requests</strong>, we exclude workflow file changes to keep the setup
+              PR minimal. When you&apos;re adding or editing a workflow file, pre-existing test
+              failures in your codebase are irrelevant and shouldn&apos;t block the PR. On{" "}
+              <strong>push</strong> (after merge to main), we don&apos;t exclude them so that the
+              initial coverage report gets generated on your target branch.
+            </p>
+          </div>
+
           <h3 className="text-xl font-semibold mt-6 mb-3">Alternative: Single Workflow File</h3>
           <p className="text-gray-600 mb-4">
             If you prefer a single file, use separate jobs per language. Each job has its own
             isolated workspace, so both can output to the same path (e.g.,{" "}
-            <code className="bg-gray-100 px-1">coverage/lcov.info</code>) without conflict - they
-            just need unique artifact names:
+            <code className="bg-gray-100 px-1">coverage/lcov.info</code>) without conflict - but
+            they need unique artifact names since they share the same workflow run:
           </p>
           <CodeBlock code={workflow} language="yaml" filename="coverage.yml" />
 
@@ -121,8 +135,13 @@ export default function MultiLanguageCoveragePage() {
                 Each job runs in its own workspace - output paths don&apos;t conflict between jobs
               </li>
               <li>
-                Artifact names must be unique and contain &quot;coverage&quot; or
-                &quot;lcov.info&quot;
+                In a single workflow file, artifact names must be unique since jobs share the same
+                workflow run. Separate workflow files don&apos;t have this constraint (each run has
+                its own artifact namespace), but unique names are still recommended for clarity.
+              </li>
+              <li>
+                Artifact names must contain &quot;coverage&quot; or &quot;lcov.info&quot; for
+                GitAuto to detect them
               </li>
               <li>Without path filters, both jobs run on every push (less efficient)</li>
             </ul>

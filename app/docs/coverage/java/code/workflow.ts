@@ -10,6 +10,14 @@ on:
       - '**/*.java'
       - pom.xml
       - build.gradle
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.java'
+      - pom.xml
+      - build.gradle
+      - '!.github/workflows/**'
   workflow_dispatch:
 
 # Auto-cancel outdated runs on the same branch
@@ -36,21 +44,30 @@ jobs:
           key: \${{ runner.os }}-m2-\${{ hashFiles('**/pom.xml') }}
           restore-keys: \${{ runner.os }}-m2
 
+      # PR: tests only, Push: tests with coverage
+      - name: Run tests
+        if: github.event_name == 'pull_request'
+        run: mvn clean test
+
       - name: Run tests with coverage
+        if: github.event_name == 'push'
         run: mvn clean test jacoco:report
 
       - name: Convert JaCoCo XML to Cobertura format
+        if: github.event_name == 'push'
         run: |
           curl -o cover2cover.py https://raw.githubusercontent.com/rix0rrr/cover2cover/master/cover2cover.py
           python3 cover2cover.py target/site/jacoco/jacoco.xml src/main/java/ > target/site/cobertura.xml
 
       - name: Convert Cobertura to LCOV format
+        if: github.event_name == 'push'
         run: |
           pip install lcov_cobertura
           mkdir -p coverage
           python3 -m lcov_cobertura target/site/cobertura.xml --output coverage/lcov.info --demangle
 
       - name: Upload coverage reports
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v6
         with:
           name: coverage-report

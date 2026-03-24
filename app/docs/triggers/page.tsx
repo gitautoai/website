@@ -82,6 +82,19 @@ export default function TriggersOverviewPage() {
         </div>
 
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 my-8">
+          <h2 className="text-2xl font-semibold mt-0 mb-4">How It Works</h2>
+          <p className="text-gray-700 mb-4">
+            Each trigger type loads a specialized prompt optimized for its context. Learn more about{" "}
+            <Link
+              href={RELATIVE_URLS.DOCS.HOW_IT_WORKS.CONTEXT_ENRICHMENT.TRIGGER_SPECIFIC_PROMPTS}
+              className="text-pink-600 hover:text-pink-700"
+            >
+              trigger-specific prompts →
+            </Link>
+          </p>
+        </div>
+
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 my-8">
           <h2 className="text-2xl font-semibold mt-0 mb-4">Getting Started</h2>
           <p className="text-gray-700 mb-4">To configure triggers:</p>
           <ol className="text-gray-700 space-y-2">

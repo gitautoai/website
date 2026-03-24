@@ -10,6 +10,14 @@ on:
       - '**/*.dart'
       - pubspec.yaml
       - pubspec.lock
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.dart'
+      - pubspec.yaml
+      - pubspec.lock
+      - '!.github/workflows/**'
   workflow_dispatch:
 
 # Auto-cancel outdated runs on the same branch
@@ -31,11 +39,17 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      # PR: tests only, Push: tests with coverage
+      - name: Run tests
+        if: github.event_name == 'pull_request'
+        run: flutter test
+
       - name: Run tests with coverage
+        if: github.event_name == 'push'
         run: flutter test --coverage
 
       - name: Upload coverage report
-        if: always()
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v6
         with:
           name: coverage-report

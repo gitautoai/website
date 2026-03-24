@@ -58,6 +58,19 @@ export function CommonConfiguration({
             ))}
           </ul>
         </div>
+
+        <div className="bg-blue-50 p-4 rounded-lg mb-6">
+          <h3 className="text-lg font-medium text-blue-900 mb-2">
+            Why <code className="bg-blue-100 px-1 rounded">!.github/workflows/**</code> on PRs Only?
+          </h3>
+          <p className="text-blue-800">
+            On <strong>pull requests</strong>, we exclude workflow file changes to keep the setup PR
+            minimal. When you&apos;re adding or editing a workflow file, pre-existing test failures
+            in your codebase are irrelevant and shouldn&apos;t block the PR. On{" "}
+            <strong>push</strong> (after merge to main), we don&apos;t exclude them so that the
+            initial coverage report gets generated on your target branch.
+          </p>
+        </div>
       </section>
 
       <section>
