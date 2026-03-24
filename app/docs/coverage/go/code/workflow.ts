@@ -10,6 +10,14 @@ on:
       - '**/*.go'
       - go.mod
       - go.sum
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.go'
+      - go.mod
+      - go.sum
+      - '!.github/workflows/**'
   workflow_dispatch:
 
 # Auto-cancel outdated runs on the same branch
@@ -32,17 +40,25 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
+      # PR: tests only, Push: tests with coverage
+      - name: Run tests
+        if: github.event_name == 'pull_request'
+        run: go test -v ./...
+
       - name: Run tests with coverage
+        if: github.event_name == 'push'
         run: |
           mkdir -p coverage
           go test -v -coverprofile=coverage/coverage.out ./...
 
       - name: Convert to LCOV format
+        if: github.event_name == 'push'
         run: |
           go install github.com/jandelgado/gcov2lcov@latest
           gcov2lcov -infile=coverage/coverage.out -outfile=coverage/lcov.info
 
       - name: Upload coverage reports
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v6
         with:
           name: coverage-report

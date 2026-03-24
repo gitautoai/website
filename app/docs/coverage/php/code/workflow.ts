@@ -11,6 +11,15 @@ on:
       - composer.json
       - composer.lock
       - phpunit.xml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.php'
+      - composer.json
+      - composer.lock
+      - phpunit.xml
+      - '!.github/workflows/**'
   workflow_dispatch:
 
 # Auto-cancel outdated runs on the same branch
@@ -35,20 +44,28 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
+      # PR: tests only, Push: tests with coverage
       # For generic PHP: runs 'phpunit' which reads phpunit.xml
       # For Laravel: runs 'php artisan test' which internally calls PHPUnit
+      - name: Run tests
+        if: github.event_name == 'pull_request'
+        run: composer test
+
       # Both generate coverage because phpunit.xml configures it
       - name: Run tests with coverage
+        if: github.event_name == 'push'
         run: composer test
 
       # Most popular Clover-to-LCOV conversion tool
       - name: Convert Clover to LCOV format
+        if: github.event_name == 'push'
         uses: andstor/clover2lcov-action@v1
         with:
           src: coverage/clover.xml
           dst: coverage/lcov.info
 
       - name: Upload coverage reports
+        if: github.event_name == 'push'
         uses: actions/upload-artifact@v6
         with:
           name: coverage-report

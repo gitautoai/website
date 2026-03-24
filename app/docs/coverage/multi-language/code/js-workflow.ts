@@ -6,7 +6,7 @@ on:
     paths: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx']
   pull_request:
     branches: [main]
-    paths: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx']
+    paths: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '!.github/workflows/**']
 
 jobs:
   test:

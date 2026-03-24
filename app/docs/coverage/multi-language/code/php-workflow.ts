@@ -6,7 +6,7 @@ on:
     paths: ['**/*.php']
   pull_request:
     branches: [main]
-    paths: ['**/*.php']
+    paths: ['**/*.php', '!.github/workflows/**']
 
 jobs:
   test:
