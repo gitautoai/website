@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { getRepoCoverage } from "@/app/actions/supabase/repo-coverage/get-repo-coverage";
 import { getTotalCoverage } from "@/app/actions/supabase/total-repo-coverage/get-total-coverage";
-import { setupCoverageWorkflow } from "@/app/actions/setup-coverage-workflow";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import DocsLink from "@/app/components/DocsLink";
 import ErrorBanner from "@/app/components/ErrorBanner";
 import Modal from "@/app/components/Modal";
+import { useSetupWorkflow } from "@/app/hooks/use-setup-workflow";
 import InfoIcon from "@/app/components/InfoIcon";
 import PeriodSelector, { Period, calculatePeriodDates } from "@/app/components/PeriodSelector";
 import ReloadButton from "@/app/components/ReloadButton";
@@ -31,10 +31,10 @@ export default function ChartsPage() {
   const [totalCoverageData, setTotalCoverageData] = useState<Tables<"repo_coverage">[]>([]);
   const [selectedPeriod, setSelectedPeriod] = useState<Period>(DEFAULT_PERIOD);
   const [reloadingRepos, setReloadingRepos] = useState<Set<string>>(new Set());
-  const [isSettingUpWorkflow, setIsSettingUpWorkflow] = useState(false);
-  const [showSetupModal, setShowSetupModal] = useState(false);
   const [showVisitModal, setShowVisitModal] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const { isSettingUp, getRepoStatus, checkSetupPR, triggerSetup, SetupModals } =
+    useSetupWorkflow();
 
   // Load saved period from localStorage on mount
   useEffect(() => {
@@ -139,6 +139,23 @@ export default function ChartsPage() {
     fetchData();
   }, [currentOwnerId, organizations, currentOwnerName]);
 
+  // Check for existing setup PRs on repos with no coverage data
+  useEffect(() => {
+    if (!dataLoaded || !currentOwnerName || !currentInstallationId) return;
+    const emptyRepos = Object.entries(allReposData)
+      .filter(([, data]) => data.length === 0)
+      .map(([repoName]) => repoName.replace(/ \([^)]+\)$/, ""));
+    // Deduplicate (multi-language repos share the same base name)
+    const uniqueRepos = [...new Set(emptyRepos)];
+    for (const repoName of uniqueRepos) {
+      checkSetupPR({
+        ownerName: currentOwnerName,
+        repoName,
+        installationId: currentInstallationId,
+      });
+    }
+  }, [dataLoaded, allReposData, currentOwnerName, currentInstallationId, checkSetupPR]);
+
   // Show visit modal when all repos have no coverage data
   const allReposEmpty =
     dataLoaded &&
@@ -221,15 +238,13 @@ export default function ChartsPage() {
 
   const handleSetupWorkflow = (repoName: string) => {
     if (!currentOwnerName || !currentInstallationId) return;
-
-    setIsSettingUpWorkflow(true);
     setError(null);
-    // Fire and forget — Lambda runs setup in the background
-    setupCoverageWorkflow(currentOwnerName, repoName, currentInstallationId, userLogin || "").catch(
-      () => {},
-    );
-    setShowSetupModal(true);
-    setIsSettingUpWorkflow(false);
+    triggerSetup({
+      ownerName: currentOwnerName,
+      repoName,
+      installationId: currentInstallationId,
+      senderName: userLogin || "",
+    });
   };
 
   return (
@@ -278,21 +293,34 @@ export default function ChartsPage() {
               </h2>
               {hasNoData ? (
                 <div className="text-center py-8">
-                  <button
-                    onClick={() => handleSetupWorkflow(baseRepoName)}
-                    disabled={isSettingUpWorkflow}
-                    className="text-sm text-pink-600 hover:text-pink-700 disabled:opacity-50"
-                  >
-                    {isSettingUpWorkflow ? (
-                      "Setting up..."
-                    ) : (
-                      <>
-                        No coverage data yet.
-                        <br />
-                        Want me to set up a CI workflow?
-                      </>
-                    )}
-                  </button>
+                  {(() => {
+                    const status = getRepoStatus(baseRepoName);
+                    if (status?.status === "open")
+                      return (
+                        <p className="text-sm text-gray-500">
+                          CI workflow setup in progress. Merge the PR and wait for CI to run.
+                        </p>
+                      );
+                    if (status?.status === "closed")
+                      return <p className="text-sm text-gray-500">{status.message}</p>;
+                    return (
+                      <button
+                        onClick={() => handleSetupWorkflow(baseRepoName)}
+                        disabled={isSettingUp}
+                        className="text-sm text-pink-600 hover:text-pink-700 disabled:opacity-50"
+                      >
+                        {isSettingUp ? (
+                          "Setting up..."
+                        ) : (
+                          <>
+                            No coverage data yet.
+                            <br />
+                            Want me to set up a CI workflow?
+                          </>
+                        )}
+                      </button>
+                    );
+                  })()}
                 </div>
               ) : (
                 <div className="space-y-2 md:space-y-6">
@@ -311,14 +339,7 @@ export default function ChartsPage() {
         })}
       </div>
 
-      {showSetupModal && (
-        <Modal
-          title="Setting Up CI Workflow"
-          type="success"
-          message="A pull request will be created shortly with a CI workflow to upload coverage reports. Check your repository for the new PR."
-          onClose={() => setShowSetupModal(false)}
-        />
-      )}
+      <SetupModals />
 
       {showVisitModal && (
         <Modal
