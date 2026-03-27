@@ -54,10 +54,10 @@ export const creditsJsonLd = {
     "@type": "Offer",
     priceSpecification: {
       "@type": "PriceSpecification",
-      price: "7",
+      price: "8",
       priceCurrency: "USD",
       unitText: "per PR",
-      description: "Pay-as-you-go pricing at $7 per pull request generated",
+      description: "Pay-as-you-go pricing at $8 per pull request generated",
       minPrice: "10",
       eligibleQuantity: {
         "@type": "QuantitativeValue",
