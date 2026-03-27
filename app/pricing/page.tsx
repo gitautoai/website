@@ -24,7 +24,10 @@ export default function PricingPage() {
       <PricingTable />
 
       <p className="text-center text-gray-500 mt-8">
-        Need something custom?{" "}
+        <Link href={RELATIVE_URLS.ROI.CALCULATOR} className="text-pink-600 hover:underline">
+          Calculate your ROI
+        </Link>
+        {" | "}
         <Link href={RELATIVE_URLS.CONTACT} className="text-pink-600 hover:underline">
           Contact us
         </Link>

@@ -23,7 +23,7 @@ export const RULES_CONTENT = {
       "## Repository Purpose\n" +
       "This repository is...\n\n" +
       "## Detailed Tech Stack\n" +
-      "- Primary language: Python 3.12\n" +
+      "- Primary language: Python 3.13\n" +
       "- Hosting: AWS Lambda\n" +
       "- Database: Supabase (PostgreSQL)\n\n" +
       "## Additional Coding Guidelines\n" +

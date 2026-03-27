@@ -20,6 +20,10 @@ export const RELATIVE_URLS = {
   // Other Pages
   CONTACT: "/contact",
   PRICING_DETAILS: "/pricing",
+  ROI: {
+    CALCULATOR: "/roi/calculator",
+    METHODOLOGY: "/roi/methodology",
+  },
   SETTINGS: {
     INDEX: "/settings",
     ACTIONS: "/settings/actions",
@@ -280,6 +284,10 @@ export const ABSOLUTE_URLS = {
     LOGO: `${BASE_URL}/logo.png`,
     PRICING: `${BASE_URL}${RELATIVE_URLS.PRICING}`,
     PRICING_DETAILS: `${BASE_URL}${RELATIVE_URLS.PRICING_DETAILS}`,
+    ROI: {
+      CALCULATOR: `${BASE_URL}${RELATIVE_URLS.ROI.CALCULATOR}`,
+      METHODOLOGY: `${BASE_URL}${RELATIVE_URLS.ROI.METHODOLOGY}`,
+    },
     PRIVACY_POLICY: `${BASE_URL}${RELATIVE_URLS.PRIVACY_POLICY}`,
     TERMS_OF_SERVICE: `${BASE_URL}${RELATIVE_URLS.TERMS_OF_SERVICE}`,
     SETTINGS: {
