@@ -47,7 +47,7 @@ Install it, configure your schedule and rules, and test PRs start showing up aut
 
 ## Pricing
 
-- [Pricing](https://gitauto.ai/pricing): $7 per PR with free credits to start
+- [Pricing](https://gitauto.ai/pricing): $8 per PR with free credits to start
 
 ## Optional
 

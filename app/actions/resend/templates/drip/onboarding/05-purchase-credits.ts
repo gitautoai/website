@@ -7,7 +7,7 @@ import type { OwnerContext } from "@/types/drip-emails";
  * Never purchased, has free credits left:
  *   Subject: Keep the test coverage growing
  *   Body:
- *     Hi Alice - you have $14 in free credits. Each PR costs $7. Set up auto-reload so you never run out.
+ *     Hi Alice - you have $16 in free credits. Each PR costs $8. Set up auto-reload so you never run out.
  *
  *     https://gitauto.ai/dashboard/credits
  *
@@ -17,14 +17,14 @@ import type { OwnerContext } from "@/types/drip-emails";
  * Never purchased, zero balance:
  *   Subject: You're out of credits
  *   Body:
- *     Hi Alice - you're out of credits. Each PR costs $7. Buy credits and set up auto-reload to keep going.
+ *     Hi Alice - you're out of credits. Each PR costs $8. Buy credits and set up auto-reload to keep going.
  *
  *     https://gitauto.ai/dashboard/credits
  *
  *     Wes
  *     Founder, GitAuto
  *
- * Purchased but balance low (≤ $7):
+ * Purchased but balance low (≤ $8):
  *   Subject: You're running low on credits
  *   Body:
  *     Hi Alice - you have $5 in credits - not enough for another PR. Set up auto-reload so this doesn't happen again.
