@@ -1,3 +1,4 @@
+const notifySlack = require("./notify-slack.js");
 const { TwitterApi } = require("twitter-api-v2");
 
 /**
@@ -75,20 +76,13 @@ async function postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title }) {
     }
   }
 
-  // Send to Slack webhook
-  if (process.env.SLACK_WEBHOOK_URL) {
-    const links = [
-      gitAutoTweetResult ? `https://x.com/gitautoai/status/${gitAutoTweetResult.data.id}` : null,
-      wesTweetResult ? `https://x.com/hiroshinishio/status/${wesTweetResult.data.id}` : null,
-    ].filter(Boolean).join(" and ");
-    await fetch(process.env.SLACK_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ msg: `Posted to X! ${links}` }),
-    });
-  } else {
-    console.log("SLACK_WEBHOOK_URL not set, skipping Slack notification");
-  }
+  const links = [
+    gitAutoTweetResult ? `https://x.com/gitautoai/status/${gitAutoTweetResult.data.id}` : null,
+    wesTweetResult ? `https://x.com/hiroshinishio/status/${wesTweetResult.data.id}` : null,
+  ]
+    .filter(Boolean)
+    .join(" and ");
+  await notifySlack(`Posted to X! ${links}`);
 }
 
 module.exports = postTwitter;

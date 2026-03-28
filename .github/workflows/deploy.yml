@@ -6,6 +6,9 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -27,11 +30,13 @@ jobs:
 
       - name: Notify Slack on Failure
         if: failure()
-        uses: slackapi/slack-github-action@v2.0.0
-        with:
-          webhook-type: incoming-webhook
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          payload: |
-            {
-              "text": "<!channel> ❌ ${{ github.ref == 'refs/heads/main' && 'Production' || 'Preview' }} deployment failed${{ steps.deploy.outputs.deployment_url && format(' - {0}', steps.deploy.outputs.deployment_url) || '' }}"
-            }
+        env:
+          DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'Production' || 'Preview' }}
+          DEPLOY_URL: ${{ steps.deploy.outputs.deployment_url }}
+        run: |
+          message="<!channel> :x: ${DEPLOY_ENV} deployment failed"
+          if [ -n "$DEPLOY_URL" ]; then
+            message="${message} - ${DEPLOY_URL}"
+          fi
+          jq -n --arg text "$message" '{"channel": "C08PHH352S3", "text": $text}' | \
+          curl -X POST -H "Authorization: Bearer $SLACK_BOT_TOKEN" -H 'Content-type: application/json' -d @- https://slack.com/api/chat.postMessage

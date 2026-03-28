@@ -10,6 +10,10 @@ on:
 permissions:
   contents: read
 
+env:
+  DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY_WES }}
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
 jobs:
   post-devto:
     runs-on: ubuntu-22.04
@@ -26,6 +30,3 @@ jobs:
           script: |
             const postDevTo = require('.github/scripts/post-devto.js');
             await postDevTo({ commits: context.payload.commits });
-        env:
-          DEVTO_API_KEY: ${{ secrets.DEVTO_API_KEY_WES }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

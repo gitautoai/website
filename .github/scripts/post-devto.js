@@ -1,34 +1,35 @@
 const fs = require("fs");
+const notifySlack = require("./notify-slack.js");
 const path = require("path");
 
 /**
  * Extracts blog post URLs from push event commits
  */
-function getPostUrls(commits) {
-  const urls = new Set();
+function getChangedPostFiles(commits) {
+  const files = new Set();
   for (const commit of commits) {
     for (const filename of [...(commit.added || []), ...(commit.modified || [])]) {
       if (filename.startsWith("app/blog/posts/") && filename.endsWith(".mdx")) {
-        const slug = filename
-          .split("/")
-          .pop()
-          .replace(/^\d{4}-\d{2}-\d{2}-/, "")
-          .replace(/\.mdx$/, "");
-        urls.add(`https://gitauto.ai/blog/${slug}`);
+        files.add(filename);
       }
     }
   }
-  return [...urls];
+  return [...files];
 }
 
 /**
  * @see https://developers.forem.com/api/v1#operation/createArticle
  */
-async function postOneToDevTo(postUrl) {
-  const urlPath = new URL(postUrl).pathname;
-  const blogPath = path.join(process.cwd(), "app", urlPath, "page.mdx");
-  const imageUrl = `https://gitauto.ai${urlPath}/thumbnail-devto.png`;
-  console.log({ urlPath, blogPath, imageUrl });
+async function postOneToDevTo(filePath) {
+  const filename = filePath
+    .split("/")
+    .pop()
+    .replace(/\.mdx$/, "");
+  const slug = filename.replace(/^\d{4}-\d{2}-\d{2}-/, "");
+  const postUrl = `https://gitauto.ai/blog/${slug}`;
+  const blogPath = path.join(process.cwd(), filePath);
+  const imageUrl = `https://gitauto.ai/blog/${slug}/thumbnail-devto.png`;
+  console.log({ slug, blogPath, imageUrl });
 
   // Read the blog content
   const content = fs.readFileSync(blogPath, "utf-8");
@@ -110,28 +111,13 @@ async function postOneToDevTo(postUrl) {
   // Get the article data from the response
   const articleData = await response.json();
 
-  // Send to Slack webhook
-  if (process.env.SLACK_WEBHOOK_URL) {
-    const slackResponse = await fetch(process.env.SLACK_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        msg: `New article published on dev.to: ${articleData.url}`,
-      }),
-    });
-
-    if (!slackResponse.ok) {
-      console.warn(`Failed to send Slack notification: ${slackResponse.statusText}`);
-    }
-  } else {
-    console.log("SLACK_WEBHOOK_URL not set, skipping Slack notification");
-  }
+  await notifySlack(`Posted to dev.to! ${articleData.url}`);
 }
 
 async function postDevTo({ commits }) {
-  const postUrls = getPostUrls(commits);
-  for (const postUrl of postUrls) {
-    await postOneToDevTo(postUrl);
+  const files = getChangedPostFiles(commits);
+  for (const filePath of files) {
+    await postOneToDevTo(filePath);
   }
 }
 

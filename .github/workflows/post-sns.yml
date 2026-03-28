@@ -12,6 +12,9 @@ permissions:
   pull-requests: read
   contents: read
 
+env:
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
 jobs:
   check-should-post:
     if: github.event.workflow_run.conclusion == 'success'
@@ -93,6 +96,18 @@ jobs:
     needs: check-should-post
     if: needs.check-should-post.outputs.should-post == 'true'
     runs-on: ubuntu-22.04
+    env:
+      X_OAUTH1_CONSUMER_KEY_GITAUTO: ${{ secrets.X_OAUTH1_CONSUMER_KEY_GITAUTO }}
+      X_OAUTH1_CONSUMER_KEY_SECRET_GITAUTO: ${{ secrets.X_OAUTH1_CONSUMER_KEY_SECRET_GITAUTO }}
+      X_OAUTH1_ACCESS_TOKEN_GITAUTO: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_GITAUTO }}
+      X_OAUTH1_ACCESS_TOKEN_SECRET_GITAUTO: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_SECRET_GITAUTO }}
+      X_OAUTH1_CONSUMER_KEY_WES: ${{ secrets.X_OAUTH1_CONSUMER_KEY_WES }}
+      X_OAUTH1_CONSUMER_KEY_SECRET_WES: ${{ secrets.X_OAUTH1_CONSUMER_KEY_SECRET_WES }}
+      X_OAUTH1_ACCESS_TOKEN_WES: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_WES }}
+      X_OAUTH1_ACCESS_TOKEN_SECRET_WES: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_SECRET_WES }}
+      LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+      HN_USERNAME: ${{ secrets.HN_USERNAME }}
+      HN_PASSWORD: ${{ secrets.HN_PASSWORD }}
     steps:
       # https://github.com/actions/checkout
       - uses: actions/checkout@v4
@@ -131,16 +146,6 @@ jobs:
             });
 
             await postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
-        env:
-          X_OAUTH1_CONSUMER_KEY_GITAUTO: ${{ secrets.X_OAUTH1_CONSUMER_KEY_GITAUTO }}
-          X_OAUTH1_CONSUMER_KEY_SECRET_GITAUTO: ${{ secrets.X_OAUTH1_CONSUMER_KEY_SECRET_GITAUTO }}
-          X_OAUTH1_ACCESS_TOKEN_GITAUTO: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_GITAUTO }}
-          X_OAUTH1_ACCESS_TOKEN_SECRET_GITAUTO: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_SECRET_GITAUTO }}
-          X_OAUTH1_CONSUMER_KEY_WES: ${{ secrets.X_OAUTH1_CONSUMER_KEY_WES }}
-          X_OAUTH1_CONSUMER_KEY_SECRET_WES: ${{ secrets.X_OAUTH1_CONSUMER_KEY_SECRET_WES }}
-          X_OAUTH1_ACCESS_TOKEN_WES: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_WES }}
-          X_OAUTH1_ACCESS_TOKEN_SECRET_WES: ${{ secrets.X_OAUTH1_ACCESS_TOKEN_SECRET_WES }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Post to LinkedIn
         uses: actions/github-script@v8
@@ -161,9 +166,6 @@ jobs:
             });
 
             await postLinkedIn({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
-        env:
-          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       - name: Post to Hacker News
         uses: actions/github-script@v8
@@ -184,7 +186,3 @@ jobs:
             });
 
             await postHackerNews({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
-        env:
-          HN_USERNAME: ${{ secrets.HN_USERNAME }}
-          HN_PASSWORD: ${{ secrets.HN_PASSWORD }}
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
