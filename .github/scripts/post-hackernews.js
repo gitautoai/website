@@ -1,4 +1,5 @@
 const { chromium } = require("playwright");
+const notifySlack = require("./notify-slack.js");
 
 /**
  * Posts to Hacker News using Playwright for browser automation
@@ -57,18 +58,7 @@ async function postHackerNews({ isBlog, postUrl, gitautoPost, wesPost, title }) 
       .catch(() => null);
     if (error) throw new Error(`HN submission failed: ${error}`);
 
-    // Send to Slack webhook
-    if (process.env.SLACK_WEBHOOK_URL) {
-      await fetch(process.env.SLACK_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          msg: `Posted to Hacker News! https://news.ycombinator.com/newest`,
-        }),
-      });
-    } else {
-      console.log("SLACK_WEBHOOK_URL not set, skipping Slack notification");
-    }
+    await notifySlack(`Posted to Hacker News! https://news.ycombinator.com/newest`);
 
     await browser.close();
   } catch (error) {

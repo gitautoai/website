@@ -1,4 +1,5 @@
 const fs = require("fs");
+const notifySlack = require("./notify-slack.js");
 const path = require("path");
 
 /**
@@ -20,7 +21,10 @@ function getChangedPostFiles(commits) {
  * @see https://developers.forem.com/api/v1#operation/createArticle
  */
 async function postOneToDevTo(filePath) {
-  const filename = filePath.split("/").pop().replace(/\.mdx$/, "");
+  const filename = filePath
+    .split("/")
+    .pop()
+    .replace(/\.mdx$/, "");
   const slug = filename.replace(/^\d{4}-\d{2}-\d{2}-/, "");
   const postUrl = `https://gitauto.ai/blog/${slug}`;
   const blogPath = path.join(process.cwd(), filePath);
@@ -107,22 +111,7 @@ async function postOneToDevTo(filePath) {
   // Get the article data from the response
   const articleData = await response.json();
 
-  // Send to Slack webhook
-  if (process.env.SLACK_WEBHOOK_URL) {
-    const slackResponse = await fetch(process.env.SLACK_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        msg: `New article published on dev.to: ${articleData.url}`,
-      }),
-    });
-
-    if (!slackResponse.ok) {
-      console.warn(`Failed to send Slack notification: ${slackResponse.statusText}`);
-    }
-  } else {
-    console.log("SLACK_WEBHOOK_URL not set, skipping Slack notification");
-  }
+  await notifySlack(`Posted to dev.to! ${articleData.url}`);
 }
 
 async function postDevTo({ commits }) {

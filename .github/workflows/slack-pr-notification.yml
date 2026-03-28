@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [closed]
 
+env:
+  SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
 jobs:
   notify-slack:
     if: github.event.pull_request.merged == true
@@ -16,5 +19,5 @@ jobs:
           jq -n \
             --arg title "${{ github.event.pull_request.title }}" \
             --arg url "${{ github.event.pull_request.html_url }}" \
-            '{"msg": "Website PR Merged: <\($url)|\($title)>"}' | \
-          curl -X POST -H 'Content-type: application/json' -d @- ${{ secrets.SLACK_WEBHOOK_URL }}
+            '{"channel": "C08PHH352S3", "text": "<!channel> Website PR Merged: <\($url)|\($title)>"}' | \
+          curl -X POST -H "Authorization: Bearer $SLACK_BOT_TOKEN" -H 'Content-type: application/json' -d @- https://slack.com/api/chat.postMessage
