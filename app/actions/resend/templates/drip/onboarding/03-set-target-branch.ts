@@ -7,8 +7,8 @@ import type { OwnerContext } from "@/types/drip-emails";
  * Body:
  *   Hi Alice - acme/backend has the most uncovered code (15%) - start there. Set a target branch and enable a schedule:
  *
- *   https://gitauto.ai/settings/rules
- *   https://gitauto.ai/settings/triggers
+ *   https://gitauto.ai/dashboard/rules
+ *   https://gitauto.ai/dashboard/triggers
  *
  *   Wes
  *   Founder, GitAuto
