@@ -1,0 +1,354 @@
+"use client";
+// Third-party imports
+import { useCallback, useEffect, useState, useRef, useTransition } from "react";
+
+// Local imports
+import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
+import { updateRepoLanguage } from "@/app/actions/supabase/repositories/update-repo-language";
+import { upsertRepository } from "@/app/actions/supabase/repositories/upsert-repository";
+import { Branch } from "@/app/api/github/get-branches/route";
+import { useAccountContext } from "@/app/components/contexts/Account";
+import LoadingSpinner from "@/app/components/LoadingSpinner";
+import RepositorySelector from "@/app/dashboard/components/RepositorySelector";
+import SaveButton from "@/app/dashboard/components/SaveButton";
+import StructuredRulesSection from "@/app/dashboard/rules/StructuredRulesSection";
+import { PLAN_LIMITS } from "@/app/dashboard/constants/plans";
+import { RULES_CONTENT } from "@/app/dashboard/rules/config/freeform-rules";
+import { SUPPORTED_LANGUAGES } from "@/config/languages";
+import {
+  DEFAULT_STRUCTURED_RULES,
+  StructuredRules,
+} from "@/app/dashboard/rules/config/structured-rules";
+import { RulesSettings } from "@/app/dashboard/types";
+import { countTokens } from "@/utils/tokens";
+
+export default function RulesPage() {
+  // Account context
+  const {
+    currentOwnerId,
+    currentOwnerName,
+    currentRepoId,
+    currentRepoName,
+    setCurrentRepoName,
+    organizations,
+    userId,
+    userName,
+    accessToken,
+  } = useAccountContext();
+
+  // Auto-select first repo if "__ALL__" is selected (rules page doesn't support all repos)
+  useEffect(() => {
+    if (currentRepoName === "__ALL__" && currentOwnerName && organizations.length > 0) {
+      const currentOrg = organizations.find((org) => org.ownerName === currentOwnerName);
+      if (currentOrg && currentOrg.repositories.length > 0) {
+        setCurrentRepoName(currentOrg.repositories[0].repoName);
+      }
+    }
+  }, [currentRepoName, currentOwnerName, organizations, setCurrentRepoName]);
+
+  // UI states
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isBranchLoading, setIsBranchLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+
+  // Form data
+  const [formData, setFormData] = useState<RulesSettings>({
+    repoRules: "",
+    structuredRules: DEFAULT_STRUCTURED_RULES,
+    targetBranch: "",
+  });
+
+  // Language state
+  const [preferredLanguage, setPreferredLanguage] = useState("en");
+
+  // Other state
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [tokenCounts, setTokenCounts] = useState<Record<string, number>>({ repoRules: 0 });
+  const tokenCountTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Load initial settings
+  useEffect(() => {
+    if (!currentOwnerId || !currentRepoId) {
+      setIsLoading(false);
+      return;
+    }
+
+    const loadFormData = async () => {
+      const startTime = performance.now();
+      try {
+        setError(null);
+        setIsLoading(true);
+        const data = await getRepositorySettings(currentOwnerId, currentRepoId);
+        if (data) {
+          const lang = "preferred_language" in data ? data.preferred_language : null;
+          if (lang) setPreferredLanguage(lang);
+          const newSettings: RulesSettings = {
+            repoRules: data.repo_rules || "",
+            targetBranch: data.target_branch || "",
+            structuredRules:
+              data &&
+              "structured_rules" in data &&
+              data.structured_rules &&
+              typeof data.structured_rules === "object" &&
+              !Array.isArray(data.structured_rules)
+                ? { ...DEFAULT_STRUCTURED_RULES, ...data.structured_rules }
+                : DEFAULT_STRUCTURED_RULES,
+          };
+          setFormData(newSettings);
+          setTokenCounts({ repoRules: countTokens(newSettings.repoRules) });
+        }
+      } catch (error) {
+        setError("Failed to load settings");
+        console.error("Error loading settings:", error);
+      } finally {
+        setIsLoading(false);
+        const endTime = performance.now();
+        const executionTime = endTime - startTime;
+        if (executionTime > 1000) {
+          console.log(`Rules page loadSettings time: ${executionTime}ms`);
+        }
+      }
+    };
+
+    loadFormData();
+  }, [currentOwnerId, currentRepoId]);
+
+  // Load branches when repository changes
+  useEffect(() => {
+    if (!currentRepoName || !currentOwnerName || !accessToken) return;
+
+    const fetchBranches = async () => {
+      setIsBranchLoading(true);
+      try {
+        const response = await fetch("/api/github/get-branches", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ownerName: currentOwnerName,
+            repoName: currentRepoName,
+            accessToken,
+          }),
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch branches");
+
+        const branchData: Branch[] = await response.json();
+        setBranches(branchData);
+      } catch (err) {
+        console.error("Error loading branches:", err);
+      } finally {
+        setIsBranchLoading(false);
+      }
+    };
+
+    fetchBranches();
+  }, [currentRepoName, currentOwnerName, accessToken]);
+
+  // Branch selection logic
+  useEffect(() => {
+    if (branches.length === 0 || isBranchLoading) return;
+
+    // Only set branch if none is selected or current selection is invalid
+    const currentBranch = formData.targetBranch;
+    const isCurrentBranchValid = currentBranch && branches.some((b) => b.name === currentBranch);
+
+    if (isCurrentBranchValid) return;
+
+    // Fallback to default branch
+    const defaultBranch = branches.find((b) => b.isDefault);
+    if (defaultBranch) {
+      setFormData((prev) => ({ ...prev, targetBranch: defaultBranch.name }));
+    }
+  }, [branches, isBranchLoading, formData.targetBranch]);
+
+  // Field change handler
+  const handleFieldChange = useCallback((field: keyof RulesSettings, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+
+    // Only count tokens for text fields
+    if (field === "repoRules") {
+      if (tokenCountTimeoutRef.current) {
+        clearTimeout(tokenCountTimeoutRef.current);
+      }
+
+      tokenCountTimeoutRef.current = setTimeout(() => {
+        setTokenCounts((prev) => ({
+          ...prev,
+          [field]: countTokens(value),
+        }));
+      }, 500);
+    }
+  }, []);
+
+  // Toggle rules change handler with auto-save for boolean and select types
+  const handleStructuredRulesChange = useCallback(
+    (key: keyof StructuredRules, value: boolean | string, shouldAutoSave: boolean = false) => {
+      setFormData((prev) => ({
+        ...prev,
+        structuredRules: { ...prev.structuredRules, [key]: value },
+      }));
+
+      // Auto-save for boolean and select types
+      if (shouldAutoSave && currentOwnerId && currentRepoId && currentRepoName && userId) {
+        const updatedFormData = {
+          ...formData,
+          structuredRules: { ...formData.structuredRules, [key]: value },
+        };
+
+        startTransition(async () => {
+          try {
+            await upsertRepository(
+              currentOwnerId,
+              currentRepoId,
+              currentRepoName,
+              userId,
+              userName,
+              {
+                repo_rules: updatedFormData.repoRules,
+                structured_rules: updatedFormData.structuredRules,
+                target_branch: updatedFormData.targetBranch,
+              },
+            );
+          } catch (error) {
+            setError("Failed to auto-save settings. Please try again later.");
+            console.error("Error auto-saving settings:", error);
+          }
+        });
+      }
+    },
+    [currentOwnerId, currentRepoId, currentRepoName, userId, userName, formData],
+  );
+
+  // Save handler
+  const handleSave = () => {
+    if (!currentOwnerId || !currentRepoId || !currentRepoName || !userId) return;
+
+    setError(null);
+
+    startTransition(async () => {
+      try {
+        await upsertRepository(currentOwnerId, currentRepoId, currentRepoName, userId, userName, {
+          repo_rules: formData.repoRules,
+          structured_rules: formData.structuredRules,
+          target_branch: formData.targetBranch,
+        });
+      } catch (error) {
+        setError("Failed to save settings. Please try again later.");
+        console.error("Error saving settings:", error);
+      }
+    });
+  };
+
+  // Language change handler (auto-saves)
+  const handleLanguageChange = async (languageCode: string) => {
+    setPreferredLanguage(languageCode);
+    if (!currentOwnerId || !currentRepoId) return;
+    await updateRepoLanguage(currentOwnerId, currentRepoId, languageCode);
+  };
+
+  // Memoized rule section renderer
+  const renderRuleSection = useCallback(
+    (field: "repoRules") => (
+      <div className="mb-8 relative">
+        <h2 className="text-xl font-semibold">{RULES_CONTENT[field].title}</h2>
+        <p className="text-gray-600 text-sm mb-2">{RULES_CONTENT[field].description}</p>
+        <div className="relative">
+          <textarea
+            value={formData.repoRules}
+            onChange={(e) => handleFieldChange("repoRules", e.target.value)}
+            placeholder={RULES_CONTENT.repoRules.placeholder}
+            maxLength={PLAN_LIMITS.STANDARD.maxChars}
+            rows={10}
+            disabled={isPending || isLoading}
+            className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-pink-600"
+          />
+          {isPending && (
+            <div className="absolute right-2 top-2">
+              <div className="w-4 h-4 border-2 border-pink-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
+        </div>
+        <div className="mt-2 text-sm text-gray-500 flex gap-2">
+          <span
+            className={`px-2 py-1 rounded ${
+              formData.repoRules.length > PLAN_LIMITS.STANDARD.maxChars
+                ? "bg-red-100 text-red-700"
+                : "bg-gray-100"
+            }`}
+          >
+            {formData.repoRules.length} / {PLAN_LIMITS.STANDARD.maxChars} characters
+          </span>
+          <span className="px-2 py-1 rounded bg-gray-100">{tokenCounts.repoRules} tokens</span>
+        </div>
+      </div>
+    ),
+    [formData, handleFieldChange, isPending, isLoading, tokenCounts],
+  );
+
+  return (
+    <div className="relative min-h-screen">
+      <h1 className="text-3xl font-bold mb-6">Rules Settings</h1>
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+          {error}
+        </div>
+      )}
+      <RepositorySelector disableAllRepos={true} />
+
+      {/* Branch selector and language */}
+      <div className="mt-4 mb-6 md:mb-0 flex gap-4">
+        <div className="w-48">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Target Branch</label>
+          <select
+            value={formData.targetBranch}
+            onChange={(e) => handleFieldChange("targetBranch", e.target.value)}
+            className={`w-full p-2 border rounded-lg ${isBranchLoading ? "bg-gray-100" : "bg-white"}`}
+            disabled={!mounted || isBranchLoading || !currentRepoName || !currentOwnerName}
+          >
+            <option value="">Select Branch</option>
+            {branches.map((branch) => (
+              <option key={branch.name} value={branch.name}>
+                {branch.name} {branch.isDefault ? "(default)" : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="w-48">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Language</label>
+          <select
+            value={preferredLanguage}
+            onChange={(e) => handleLanguageChange(e.target.value)}
+            className="w-full p-2 border rounded-lg bg-white"
+            disabled={!mounted || !currentRepoName || !currentOwnerName}
+          >
+            {SUPPORTED_LANGUAGES.map((lang) => (
+              <option key={lang.code} value={lang.code}>
+                {lang.name}
+                {"nativeName" in lang ? ` (${lang.nativeName})` : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="space-y-6">
+        <StructuredRulesSection
+          structuredRules={formData.structuredRules}
+          onStructuredRulesChange={handleStructuredRulesChange}
+          disabled={isPending || isLoading}
+        />
+
+        {renderRuleSection("repoRules")}
+
+        <div className="mt-6">
+          <SaveButton onClick={handleSave} isSaving={isPending} />
+        </div>
+      </div>
+
+      {isLoading && <LoadingSpinner />}
+    </div>
+  );
+}

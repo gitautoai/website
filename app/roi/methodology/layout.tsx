@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/utils/metadata";
 import { methodologyJsonLd } from "./jsonld";
 
 export const metadata = createPageMetadata({
-  title: `${PRODUCT_NAME} ROI Methodology - How We Calculate Return on Investment`,
+  title: `${PRODUCT_NAME} ROI Methodology - How We Calculate Savings`,
   description: `How GitAuto calculates ROI: the formula, time savings breakdown, and real-world examples for California and India engineering teams.`,
   url: ABSOLUTE_URLS.GITAUTO.ROI.METHODOLOGY,
   images: [{ url: THUMBNAILS.PRICING, alt: `${PRODUCT_NAME} ROI Methodology` }],

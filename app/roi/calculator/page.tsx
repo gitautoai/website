@@ -5,19 +5,22 @@ import Link from "next/link";
 import { useState } from "react";
 
 // Local imports
-import { CREDIT_PRICING } from "@/config/pricing";
+import { CREDIT_PRICING, ROI_DEFAULTS } from "@/config/pricing";
 import { ABSOLUTE_URLS, RELATIVE_URLS } from "@/config/urls";
 
 const COST_PER_PR = CREDIT_PRICING.PER_PR.AMOUNT_USD;
-const DEFAULT_HOURS_PER_TEST = 3;
 
 export default function ROICalculatorPage() {
   const [fileCount, setFileCount] = useState(100);
   const [currentCoverage, setCurrentCoverage] = useState(20);
   const [targetCoverage, setTargetCoverage] = useState(80);
-  const [hourlyRate, setHourlyRate] = useState(71);
-  const [hoursPerTest, setHoursPerTest] = useState(DEFAULT_HOURS_PER_TEST);
+  const [annualSalary, setAnnualSalary] = useState(ROI_DEFAULTS.CALIFORNIA.ANNUAL_SALARY);
+  const [hoursPerTest, setHoursPerTest] = useState(ROI_DEFAULTS.HOURS_PER_TEST);
 
+  const hourlyRate = Math.round(
+    annualSalary / (ROI_DEFAULTS.WORK_DAYS_PER_YEAR * ROI_DEFAULTS.WORK_HOURS_PER_DAY),
+  );
+  // Approximation: coverage % is line coverage, not file coverage. The actual number depends on how coverage is distributed across files. This assumes uniform distribution as a rough estimate.
   const filesNeedingTests = Math.max(
     0,
     Math.round((fileCount * (targetCoverage - currentCoverage)) / 100),
@@ -91,23 +94,28 @@ export default function ROICalculatorPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Engineer hourly rate ($)
+              Engineer annual salary ($)
             </label>
             <div className="relative">
               <span className="absolute left-3 top-2 text-gray-500">$</span>
               <input
-                type="number"
-                value={hourlyRate}
-                onChange={(e) => setHourlyRate(Math.max(0, Number(e.target.value)))}
-                min={0}
+                type="text"
+                inputMode="numeric"
+                value={annualSalary.toLocaleString()}
+                onChange={(e) =>
+                  setAnnualSalary(Math.max(0, Number(e.target.value.replace(/,/g, "")) || 0))
+                }
                 className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
             </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Hourly rate: ${hourlyRate}/hr (salary / 260 days / 8 hours)
+            </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Hours to write tests per file (manually)
+              Hours per file (with AI coding tools)
             </label>
             <input
               type="number"
@@ -117,6 +125,13 @@ export default function ROICalculatorPage() {
               step={0.5}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Detect untested file, find existing tests, write tests, open PR, run CI, fix failures,
+              address reviews, update branch, and iterate until merged.{" "}
+              <Link href={RELATIVE_URLS.SOLUTION} className="text-pink-600 hover:underline">
+                See the full cycle
+              </Link>
+            </p>
           </div>
         </div>
 
@@ -126,8 +141,14 @@ export default function ROICalculatorPage() {
 
           <div className="bg-gray-50 p-6 rounded-lg space-y-4">
             <div>
-              <p className="text-sm text-gray-500">Files needing new tests</p>
+              <p className="text-sm text-gray-500">Files needing new tests (estimate)</p>
               <p className="text-2xl font-bold">{filesNeedingTests.toLocaleString()}</p>
+              <p className="text-xs text-gray-400">
+                Your coverage gap is {targetCoverage - currentCoverage}%, so roughly{" "}
+                {targetCoverage - currentCoverage}% of your {fileCount.toLocaleString()} files need
+                new or improved tests. This is a simplified estimate since coverage is measured per
+                line, not per file.
+              </p>
             </div>
 
             <hr className="border-gray-200" />
@@ -139,7 +160,7 @@ export default function ROICalculatorPage() {
                   ${manualCost.toLocaleString()}
                 </p>
                 <p className="text-xs text-gray-400">
-                  {filesNeedingTests.toLocaleString()} files x {hoursPerTest}h x ${hourlyRate}
+                  {filesNeedingTests.toLocaleString()} files x {hoursPerTest}h x ${hourlyRate}/hr
                 </p>
               </div>
               <div>
@@ -162,9 +183,9 @@ export default function ROICalculatorPage() {
 
             <div>
               <p className="text-sm text-gray-500">ROI</p>
-              <p className="text-3xl font-bold text-pink-600">{roiMultiplier.toFixed(0)}x</p>
+              <p className="text-3xl font-bold text-pink-600">{roiMultiplier.toPrecision(2)}x</p>
               <p className="text-xs text-gray-400">
-                Every $1 spent on GitAuto saves ${roiMultiplier.toFixed(0)} in engineer time
+                Every $1 spent on GitAuto saves ${roiMultiplier.toPrecision(2)} in engineer time
               </p>
             </div>
 

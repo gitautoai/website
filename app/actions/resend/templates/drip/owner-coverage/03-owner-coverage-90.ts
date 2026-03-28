@@ -7,7 +7,7 @@ import { ABSOLUTE_URLS } from "@/config/urls";
  *   Body:
  *     Hi Alice - ahead of most teams. See the coverage chart:
  *
- *     https://gitauto.ai/dashboard/charts
+ *     https://gitauto.ai/dashboard/coverage-trends
  *
  *     Know someone who'd benefit? Forward this email - I'd appreciate it.
  *
@@ -19,7 +19,7 @@ import { ABSOLUTE_URLS } from "@/config/urls";
  *   Body:
  *     Hi Alice - ahead of most teams. This is weighted coverage across 3 repos. See the chart:
  *
- *     https://gitauto.ai/dashboard/charts
+ *     https://gitauto.ai/dashboard/coverage-trends
  *
  *     Know someone who'd benefit? Forward this email - I'd appreciate it.
  *
@@ -48,7 +48,7 @@ export const generateOwnerCoverage90Email = (
 
   return `Hi ${firstName} - ahead of most teams.${weightedNote} See the coverage chart:
 
-${ABSOLUTE_URLS.GITAUTO.DASHBOARD.CHARTS}
+${ABSOLUTE_URLS.GITAUTO.DASHBOARD.COVERAGE_TRENDS}
 
 Know someone who'd benefit? Forward this email - I'd appreciate it.
 

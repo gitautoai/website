@@ -25,8 +25,8 @@ export const generateSetTargetBranchEmail = (
 
   return `Hi ${firstName} - ${ownerName}/${ctx.repoMostNeedingCoverage} has the most uncovered code${pct} - start there. Set a target branch and enable a schedule:
 
-${ABSOLUTE_URLS.GITAUTO.SETTINGS.RULES}
-${ABSOLUTE_URLS.GITAUTO.SETTINGS.TRIGGERS}
+${ABSOLUTE_URLS.GITAUTO.DASHBOARD.RULES}
+${ABSOLUTE_URLS.GITAUTO.DASHBOARD.TRIGGERS}
 
 ${EMAIL_SIGN_OFF}`;
 };

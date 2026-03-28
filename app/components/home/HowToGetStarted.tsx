@@ -45,14 +45,14 @@ export default function HowToGetStarted() {
       description:
         "Set your coding style and testing preferences so GitAuto generates tests in your style",
       ctaText: "Configure Rules",
-      ctaLink: RELATIVE_URLS.SETTINGS.RULES,
+      ctaLink: RELATIVE_URLS.DASHBOARD.RULES,
     },
     {
       title: "Enable Schedule Trigger",
       description:
         "Set up daily automation to continuously improve coverage while you focus on features",
       ctaText: "Setup Schedule",
-      ctaLink: RELATIVE_URLS.SETTINGS.TRIGGERS,
+      ctaLink: RELATIVE_URLS.DASHBOARD.TRIGGERS,
     },
   ];
 

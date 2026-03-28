@@ -1,10 +1,10 @@
 // Third party imports
 import {
+  // faAtlassian,
   faGithub,
-  faXTwitter,
   faLinkedin,
+  faXTwitter,
   faYoutube,
-  faAtlassian,
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
@@ -30,28 +30,16 @@ const SNS = () => {
       >
         <FontAwesomeIcon icon={faGithub} size={iconSize} className="" />
       </Link>
-      <Link
-        href={ABSOLUTE_URLS.ATLASSIAN.MARKETPLACE}
-        target="_blank"
-      >
+      {/* <Link href={ABSOLUTE_URLS.ATLASSIAN.MARKETPLACE} target="_blank">
         <FontAwesomeIcon icon={faAtlassian} size="lg" className="" />
-      </Link>
-      <Link
-        href={ABSOLUTE_URLS.LINKEDIN}
-        target="_blank"
-      >
+      </Link> */}
+      <Link href={ABSOLUTE_URLS.LINKEDIN} target="_blank">
         <FontAwesomeIcon icon={faLinkedin} size={iconSize} className="" />
       </Link>
-      <Link
-        href={ABSOLUTE_URLS.TWITTER}
-        target="_blank"
-      >
+      <Link href={ABSOLUTE_URLS.TWITTER} target="_blank">
         <FontAwesomeIcon icon={faXTwitter} size={iconSize} className="" />
       </Link>
-      <Link
-        href={ABSOLUTE_URLS.YOUTUBE.HOME}
-        target="_blank"
-      >
+      <Link href={ABSOLUTE_URLS.YOUTUBE.HOME} target="_blank">
         <FontAwesomeIcon icon={faYoutube} size={iconSize} className="" />
       </Link>
     </div>

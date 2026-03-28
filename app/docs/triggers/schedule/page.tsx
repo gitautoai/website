@@ -72,7 +72,7 @@ export default function ScheduleTriggerPage() {
                 <p className="text-gray-700">
                   Go to your{" "}
                   <Link
-                    href={RELATIVE_URLS.SETTINGS.TRIGGERS}
+                    href={RELATIVE_URLS.DASHBOARD.TRIGGERS}
                     className="text-pink-600 hover:text-pink-700"
                   >
                     Trigger Settings
@@ -155,7 +155,7 @@ export default function ScheduleTriggerPage() {
         <p className="text-gray-700">
           Ready to automate your test coverage?{" "}
           <Link
-            href={RELATIVE_URLS.SETTINGS.TRIGGERS}
+            href={RELATIVE_URLS.DASHBOARD.TRIGGERS}
             className="text-pink-600 hover:text-pink-700 underline"
           >
             Enable Schedule Trigger in your settings

@@ -20,27 +20,26 @@ export const RELATIVE_URLS = {
   // Other Pages
   CONTACT: "/contact",
   PRICING_DETAILS: "/pricing",
+  SOLUTION: "/solution",
   ROI: {
     CALCULATOR: "/roi/calculator",
     METHODOLOGY: "/roi/methodology",
   },
-  SETTINGS: {
-    INDEX: "/settings",
-    ACTIONS: "/settings/actions",
-    REFERENCES: "/settings/references",
-    RULES: "/settings/rules",
-    TRIGGERS: "/settings/triggers",
-    INTEGRATIONS: {
-      CIRCLECI: "/settings/integrations/circleci",
-      NPM: "/settings/integrations/npm",
-    },
-  },
   DASHBOARD: {
-    CHARTS: "/dashboard/charts",
-    COVERAGE: "/dashboard/coverage",
+    GENERAL: "/dashboard/general",
+    COVERAGE_TRENDS: "/dashboard/coverage-trends",
+    FILE_COVERAGE: "/dashboard/file-coverage",
     CREDITS: "/dashboard/credits",
     PRS: "/dashboard/prs",
     USAGE: "/dashboard/usage",
+    TRIGGERS: "/dashboard/triggers",
+    ACTIONS: "/dashboard/actions",
+    REFERENCES: "/dashboard/references",
+    RULES: "/dashboard/rules",
+    INTEGRATIONS: {
+      CIRCLECI: "/dashboard/integrations/circleci",
+      NPM: "/dashboard/integrations/npm",
+    },
   },
   BLOG: "/blog",
   DOCS: {
@@ -160,7 +159,7 @@ export const RELATIVE_URLS = {
 } as const;
 
 // Authentication
-export const DEFAULT_SIGNIN_REDIRECT = RELATIVE_URLS.DASHBOARD.CHARTS;
+export const DEFAULT_SIGNIN_REDIRECT = RELATIVE_URLS.DASHBOARD.COVERAGE_TRENDS;
 
 export const ABSOLUTE_URLS = {
   CALENDLY: "https://calendly.com/gitauto/wes",
@@ -169,12 +168,21 @@ export const ABSOLUTE_URLS = {
     CANCEL_FALLBACK: `${BASE_URL}?success=false`,
     CONTACT: `${BASE_URL}${RELATIVE_URLS.CONTACT}`,
     DASHBOARD: {
-      CHARTS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.CHARTS}`,
-      COVERAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE}`,
+      GENERAL: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.GENERAL}`,
+      COVERAGE_TRENDS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.COVERAGE_TRENDS}`,
+      FILE_COVERAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.FILE_COVERAGE}`,
       CREDITS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.CREDITS}`,
       CREDITS_SUCCESS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.CREDITS}?success=true`,
       PRS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.PRS}`,
       USAGE: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.USAGE}`,
+      TRIGGERS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.TRIGGERS}`,
+      ACTIONS: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.ACTIONS}`,
+      REFERENCES: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.REFERENCES}`,
+      RULES: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.RULES}`,
+      INTEGRATIONS: {
+        CIRCLECI: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.INTEGRATIONS.CIRCLECI}`,
+        NPM: `${BASE_URL}${RELATIVE_URLS.DASHBOARD.INTEGRATIONS.NPM}`,
+      },
     },
     DOCS: {
       ACTIONS: {
@@ -283,6 +291,7 @@ export const ABSOLUTE_URLS = {
     },
     LOGO: `${BASE_URL}/logo.png`,
     PRICING: `${BASE_URL}${RELATIVE_URLS.PRICING}`,
+    SOLUTION: `${BASE_URL}${RELATIVE_URLS.SOLUTION}`,
     PRICING_DETAILS: `${BASE_URL}${RELATIVE_URLS.PRICING_DETAILS}`,
     ROI: {
       CALCULATOR: `${BASE_URL}${RELATIVE_URLS.ROI.CALCULATOR}`,
@@ -290,17 +299,6 @@ export const ABSOLUTE_URLS = {
     },
     PRIVACY_POLICY: `${BASE_URL}${RELATIVE_URLS.PRIVACY_POLICY}`,
     TERMS_OF_SERVICE: `${BASE_URL}${RELATIVE_URLS.TERMS_OF_SERVICE}`,
-    SETTINGS: {
-      INDEX: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INDEX}`,
-      ACTIONS: `${BASE_URL}${RELATIVE_URLS.SETTINGS.ACTIONS}`,
-      REFERENCES: `${BASE_URL}${RELATIVE_URLS.SETTINGS.REFERENCES}`,
-      RULES: `${BASE_URL}${RELATIVE_URLS.SETTINGS.RULES}`,
-      TRIGGERS: `${BASE_URL}${RELATIVE_URLS.SETTINGS.TRIGGERS}`,
-      INTEGRATIONS: {
-        CIRCLECI: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI}`,
-        NPM: `${BASE_URL}${RELATIVE_URLS.SETTINGS.INTEGRATIONS.NPM}`,
-      },
-    },
   },
   GITHUB: {
     EMAIL_SETTING: "https://github.com/settings/emails",
@@ -326,7 +324,6 @@ export const ABSOLUTE_URLS = {
 
 export const SNS_LINKS = {
   GitHub: ABSOLUTE_URLS.GITHUB.MARKETPLACE,
-  Atlassian: ABSOLUTE_URLS.ATLASSIAN.MARKETPLACE,
   LinkedIn: ABSOLUTE_URLS.LINKEDIN,
   Twitter: ABSOLUTE_URLS.TWITTER,
   YouTube: ABSOLUTE_URLS.YOUTUBE.HOME,

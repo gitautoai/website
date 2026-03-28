@@ -64,7 +64,7 @@ export default function TestFailureTriggerPage() {
                 <p className="text-gray-700 mb-3">
                   Go to your{" "}
                   <Link
-                    href={RELATIVE_URLS.SETTINGS.TRIGGERS}
+                    href={RELATIVE_URLS.DASHBOARD.TRIGGERS}
                     className="text-pink-600 hover:text-pink-700"
                   >
                     Trigger Settings
@@ -176,7 +176,7 @@ export default function TestFailureTriggerPage() {
         <p className="text-gray-700">
           Ready for automatic test fixing?{" "}
           <Link
-            href={RELATIVE_URLS.SETTINGS.TRIGGERS}
+            href={RELATIVE_URLS.DASHBOARD.TRIGGERS}
             className="text-pink-600 hover:text-pink-700 underline"
           >
             Enable Test Failure Trigger in your settings

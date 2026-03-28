@@ -9,7 +9,7 @@ import { formatLines } from "@/utils/format-lines";
  *   Body:
  *     Hi Alice - I just measured your test coverage at 15% for acme/backend (~8K lines). For reference, a 5K-line project on GitAuto reached 89% coverage. See the chart:
  *
- *     https://gitauto.ai/dashboard/charts
+ *     https://gitauto.ai/dashboard/coverage-trends
  *
  *     Wes
  *     Founder, GitAuto
@@ -19,7 +19,7 @@ import { formatLines } from "@/utils/format-lines";
  *   Body:
  *     Hi Alice - I just measured your weighted test coverage at 72% across 3 repos like acme/backend (~8K lines). See the chart:
  *
- *     https://gitauto.ai/dashboard/charts
+ *     https://gitauto.ai/dashboard/coverage-trends
  *
  *     Wes
  *     Founder, GitAuto
@@ -53,7 +53,7 @@ export const generateCoverageChartsEmail = (
 
   return `Hi ${firstName} - your ${multi ? "weighted " : ""}test coverage just came in at ${pct}%${repoDetail}.${benchmarkLine} See the chart:
 
-${ABSOLUTE_URLS.GITAUTO.DASHBOARD.CHARTS}
+${ABSOLUTE_URLS.GITAUTO.DASHBOARD.COVERAGE_TRENDS}
 
 ${EMAIL_SIGN_OFF}`;
 };

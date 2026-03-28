@@ -7,7 +7,7 @@ import { ABSOLUTE_URLS } from "@/config/urls";
  *   Body:
  *     Hi Alice - you're in great shape. See the coverage chart:
  *
- *     https://gitauto.ai/dashboard/charts
+ *     https://gitauto.ai/dashboard/coverage-trends
  *
  *     Mind sharing a testimonial? Just reply to this email.
  *
@@ -19,7 +19,7 @@ import { ABSOLUTE_URLS } from "@/config/urls";
  *   Body:
  *     Hi Alice - you're in great shape. This is weighted coverage across 3 repos. See the chart:
  *
- *     https://gitauto.ai/dashboard/charts
+ *     https://gitauto.ai/dashboard/coverage-trends
  *
  *     Mind sharing a testimonial? Just reply to this email.
  *
@@ -48,7 +48,7 @@ export const generateOwnerCoverage80Email = (
 
   return `Hi ${firstName} - you're in great shape.${weightedNote} See the coverage chart:
 
-${ABSOLUTE_URLS.GITAUTO.DASHBOARD.CHARTS}
+${ABSOLUTE_URLS.GITAUTO.DASHBOARD.COVERAGE_TRENDS}
 
 Mind sharing a testimonial? Just reply to this email.
 

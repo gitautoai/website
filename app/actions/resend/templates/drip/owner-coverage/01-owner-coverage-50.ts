@@ -5,9 +5,9 @@ import { ABSOLUTE_URLS } from "@/config/urls";
  * Single repo example:
  *   Subject: acme/backend's test coverage just hit 50%
  *   Body:
- *     Hi Alice - congrats on the milestone! See the coverage chart:
+ *     Hi Alice - congrats on the milestone! See the chart:
  *
- *     https://gitauto.ai/dashboard/charts
+ *     https://gitauto.ai/dashboard/coverage-trends
  *
  *     How's GitAuto working for you so far? Reply to this email - I read every one.
  *
@@ -19,7 +19,7 @@ import { ABSOLUTE_URLS } from "@/config/urls";
  *   Body:
  *     Hi Alice - congrats on the milestone! This is weighted coverage across 3 repos. See the chart:
  *
- *     https://gitauto.ai/dashboard/charts
+ *     https://gitauto.ai/dashboard/coverage-trends
  *
  *     How's GitAuto working for you so far? Reply to this email - I read every one.
  *
@@ -45,9 +45,9 @@ export const generateOwnerCoverage50Email = (
 ) => {
   const weightedNote = repoCount > 1 ? ` This is weighted coverage across ${repoCount} repos.` : "";
 
-  return `Hi ${firstName} - congrats on the milestone!${weightedNote} See the coverage chart:
+  return `Hi ${firstName} - congrats on the milestone!${weightedNote} See the chart:
 
-${ABSOLUTE_URLS.GITAUTO.DASHBOARD.CHARTS}
+${ABSOLUTE_URLS.GITAUTO.DASHBOARD.COVERAGE_TRENDS}
 
 How's GitAuto working for you so far? Reply to this email - I read every one.
 

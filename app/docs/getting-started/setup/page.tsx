@@ -40,14 +40,14 @@ export default function SetupPage() {
             <p className="text-gray-700 mb-4">
               You can also trigger this from the{" "}
               <Link
-                href={RELATIVE_URLS.DASHBOARD.COVERAGE}
+                href={RELATIVE_URLS.DASHBOARD.FILE_COVERAGE}
                 className="text-pink-600 hover:text-pink-700 underline"
               >
                 Coverage Dashboard
               </Link>{" "}
               or the{" "}
               <Link
-                href={RELATIVE_URLS.DASHBOARD.CHARTS}
+                href={RELATIVE_URLS.DASHBOARD.COVERAGE_TRENDS}
                 className="text-pink-600 hover:text-pink-700 underline"
               >
                 Coverage Charts
@@ -96,7 +96,7 @@ export default function SetupPage() {
             <p className="text-gray-700 mb-4">
               Once your CI workflow uploads coverage, check the{" "}
               <Link
-                href={RELATIVE_URLS.DASHBOARD.CHARTS}
+                href={RELATIVE_URLS.DASHBOARD.COVERAGE_TRENDS}
                 className="text-pink-600 hover:text-pink-700 underline"
               >
                 Coverage Charts
@@ -118,7 +118,7 @@ export default function SetupPage() {
             <p className="text-gray-700 mb-4">
               Enable the schedule trigger on the{" "}
               <Link
-                href={RELATIVE_URLS.SETTINGS.TRIGGERS}
+                href={RELATIVE_URLS.DASHBOARD.TRIGGERS}
                 className="text-pink-600 hover:text-pink-700 underline"
               >
                 Triggers settings page
@@ -129,7 +129,7 @@ export default function SetupPage() {
             <p className="text-gray-700 mb-4">
               To decide how many times per day to set, open the{" "}
               <Link
-                href={RELATIVE_URLS.DASHBOARD.COVERAGE}
+                href={RELATIVE_URLS.DASHBOARD.FILE_COVERAGE}
                 className="text-pink-600 hover:text-pink-700 underline"
               >
                 Coverage Dashboard

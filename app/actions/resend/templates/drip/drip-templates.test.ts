@@ -98,7 +98,7 @@ describe("drip email templates", () => {
     expect(text).toContain("acme/backend (~8K lines)");
     expect(text).not.toContain("across");
     expect(text).toContain("5K-line project on GitAuto reached 89% coverage");
-    expect(text).toContain("/dashboard/charts");
+    expect(text).toContain("/dashboard/coverage-trends");
     expect(text).toContain("Wes");
   });
 
@@ -115,7 +115,7 @@ describe("drip email templates", () => {
     expect(text).toContain("72%");
     expect(text).toContain("across 5 repos");
     expect(text).toContain("acme/backend (~12K lines)");
-    expect(text).toContain("/dashboard/charts");
+    expect(text).toContain("/dashboard/coverage-trends");
     expect(text).toContain("Wes");
   });
 
@@ -124,8 +124,8 @@ describe("drip email templates", () => {
     const text = generateSetTargetBranchEmail("acme", "Alice", ctx);
     expect(text).toContain("Hi Alice");
     expect(text).toContain("acme/backend has the most uncovered code (15%)");
-    expect(text).toContain("/settings/rules");
-    expect(text).toContain("/settings/triggers");
+    expect(text).toContain("/dashboard/rules");
+    expect(text).toContain("/dashboard/triggers");
     expect(text).toContain("Wes");
   });
 
@@ -183,7 +183,7 @@ describe("drip email templates", () => {
     const text = generateOwnerCoverage50Email("acme", "Alice", 50.4, 1, "backend");
     expect(text).toContain("Hi Alice");
     expect(text).not.toContain("weighted");
-    expect(text).toContain("/dashboard/charts");
+    expect(text).toContain("/dashboard/coverage-trends");
     expect(text).toContain("Reply");
     expect(text).toContain("Wes");
   });
@@ -191,7 +191,7 @@ describe("drip email templates", () => {
   it("generateOwnerCoverage50Email multi repo mentions weighted", () => {
     const text = generateOwnerCoverage50Email("acme", "Alice", 50.4, 3, null);
     expect(text).toContain("weighted coverage across 3 repos");
-    expect(text).toContain("/dashboard/charts");
+    expect(text).toContain("/dashboard/coverage-trends");
   });
 
   it("generateOwnerCoverage80Email asks for testimonial", () => {
@@ -199,7 +199,7 @@ describe("drip email templates", () => {
     expect(text).toContain("Hi Alice");
     expect(text).toContain("great shape");
     expect(text).toContain("weighted coverage across 3 repos");
-    expect(text).toContain("/dashboard/charts");
+    expect(text).toContain("/dashboard/coverage-trends");
     expect(text).toContain("testimonial");
     expect(text).toContain("Wes");
   });
@@ -209,7 +209,7 @@ describe("drip email templates", () => {
     expect(text).toContain("Hi Alice");
     expect(text).toContain("ahead of most teams");
     expect(text).toContain("weighted coverage across 5 repos");
-    expect(text).toContain("/dashboard/charts");
+    expect(text).toContain("/dashboard/coverage-trends");
     expect(text).toContain("Forward");
     expect(text).toContain("Wes");
   });

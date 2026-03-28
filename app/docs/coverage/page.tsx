@@ -14,7 +14,7 @@ export default function DocsPage() {
           <p className="text-gray-600 mb-6">
             Learn how to use GitAuto&apos;s{" "}
             <Link
-              href={RELATIVE_URLS.DASHBOARD.COVERAGE}
+              href={RELATIVE_URLS.DASHBOARD.FILE_COVERAGE}
               className="text-pink-600 hover:text-pink-700 underline"
             >
               Coverage Dashboard
@@ -140,7 +140,7 @@ export default function DocsPage() {
           <p className="text-gray-600 mb-4">
             From the{" "}
             <Link
-              href={RELATIVE_URLS.DASHBOARD.COVERAGE}
+              href={RELATIVE_URLS.DASHBOARD.FILE_COVERAGE}
               className="text-pink-600 hover:text-pink-700 underline"
             >
               Coverage Dashboard
