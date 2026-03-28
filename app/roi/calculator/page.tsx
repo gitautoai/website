@@ -126,8 +126,8 @@ export default function ROICalculatorPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Detect untested file, find existing tests, write tests, open PR, run CI, fix failures,
-              address reviews, update branch, and iterate until merged.{" "}
+              Detect untested file, find existing tests, open PR, write tests, run CI, fix failures,
+              address reviews, sync branch, and merge.{" "}
               <Link href={RELATIVE_URLS.SOLUTION} className="text-pink-600 hover:underline">
                 See the full cycle
               </Link>
