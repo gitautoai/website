@@ -43,12 +43,12 @@ export const FAQS: FAQItem[] = [
   {
     category: "features",
     question: `What does GitAuto output?`,
-    answer: `GitAuto outputs a pull request with test code for the target file. It analyzes uncovered lines and branches, writes tests to cover them, and verifies the tests pass before submitting.`,
+    answer: `GitAuto outputs a pull request with test code for the target file. It analyzes uncovered lines and branches, writes tests, runs CI, fixes failures, addresses review comments, syncs the branch, and can [auto-merge](${RELATIVE_URLS.DOCS.ACTIONS.AUTO_MERGE}) when all checks pass.`,
   },
   {
     category: "features",
     question: `Does GitAuto automatically merge the pull requests it creates?`,
-    answer: `No, GitAuto does not automatically merge its own pull requests, nor does it have the authority to do so. More importantly, GitAuto's pull requests are intended to be reviewed by humans. Please review them and decide whether they should be merged. If there is a reason why they cannot be merged, please provide feedback, and we will attempt to improve: ${EMAIL}`,
+    answer: `Yes, GitAuto can [auto-merge](${RELATIVE_URLS.DOCS.ACTIONS.AUTO_MERGE}) when all CI checks pass and only test files are changed. You can also review and merge manually. Either way, GitAuto then moves on to the next untested file automatically.`,
   },
   {
     category: "language",

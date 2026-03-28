@@ -14,15 +14,15 @@ const whatItems = [
   {
     icon: <FaRocket className="text-purple-500 text-4xl mb-3" />,
     color: "text-purple-500",
-    title: "Automates Test Gen on Schedule",
-    desc: "Set up repository rules and schedule triggers to automatically generate tests daily. GitAuto picks the lowest coverage files and creates PRs in your style.",
+    title: "Automates the Full Cycle on Schedule",
+    desc: "Set up repository rules and schedule triggers. GitAuto picks untested files, opens PRs, writes tests, runs CI, fixes failures, addresses reviews, and merges - daily.",
     link: RELATIVE_URLS.DOCS.TRIGGERS.OVERVIEW,
   },
   {
     icon: <FaTools className="text-red-500 text-4xl mb-3" />,
     color: "text-red-500",
-    title: "Fixes Test Failures Automatically",
-    desc: "When tests fail, GitAuto analyzes errors, updates code or tests, and retries until everything passes. No manual intervention needed.",
+    title: "Fixes Failures & Addresses Reviews",
+    desc: "When tests fail, GitAuto reads CI logs, fixes errors, and retries. It also responds to review comments and syncs branches when other PRs get merged.",
     link: RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE,
   },
   {

@@ -89,9 +89,11 @@ export default function MethodologyPage() {
             <li>Finding existing test patterns in your repo</li>
             <li>Opening a pull request</li>
             <li>Writing or updating test files with proper mocks, fixtures, and assertions</li>
-            <li>Running CI and monitoring whether tests pass</li>
-            <li>Fixing test failures and addressing review comments (even from bots)</li>
-            <li>Updating the PR branch and iterating until tests pass</li>
+            <li>Running CI and monitoring results</li>
+            <li>Fixing test failures, linter errors, and type checker warnings</li>
+            <li>Addressing review comments from humans and bots</li>
+            <li>Syncing the PR branch when other PRs get merged</li>
+            <li>Merging automatically when conditions are met, or you merge manually</li>
           </ol>
           <p>
             Even with AI coding tools, this{" "}

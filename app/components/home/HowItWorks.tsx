@@ -35,9 +35,10 @@ const steps = [
     title: "PRs Created & Fixed",
     desc: (
       <>
-        Pull requests are opened with tests. If they fail, GitAuto fixes them automatically.{" "}
-        <Link href={RELATIVE_URLS.DOCS.TRIGGERS.TEST_FAILURE} className="text-red-500 underline">
-          Learn more →
+        Pull requests are opened with tests. GitAuto fixes CI failures, addresses reviews, and syncs
+        branches automatically.{" "}
+        <Link href={RELATIVE_URLS.SOLUTION} className="text-red-500 underline">
+          See the full cycle →
         </Link>
       </>
     ),
@@ -47,7 +48,7 @@ const steps = [
     title: "Coverage Improves",
     desc: (
       <>
-        You review and merge PRs. Watch your coverage climb to 90%+ over time.{" "}
+        PRs auto-merge when checks pass, or you merge manually. Coverage climbs to 90%+ over time.{" "}
         <Link href={RELATIVE_URLS.DASHBOARD.COVERAGE_TRENDS} className="text-green-500 underline">
           View charts →
         </Link>
