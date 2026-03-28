@@ -10,7 +10,7 @@ import { useAccountContext } from "@/app/components/contexts/Account";
 import { getCreditBalance } from "@/app/actions/supabase/owners/get-credit-balance";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import Toast from "@/app/components/Toast";
-import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import RepositorySelector from "@/app/dashboard/components/RepositorySelector";
 import { CREDIT_PRICING } from "@/config/pricing";
 
 // Local imports (Relative paths)

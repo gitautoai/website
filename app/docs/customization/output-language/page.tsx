@@ -62,7 +62,7 @@ export default function OutputLanguagePage() {
             <li>
               Go to your{" "}
               <Link
-                href={RELATIVE_URLS.SETTINGS.RULES}
+                href={RELATIVE_URLS.DASHBOARD.RULES}
                 className="text-pink-600 hover:text-pink-700 underline"
               >
                 Rules Settings

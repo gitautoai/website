@@ -47,8 +47,8 @@ export default function TriggersOverviewPage() {
             <h2 className="text-2xl font-semibold mt-0 mb-4">Review Comment Trigger</h2>
             <p className="text-gray-700">
               Request fixes on GitAuto-created PRs by leaving inline review comments or general PR
-              comments. GitAuto responds with automatic fix commits just like collaborating with team
-              members.{" "}
+              comments. GitAuto responds with automatic fix commits just like collaborating with
+              team members.{" "}
               <Link
                 href={RELATIVE_URLS.DOCS.TRIGGERS.REVIEW_COMMENT}
                 className="text-pink-600 hover:text-pink-700"
@@ -63,7 +63,7 @@ export default function TriggersOverviewPage() {
             <p className="text-gray-700">
               Trigger GitAuto from the{" "}
               <Link
-                href={RELATIVE_URLS.DASHBOARD.COVERAGE}
+                href={RELATIVE_URLS.DASHBOARD.FILE_COVERAGE}
                 className="text-pink-600 hover:text-pink-700"
               >
                 coverage dashboard
@@ -78,7 +78,6 @@ export default function TriggersOverviewPage() {
               </Link>
             </p>
           </div>
-
         </div>
 
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 my-8">
@@ -101,7 +100,7 @@ export default function TriggersOverviewPage() {
             <li>
               1. Go to your{" "}
               <Link
-                href={RELATIVE_URLS.SETTINGS.TRIGGERS}
+                href={RELATIVE_URLS.DASHBOARD.TRIGGERS}
                 className="text-pink-600 hover:text-pink-700"
               >
                 Trigger Settings

@@ -15,7 +15,7 @@ export default function CoverageChartsPage() {
           <p className="text-lg text-gray-700 mb-6">
             Track your test coverage progress over time with GitAuto&apos;s{" "}
             <Link
-              href={RELATIVE_URLS.DASHBOARD.CHARTS}
+              href={RELATIVE_URLS.DASHBOARD.COVERAGE_TRENDS}
               className="text-pink-600 hover:text-pink-700 underline"
             >
               Coverage Charts
@@ -177,7 +177,7 @@ export default function CoverageChartsPage() {
               <p className="text-gray-700 mb-3">
                 Navigate to the{" "}
                 <Link
-                  href={RELATIVE_URLS.DASHBOARD.CHARTS}
+                  href={RELATIVE_URLS.DASHBOARD.COVERAGE_TRENDS}
                   className="text-pink-600 hover:text-pink-700 underline"
                 >
                   Coverage Charts

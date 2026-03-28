@@ -14,7 +14,7 @@ import { ABSOLUTE_URLS, RELATIVE_URLS, SNS_LINKS } from "@/config/urls";
 export default function Footer() {
   const posthog = usePostHog();
   const pathname = usePathname();
-  const hideFooter = pathname?.startsWith("/settings") || pathname?.startsWith("/dashboard");
+  const hideFooter = pathname?.startsWith("/dashboard");
   if (hideFooter) return null;
 
   const groupedLinks = INTERNAL_LINKS.reduce(
@@ -23,14 +23,14 @@ export default function Footer() {
       acc[link.category].push(link);
       return acc;
     },
-    {} as Record<string, (typeof INTERNAL_LINKS)[number][]>
+    {} as Record<string, (typeof INTERNAL_LINKS)[number][]>,
   );
 
   const categoryTitles: Record<string, string> = {
     product: "Product",
-    resources: "Resources",
+    dashboard: "Dashboard",
+    docs: "Documentation",
     legal: "Legal",
-    sns: "Connect With Us",
   };
 
   return (
@@ -74,7 +74,7 @@ export default function Footer() {
 
         {/* Links Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 xl:gap-16 mb-12">
-          {/* Product Links with conditional Manage Subscriptions */}
+          {/* Product */}
           <div className="flex flex-col gap-4 text-center sm:text-left">
             <h3 className="font-bold text-gray-900">{categoryTitles.product}</h3>
             <ul className="flex flex-col gap-3">
@@ -91,11 +91,11 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Resources Links */}
+          {/* Dashboard */}
           <div className="flex flex-col gap-4 text-center sm:text-left">
-            <h3 className="font-bold text-gray-900">{categoryTitles.resources}</h3>
+            <h3 className="font-bold text-gray-900">{categoryTitles.dashboard}</h3>
             <ul className="flex flex-col gap-3">
-              {groupedLinks.resources.map((link) => (
+              {groupedLinks.dashboard?.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -108,7 +108,24 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Legal Links */}
+          {/* Documentation */}
+          <div className="flex flex-col gap-4 text-center sm:text-left">
+            <h3 className="font-bold text-gray-900">{categoryTitles.docs}</h3>
+            <ul className="flex flex-col gap-3">
+              {groupedLinks.docs?.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-gray-600 hover:text-gray-900 hover:underline"
+                  >
+                    {link.text}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal + Connect */}
           <div className="flex flex-col gap-4 text-center sm:text-left">
             <h3 className="font-bold text-gray-900">{categoryTitles.legal}</h3>
             <ul className="flex flex-col gap-3">
@@ -123,11 +140,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
-
-          {/* SNS Links */}
-          <div className="flex flex-col gap-4 text-center sm:text-left">
-            <h3 className="font-bold text-gray-900">{categoryTitles.sns}</h3>
+            <h3 className="font-bold text-gray-900 mt-4">Connect</h3>
             <ul className="flex flex-col gap-3">
               {Object.entries(SNS_LINKS).map(([key, value]) => (
                 <li key={key}>

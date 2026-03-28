@@ -38,7 +38,7 @@ export const FAQS: FAQItem[] = [
   {
     category: "features",
     question: `Dear GitAuto: What inputs does GitAuto use?`,
-    answer: `GitAuto utilizes the PR title, body, comments, the file tree of the repository, the contents of related files, your [repository rules](${RELATIVE_URLS.SETTINGS.RULES}), and a [GITAUTO.md](${RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}) file if present (where GitAuto persists learnings from past feedback). Currently, GitHub secrets are excluded. If there are any other inputs you would like us to use, please feel free to let us know at ${EMAIL}.`,
+    answer: `GitAuto utilizes the PR title, body, comments, the file tree of the repository, the contents of related files, your [repository rules](${RELATIVE_URLS.DASHBOARD.RULES}), and a [GITAUTO.md](${RELATIVE_URLS.DOCS.CUSTOMIZATION.GITAUTO_MD}) file if present (where GitAuto persists learnings from past feedback). Currently, GitHub secrets are excluded. If there are any other inputs you would like us to use, please feel free to let us know at ${EMAIL}.`,
   },
   {
     category: "features",
@@ -53,7 +53,7 @@ export const FAQS: FAQItem[] = [
   {
     category: "language",
     question: `Do you support languages other than English?`,
-    answer: `Yes, GitAuto supports ${LANGUAGE_COUNT_LABEL} output languages including Japanese, Chinese, Korean, French, German, Spanish, and more. You can configure the language per repository in your [Rules Settings](${RELATIVE_URLS.SETTINGS.RULES}). GitAuto will write code comments and GitHub comments in your chosen language, while PR titles and bodies remain in English.`,
+    answer: `Yes, GitAuto supports ${LANGUAGE_COUNT_LABEL} output languages including Japanese, Chinese, Korean, French, German, Spanish, and more. You can configure the language per repository in your [Rules Settings](${RELATIVE_URLS.DASHBOARD.RULES}). GitAuto will write code comments and GitHub comments in your chosen language, while PR titles and bodies remain in English.`,
   },
   {
     category: "language",

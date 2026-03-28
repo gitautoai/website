@@ -70,7 +70,7 @@ export default function ReviewCommentTriggerPage() {
                 <p className="text-gray-700 mb-3">
                   Go to your{" "}
                   <Link
-                    href={RELATIVE_URLS.SETTINGS.TRIGGERS}
+                    href={RELATIVE_URLS.DASHBOARD.TRIGGERS}
                     className="text-pink-600 hover:text-pink-700"
                   >
                     Trigger Settings

@@ -54,7 +54,7 @@ export default function AutoMergePage() {
             <p className="text-gray-700 mb-3">
               To enable auto-merge for your repository, go to{" "}
               <Link
-                href={RELATIVE_URLS.SETTINGS.ACTIONS}
+                href={RELATIVE_URLS.DASHBOARD.ACTIONS}
                 className="text-pink-600 hover:text-pink-700 underline"
               >
                 Actions Settings

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { DocsNavigation } from "@/app/components/docs/DocsNavigation";
 import { CodeBlock } from "@/app/docs/coverage/CodeBlock";
-import { STRUCTURED_RULES_CONFIG } from "@/app/settings/rules/config/structured-rules";
+import { STRUCTURED_RULES_CONFIG } from "@/app/dashboard/rules/config/structured-rules";
 import { RELATIVE_URLS } from "@/config/urls";
 import { bestPracticesFirst } from "./code/best-practices-first";
 import { consistencyFirst } from "./code/consistency-first";
@@ -36,7 +36,7 @@ export default function RulesPage() {
           <h2 className="text-3xl font-semibold mt-0 mb-6">What are Repository Rules?</h2>
           <p className="text-gray-700 mb-4">
             <Link
-              href={RELATIVE_URLS.SETTINGS.RULES}
+              href={RELATIVE_URLS.DASHBOARD.RULES}
               className="text-pink-600 hover:text-pink-700 underline"
             >
               Repository rules
@@ -414,7 +414,7 @@ export default function RulesPage() {
               <p className="text-gray-700">
                 The default settings work well for most projects. Go to your{" "}
                 <Link
-                  href={RELATIVE_URLS.SETTINGS.RULES}
+                  href={RELATIVE_URLS.DASHBOARD.RULES}
                   className="text-pink-600 hover:text-pink-700 underline"
                 >
                   Rules Settings

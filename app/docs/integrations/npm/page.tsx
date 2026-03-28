@@ -56,7 +56,9 @@ export default function NpmIntegrationPage() {
               <div className="bg-gray-50 p-4 rounded-lg space-y-3">
                 <div>
                   <p className="font-semibold text-sm">Token name:</p>
-                  <p className="text-gray-600 text-sm">Any name you prefer (e.g., &quot;GitAuto&quot;)</p>
+                  <p className="text-gray-600 text-sm">
+                    Any name you prefer (e.g., &quot;GitAuto&quot;)
+                  </p>
                 </div>
                 <div>
                   <p className="font-semibold text-sm">Packages and scopes - Permissions:</p>
@@ -105,7 +107,7 @@ export default function NpmIntegrationPage() {
               <p className="text-gray-600 mb-2">
                 Go to{" "}
                 <Link
-                  href={RELATIVE_URLS.SETTINGS.INTEGRATIONS.NPM}
+                  href={RELATIVE_URLS.DASHBOARD.INTEGRATIONS.NPM}
                   className="text-pink-600 hover:underline"
                 >
                   npm Integration Settings
@@ -140,8 +142,8 @@ export default function NpmIntegrationPage() {
             <li>
               <strong>Packages and scopes: Read-only, All packages</strong> - Required to install
               all packages (including organization-scoped ones like{" "}
-              <code className="bg-gray-200 px-1 rounded text-xs">@yourorg/package</code>). Use &quot;All
-              packages&quot; to automatically include future packages.
+              <code className="bg-gray-200 px-1 rounded text-xs">@yourorg/package</code>). Use
+              &quot;All packages&quot; to automatically include future packages.
             </li>
             <li>
               <strong>Organizations: No access</strong> - Not needed (this permission is only for

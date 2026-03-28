@@ -10,7 +10,7 @@ import { useAccountContext } from "@/app/components/contexts/Account";
 import ErrorBanner from "@/app/components/ErrorBanner";
 import FilterSelect from "@/app/components/FilterSelect";
 import ReloadButton from "@/app/components/ReloadButton";
-import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import RepositorySelector from "@/app/dashboard/components/RepositorySelector";
 import { safeLocalStorage } from "@/lib/local-storage";
 
 import PRTable from "./components/PRTable";

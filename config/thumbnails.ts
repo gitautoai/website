@@ -7,23 +7,19 @@ export const THUMBNAILS = {
 
   // Dashboard
   DASHBOARD: {
-    CHARTS: `${BASE_URL}/og/dashboard-charts.png`,
-    COVERAGE: `${BASE_URL}/og/dashboard-coverage.png`,
+    GENERAL: `${BASE_URL}/og/dashboard-general.png`,
+    COVERAGE_TRENDS: `${BASE_URL}/og/dashboard-coverage-trends.png`,
+    FILE_COVERAGE: `${BASE_URL}/og/dashboard-file-coverage.png`,
     CREDITS: `${BASE_URL}/og/dashboard-credits.png`,
     PRS: `${BASE_URL}/og/dashboard-prs.png`,
     USAGE: `${BASE_URL}/og/dashboard-usage.png`,
-  },
-
-  // Settings
-  SETTINGS: {
-    INDEX: `${BASE_URL}/og/settings.png`,
-    ACTIONS: `${BASE_URL}/og/settings-actions.png`,
-    REFERENCES: `${BASE_URL}/og/settings-references.png`,
-    RULES: `${BASE_URL}/og/settings-rules.png`,
-    TRIGGERS: `${BASE_URL}/og/settings-triggers.png`,
+    TRIGGERS: `${BASE_URL}/og/dashboard-triggers.png`,
+    ACTIONS: `${BASE_URL}/og/dashboard-actions.png`,
+    REFERENCES: `${BASE_URL}/og/dashboard-references.png`,
+    RULES: `${BASE_URL}/og/dashboard-rules.png`,
     INTEGRATIONS: {
-      CIRCLECI: `${BASE_URL}/og/settings-integrations-circleci.png`,
-      NPM: `${BASE_URL}/og/settings-integrations-npm.png`,
+      CIRCLECI: `${BASE_URL}/og/dashboard-integrations-circleci.png`,
+      NPM: `${BASE_URL}/og/dashboard-integrations-npm.png`,
     },
   },
 

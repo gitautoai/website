@@ -8,6 +8,20 @@ export const TEST_STANDARD_PLAN_PRICE_ID = "price_1QHCpnKUN3yUNaHzXNhxtQ8A";
 // https://dashboard.stripe.com/test/customers/cus_QO4R5vh6FJuN7t
 export const TEST_LEGACY_CUSTOMER_ID = "cus_QO4R5vh6FJuN7t";
 
+export const ROI_DEFAULTS = {
+  HOURS_PER_TEST: 2,
+  WORK_DAYS_PER_YEAR: 260,
+  WORK_HOURS_PER_DAY: 8,
+  CALIFORNIA: {
+    ANNUAL_SALARY: 150000,
+    LABEL: "California",
+  },
+  INDIA: {
+    ANNUAL_SALARY: 23000,
+    LABEL: "India",
+  },
+};
+
 export const CREDIT_PRICING = {
   PER_PR: {
     AMOUNT_USD: 8,

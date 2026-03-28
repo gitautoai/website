@@ -2,9 +2,25 @@
 import Link from "next/link";
 
 // Local imports
-import { CREDIT_PRICING } from "@/config/pricing";
+import { CREDIT_PRICING, ROI_DEFAULTS } from "@/config/pricing";
+import { RELATIVE_URLS } from "@/config/urls";
 
 const COST_PER_PR = CREDIT_PRICING.PER_PR.AMOUNT_USD;
+const HOURS_PER_TEST = ROI_DEFAULTS.HOURS_PER_TEST;
+const WORK_DAYS = ROI_DEFAULTS.WORK_DAYS_PER_YEAR;
+const WORK_HOURS = ROI_DEFAULTS.WORK_HOURS_PER_DAY;
+
+const CA_SALARY = ROI_DEFAULTS.CALIFORNIA.ANNUAL_SALARY;
+const CA_RATE = Math.round(CA_SALARY / (WORK_DAYS * WORK_HOURS));
+const CA_SAVINGS_PER_PR = HOURS_PER_TEST * CA_RATE;
+const CA_ROI = (CA_SAVINGS_PER_PR / COST_PER_PR).toPrecision(2);
+const CA_MONTHLY = 50 * (CA_SAVINGS_PER_PR - COST_PER_PR);
+
+const IN_SALARY = ROI_DEFAULTS.INDIA.ANNUAL_SALARY;
+const IN_RATE = Math.round(IN_SALARY / (WORK_DAYS * WORK_HOURS));
+const IN_SAVINGS_PER_PR = HOURS_PER_TEST * IN_RATE;
+const IN_ROI = (IN_SAVINGS_PER_PR / COST_PER_PR).toPrecision(2);
+const IN_MONTHLY = 50 * (IN_SAVINGS_PER_PR - COST_PER_PR);
 
 export default function MethodologyPage() {
   return (
@@ -65,16 +81,26 @@ export default function MethodologyPage() {
         <section className="space-y-4">
           <h2 className="text-2xl font-semibold text-gray-900">How GitAuto Saves Time</h2>
           <p>
-            Writing tests manually is one of the most time-consuming parts of software development:
+            Adding tests to a file isn&apos;t just writing code. The full cycle for each file
+            includes:
           </p>
           <ol className="list-decimal pl-6 space-y-1">
-            <li>Reading the source file, understanding dependencies, identifying what to test</li>
-            <li>Setting up mocks, fixtures, and assertions for each code path</li>
-            <li>Running tests, debugging failures, adjusting mocks, ensuring coverage</li>
+            <li>Detecting which files lack coverage from your coverage reports</li>
+            <li>Finding existing test patterns in your repo</li>
+            <li>Opening a pull request</li>
+            <li>Writing or updating test files with proper mocks, fixtures, and assertions</li>
+            <li>Running CI and monitoring whether tests pass</li>
+            <li>Fixing test failures and addressing review comments (even from bots)</li>
+            <li>Updating the PR branch and iterating until tests pass</li>
           </ol>
           <p>
-            This typically takes 2-4 hours per file. GitAuto generates a test PR in minutes -
-            roughly <strong>60x faster</strong>.
+            Even with AI coding tools, this{" "}
+            <Link href={RELATIVE_URLS.SOLUTION} className="text-pink-600 hover:underline">
+              full cycle
+            </Link>{" "}
+            typically takes ~{HOURS_PER_TEST} hours per file. GitAuto handles the entire workflow
+            autonomously - and can run on a daily schedule, continuously improving your coverage
+            without any manual effort.
           </p>
         </section>
 
@@ -87,42 +113,58 @@ export default function MethodologyPage() {
               work.
             </li>
             <li>
-              <strong>Multiply by hours saved per PR</strong>: Hours saved = ~3 hours (typical
-              manual time) - negligible GitAuto time. Cost saved per PR = hourly rate x ~3 hours.
+              <strong>Multiply by hours saved per PR</strong>: Hours saved = ~{HOURS_PER_TEST} hours
+              (full cycle with AI coding tools) - negligible GitAuto time. Cost saved per PR =
+              hourly rate x {HOURS_PER_TEST} hours.
             </li>
           </ol>
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-900">Example: California</h2>
+          <h2 className="text-2xl font-semibold text-gray-900">
+            Example: {ROI_DEFAULTS.CALIFORNIA.LABEL}
+          </h2>
           <div className="bg-gray-50 p-4 rounded-lg space-y-1 text-sm">
             <p>GitAuto cost: ${COST_PER_PR} per PR</p>
             <p>Monthly usage: 50 PRs</p>
-            <p>Time to write tests manually: 3 hours</p>
-            <p>Engineer hourly rate: $71/hour (entry-level, California)</p>
+            <p>Hours per file (full cycle with AI coding tools): {HOURS_PER_TEST}</p>
+            <p>
+              Engineer annual salary: ${CA_SALARY.toLocaleString()} (hourly: ${CA_RATE}/hr = $
+              {CA_SALARY.toLocaleString()} / {WORK_DAYS} days / {WORK_HOURS} hours)
+            </p>
           </div>
           <p>
-            Savings per PR = 3h x $71 = $213. <strong>ROI = $213 / ${COST_PER_PR} = 27x</strong>.
-            Monthly savings = 50 PRs x ($213 - ${COST_PER_PR}) = <strong>$10,250</strong>.
+            Savings per PR = {HOURS_PER_TEST}h x ${CA_RATE} = ${CA_SAVINGS_PER_PR}.{" "}
+            <strong>
+              ROI = ${CA_SAVINGS_PER_PR} / ${COST_PER_PR} = {CA_ROI}x
+            </strong>
+            . Monthly savings = 50 PRs x (${CA_SAVINGS_PER_PR} - ${COST_PER_PR}) ={" "}
+            <strong>${CA_MONTHLY.toLocaleString()}</strong>.
           </p>
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-2xl font-semibold text-gray-900">Example: India</h2>
+          <h2 className="text-2xl font-semibold text-gray-900">
+            Example: {ROI_DEFAULTS.INDIA.LABEL}
+          </h2>
           <div className="bg-gray-50 p-4 rounded-lg space-y-1 text-sm">
             <p>GitAuto cost: ${COST_PER_PR} per PR</p>
             <p>Monthly usage: 50 PRs</p>
-            <p>Time to write tests manually: 3 hours</p>
-            <p>Engineer hourly rate: $11/hour (entry-level contractor, India)</p>
+            <p>Hours per file (full cycle with AI coding tools): {HOURS_PER_TEST}</p>
+            <p>
+              Engineer annual salary: ${IN_SALARY.toLocaleString()} (hourly: ${IN_RATE}/hr = $
+              {IN_SALARY.toLocaleString()} / {WORK_DAYS} days / {WORK_HOURS} hours)
+            </p>
           </div>
           <p>
-            Savings per PR = 3h x $11 = $33. <strong>ROI = $33 / ${COST_PER_PR} = 4x</strong>.
-            Monthly savings = 50 PRs x ($33 - ${COST_PER_PR}) = <strong>$1,250</strong>.
+            Savings per PR = {HOURS_PER_TEST}h x ${IN_RATE} = ${IN_SAVINGS_PER_PR}.{" "}
+            <strong>
+              ROI = ${IN_SAVINGS_PER_PR} / ${COST_PER_PR} = {IN_ROI}x
+            </strong>
+            . Monthly savings = 50 PRs x (${IN_SAVINGS_PER_PR} - ${COST_PER_PR}) ={" "}
+            <strong>${IN_MONTHLY.toLocaleString()}</strong>.
           </p>
-          <p>
-            Even compared to India&apos;s competitive contractor rates, GitAuto provides compelling
-            ROI.
-          </p>
+          <p>Even compared to India&apos;s competitive rates, GitAuto provides compelling ROI.</p>
         </section>
 
         <div className="pt-8 text-center">

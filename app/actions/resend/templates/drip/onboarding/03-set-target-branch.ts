@@ -7,8 +7,8 @@ import type { OwnerContext } from "@/types/drip-emails";
  * Body:
  *   Hi Alice - acme/backend has the most uncovered code (15%) - start there. Set a target branch and enable a schedule:
  *
- *   https://gitauto.ai/settings/rules
- *   https://gitauto.ai/settings/triggers
+ *   https://gitauto.ai/dashboard/rules
+ *   https://gitauto.ai/dashboard/triggers
  *
  *   Wes
  *   Founder, GitAuto
@@ -25,8 +25,8 @@ export const generateSetTargetBranchEmail = (
 
   return `Hi ${firstName} - ${ownerName}/${ctx.repoMostNeedingCoverage} has the most uncovered code${pct} - start there. Set a target branch and enable a schedule:
 
-${ABSOLUTE_URLS.GITAUTO.SETTINGS.RULES}
-${ABSOLUTE_URLS.GITAUTO.SETTINGS.TRIGGERS}
+${ABSOLUTE_URLS.GITAUTO.DASHBOARD.RULES}
+${ABSOLUTE_URLS.GITAUTO.DASHBOARD.TRIGGERS}
 
 ${EMAIL_SIGN_OFF}`;
 };

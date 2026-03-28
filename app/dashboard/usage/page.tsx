@@ -19,7 +19,7 @@ import Modal from "@/app/components/Modal";
 import PeriodSelector, { Period, calculatePeriodDates } from "@/app/components/PeriodSelector";
 import ReloadButton from "@/app/components/ReloadButton";
 import SpinnerIcon from "@/app/components/SpinnerIcon";
-import RepositorySelector from "@/app/settings/components/RepositorySelector";
+import RepositorySelector from "@/app/dashboard/components/RepositorySelector";
 import { safeLocalStorage } from "@/lib/local-storage";
 
 const DEFAULT_PERIOD: Period = { type: "this-month", label: "This Month" };

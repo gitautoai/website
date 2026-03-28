@@ -24,7 +24,7 @@ const steps = [
     desc: (
       <>
         GitAuto automatically picks files and generates tests using your repository rules.{" "}
-        <Link href={RELATIVE_URLS.SETTINGS.RULES} className="text-purple-500 underline">
+        <Link href={RELATIVE_URLS.DASHBOARD.RULES} className="text-purple-500 underline">
           Setup rules →
         </Link>
       </>
@@ -48,7 +48,7 @@ const steps = [
     desc: (
       <>
         You review and merge PRs. Watch your coverage climb to 90%+ over time.{" "}
-        <Link href={RELATIVE_URLS.DASHBOARD.CHARTS} className="text-green-500 underline">
+        <Link href={RELATIVE_URLS.DASHBOARD.COVERAGE_TRENDS} className="text-green-500 underline">
           View charts →
         </Link>
       </>

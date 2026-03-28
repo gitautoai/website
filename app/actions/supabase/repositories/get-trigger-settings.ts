@@ -1,6 +1,6 @@
 "use server";
 
-import type { TriggerSettings } from "@/app/settings/types";
+import type { TriggerSettings } from "@/app/dashboard/types";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import type { Tables } from "@/types/supabase";
 

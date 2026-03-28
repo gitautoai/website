@@ -194,7 +194,7 @@ test.describe("Credits - Regular users", () => {
 
   test("should handle insufficient credits gracefully", async ({ page }) => {
     // Mock scenario where user has insufficient credits
-    await page.goto("/dashboard/coverage");
+    await page.goto("/dashboard/file-coverage");
 
     // Try to create PRs (which would deduct credits)
     const createPRsButton = page.locator("[data-testid=create-prs-button]");
@@ -214,7 +214,7 @@ test.describe("Credits - Regular users", () => {
   });
 
   test("should display credits in navigation menu", async ({ page }) => {
-    await page.goto("/dashboard/coverage");
+    await page.goto("/dashboard/file-coverage");
 
     // Should see Credits link in navigation
     const creditsLink = page.locator("nav a[href='/dashboard/credits']");

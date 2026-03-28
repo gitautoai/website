@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Modal from "@/app/components/Modal";
-import { SYNC_MESSAGES } from "@/app/dashboard/coverage/constants/sync-messages";
+import { SYNC_MESSAGES } from "@/app/dashboard/file-coverage/constants/sync-messages";
 
 const meta: Meta<typeof Modal> = {
   title: "Components/Modal",

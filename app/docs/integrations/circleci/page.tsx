@@ -72,7 +72,7 @@ export default function CircleCIIntegrationPage() {
               <p className="text-gray-600 mb-2">
                 Go to{" "}
                 <Link
-                  href={RELATIVE_URLS.SETTINGS.INTEGRATIONS.CIRCLECI}
+                  href={RELATIVE_URLS.DASHBOARD.INTEGRATIONS.CIRCLECI}
                   className="text-pink-600 hover:underline"
                 >
                   CircleCI Integration Settings

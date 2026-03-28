@@ -15,7 +15,7 @@ export default function DashboardTriggerPage() {
           <p className="text-lg text-gray-700">
             Trigger GitAuto from the{" "}
             <Link
-              href={RELATIVE_URLS.DASHBOARD.COVERAGE}
+              href={RELATIVE_URLS.DASHBOARD.FILE_COVERAGE}
               className="text-pink-600 hover:text-pink-700 underline"
             >
               coverage dashboard
@@ -153,7 +153,7 @@ export default function DashboardTriggerPage() {
         <p className="text-gray-700">
           Ready to explore your codebase?{" "}
           <Link
-            href={RELATIVE_URLS.DASHBOARD.COVERAGE}
+            href={RELATIVE_URLS.DASHBOARD.FILE_COVERAGE}
             className="text-pink-600 hover:text-pink-700 underline"
           >
             Visit the coverage dashboard
