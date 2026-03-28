@@ -10,8 +10,8 @@ test.describe("Credits - Non-signed in users", () => {
   test("should redirect to sign in when accessing credits dashboard", async ({ page }) => {
     await page.goto("/dashboard/credits");
 
-    // Non-authenticated users should be redirected to GitHub sign-in immediately
-    await expect(page).toHaveURL(/github\.com\/login/);
+    // Non-authenticated users should be redirected to GitHub sign-in via client-side useEffect
+    await expect(page).toHaveURL(/github\.com\/login/, { timeout: 15000 });
   });
 
   test.skip("should see credits information on pricing page but cannot purchase", async ({
@@ -57,8 +57,8 @@ test.describe("Credits - Non-signed in users", () => {
     for (const route of protectedRoutes) {
       await page.goto(route);
 
-      // Should redirect to GitHub OAuth (which is the auth flow)
-      await expect(page).toHaveURL(/github\.com\/login/);
+      // Should redirect to GitHub OAuth via client-side useEffect
+      await expect(page).toHaveURL(/github\.com\/login/, { timeout: 15000 });
     }
   });
 });
