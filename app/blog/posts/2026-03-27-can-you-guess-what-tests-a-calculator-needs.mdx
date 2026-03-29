@@ -1,0 +1,141 @@
+export const metadata = {
+  title: "Can You Guess What Tests a Calculator Needs?",
+  description:
+    "A 40-line Python calculator. How many tests would you write? Most say 10-15. GitAuto generated 41. Here's what you missed.",
+  slug: "can-you-guess-what-tests-a-calculator-needs",
+  alternates: { canonical: "/blog/can-you-guess-what-tests-a-calculator-needs" },
+  openGraph: { url: "/blog/can-you-guess-what-tests-a-calculator-needs" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["unit testing", "test coverage", "adversarial testing", "Python", "test generation"],
+  createdAt: "2026-03-27",
+  updatedAt: "2026-03-27",
+};
+
+# Can You Guess What Tests a Calculator Needs?
+
+Here's a challenge. Below is a complete Python calculator - 40 lines, four operations, a CLI interface. Before scrolling down, think about what tests you'd write. How many test cases do you need for full coverage?
+
+```python
+def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+
+def multiply(a, b):
+    return a * b
+
+def divide(a, b):
+    if b == 0:
+        raise ValueError("Cannot divide by zero")
+    return a / b
+
+def main():
+    print("Simple Calculator")
+    print("Operations: +, -, *, /")
+    a = float(input("Enter first number: "))
+    op = input("Enter operation (+, -, *, /): ")
+    b = float(input("Enter second number: "))
+    operations = {"+": add, "-": subtract, "*": multiply, "/": divide}
+    if op not in operations:
+        print(f"Unknown operation: {op}")
+        return
+    result = operations[op](a, b)
+    print(f"{a} {op} {b} = {result}")
+```
+
+Got your number? Most developers say 10-15 tests. Something like: test each operation with positive numbers, test divide by zero, test invalid operator, test main with each operation. That covers the obvious cases.
+
+## GitAuto Generated 41 Tests
+
+We pointed [GitAuto](/) at this file via our dashboard. It created a [PR with 41 tests organized into 5 test classes](https://github.com/gitautoai/sample-calculator/pull/10). Here's what you probably didn't think of.
+
+### Did You Test Float Precision?
+
+```python
+assert add(0.1, 0.2) == pytest.approx(0.3)
+```
+
+`0.1 + 0.2` is `0.30000000000000004` in IEEE 754 floating point. A bare `==` would fail. This is the most common numerical bug in production systems, and most developers forget to test for it because it works fine with integers.
+
+### Did You Test Infinity?
+
+```python
+assert add(float("inf"), 1) == float("inf")
+assert math.isnan(add(float("inf"), float("-inf")))
+```
+
+`float("inf")` is a valid Python value. Your calculator doesn't reject it. So what happens when someone adds infinity to 1? What about infinity minus infinity? The answer is NaN (Not a Number), which propagates silently through every subsequent calculation.
+
+### Did You Test Duck Typing?
+
+```python
+assert add("hello", " world") == "hello world"
+assert multiply("ab", 3) == "ababab"
+```
+
+Python's `+` operator works on strings. `*` works with a string and an integer. Your calculator doesn't check input types, so `add("hello", " world")` returns `"hello world"`. That's not a bug per se - it's a documented behavior. But if you don't test it, you don't know when it changes.
+
+### Did You Test Type Mismatches?
+
+```python
+with pytest.raises(TypeError):
+    add(1, "two")
+```
+
+`int + str` raises `TypeError` in Python. No validation, no friendly error message - just a raw exception. Is that the behavior you want? Without a test, you don't know this is happening until a user hits it.
+
+### Did You Test Division by 0.0?
+
+```python
+with pytest.raises(ValueError):
+    divide(5, 0.0)
+```
+
+The guard is `if b == 0`. Does that catch `0.0`? Yes, in Python `0.0 == 0` is `True`. But it's worth testing explicitly because other languages behave differently, and someone might change the guard to `if b is 0` (which would break for `0.0`).
+
+### Did You Test a Very Small Divisor?
+
+```python
+result = divide(1, 1e-300)
+assert result == pytest.approx(1e300)
+```
+
+`1e-300` is not zero, so it passes the division guard. The result is `1e300` - a valid but enormous number. In a financial system, this could mean a $1 transaction produces a $10^300 result. The test verifies the calculator doesn't raise an error, but it also documents this potentially dangerous behavior.
+
+### Did You Test Invalid Main Inputs?
+
+```python
+# Non-numeric input
+with pytest.raises(ValueError):
+    main()  # input: "not_a_number", "+", "3"
+
+# Empty operator
+main()  # input: "5", "", "3"
+mock_print.assert_any_call("Unknown operation: ")
+```
+
+What if the user types "abc" as a number? `float("abc")` raises `ValueError` with no catch block. What about an empty string as the operator? It falls through to the "Unknown operation" branch. These are the exact inputs your users will provide.
+
+## The Scorecard
+
+If you said 10-15 tests, you're in good company. Here's what the typical developer tests vs what GitAuto tests:
+
+| Category             | What developers test           | What GitAuto adds                                |
+| -------------------- | ------------------------------ | ------------------------------------------------ |
+| **Basic arithmetic** | 2+3=5, 10-4=6, 3\*4=12, 10/2=5 | Negative numbers, mixed signs, zero, identity    |
+| **Division errors**  | divide(1,0) raises             | divide(0,0), divide(5,0.0), divide(1,1e-300)     |
+| **Floating point**   | Rarely tested                      | 0.1+0.2 with approx, float division precision    |
+| **Infinity/NaN**     | Rarely tested                      | inf+1, inf+(-inf), inf/1                         |
+| **Duck typing**      | Rarely tested                      | String concat, string repeat, type mismatch      |
+| **Main function**    | One happy path                 | All 4 ops, unknown op, empty op, invalid numbers |
+| **Total**            | ~10-15 tests                   | 41 tests                                         |
+
+## Beyond a Calculator
+
+A 40-line calculator is a toy example. Does this pattern hold on real codebases?
+
+We ran [GitAuto](/) across a 14-repo insurance platform over 7 months. Statement coverage went from 40% to 70% - with the same adversarial approach: testing boundary values, type coercion, and untested code paths across hundreds of files. The gap between "obvious tests" and "thorough tests" compounds when you have API handlers, database queries, authentication logic, and business rules instead of `add(a, b)`.
+
+Read more about [what adversarial tests are and why they matter](/blog/what-are-adversarial-tests), [how this compares to generic AI test generation](/blog/vanilla-claude-vs-gitauto-test-generation), or estimate the savings for your team with the [ROI calculator](/roi/calculator).

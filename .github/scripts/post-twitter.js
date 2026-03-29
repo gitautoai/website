@@ -1,4 +1,5 @@
 const notifySlack = require("./notify-slack.js");
+const randomDelay = require("./random-delay.js");
 const { TwitterApi } = require("twitter-api-v2");
 
 /**
@@ -19,7 +20,7 @@ async function postTweetWithRetry(client, text) {
 /**
  * @see https://developer.x.com/en/docs/x-api/tweets/manage-tweets/api-reference/post-tweets
  */
-async function postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title }) {
+async function postTwitter({ isBlog, blogPosts, gitautoPost, wesPost, title }) {
   // GitAuto company account
   const clientGitAuto = new TwitterApi({
     appKey: process.env.X_OAUTH1_CONSUMER_KEY_GITAUTO,
@@ -36,17 +37,51 @@ async function postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title }) {
     accessSecret: process.env.X_OAUTH1_ACCESS_TOKEN_SECRET_WES,
   });
 
-  const url = isBlog ? `${postUrl}?utm_source=x&utm_medium=referral` : null;
-
-  // Build tweet text for each account
-  const buildTweet = (post) => {
-    let tweet = post || title;
+  // Build tweet text with optional URL
+  const buildTweet = (text, url) => {
+    let tweet = text;
     if (url) tweet += `\n\n${url}`;
     return tweet;
   };
 
-  const gitautoTweet = gitautoPost ? buildTweet(gitautoPost) : buildTweet(title);
-  const wesTweet = wesPost ? buildTweet(wesPost) : buildTweet(title);
+  // For blog posts, post each one separately with title + URL
+  if (isBlog && blogPosts.length > 0) {
+    for (const post of blogPosts) {
+      const url = `${post.url}?utm_source=x&utm_medium=referral`;
+      const gitautoTweet = buildTweet(title, url);
+      const wesTweet = buildTweet(title, url);
+
+      const gitAutoTweetResult = await postTweetWithRetry(clientGitAuto, gitautoTweet);
+      const wesTweetResult = await postTweetWithRetry(clientWes, wesTweet);
+
+      await randomDelay();
+
+      if (gitAutoTweetResult && wesTweetResult) {
+        try {
+          const userGitAuto = await clientGitAuto.v2.me();
+          await clientGitAuto.v2.like(userGitAuto.data.id, wesTweetResult.data.id);
+          const userWes = await clientWes.v2.me();
+          await clientWes.v2.like(userWes.data.id, gitAutoTweetResult.data.id);
+        } catch (error) {
+          console.log("Failed to like tweets (free tier):", error.message);
+        }
+      }
+
+      const links = [
+        gitAutoTweetResult ? `https://x.com/gitautoai/status/${gitAutoTweetResult.data.id}` : null,
+        wesTweetResult ? `https://x.com/hiroshinishio/status/${wesTweetResult.data.id}` : null,
+      ]
+        .filter(Boolean)
+        .join(" and ");
+      await notifySlack(`Posted to X! ${links}`);
+      await randomDelay();
+    }
+    return;
+  }
+
+  // Non-blog: single post with custom social media text
+  const gitautoTweet = gitautoPost || title;
+  const wesTweet = wesPost || title;
 
   if (!gitautoTweet && !wesTweet) {
     console.log("No social media post content, skipping Twitter post");
@@ -58,10 +93,7 @@ async function postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title }) {
   const gitAutoTweetResult = await postTweetWithRetry(clientGitAuto, gitautoTweet);
   const wesTweetResult = await postTweetWithRetry(clientWes, wesTweet);
 
-  // Wait for a random amount of time
-  const getRandomDelay = () => Math.floor(Math.random() * 55000 + 5000);
-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-  await sleep(getRandomDelay());
+  await randomDelay();
 
   // Like each other's tweets (requires paid X API access)
   // https://github.com/PLhery/node-twitter-api-v2/blob/master/doc/v2.md#like-a-tweet

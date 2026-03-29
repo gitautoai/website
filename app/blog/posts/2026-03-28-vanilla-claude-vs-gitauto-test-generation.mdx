@@ -1,0 +1,128 @@
+export const metadata = {
+  title: "Vanilla Claude vs GitAuto Test Generation",
+  description:
+    "We tested a calculator with vanilla Claude and GitAuto. Claude wrote 19 happy-path tests. GitAuto wrote 41 including adversarial edge cases.",
+  slug: "vanilla-claude-vs-gitauto-test-generation",
+  alternates: { canonical: "/blog/vanilla-claude-vs-gitauto-test-generation" },
+  openGraph: { url: "/blog/vanilla-claude-vs-gitauto-test-generation" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["test generation", "Claude", "AI testing", "adversarial testing", "comparison"],
+  createdAt: "2026-03-28",
+  updatedAt: "2026-03-28",
+};
+
+# Vanilla Claude vs GitAuto: Test Generation Compared
+
+We ran an experiment. Take a [simple Python calculator](https://github.com/gitautoai/sample-calculator) - 40 lines of code, four arithmetic operations, and a CLI main function. Give it to vanilla Claude with a generic prompt, then give the same file to GitAuto. Compare the results.
+
+Both use the same Claude Opus 4.6 model. The difference is in the **system** around it - the prompts, the pipeline, and the adversarial testing approach.
+
+## The Source Code
+
+```python
+def add(a, b):
+    return a + b
+
+def subtract(a, b):
+    return a - b
+
+def multiply(a, b):
+    return a * b
+
+def divide(a, b):
+    if b == 0:
+        raise ValueError("Cannot divide by zero")
+    return a / b
+
+def main():
+    print("Simple Calculator")
+    print("Operations: +, -, *, /")
+    a = float(input("Enter first number: "))
+    op = input("Enter operation (+, -, *, /): ")
+    b = float(input("Enter second number: "))
+    operations = {"+": add, "-": subtract, "*": multiply, "/": divide}
+    if op not in operations:
+        print(f"Unknown operation: {op}")
+        return
+    result = operations[op](a, b)
+    print(f"{a} {op} {b} = {result}")
+```
+
+## Vanilla Claude: "Write Tests for This"
+
+We pasted this into Claude Opus 4.6 with a generic prompt and asked it to write unit tests. It produced [19 tests](https://github.com/gitautoai/sample-calculator/pull/11):
+
+- 5 tests for `add` (positive, negative, mixed signs, floats with `pytest.approx`, zeros)
+- 4 tests for `subtract` (positive, negative result, negative numbers, floats)
+- 5 tests for `multiply` (positive, by zero, negative, mixed signs, floats)
+- 5 tests for `divide` (positive, float result, negative, mixed signs, divide by zero)
+
+**19 well-written tests**. Clean structure, good use of `pytest.approx` for floats, covers the happy paths and the one explicit error case. But notice what's missing: no `main()` tests, no infinity, no duck typing, no type mismatches, no boundary values.
+
+## GitAuto: 41 Tests
+
+GitAuto generated **41 tests** for the same file ([PR #10](https://github.com/gitautoai/sample-calculator/pull/10)). Both handle float precision correctly with `pytest.approx` - that's table stakes. The difference is in the categories vanilla Claude skipped entirely:
+
+### Infinity and NaN
+
+```python
+def test_infinity(self):
+    assert add(float("inf"), 1) == float("inf")
+
+def test_inf_minus_inf(self):
+    assert math.isnan(add(float("inf"), float("-inf")))
+```
+
+`float("inf")` is a valid Python value. In 1982, the Vancouver Stock Exchange [lost half its index value](/blog/what-are-adversarial-tests) because nobody tested how repeated float operations accumulate. These tests verify behavior with values most developers never think to pass.
+
+### Duck Typing and Type Mismatches
+
+```python
+def test_string_concatenation(self):
+    assert add("hello", " world") == "hello world"
+
+def test_type_mismatch_raises(self):
+    with pytest.raises(TypeError):
+        add(1, "two")
+```
+
+In December 2025, Cloudflare's Lua proxy [went down for 25 minutes](/blog/what-are-adversarial-tests) because a nil value appeared where an object was expected - a type exploit in a dynamic language. These tests document what `add` actually does with strings and mixed types, so you know before production does.
+
+### Division Boundaries and Main Function
+
+```python
+def test_very_small_divisor(self):
+    result = divide(1, 1e-300)
+    assert result == pytest.approx(1e300)
+
+def test_invalid_first_number(self, _mock_print, _mock_input):
+    with pytest.raises(ValueError):
+        main()
+```
+
+Dividing by `1e-300` produces `1e300` - a valid but astronomically large result. And vanilla Claude never tested `main()` at all - no invalid inputs, no empty operators, no error paths. GitAuto generated 9 tests for `main()` covering all branches.
+
+## The Numbers
+
+|                   | Vanilla Claude | GitAuto                       |
+| ----------------- | -------------- | ----------------------------- |
+| Total tests       | 19             | 41                            |
+| Happy path tests  | 14             | 19                            |
+| Edge case tests   | 5              | 13                            |
+| Adversarial tests | 0              | 9                             |
+| `main()` function | Not tested     | 9 tests covering all branches |
+| Float precision   | Yes            | Yes                           |
+| Infinity/NaN      | No             | Yes                           |
+| Duck typing       | No             | Yes                           |
+| Type mismatch     | No             | Yes                           |
+
+## The Fair Criticism
+
+Could you close this gap with a better prompt? Partially. Asking Claude to "test edge cases, type coercion, and boundary values" would get you closer. The gap isn't about a secret prompt - it's about doing this **automatically across hundreds of files** without writing a prompt for each one. On a 14-repo codebase, we took statement coverage from 40% to 70% over 7 months using this approach. No developer wrote a single test prompt.
+
+## Why This Matters
+
+Basic tests catch bugs you already thought about. Adversarial tests catch bugs you didn't - [the kind that took down the Vancouver Stock Exchange, Bitcoin, and Cloudflare](/blog/what-are-adversarial-tests). The gap between 19 and 41 tests on a calculator becomes the gap between 40% and 70% coverage on a real codebase.
+
+Read more about [what adversarial tests are](/blog/what-are-adversarial-tests), [try guessing what tests a calculator needs](/blog/can-you-guess-what-tests-a-calculator-needs), or estimate the savings for your team with the [ROI calculator](/roi/calculator).

@@ -1,5 +1,6 @@
 const { RestliClient } = require("linkedin-api-client");
 const notifySlack = require("./notify-slack.js");
+const randomDelay = require("./random-delay.js");
 
 const gitautoUrn = "urn:li:organization:100932100";
 const wesUrn = "urn:li:person:Nu-Ocwc81N"; // curl -X GET "https://api.linkedin.com/v2/me" -H "Authorization: Bearer YOUR_ACCESS_TOKEN" and get the "id" field
@@ -7,19 +8,13 @@ const wesUrn = "urn:li:person:Nu-Ocwc81N"; // curl -X GET "https://api.linkedin.
 /**
  * @see https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares/posts-api?view=li-lms-2024-11&viewFallbackFrom=li-lms-unversioned&tabs=http
  */
-async function postLinkedIn({ isBlog, postUrl, gitautoPost, wesPost, title }) {
+async function postLinkedIn({ isBlog, blogPosts, gitautoPost, wesPost, title }) {
   const restliClient = new RestliClient();
   const accessToken = process.env.LINKEDIN_ACCESS_TOKEN;
 
-  const url = isBlog ? `${postUrl}?utm_source=linkedin&utm_medium=referral` : null;
-
-  // Helper function for random delay between 5-15 seconds
-  const getRandomDelay = () => Math.floor(Math.random() * 10000 + 5000);
-  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
   // Helper function to create a post
   // https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/advertising-targeting/version/article-ads-integrations?view=li-lms-2024-11&tabs=http#workflow
-  const createPost = async (authorUrn, text) => {
+  const createPost = async (authorUrn, text, url, postTitle) => {
     const entity = {
       author: authorUrn,
       commentary: text,
@@ -33,12 +28,12 @@ async function postLinkedIn({ isBlog, postUrl, gitautoPost, wesPost, title }) {
       isReshareDisabledByAuthor: false,
     };
 
-    // Include article preview only for blog posts
+    // Include article preview for blog posts
     if (url) {
       entity.content = {
         article: {
           source: url,
-          title: title,
+          title: postTitle,
           description: text || `Check out our latest release on GitAuto!`,
         },
       };
@@ -62,6 +57,37 @@ async function postLinkedIn({ isBlog, postUrl, gitautoPost, wesPost, title }) {
     });
   };
 
+  // For blog posts, post each one separately with title + URL
+  if (isBlog && blogPosts.length > 0) {
+    for (const post of blogPosts) {
+      const url = `${post.url}?utm_source=linkedin&utm_medium=referral`;
+
+      const gitautoResult = await createPost(gitautoUrn, title, url, title);
+      const gitautoPostUrn = gitautoResult.headers["x-restli-id"];
+      const wesResult = await createPost(wesUrn, title, url, title);
+      const wesPostUrn = wesResult.headers["x-restli-id"];
+
+      if (gitautoPostUrn && wesPostUrn) {
+        await randomDelay();
+        await likePost(gitautoUrn, wesPostUrn);
+        await likePost(wesUrn, gitautoPostUrn);
+      }
+
+      const links = [
+        gitautoPostUrn
+          ? `https://www.linkedin.com/feed/update/urn:li:activity:${gitautoPostUrn}`
+          : null,
+        wesPostUrn ? `https://www.linkedin.com/feed/update/urn:li:activity:${wesPostUrn}` : null,
+      ]
+        .filter(Boolean)
+        .join(" and ");
+      await notifySlack(`Posted to LinkedIn! ${links}`);
+      await randomDelay();
+    }
+    return;
+  }
+
+  // Non-blog: single post
   const gitautoText = gitautoPost || title;
   const wesText = wesPost || title;
 
@@ -71,14 +97,14 @@ async function postLinkedIn({ isBlog, postUrl, gitautoPost, wesPost, title }) {
   }
 
   // Post from both accounts with different content
-  const gitautoResult = await createPost(gitautoUrn, gitautoText);
+  const gitautoResult = await createPost(gitautoUrn, gitautoText, null, title);
   const gitautoPostUrn = gitautoResult.headers["x-restli-id"];
-  const wesResult = await createPost(wesUrn, wesText);
+  const wesResult = await createPost(wesUrn, wesText, null, title);
   const wesPostUrn = wesResult.headers["x-restli-id"];
 
   // Wait and like each other's posts
   if (gitautoPostUrn && wesPostUrn) {
-    await sleep(getRandomDelay());
+    await randomDelay();
     await likePost(gitautoUrn, wesPostUrn);
     await likePost(wesUrn, gitautoPostUrn);
   }

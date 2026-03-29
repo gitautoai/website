@@ -1,0 +1,110 @@
+export const metadata = {
+  title: "What Are Adversarial Tests and Why Run Them",
+  description:
+    "Adversarial tests push code with unexpected inputs - infinity, NaN, type mismatches, duck typing. Learn why they catch bugs happy-path tests miss.",
+  slug: "what-are-adversarial-tests",
+  alternates: { canonical: "/blog/what-are-adversarial-tests" },
+  openGraph: { url: "/blog/what-are-adversarial-tests" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["adversarial testing", "edge cases", "test automation", "software quality", "unit testing"],
+  createdAt: "2026-03-26",
+  updatedAt: "2026-03-26",
+};
+
+# What Are Adversarial Tests and Why Run Them
+
+Most unit tests verify that code works when given expected inputs. Adversarial tests verify what happens when code receives **unexpected** inputs - the kind that real systems inevitably encounter.
+
+## Happy Path vs Adversarial
+
+A happy-path test for an `add` function:
+
+```python
+assert add(2, 3) == 5  # Expected input, expected output
+```
+
+An adversarial test for the same function:
+
+```python
+assert add(float("inf"), float("-inf"))  # What happens with infinity?
+assert add("hello", " world") == "hello world"  # What about strings?
+```
+
+The happy-path test confirms the function works. The adversarial tests discover what the function **actually does** with inputs the developer didn't plan for.
+
+## What Happens Without Adversarial Tests
+
+These span four decades - because the same class of bugs keeps happening regardless of era, language, or team size.
+
+### Vancouver Stock Exchange: Float Truncation (1982)
+
+The Vancouver Stock Exchange launched a new index at 1000.000. The code recalculated the index ~3,000 times daily, but used `floor()` instead of `round()` when storing the result to three decimal places. Each truncation lost a fraction of a cent. Over 22 months, the index read 524.811 when its true value was approximately 1098.892 - the index silently lost nearly half its value. A single test running 10,000 sequential updates against a high-precision reference would have caught the drift immediately.
+
+### Ariane 5: Unchecked Type Conversion (1996)
+
+The Ariane 5 rocket reused inertial reference code from the Ariane 4. A 64-bit float (horizontal velocity) was converted to a 16-bit signed integer. On Ariane 4, the velocity never exceeded 32,767, so no overflow protection was added. On Ariane 5's steeper trajectory, it did - 37 seconds after launch. The overflow crashed the navigation system, which commanded full nozzle deflection, breaking the rocket apart. $370 million lost. A test feeding the Ariane 5 velocity profile into the conversion function would have caught it.
+
+### Bitcoin: Integer Overflow (2010)
+
+In block 74638, an attacker created a transaction with two outputs of ~92.2 billion BTC each. The validation code summed output values to check they were valid, but the sum of two near-max 64-bit integers overflowed, wrapping to a small positive number that passed validation. 184 billion BTC were created out of thin air. The network required an emergency fork and rollback - the only time in Bitcoin's history. A boundary-value test with outputs near `INT64_MAX / 2` would have caught it.
+
+### Cloudflare: Nil Access in Dynamic Typing (2025)
+
+Cloudflare's FL1 proxy (written in Lua) had a WAF rule that could be skipped via a killswitch. When skipped, the `rule_result.execute` object was never created - but downstream code accessed it unconditionally. Lua returned a nil-indexing error. The bug existed undetected for years because the killswitch was rarely triggered. When it finally fired, 28% of all Cloudflare HTTP traffic returned 500 errors for 25 minutes. A test exercising the rule-skip path would have caught it.
+
+## Categories of Adversarial Tests
+
+### 1. Boundary Values and Overflow
+
+The Vancouver Stock Exchange and Bitcoin incidents both involved values at the edges of their valid range. Test with zero, near-max integers, very small floats, and values that cause accumulation drift over many iterations.
+
+### 2. Type Exploits
+
+In dynamically-typed languages like Python and JavaScript, functions often accept inputs they weren't designed for. The Cloudflare incident is a type exploit - nil where an object was expected.
+
+```python
+def add(a, b):
+    return a + b
+```
+
+This function "works" with strings (`add("foo", "bar") == "foobar"`), lists (`add([1], [2]) == [1, 2]`), and mixed types that raise `TypeError`. Adversarial tests document this behavior so you know when it changes.
+
+### 3. Floating Point Traps
+
+The Vancouver Stock Exchange lost half an index to float truncation. IEEE 754 has more surprises:
+
+| Formula | Expected | Actual | Why |
+| --- | --- | --- | --- |
+| `0.1 + 0.2` | `0.3` | `0.30000000000000004` | Binary can't represent 0.1 exactly |
+| `float("inf") - float("inf")` | `0` | `nan` | Infinity minus infinity is undefined |
+| `float("nan") == float("nan")` | `True` | `False` | NaN is not equal to itself by IEEE 754 spec |
+
+### 4. Untested Code Paths
+
+The Cloudflare and Ariane 5 incidents share a pattern: code that worked in one context but was never tested in another. Feature toggles, killswitches, error handlers, and reused components all need adversarial tests for the paths that "shouldn't happen."
+
+## Why Developers Skip Adversarial Tests
+
+Time. Writing adversarial tests for a simple function takes 3-4x longer than happy-path tests. For a large codebase, that adds up to weeks of work that's hard to justify when there are features to ship.
+
+[GitAuto](/) generates adversarial tests automatically. When the cost drops to zero developer time, there's no reason to skip them.
+
+## Real Example
+
+We ran [GitAuto](/) against a [40-line Python calculator](https://github.com/gitautoai/sample-calculator). It generated [41 tests](https://github.com/gitautoai/sample-calculator/pull/10) including:
+
+- Infinity and NaN arithmetic (`add(inf, -inf)` returns `NaN`)
+- Duck typing behavior (string concatenation via `add`, string repetition via `multiply`)
+- Type mismatch errors (`add(1, "two")` raises `TypeError`)
+- Large numbers (`10**18 + 10**18` verifying arbitrary precision)
+- Division edge cases (`divide(0, 0)`, `divide(5, 0.0)`, `divide(1, 1e-300)`)
+- Invalid CLI inputs (non-numeric strings, empty operator)
+
+Most developers would write 10-15 tests for this file - the happy paths plus divide-by-zero. See [how this compares to vanilla Claude](/blog/vanilla-claude-vs-gitauto-test-generation) on the same calculator.
+
+## The Pattern
+
+Every incident above follows the same pattern: the code worked for expected inputs, and nobody tested what happens with unexpected ones. The Vancouver Stock Exchange didn't test cumulative rounding. Bitcoin didn't test near-max values. Ariane 5 didn't test with the new rocket's trajectory. Cloudflare didn't test the killswitch path.
+
+Adversarial tests are the tests you write for inputs you don't expect. They're also the tests most likely to prevent your next production incident. See [what this looks like in practice](/blog/can-you-guess-what-tests-a-calculator-needs) on a simple codebase, or estimate the impact for your team with the [ROI calculator](/roi/calculator).

@@ -22,7 +22,7 @@ jobs:
     outputs:
       should-post: ${{ steps.check.outputs.should-post }}
       is-blog: ${{ steps.check.outputs.is-blog }}
-      post-url: ${{ steps.check.outputs.post-url }}
+      blog-posts: ${{ steps.check.outputs.blog-posts }}
       pr-number: ${{ steps.check.outputs.pr-number }}
       social-media-post-gitauto: ${{ steps.check.outputs.social-media-post-gitauto }}
       social-media-post-wes: ${{ steps.check.outputs.social-media-post-wes }}
@@ -56,7 +56,7 @@ jobs:
               console.log('No PR found for commit, skipping SNS post');
               core.setOutput('should-post', false);
               core.setOutput('is-blog', false);
-              core.setOutput('post-url', 'https://gitauto.ai');
+              core.setOutput('blog-posts', '[]');
               return;
             }
 
@@ -70,7 +70,7 @@ jobs:
             };
 
             // Check if it's a blog post
-            const { isBlog, postUrl } = await getBlogInfo({ github, context: triggeringContext });
+            const { isBlog, blogPosts } = await getBlogInfo({ github, context: triggeringContext });
 
             // Extract Social Media Post content (supports separate GitAuto/Wes posts)
             const extractSocialPosts = require('.github/scripts/extract-social-posts.js');
@@ -82,12 +82,12 @@ jobs:
 
             core.setOutput('should-post', shouldPost);
             core.setOutput('is-blog', isBlog);
-            core.setOutput('post-url', postUrl);
+            core.setOutput('blog-posts', JSON.stringify(blogPosts));
             core.setOutput('pr-number', pullRequest.number);
             core.setOutput('social-media-post-gitauto', gitautoPost);
             core.setOutput('social-media-post-wes', wesPost);
 
-            console.log(`Blog post detected: ${isBlog}`);
+            console.log(`Blog posts: ${blogPosts.length}`);
             console.log(`GitAuto post: ${gitautoPost ? 'yes' : 'no'}`);
             console.log(`Wes post: ${wesPost ? 'yes' : 'no'}`);
             console.log(`Should post to SNS: ${shouldPost}`);
@@ -134,7 +134,7 @@ jobs:
           script: |
             const postTwitter = require('.github/scripts/post-twitter.js');
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
-            const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
+            const blogPosts = JSON.parse('${{ needs.check-should-post.outputs.blog-posts }}');
             const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
             const gitautoPost = `${{ needs.check-should-post.outputs.social-media-post-gitauto }}`;
             const wesPost = `${{ needs.check-should-post.outputs.social-media-post-wes }}`;
@@ -145,7 +145,7 @@ jobs:
               pull_number: prNumber
             });
 
-            await postTwitter({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
+            await postTwitter({ isBlog, blogPosts, gitautoPost, wesPost, title: pullRequest.title });
 
       - name: Post to LinkedIn
         uses: actions/github-script@v8
@@ -154,7 +154,7 @@ jobs:
           script: |
             const postLinkedIn = require('.github/scripts/post-linkedin.js');
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
-            const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
+            const blogPosts = JSON.parse('${{ needs.check-should-post.outputs.blog-posts }}');
             const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
             const gitautoPost = `${{ needs.check-should-post.outputs.social-media-post-gitauto }}`;
             const wesPost = `${{ needs.check-should-post.outputs.social-media-post-wes }}`;
@@ -165,7 +165,7 @@ jobs:
               pull_number: prNumber
             });
 
-            await postLinkedIn({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
+            await postLinkedIn({ isBlog, blogPosts, gitautoPost, wesPost, title: pullRequest.title });
 
       - name: Post to Hacker News
         uses: actions/github-script@v8
@@ -174,7 +174,7 @@ jobs:
           script: |
             const postHackerNews = require('.github/scripts/post-hackernews.js');
             const isBlog = ${{ needs.check-should-post.outputs.is-blog }};
-            const postUrl = '${{ needs.check-should-post.outputs.post-url }}';
+            const blogPosts = JSON.parse('${{ needs.check-should-post.outputs.blog-posts }}');
             const prNumber = ${{ needs.check-should-post.outputs.pr-number }};
             const gitautoPost = `${{ needs.check-should-post.outputs.social-media-post-gitauto }}`;
             const wesPost = `${{ needs.check-should-post.outputs.social-media-post-wes }}`;
@@ -185,4 +185,4 @@ jobs:
               pull_number: prNumber
             });
 
-            await postHackerNews({ isBlog, postUrl, gitautoPost, wesPost, title: pullRequest.title });
+            await postHackerNews({ isBlog, blogPosts, gitautoPost, wesPost, title: pullRequest.title });

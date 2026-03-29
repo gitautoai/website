@@ -279,6 +279,19 @@ Never rely on `npm run build` alone as it ignores test files. All TypeScript err
 
 ## Blog Content Guidelines
 
+### Quality Gate: Devil's Advocate Review
+
+**Before publishing any blog post**, play devil's advocate and argue against it. Ask:
+
+- **Is this original?** If a reader can find the same content on 10 other blogs, drop it. Textbook explanations of well-known concepts (DORA metrics, testing pyramids, etc.) are not worth publishing.
+- **Does the data support the thesis?** If the post makes claims (e.g., "X improves Y"), verify with real data. If the data shows no correlation, drop the post. Don't publish dishonest content.
+- **Is the example too simple?** A toy example (calculator, todo app) is weak. Every testing blog uses them. Real-world examples from actual customer codebases are 10x more convincing.
+- **Is the comparison fair?** If comparing GitAuto vs alternatives, ensure both get a fair shot. Comparing best-case GitAuto vs worst-case competitor is dishonest and readers will notice.
+- **Would a senior dev learn anything?** If the target audience already knows everything in the post, it has no value. Write for people who build real systems, not beginners.
+- **Is this just marketing disguised as content?** If the post is a product pitch with a thin educational wrapper, readers will bounce. The insight must stand on its own without GitAuto.
+
+If the post fails any of these, either fix it or drop it. Quality over quantity - one strong post beats three weak ones.
+
 ### BLOG Command
 
 When the user says "BLOG", use these sub-agents in sequence:
