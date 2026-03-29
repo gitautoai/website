@@ -29,4 +29,4 @@ jobs:
         with:
           script: |
             const postDevTo = require('.github/scripts/post-devto.js');
-            await postDevTo({ commits: context.payload.commits });
+            await postDevTo({ github, context });

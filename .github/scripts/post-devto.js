@@ -3,18 +3,20 @@ const notifySlack = require("./notify-slack.js");
 const path = require("path");
 
 /**
- * Extracts blog post URLs from push event commits
+ * Extracts blog post files from push event using compare API.
+ * Using commit.added/modified from push payload doesn't work for merge commits
+ * (arrays are empty), so we compare before/after SHAs instead.
  */
-function getChangedPostFiles(commits) {
-  const files = new Set();
-  for (const commit of commits) {
-    for (const filename of [...(commit.added || []), ...(commit.modified || [])]) {
-      if (filename.startsWith("app/blog/posts/") && filename.endsWith(".mdx")) {
-        files.add(filename);
-      }
-    }
-  }
-  return [...files];
+async function getChangedPostFiles(github, context) {
+  const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    basehead: `${context.payload.before}...${context.payload.after}`,
+  });
+  return (comparison.files || [])
+    .filter((f) => f.filename.startsWith("app/blog/posts/") && f.filename.endsWith(".mdx"))
+    .filter((f) => f.status !== "removed")
+    .map((f) => f.filename);
 }
 
 /**
@@ -114,8 +116,8 @@ async function postOneToDevTo(filePath) {
   await notifySlack(`Posted to dev.to! ${articleData.url}`);
 }
 
-async function postDevTo({ commits }) {
-  const files = getChangedPostFiles(commits);
+async function postDevTo({ github, context }) {
+  const files = await getChangedPostFiles(github, context);
   for (const filePath of files) {
     await postOneToDevTo(filePath);
   }
