@@ -48,8 +48,8 @@ async function postTwitter({ isBlog, blogPosts, gitautoPost, wesPost, title }) {
   if (isBlog && blogPosts.length > 0) {
     for (const post of blogPosts) {
       const url = `${post.url}?utm_source=x&utm_medium=referral`;
-      const gitautoTweet = buildTweet(title, url);
-      const wesTweet = buildTweet(title, url);
+      const gitautoTweet = buildTweet(post.title, url);
+      const wesTweet = buildTweet(post.title, url);
 
       const gitAutoTweetResult = await postTweetWithRetry(clientGitAuto, gitautoTweet);
       const wesTweetResult = await postTweetWithRetry(clientWes, wesTweet);

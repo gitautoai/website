@@ -31,7 +31,7 @@ async function postHackerNews({ isBlog, blogPosts, gitautoPost, wesPost, title }
         await page.waitForLoadState("networkidle");
 
         // Submit story
-        const hnTitle = title.substring(0, 80);
+        const hnTitle = post.title.substring(0, 80);
         await page.fill('input[name="title"]', hnTitle);
         await page.fill(
           'input[name="url"]',
