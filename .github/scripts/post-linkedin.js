@@ -62,9 +62,9 @@ async function postLinkedIn({ isBlog, blogPosts, gitautoPost, wesPost, title }) 
     for (const post of blogPosts) {
       const url = `${post.url}?utm_source=linkedin&utm_medium=referral`;
 
-      const gitautoResult = await createPost(gitautoUrn, title, url, title);
+      const gitautoResult = await createPost(gitautoUrn, post.title, url, post.title);
       const gitautoPostUrn = gitautoResult.headers["x-restli-id"];
-      const wesResult = await createPost(wesUrn, title, url, title);
+      const wesResult = await createPost(wesUrn, post.title, url, post.title);
       const wesPostUrn = wesResult.headers["x-restli-id"];
 
       if (gitautoPostUrn && wesPostUrn) {
