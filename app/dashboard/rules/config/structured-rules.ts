@@ -136,6 +136,7 @@ export const STRUCTURED_RULES_CONFIG = {
     description: "Configure test file placement and naming conventions",
     rules: [
       {
+        // Cross-ref: gitauto repo services/webhook/new_pr_handler.py testFileLocation check
         key: "testFileLocation",
         label: "Test file location",
         description: "Choose where test files should be placed relative to source files",

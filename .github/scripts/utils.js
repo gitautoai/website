@@ -8,23 +8,24 @@ async function getBlogInfo({ github, context }) {
     pull_number: context.payload.pull_request.number,
   });
 
-  let isBlog = false;
-  let postUrl = "https://gitauto.ai";
-
+  const blogPosts = [];
   for (const file of files) {
     // Check for blog posts in app/blog/posts/*.mdx
     if (file.filename.startsWith("app/blog/posts/") && file.filename.endsWith(".mdx")) {
-      isBlog = true;
       // Extract slug from filename: "2025-08-07-why-developers-think-unit-tests-waste-time.mdx"
       // Remove date prefix and .mdx extension to get the slug
       const filename = file.filename.split("/").pop();
       const slug = filename.replace(/^\d{4}-\d{2}-\d{2}-/, "").replace(/\.mdx$/, "");
-      postUrl = `https://gitauto.ai/blog/${slug}`;
-      break;
+      blogPosts.push({
+        slug,
+        url: `https://gitauto.ai/blog/${slug}`,
+      });
     }
   }
 
-  return { isBlog, postUrl };
+  const isBlog = blogPosts.length > 0;
+  const postUrl = isBlog ? blogPosts[0].url : "https://gitauto.ai";
+  return { isBlog, postUrl, blogPosts };
 }
 
 module.exports = { getBlogInfo };

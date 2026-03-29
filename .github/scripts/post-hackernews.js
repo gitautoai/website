@@ -1,10 +1,11 @@
 const { chromium } = require("playwright");
 const notifySlack = require("./notify-slack.js");
+const randomDelay = require("./random-delay.js");
 
 /**
  * Posts to Hacker News using Playwright for browser automation
  */
-async function postHackerNews({ isBlog, postUrl, gitautoPost, wesPost, title }) {
+async function postHackerNews({ isBlog, blogPosts, gitautoPost, wesPost, title }) {
   const browser = await chromium.launch();
   const page = await browser.newPage();
 
@@ -22,19 +23,55 @@ async function postHackerNews({ isBlog, postUrl, gitautoPost, wesPost, title }) 
     // Wait for login to complete (look for a logout link)
     await page.waitForSelector('a[href^="logout"]', { timeout: 10000 }); // Use href^= to match links that start with "logout"
 
+    // For blog posts, submit each one separately with title + URL
+    if (isBlog && blogPosts.length > 0) {
+      for (const post of blogPosts) {
+        // Navigate to submit page and wait for it to load
+        await page.goto("https://news.ycombinator.com/submit");
+        await page.waitForLoadState("networkidle");
+
+        // Submit story
+        const hnTitle = title.substring(0, 80);
+        await page.fill('input[name="title"]', hnTitle);
+        await page.fill(
+          'input[name="url"]',
+          `${post.url}?utm_source=hackernews&utm_medium=referral`,
+        );
+
+        await page.click('input[type="submit"]');
+        await page.waitForLoadState("networkidle");
+
+        // Wait for redirect to either newest page or error
+        await Promise.race([
+          page.waitForURL("https://news.ycombinator.com/newest"),
+          page.waitForSelector(".error", { timeout: 10000 }),
+        ]);
+
+        // Check if there was an error
+        const error = await page
+          .locator(".error")
+          .first()
+          .textContent()
+          .catch(() => null);
+        if (error) throw new Error(`HN submission failed: ${error}`);
+
+        await notifySlack(`Posted to Hacker News! https://news.ycombinator.com/newest`);
+
+        await randomDelay();
+      }
+      await browser.close();
+      return;
+    }
+
+    // Non-blog: single post
     // Navigate to submit page and wait for it to load
     await page.goto("https://news.ycombinator.com/submit");
     await page.waitForLoadState("networkidle");
 
     // Submit story
     const hnTitle = title.substring(0, 80);
-
     await page.fill('input[name="title"]', hnTitle);
 
-    // Blog posts: submit with URL; Non-blog: text-only post
-    if (isBlog) {
-      await page.fill('input[name="url"]', `${postUrl}?utm_source=hackernews&utm_medium=referral`);
-    }
     // Use GitAuto post for HN (company voice is more appropriate)
     const hnText = gitautoPost || wesPost;
     if (hnText) {
