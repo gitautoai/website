@@ -52,7 +52,7 @@ test.describe("Credits - Non-signed in users", () => {
   });
 
   test("should handle direct navigation to protected credit routes", async ({ page }) => {
-    const protectedRoutes = ["/dashboard/credits", "/dashboard/usage"];
+    const protectedRoutes = ["/dashboard/credits", "/dashboard/usage", "/dashboard/coverage-trends"];
 
     for (const route of protectedRoutes) {
       await page.goto(route);
