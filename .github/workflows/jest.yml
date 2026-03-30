@@ -25,6 +25,11 @@ on:
   # Allow manual trigger for debugging
   workflow_dispatch:
 
+# Cancel older runs when new commits are pushed or PR is merged
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
