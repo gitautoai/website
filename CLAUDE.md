@@ -224,19 +224,15 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;
 
 **EXCEPTION**: For blog-only changes (adding/editing blog posts in `app/blog/posts/`), tests can be skipped since blog content doesn't affect application functionality.
 
-**Pre-commit hook**: Install with `ln -sf ../../scripts/git/pre_commit_hook.sh .git/hooks/pre-commit`. Runs automatically on commit: blog metadata validation (title 34-44 chars + ` - GitAuto Blog` suffix = 50-60, description 110-160 chars), eslint, tsc, jest.
+**Pre-commit hook**: Install with `ln -sf ../../scripts/git/pre_commit_hook.sh .git/hooks/pre-commit`. Runs automatically on commit: blog metadata validation (title 34-44 chars + ` - GitAuto Blog` suffix = 50-60, description 110-160 chars), types:generate, eslint, markdownlint, tsc, jest, build.
 
 When the user says "LGTM", execute these commands in order:
 
-1. `npm run types:generate` - Generate TypeScript types
-2. `npx markdownlint-cli2 "**/*.md" "#node_modules" "#.next"` - Lint markdown files. **Fix any errors before proceeding.**
-3. `npm run build` - Build the project
-4. **STOP if any step fails** - Fix all failures before proceeding
-5. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes
-6. `git add <specific-file-paths>` - Stage specific changed files including updated/created test files (NEVER use `git add .`, always specify exact file paths)
-7. `git commit -m "descriptive message"` - Pre-commit hook runs blog metadata validation, eslint, tsc, jest. **If hook fails, fix and re-commit.** (do NOT include Claude Code attribution, do NOT include `[skip ci]`)
-8. `git push` - Push to remote
-9. Create pull request: `gh pr create --title "PR title" --body "PR description" --assignee @me`
+1. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes
+2. `git add <specific-file-paths>` - Stage specific changed files (NEVER use `git add .`, always specify exact file paths)
+3. `git commit -m "descriptive message"` - Pre-commit hook runs all checks. **If hook fails, fix and re-commit.** (do NOT include Claude Code attribution, do NOT include `[skip ci]`)
+4. `git push` - Push to remote
+5. Create pull request: `gh pr create --title "PR title" --body "PR description" --assignee @me`
     - PR title should be technical and descriptive
     - **Do NOT include a `## Test plan` section** - it's unnecessary noise
     - **Social Media Post sections must always be the last sections in the PR body**

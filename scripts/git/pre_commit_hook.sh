@@ -13,11 +13,27 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Generate TypeScript types
+echo "--- types:generate ---"
+npm run types:generate
+if [ $? -ne 0 ]; then
+    echo "FAILED: Type generation failed."
+    exit 1
+fi
+
 # ESLint
 echo "--- eslint ---"
 npx eslint .
 if [ $? -ne 0 ]; then
     echo "FAILED: Fix ESLint errors before committing."
+    exit 1
+fi
+
+# Markdown lint
+echo "--- markdownlint ---"
+npx markdownlint-cli2 "**/*.md" "#node_modules" "#.next"
+if [ $? -ne 0 ]; then
+    echo "FAILED: Fix markdown lint errors before committing."
     exit 1
 fi
 
@@ -34,6 +50,14 @@ echo "--- jest ---"
 npx jest
 if [ $? -ne 0 ]; then
     echo "FAILED: Fix failing tests before committing."
+    exit 1
+fi
+
+# Build
+echo "--- build ---"
+npm run build
+if [ $? -ne 0 ]; then
+    echo "FAILED: Build failed."
     exit 1
 fi
 
