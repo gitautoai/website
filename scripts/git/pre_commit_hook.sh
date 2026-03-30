@@ -5,6 +5,14 @@ set -uo pipefail
 
 echo "=== Pre-commit hook ==="
 
+# Merge latest main
+echo "--- merge main ---"
+git fetch origin main && git merge origin/main
+if [ $? -ne 0 ]; then
+    echo "FAILED: Merge conflict with main. Resolve before committing."
+    exit 1
+fi
+
 # Blog metadata length validation (title 50-60 with suffix, description 110-160)
 echo "--- blog metadata length check ---"
 npx tsx scripts/git/validate_blog_metadata.ts
