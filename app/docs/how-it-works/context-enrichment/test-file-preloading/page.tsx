@@ -56,12 +56,24 @@ export default function TestFilePreloadingPage() {
         <section>
           <h2 className="text-2xl font-semibold mb-4">How It Works</h2>
           <p className="text-gray-600 mb-4">
-            GitAuto greps the repository for the implementation file name, then filters the results
-            to find existing test files - all before the model starts. This is critical because the
-            model will happily give up searching after a few attempts and create a new file instead.
-            By doing the search upfront outside the model, GitAuto guarantees that existing tests
-            are found and their content is injected into the initial context before the model begins
-            its work.
+            GitAuto discovers test files through two methods: path matching (walking the file tree
+            for test files whose path contains the implementation file&apos;s stem) and content grep
+            (finding test files that reference the stem in their source code). This hybrid approach
+            catches both colocated tests and tests in separate directories that import the
+            implementation file.
+          </p>
+          <p className="text-gray-600 mb-4">
+            Discovered test files are then ranked by relevance using a scoring system: name match
+            (+100 if the test file name contains the implementation stem), same directory (+50),
+            shared path components (+10 per shared component), and a distance penalty. The top 5
+            most relevant test files are included with their full contents. Any remaining test files
+            are listed as paths so the model knows they exist without consuming context budget.
+          </p>
+          <p className="text-gray-600 mb-4">
+            This is critical because the model will happily give up searching after a few attempts
+            and create a new file instead. By doing the search and ranking upfront outside the
+            model, GitAuto guarantees that the most relevant existing tests are found and their
+            content is injected into the initial context before the model begins its work.
           </p>
         </section>
 

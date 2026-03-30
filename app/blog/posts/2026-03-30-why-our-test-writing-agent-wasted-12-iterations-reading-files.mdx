@@ -1,0 +1,61 @@
+export const metadata = {
+  title: "Your Tests Pass But Prove Nothing: A Mutation Testing Wake-Up Call",
+  description:
+    "We wrote unit tests with 3 synthetic inputs. They passed. Then we used real data - 31 items instead of 3 - and found the logic was fundamentally broken. Here's why toy tests are worthless.",
+  slug: "why-our-test-writing-agent-wasted-12-iterations-reading-files",
+  alternates: {
+    canonical:
+      "/blog/why-our-test-writing-agent-wasted-12-iterations-reading-files",
+  },
+  openGraph: {
+    url: "/blog/why-our-test-writing-agent-wasted-12-iterations-reading-files",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: [
+    "mutation testing",
+    "testing",
+    "software quality",
+    "real-world data",
+    "test design",
+  ],
+  createdAt: "2026-03-30",
+  updatedAt: "2026-03-30",
+};
+
+# Your Tests Pass But Prove Nothing: A Mutation Testing Wake-Up Call
+
+We wrote a function that ranks files by relevance. It scores each file based on name matching, directory proximity, and shared path depth. We wrote tests with 3 handcrafted inputs. They passed. We shipped.
+
+Then we ran the same function against real data from a production repository - 31 files instead of 3. The results were wrong. Completely unrelated files ranked above obviously relevant ones.
+
+## The Bug We Missed
+
+The function gave a flat +30 bonus for "shared parent directory." Whether two paths shared 1 component (`src/`) or 3 components (`src/pages/Quote/`), the bonus was the same. With 3 carefully chosen test inputs, this never mattered - the other scoring factors dominated. With 31 real inputs at varying depths, it broke everything.
+
+## Why 3 Inputs Can't Catch This
+
+With a small handcrafted test, you unconsciously avoid the edge cases. You pick inputs where the answer is obvious. The name match alone is enough to sort them correctly. The shared-parent bug is invisible because your test data doesn't have enough items at similar scores to expose the tiebreaker flaw.
+
+This is the mutation testing principle: imagine an "evil coder" who changes your constants. They change +30 to +0. Or +1000. Do your tests fail? With 3 synthetic inputs, no. The tests still pass regardless. That means your tests prove nothing about that constant. They're decoration.
+
+## What Real Data Exposes
+
+When we fed in 31 actual file paths from a customer repo:
+
+- `src/index.test.tsx` (the root app test, completely unrelated) ranked #2
+- `src/pages/Quote/components/BuyNowButton/index.test.tsx` (an actual relevant test) ranked #4
+
+Both had the same score because the flat +30 treated one shared component identically to three. Only the alphabetical tiebreaker separated them - in the wrong direction.
+
+## The Fix Was Trivial
+
+Change `score += 30` to `score += common_len * 10`. One line. The bug wasn't hard to fix. It was hard to find - because our tests weren't designed to find it.
+
+## How to Apply This
+
+- **Run your function against real data.** If it processes lists of 30+ items in production, test it with 30+ real items. Clone a repo, hit a real API, use a real database dump.
+- **Apply the mutation test.** For every constant or threshold in your code, ask: if I changed this value, would any test fail? If not, your tests don't actually cover that logic.
+- **Distrust small synthetic inputs.** Three carefully chosen items will always work. They confirm your mental model, not your code. Real data has no such courtesy.
+
+The uncomfortable truth: passing tests don't mean correct code. They mean your tests and your code share the same assumptions. Real data doesn't share your assumptions. That's why it finds the bugs.
