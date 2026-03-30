@@ -25,39 +25,39 @@ export const metadata = {
 
 # Test File Discovery Is Still Unsolved
 
-Given `src/pages/Quote/index.tsx`, which test files should you look at? Sounds simple. It's not.
+Given `src/pages/Checkout/index.tsx`, which test files should you look at? Sounds simple. It's not.
 
 We build an AI agent that writes tests. Before the agent starts, we need to find existing test files so it can match the project's testing patterns. The agent wasted 12 of 34 iterations just reading files one by one. So we decided to find and pre-load test files before the agent loop begins. The discovery algorithm is the hard part.
 
 ## Approach 1: Stem Matching
 
-Extract the filename stem and search the tree. `src/auth/AuthProvider.tsx` has stem `AuthProvider`. Walk the file tree, find test files containing "AuthProvider" in their path. This works for most files.
+Extract the filename stem and search the tree. `src/auth/SessionProvider.tsx` has stem `SessionProvider`. Walk the file tree, find test files containing "SessionProvider" in their path. This works for most files.
 
-It fails for generic stems. `src/pages/Quote/index.tsx` has stem `index`. Grepping for "index" across a codebase matches almost everything - 29 test files in one real repo. The signal drowns in noise.
+It fails for generic stems. `src/pages/Checkout/index.tsx` has stem `index`. Grepping for "index" across a codebase matches almost everything - 29 test files in one real repo. The signal drowns in noise.
 
-We considered falling back to the parent directory name for generic stems (`index` -> `Quote`). This helps for some cases, but "generic" is a judgment call. Is `utils` generic? `config`? `handler`? Every heuristic creates a new edge case.
+We considered falling back to the parent directory name for generic stems (`index` -> `Checkout`). This helps for some cases, but "generic" is a judgment call. Is `utils` generic? `config`? `handler`? Every heuristic creates a new edge case.
 
 ## Approach 2: Content Grepping
 
-Instead of matching paths, grep test file contents for the stem. If a test file imports `AuthProvider`, it references that implementation. This catches tests in completely different directories - a test in `src/pages/Quote/` might import `../../auth/AuthProvider`.
+Instead of matching paths, grep test file contents for the stem. If a test file imports `SessionProvider`, it references that implementation. This catches tests in completely different directories - a test in `src/pages/Checkout/` might import `../../auth/SessionProvider`.
 
-But content grep has a different failure mode. Many JavaScript projects use barrel exports (`index.ts` re-exporting everything). A test might import from `'@/pages/Quote'` which resolves to `index.tsx` at runtime, but the string "index" never appears in the import. The connection exists at the module resolution level, not the string level.
+But content grep has a different failure mode. Many JavaScript projects use barrel exports (`index.ts` re-exporting everything). A test might import from `'@/pages/Checkout'` which resolves to `index.tsx` at runtime, but the string "index" never appears in the import. The connection exists at the module resolution level, not the string level.
 
-PHP and Go have the same problem differently. A PHP test file might reference `SafetypatService` by class name without any file path in the import. A Go test lives in the same package directory and imports nothing explicitly.
+PHP and Go have the same problem differently. A PHP test file might reference `InvoiceService` by class name without any file path in the import. A Go test lives in the same package directory and imports nothing explicitly.
 
 ## Approach 3: Hybrid (Current)
 
 We now combine both approaches. Path matching (walk the tree for test files whose path contains the stem) plus content grep (find test files that reference the stem in source code). Take the union. This catches both colocated tests and distant tests that import the file.
 
-The problem shifts from discovery to ranking. A real repo produces 31 test file hits for `index.tsx`. Five of them are highly relevant (in `src/pages/Quote/` subtree). The other 26 are noise. Which 5 do we load into context?
+The problem shifts from discovery to ranking. A real repo produces 31 test file hits for `index.tsx`. Five of them are highly relevant (in `src/pages/Checkout/` subtree). The other 26 are noise. Which 5 do we load into context?
 
 ## The Ranking Bug That Toy Tests Missed
 
 We scored each test file: +100 for name match, +50 for same directory, +30 for shared parent, -1 per distance. We wrote tests with 3 handcrafted files. They passed.
 
-Then we ran the ranker against 31 real file paths from a production repo. `src/index.test.tsx` (the root app test, completely unrelated) ranked #2. `src/pages/Quote/components/BuyNowButton/index.test.tsx` (actually relevant) ranked #4.
+Then we ran the ranker against 31 real file paths from a production repo. `src/index.test.tsx` (the root app test, completely unrelated) ranked #2. `src/pages/Checkout/components/PayButton/index.test.tsx` (actually relevant) ranked #4.
 
-The bug: `+30` was a flat bonus for any shared parent. One shared component (`src/`) got the same +30 as three shared components (`src/pages/Quote/`). With 3 synthetic inputs, other scoring factors dominated. With 31 real inputs at varying depths, the flat bonus broke everything.
+The bug: `+30` was a flat bonus for any shared parent. One shared component (`src/`) got the same +30 as three shared components (`src/pages/Checkout/`). With 3 synthetic inputs, other scoring factors dominated. With 31 real inputs at varying depths, the flat bonus broke everything.
 
 The fix was one line: change `+30` to `common_len * 10` so deeper shared paths score higher.
 
