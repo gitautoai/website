@@ -25,6 +25,10 @@ describe("getMetricValue", () => {
     uncovered_branches: null,
     uncovered_functions: null,
     uncovered_lines: null,
+    checklist_hash: null,
+    impl_blob_sha: null,
+    quality_checks: null,
+    test_blob_sha: null,
     updated_at: "2024-01-01T00:00:00Z",
     updated_by: "test",
   };

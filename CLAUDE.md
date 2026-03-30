@@ -224,7 +224,7 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;
 
 **EXCEPTION**: For blog-only changes (adding/editing blog posts in `app/blog/posts/`), tests can be skipped since blog content doesn't affect application functionality.
 
-**Pre-commit hook**: Install with `ln -sf ../../scripts/git/pre_commit_hook.sh .git/hooks/pre-commit`. Runs automatically on commit: merge main, blog metadata validation (title 34-44 chars + ` - GitAuto Blog` suffix = 50-60, description 110-160 chars), types:generate, eslint, markdownlint, tsc, jest, build.
+**Pre-commit hook**: Install with `ln -sf ../../scripts/git/pre_commit_hook.sh .git/hooks/pre-commit`. Runs automatically on commit: merge main, blog metadata validation (title 34-44 chars + `- GitAuto Blog` suffix = 50-60, description 110-160 chars), types:generate, eslint, markdownlint, tsc, jest, build.
 
 When the user says "LGTM", execute these commands in order:
 

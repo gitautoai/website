@@ -143,6 +143,15 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     // Add custom styling for diff blocks
     pre: ({ children }) => <pre className="overflow-x-auto my-4">{children}</pre>,
     code: ({ className, children }) => {
+      // Inline code (no className = not inside a code block)
+      if (!className) {
+        return (
+          <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm">
+            {children}
+          </code>
+        );
+      }
+
       const language = className?.replace("language-", "") || "plaintext";
       const [lang, path] = language.split(":");
 

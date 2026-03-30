@@ -4,8 +4,7 @@ export const metadata = {
     "Given an implementation file, which test files are relevant? We tried stem matching, content grepping, and hybrid discovery. Each fails differently.",
   slug: "why-our-test-writing-agent-wasted-12-iterations-reading-files",
   alternates: {
-    canonical:
-      "/blog/why-our-test-writing-agent-wasted-12-iterations-reading-files",
+    canonical: "/blog/why-our-test-writing-agent-wasted-12-iterations-reading-files",
   },
   openGraph: {
     url: "/blog/why-our-test-writing-agent-wasted-12-iterations-reading-files",
@@ -25,21 +24,23 @@ export const metadata = {
 
 # Test File Discovery Is Still Unsolved
 
-Given `src/pages/checkout/index.tsx`, which test files should you look at? Sounds simple. It's not.
+Given a file like `src/pages/checkout/index.tsx`, which test files should you look at? Sounds simple. It's not.
 
-We build an AI agent that writes tests. Before the agent starts, we need to find existing test files so it can match the project's testing patterns. The agent wasted 20+ of its 30 iterations just reading files one by one - searching, guessing paths, retrying. So we decided to find and pre-load test files before the agent loop begins. The discovery algorithm is the hard part.
+We build an AI agent that writes tests. Before the agent starts, we need to find existing test files so it can match the project's testing patterns. We looked at the agent's logs for one real run: 34 iterations total, and 18 of them were spent just reading files - fetching imported modules, searching for type definitions, re-reading files it had already seen. The agent can read 2-3 files per iteration in parallel, but it still burned half its budget on discovery instead of writing tests.
+
+The agent can solve this on its own - it does search, read, and eventually find the right files. But each iteration costs tokens. We want to pre-load as much context as possible before the agent loop begins, doing deterministically what the agent would do heuristically. Same work, but programmatic, stable, and cheaper. The discovery algorithm is the hard part - especially when you're language-agnostic and can't rely on any single project's conventions.
 
 ## Approach 1: Stem Matching
 
-Extract the filename stem and search the tree. `src/auth/SessionProvider.tsx` has stem `SessionProvider`. Walk the file tree, find test files containing "SessionProvider" in their path. This works for most files.
+Extract the filename stem and search the tree. Say you have `src/auth/SessionProvider.tsx` - the stem is `SessionProvider`. Walk the file tree, find test files containing "SessionProvider" in their path. This works for most files.
 
-It fails for generic stems. `src/pages/checkout/index.tsx` has stem `index`. Grepping for "index" across a codebase matches almost everything - 29 test files in one real repo. The signal drowns in noise.
+It fails for generic stems. A file like `src/pages/checkout/index.tsx` has stem `index`. Grepping for "index" across a codebase matches almost everything - 29 test files in one real repo. The signal drowns in noise.
 
 We considered falling back to the parent directory name for generic stems (`index` -> `checkout`). This helps for some cases, but "generic" is a judgment call. Is `utils` generic? `config`? `handler`? Every heuristic creates a new edge case.
 
 ## Approach 2: Content Grepping
 
-Instead of matching paths, grep test file contents for the stem. If a test file imports `SessionProvider`, it references that implementation. This catches tests in completely different directories - a test in `src/pages/checkout/` might import `../../auth/SessionProvider`.
+Instead of matching paths, grep test file contents for the stem. If a test file imports `SessionProvider`, it references that implementation. This catches tests in completely different directories - e.g. a test in `src/pages/checkout/` might import `../../auth/SessionProvider`.
 
 But content grep has a different failure mode. Many JavaScript projects use barrel exports (`index.ts` re-exporting everything). A test might import from `'@/pages/checkout'` which resolves to `index.tsx` at runtime, but the string "index" never appears in the import. The connection exists at the module resolution level, not the string level.
 
@@ -49,19 +50,19 @@ PHP and Go have the same problem differently. A PHP test file might reference `I
 
 We now combine both approaches. Path matching (walk the tree for test files whose path contains the stem) plus content grep (find test files that reference the stem in source code). Take the union. This catches both colocated tests and distant tests that import the file.
 
-The problem shifts from discovery to ranking. A real repo produces 31 test file hits for `index.tsx`. Five of them are highly relevant (in `src/pages/checkout/` subtree). The other 26 are noise. Which 5 do we load into context?
+The problem shifts from discovery to ranking. A real repo produces 29 test file hits for `index.tsx` (from 51 raw grep matches). Five of them are highly relevant (in `src/pages/checkout/` subtree). The other 24 are noise. Which 5 do we load into context?
 
 ## The Ranking Bug That Toy Tests Missed
 
 We scored each test file: +100 for name match, +50 for same directory, +30 for shared parent, -1 per distance. We wrote tests with 3 handcrafted files. They passed.
 
-Then we ran the ranker against 31 real file paths from a production repo. `src/index.test.tsx` (the root app test, completely unrelated) ranked #2. `src/pages/checkout/components/PayButton/index.test.tsx` (actually relevant) ranked #4.
+Then we ran the ranker against 29 real file paths from a production repo. `src/index.test.tsx` (the root app test, completely unrelated) ranked #2. `src/pages/checkout/components/PayButton/index.test.tsx` (actually relevant) ranked #4.
 
-The bug: `+30` was a flat bonus for any shared parent. One shared component (`src/`) got the same +30 as three shared components (`src/pages/checkout/`). With 3 synthetic inputs, other scoring factors dominated. With 31 real inputs at varying depths, the flat bonus broke everything.
+The bug: `+30` was a flat bonus for any shared parent. One shared component (`src/`) got the same +30 as three shared components (`src/pages/checkout/`). With 3 synthetic inputs, other scoring factors dominated. With 29 real inputs at varying depths, the flat bonus broke everything.
 
 The fix was one line: change `+30` to `common_len * 10` so deeper shared paths score higher.
 
-This is the mutation testing principle. Imagine an "evil coder" who changes your constant: +30 to +0 or +1000. Do your tests fail? With 3 synthetic inputs, no. The tests pass regardless of the constant's value. That means they prove nothing about it. Only 31 real inputs exposed the flaw.
+This is the mutation testing principle. Imagine an "evil coder" who changes your constant: +30 to +0 or +1000. Do your tests fail? With 3 synthetic inputs, no. The tests pass regardless of the constant's value. That means they prove nothing about it. Only 29 real inputs exposed the flaw.
 
 ## What Remains Unsolved
 

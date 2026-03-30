@@ -4,7 +4,7 @@
 // Only checks staged blog posts to avoid blocking on pre-existing issues.
 import { execSync } from "child_process";
 import { readFileSync } from "fs";
-import { join } from "path";
+
 
 const BLOG_DIR = "app/blog/posts";
 const SUFFIX = " - GitAuto Blog"; // From layout.tsx: `${post.title} - ${PRODUCT_NAME} Blog`
