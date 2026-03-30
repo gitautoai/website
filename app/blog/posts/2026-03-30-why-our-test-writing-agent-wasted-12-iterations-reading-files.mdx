@@ -27,7 +27,7 @@ export const metadata = {
 
 Given `src/pages/checkout/index.tsx`, which test files should you look at? Sounds simple. It's not.
 
-We build an AI agent that writes tests. Before the agent starts, we need to find existing test files so it can match the project's testing patterns. The agent wasted 12 of 34 iterations just reading files one by one. So we decided to find and pre-load test files before the agent loop begins. The discovery algorithm is the hard part.
+We build an AI agent that writes tests. Before the agent starts, we need to find existing test files so it can match the project's testing patterns. The agent wasted 20+ of its 30 iterations just reading files one by one - searching, guessing paths, retrying. So we decided to find and pre-load test files before the agent loop begins. The discovery algorithm is the hard part.
 
 ## Approach 1: Stem Matching
 
