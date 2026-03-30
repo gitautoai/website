@@ -1,0 +1,60 @@
+export const metadata = {
+  title: "How 39 Duplicate Jest Errors Burned $300 in Claude API Costs",
+  description:
+    "A single PR cost $300 because 39 identical Jest TypeErrors survived our log cleaning pipeline. Here's the root cause, the fix, and how we prevent it.",
+  slug: "how-39-duplicate-jest-errors-burned-300-dollars",
+  alternates: {
+    canonical: "/blog/how-39-duplicate-jest-errors-burned-300-dollars",
+  },
+  openGraph: {
+    url: "/blog/how-39-duplicate-jest-errors-burned-300-dollars",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: [
+    "CI logs",
+    "Jest",
+    "token costs",
+    "Claude API",
+    "debugging",
+    "deduplication",
+  ],
+  createdAt: "2026-03-29",
+  updatedAt: "2026-03-29",
+};
+
+# How 39 Duplicate Jest Errors Burned $300 in Claude API Costs
+
+I'd been going back and forth for days on whether to buy a $300 badminton racket. Comparing models, reading reviews, watching YouTube videos. $300 is $300 - you think about it.
+
+Then I woke up one morning, checked our Claude API usage dashboard, and found that a single PR had already burned $300 overnight while I was sleeping. The exact amount I'd been agonizing over for days, gone in a few hours of automated retries.
+
+## What Happened
+
+The repo was foxden-admin-portal, a React app with Jest tests. It had 39 test files that all imported a shared module. That module had a TypeError. When Jest runs, it executes every test file independently, so the same TypeError appeared 39 times in the CI log - once per file, with identical stack traces.
+
+Our log cleaning pipeline already:
+
+- Stripped ANSI escape codes
+- Removed node_modules from stack traces
+- Extracted the "Summary of all failing tests" section
+
+But it treated each of the 39 copies as a unique error. The cleaned log was still 390K characters. That's roughly 100K tokens embedded in the first message of every API call.
+
+## Why It Cost $300
+
+GitAuto's agent loop sends the CI log in `messages[0]` so the model always has the error context. With 8 retry iterations, each carrying 240K input tokens (the log plus conversation history), the total input token count hit millions. At Claude Opus pricing, that's $300 for one PR that never even got fixed - the error was unfixable by the agent (a missing environment variable in CI).
+
+## The Fix
+
+Three changes:
+
+- **Deduplication**: Group identical errors by their stack trace. Instead of showing the same TypeError 39 times, show it once with "39 tests failed with this same error." This reduced the 390K char log to under 10K.
+- **File-based storage**: For logs that are still large after cleaning (over 50K chars), save the full log to `.gitauto/ci_error_log.txt` in the cloned repo. Include a 5K char preview in the initial message. The agent can read or grep the full file on demand instead of carrying it in every API call.
+- **Per-model context windows**: Replace the hardcoded 200K context window with per-model values. Claude Opus 4.6 and Sonnet 4.6 support 1M tokens. Older models stay at 200K. This prevents unnecessary token trimming on newer models while keeping older models safe.
+
+## Prevention
+
+The root pattern: cleaning pipelines that remove noise but don't deduplicate. ANSI codes and node_modules paths are noise - they add characters without information. But 39 identical errors aren't noise in the traditional sense. Each one is a valid error from a valid test file. The pipeline treated them as unique because they came from different files. The fix was recognizing that the error content, not the source file, determines uniqueness.
+
+For any system that feeds CI logs to an LLM, the question isn't just "how do I make this log smaller?" but "how many of these errors are actually saying the same thing?"

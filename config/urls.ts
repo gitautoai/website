@@ -135,6 +135,7 @@ export const RELATIVE_URLS = {
         OUTDATED_DIFF_REMOVAL: "/docs/how-it-works/token-cost-management/outdated-diff-removal",
         STALE_FILE_REPLACEMENT: "/docs/how-it-works/token-cost-management/stale-file-replacement",
         SKIP_CI_INTERMEDIATE: "/docs/how-it-works/token-cost-management/skip-ci-intermediate",
+        CI_LOG_DEDUP: "/docs/how-it-works/token-cost-management/ci-log-dedup",
       },
       RESILIENCE_RECOVERY: {
         MODEL_FALLBACK: "/docs/how-it-works/resilience-recovery/model-fallback",
@@ -273,6 +274,7 @@ export const ABSOLUTE_URLS = {
           OUTDATED_DIFF_REMOVAL: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.OUTDATED_DIFF_REMOVAL}`,
           STALE_FILE_REPLACEMENT: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.STALE_FILE_REPLACEMENT}`,
           SKIP_CI_INTERMEDIATE: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.SKIP_CI_INTERMEDIATE}`,
+          CI_LOG_DEDUP: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.CI_LOG_DEDUP}`,
         },
         RESILIENCE_RECOVERY: {
           MODEL_FALLBACK: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.RESILIENCE_RECOVERY.MODEL_FALLBACK}`,

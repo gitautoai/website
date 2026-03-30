@@ -1,6 +1,7 @@
 const { RestliClient } = require("linkedin-api-client");
 const notifySlack = require("./notify-slack.js");
 const randomDelay = require("./random-delay.js");
+const refreshLinkedInToken = require("./refresh-linkedin-token.js");
 
 const gitautoUrn = "urn:li:organization:100932100";
 const wesUrn = "urn:li:person:Nu-Ocwc81N"; // curl -X GET "https://api.linkedin.com/v2/me" -H "Authorization: Bearer YOUR_ACCESS_TOKEN" and get the "id" field
@@ -10,9 +11,10 @@ const wesUrn = "urn:li:person:Nu-Ocwc81N"; // curl -X GET "https://api.linkedin.
  */
 async function postLinkedIn({ isBlog, blogPosts, gitautoPost, wesPost, title }) {
   const restliClient = new RestliClient();
-  const accessToken = process.env.LINKEDIN_ACCESS_TOKEN;
+  let accessToken = process.env.LINKEDIN_ACCESS_TOKEN;
+  let tokenRefreshed = false;
 
-  // Helper function to create a post
+  // Helper function to create a post, with automatic token refresh on 401
   // https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/advertising-targeting/version/article-ads-integrations?view=li-lms-2024-11&tabs=http#workflow
   const createPost = async (authorUrn, text, url, postTitle) => {
     const entity = {
@@ -39,11 +41,26 @@ async function postLinkedIn({ isBlog, blogPosts, gitautoPost, wesPost, title }) 
       };
     }
 
-    return restliClient.create({
-      resourcePath: "/posts",
-      entity,
-      accessToken,
-    });
+    try {
+      return await restliClient.create({
+        resourcePath: "/posts",
+        entity,
+        accessToken,
+      });
+    } catch (error) {
+      // Refresh token once on 401 and retry
+      if (error.status === 401 && !tokenRefreshed) {
+        console.log("Access token expired, refreshing...");
+        accessToken = await refreshLinkedInToken();
+        tokenRefreshed = true;
+        return restliClient.create({
+          resourcePath: "/posts",
+          entity,
+          accessToken,
+        });
+      }
+      throw error;
+    }
   };
 
   // Helper function to like a post

@@ -225,6 +225,11 @@ export const HOW_IT_WORKS_PAGES: NavItem[] = [
     title: "Skip CI Intermediate",
     category: "Token/Cost Management",
   },
+  {
+    href: UTH.TOKEN_COST_MANAGEMENT.CI_LOG_DEDUP,
+    title: "CI Log Deduplication",
+    category: "Token/Cost Management",
+  },
 
   // Resilience & Recovery
   {
