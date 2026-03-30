@@ -1,7 +1,7 @@
 export const metadata = {
-  title: "Your Tests Pass But Prove Nothing: A Mutation Testing Wake-Up Call",
+  title: "Finding Test Files From Implementation Files Is an Unsolved Problem",
   description:
-    "We wrote unit tests with 3 synthetic inputs. They passed. Then we used real data - 31 items instead of 3 - and found the logic was fundamentally broken. Here's why toy tests are worthless.",
+    "Given an implementation file, which test files are relevant? We tried stem matching, import grepping, and hybrid discovery. Each approach fails differently. Here's what we learned.",
   slug: "why-our-test-writing-agent-wasted-12-iterations-reading-files",
   alternates: {
     canonical:
@@ -13,49 +13,66 @@ export const metadata = {
   author: "Wes Nishio",
   authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
   tags: [
+    "test discovery",
     "mutation testing",
-    "testing",
-    "software quality",
-    "real-world data",
-    "test design",
+    "developer tooling",
+    "software architecture",
+    "unsolved problems",
   ],
   createdAt: "2026-03-30",
   updatedAt: "2026-03-30",
 };
 
-# Your Tests Pass But Prove Nothing: A Mutation Testing Wake-Up Call
+# Finding Test Files From Implementation Files Is an Unsolved Problem
 
-We wrote a function that ranks files by relevance. It scores each file based on name matching, directory proximity, and shared path depth. We wrote tests with 3 handcrafted inputs. They passed. We shipped.
+Given `src/pages/Quote/index.tsx`, which test files should you look at? Sounds simple. It's not.
 
-Then we ran the same function against real data from a production repository - 31 files instead of 3. The results were wrong. Completely unrelated files ranked above obviously relevant ones.
+We build an AI agent that writes tests. Before the agent starts, we need to find existing test files so it can match the project's testing patterns. The agent wasted 12 of 34 iterations just reading files one by one. So we decided to find and pre-load test files before the agent loop begins. The discovery algorithm is the hard part.
 
-## The Bug We Missed
+## Approach 1: Stem Matching
 
-The function gave a flat +30 bonus for "shared parent directory." Whether two paths shared 1 component (`src/`) or 3 components (`src/pages/Quote/`), the bonus was the same. With 3 carefully chosen test inputs, this never mattered - the other scoring factors dominated. With 31 real inputs at varying depths, it broke everything.
+Extract the filename stem and search the tree. `src/auth/AuthProvider.tsx` has stem `AuthProvider`. Walk the file tree, find test files containing "AuthProvider" in their path. This works for most files.
 
-## Why 3 Inputs Can't Catch This
+It fails for generic stems. `src/pages/Quote/index.tsx` has stem `index`. Grepping for "index" across a codebase matches almost everything - 29 test files in one real repo. The signal drowns in noise.
 
-With a small handcrafted test, you unconsciously avoid the edge cases. You pick inputs where the answer is obvious. The name match alone is enough to sort them correctly. The shared-parent bug is invisible because your test data doesn't have enough items at similar scores to expose the tiebreaker flaw.
+We considered falling back to the parent directory name for generic stems (`index` -> `Quote`). This helps for some cases, but "generic" is a judgment call. Is `utils` generic? `config`? `handler`? Every heuristic creates a new edge case.
 
-This is the mutation testing principle: imagine an "evil coder" who changes your constants. They change +30 to +0. Or +1000. Do your tests fail? With 3 synthetic inputs, no. The tests still pass regardless. That means your tests prove nothing about that constant. They're decoration.
+## Approach 2: Content Grepping
 
-## What Real Data Exposes
+Instead of matching paths, grep test file contents for the stem. If a test file imports `AuthProvider`, it references that implementation. This catches tests in completely different directories - a test in `src/pages/Quote/` might import `../../auth/AuthProvider`.
 
-When we fed in 31 actual file paths from a customer repo:
+But content grep has a different failure mode. Many JavaScript projects use barrel exports (`index.ts` re-exporting everything). A test might import from `'@/pages/Quote'` which resolves to `index.tsx` at runtime, but the string "index" never appears in the import. The connection exists at the module resolution level, not the string level.
 
-- `src/index.test.tsx` (the root app test, completely unrelated) ranked #2
-- `src/pages/Quote/components/BuyNowButton/index.test.tsx` (an actual relevant test) ranked #4
+PHP and Go have the same problem differently. A PHP test file might reference `SafetypatService` by class name without any file path in the import. A Go test lives in the same package directory and imports nothing explicitly.
 
-Both had the same score because the flat +30 treated one shared component identically to three. Only the alphabetical tiebreaker separated them - in the wrong direction.
+## Approach 3: Hybrid (Current)
 
-## The Fix Was Trivial
+We now combine both approaches. Path matching (walk the tree for test files whose path contains the stem) plus content grep (find test files that reference the stem in source code). Take the union. This catches both colocated tests and distant tests that import the file.
 
-Change `score += 30` to `score += common_len * 10`. One line. The bug wasn't hard to fix. It was hard to find - because our tests weren't designed to find it.
+The problem shifts from discovery to ranking. A real repo produces 31 test file hits for `index.tsx`. Five of them are highly relevant (in `src/pages/Quote/` subtree). The other 26 are noise. Which 5 do we load into context?
 
-## How to Apply This
+## The Ranking Bug That Toy Tests Missed
 
-- **Run your function against real data.** If it processes lists of 30+ items in production, test it with 30+ real items. Clone a repo, hit a real API, use a real database dump.
-- **Apply the mutation test.** For every constant or threshold in your code, ask: if I changed this value, would any test fail? If not, your tests don't actually cover that logic.
-- **Distrust small synthetic inputs.** Three carefully chosen items will always work. They confirm your mental model, not your code. Real data has no such courtesy.
+We scored each test file: +100 for name match, +50 for same directory, +30 for shared parent, -1 per distance. We wrote tests with 3 handcrafted files. They passed.
 
-The uncomfortable truth: passing tests don't mean correct code. They mean your tests and your code share the same assumptions. Real data doesn't share your assumptions. That's why it finds the bugs.
+Then we ran the ranker against 31 real file paths from a production repo. `src/index.test.tsx` (the root app test, completely unrelated) ranked #2. `src/pages/Quote/components/BuyNowButton/index.test.tsx` (actually relevant) ranked #4.
+
+The bug: `+30` was a flat bonus for any shared parent. One shared component (`src/`) got the same +30 as three shared components (`src/pages/Quote/`). With 3 synthetic inputs, other scoring factors dominated. With 31 real inputs at varying depths, the flat bonus broke everything.
+
+The fix was one line: change `+30` to `common_len * 10` so deeper shared paths score higher.
+
+This is the mutation testing principle. Imagine an "evil coder" who changes your constant: +30 to +0 or +1000. Do your tests fail? With 3 synthetic inputs, no. The tests pass regardless of the constant's value. That means they prove nothing about it. Only 31 real inputs exposed the flaw.
+
+## What Remains Unsolved
+
+The fundamental issue is that the mapping between implementation files and test files is a convention, not a computable relationship. Every project invents its own rules:
+
+- **Colocated**: `Button.tsx` and `Button.test.tsx` side by side
+- **Mirror tree**: `src/auth/Provider.tsx` tested by `tests/auth/Provider.test.tsx`
+- **Separate dir with different naming**: `core/app/Services/Foo.php` tested by `core/tests/Unit/Service/FooTest.php`
+- **Framework magic**: Go tests in the same package, Python tests discovered by pytest markers
+- **Barrel re-exports**: The actual file path never appears in any import statement
+
+No single algorithm handles all of these. Path matching fails for different directory structures. Content grep fails for barrel exports and framework-level imports. Even the hybrid approach requires a ranking function, and that ranking function needs real data to validate - not 3 handcrafted inputs.
+
+If you're building developer tooling that needs to answer "which test covers this file?" - there's no clean answer. The best we've found is: try multiple discovery methods, take the union, rank aggressively, and validate with real repository data at real scale. And even then, you'll miss cases.
