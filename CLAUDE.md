@@ -224,20 +224,14 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;
 
 **EXCEPTION**: For blog-only changes (adding/editing blog posts in `app/blog/posts/`), tests can be skipped since blog content doesn't affect application functionality.
 
+**Pre-commit hook**: Install with `ln -sf ../../scripts/git/pre_commit_hook.sh .git/hooks/pre-commit`. Runs automatically on commit: merge main, blog metadata validation (title 34-44 chars + `- GitAuto Blog` suffix = 50-60, description 110-160 chars), types:generate, eslint, markdownlint, tsc, jest, build.
+
 When the user says "LGTM", execute these commands in order:
 
-1. `npm run types:generate` - Generate TypeScript types
-2. `npm run lint` - Run linting. **Fix any errors/warnings before proceeding.**
-3. `npx markdownlint-cli2 "**/*.md" "#node_modules" "#.next"` - Lint markdown files. **Fix any errors before proceeding.**
-4. `npx tsc --noEmit` - Type-check ALL files including tests. **Fix any errors before proceeding.**
-5. `npm test` - Run unit tests (must pass 100%, skip for blog-only changes). **Fix any failures before proceeding.**
-6. `npm run build` - Build the project
-7. **STOP if any step fails** - Fix all failures before proceeding (unless blog-only)
-8. `git fetch origin main && git merge origin/main` - Pull and merge latest main branch changes
-9. `git add <specific-file-paths>` - Stage specific changed files including updated/created test files (NEVER use `git add .`, always specify exact file paths)
-10. Create a descriptive commit message based on changes (do NOT include Claude Code attribution, do NOT include `[skip ci]` as it skips CI)
-11. `git push` - Push to remote
-12. Create pull request: `gh pr create --title "PR title" --body "PR description" --assignee @me`
+1. `git add <specific-file-paths>` - Stage specific changed files (NEVER use `git add .`, always specify exact file paths)
+2. `git commit -m "descriptive message"` - Pre-commit hook runs all checks (merge main, lint, type check, test, build). **If hook fails, fix and re-commit.** (do NOT include Claude Code attribution, do NOT include `[skip ci]`)
+3. `git push` - Push to remote
+4. Create pull request: `gh pr create --title "PR title" --body "PR description" --assignee @me`
     - PR title should be technical and descriptive
     - **Do NOT include a `## Test plan` section** - it's unnecessary noise
     - **Social Media Post sections must always be the last sections in the PR body**
