@@ -37,11 +37,11 @@ export async function checkAllAutoReloads() {
       try {
         // Atomic lock: only the first concurrent caller acquires it, rest skip.
         // Flag auto-expires after 5 minutes in case of crash/timeout.
-        const { count } = await supabaseAdmin.rpc("acquire_auto_reload_lock", {
+        const { data: lockAcquired } = await supabaseAdmin.rpc("acquire_auto_reload_lock", {
           p_owner_id: owner.owner_id,
         });
 
-        if (!count || count === 0) {
+        if (!lockAcquired || lockAcquired === 0) {
           results.push({
             ownerId: owner.owner_id,
             success: false,
