@@ -116,6 +116,7 @@ export const RELATIVE_URLS = {
         UNTESTABLE_DETECTION: "/docs/how-it-works/quality-verification/untestable-detection",
         SHOULD_SKIP_DETECTION: "/docs/how-it-works/quality-verification/should-skip-detection",
         DEAD_CODE_REMOVAL: "/docs/how-it-works/quality-verification/dead-code-removal",
+        QUALITY_CHECK_SCORING: "/docs/how-it-works/quality-verification/quality-check-scoring",
       },
       SAFETY_GUARDRAILS: {
         FILE_EDIT_RESTRICTIONS: "/docs/how-it-works/safety-guardrails/file-edit-restrictions",
@@ -256,6 +257,7 @@ export const ABSOLUTE_URLS = {
           UNTESTABLE_DETECTION: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.QUALITY_VERIFICATION.UNTESTABLE_DETECTION}`,
           SHOULD_SKIP_DETECTION: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.QUALITY_VERIFICATION.SHOULD_SKIP_DETECTION}`,
           DEAD_CODE_REMOVAL: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.QUALITY_VERIFICATION.DEAD_CODE_REMOVAL}`,
+          QUALITY_CHECK_SCORING: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.QUALITY_VERIFICATION.QUALITY_CHECK_SCORING}`,
         },
         SAFETY_GUARDRAILS: {
           FILE_EDIT_RESTRICTIONS: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.SAFETY_GUARDRAILS.FILE_EDIT_RESTRICTIONS}`,

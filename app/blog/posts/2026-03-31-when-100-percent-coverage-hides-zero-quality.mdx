@@ -1,0 +1,97 @@
+export const metadata = {
+  title: "When 100% Coverage Hides Zero Quality",
+  description:
+    "100% line coverage means every line was executed, not that meaningful scenarios were tested. Blob SHA change detection finds the gaps.",
+  slug: "when-100-percent-coverage-hides-zero-quality",
+  alternates: {
+    canonical: "/blog/when-100-percent-coverage-hides-zero-quality",
+  },
+  openGraph: {
+    url: "/blog/when-100-percent-coverage-hides-zero-quality",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: [
+    "test quality",
+    "code coverage",
+    "content hashing",
+    "developer tooling",
+    "testing strategy",
+  ],
+  createdAt: "2026-03-31",
+  updatedAt: "2026-03-31",
+};
+
+# When 100% Coverage Hides Zero Quality
+
+A customer repo hit 100% line coverage, 100% branch coverage, 100% function coverage. The dashboard was green across the board. We stopped looking at it. That was the mistake.
+
+## What 100% Actually Means
+
+Coverage tools instrument your code and record which lines execute during a test run. 100% line coverage means every line ran at least once. It says nothing about:
+
+- Whether edge cases were tested
+- Whether error paths were exercised with realistic failure modes
+- Whether security-sensitive inputs were fuzzed or boundary-tested
+- Whether performance under load was measured
+- Whether accessibility requirements were validated
+
+Consider a payment form component. A test that renders the form, types a valid card number, and clicks submit can hit every line and every branch. But it never tests what happens with an expired card, a malformed CVV, an XSS payload in the name field, or a network timeout mid-submission. Every line was "covered." Nothing meaningful was verified.
+
+## The Gap Between Execution and Verification
+
+The real question isn't "was this line executed?" but "was this line's behavior verified under conditions that matter?" Coverage tools can't answer that. They count execution, not assertion quality.
+
+We looked at the test files in the customer repo. The patterns were consistent:
+
+- Happy path only - valid inputs, successful responses, no error states
+- No adversarial inputs - no SQL injection strings, no XSS payloads, no overflow values
+- No error handling verification - API failures, network timeouts, and malformed responses were never simulated
+- No performance assertions - no tests for render time, bundle size, or memory leaks
+- No accessibility checks - no screen reader testing, no keyboard navigation, no ARIA validation
+
+The coverage number was perfect. The test quality was near zero for anything beyond the happy path.
+
+## Detecting Quality Gaps at Scale
+
+We needed to evaluate test quality per file, not per repo. A repo-level metric hides the same problem coverage does - it averages out. One file with excellent adversarial tests masks ten files with none.
+
+The evaluation checks seven categories for each source file and its associated tests:
+
+- **Adversarial** - boundary values, malformed inputs, injection attempts
+- **Security** - authentication bypass, authorization checks, input sanitization
+- **Performance** - load testing, render benchmarks, memory profiling
+- **Memory** - leak detection, cleanup verification, resource disposal
+- **Error handling** - network failures, invalid state, timeout recovery
+- **Accessibility** - ARIA attributes, keyboard navigation, screen reader compatibility
+- **SEO** - meta tags, structured data, canonical URLs
+
+Each category gets a pass/fail per source file. The results surface exactly which files need which types of tests.
+
+## Zero-Cost Change Detection with Blob SHAs
+
+Running quality evaluation on every file on every check would be wasteful. Most files don't change between runs. We needed a way to detect changes without extra API calls.
+
+Git blob SHAs are content hashes. Two files with identical content produce the same SHA regardless of path, commit, or branch. We already fetch the file tree (which includes blob SHAs) for other purposes - so change detection costs zero additional API calls.
+
+The approach:
+
+```
+stored_sha = database.get(file_path, "source_sha")
+current_sha = file_tree[file_path].sha
+
+if stored_sha == current_sha and stored_test_sha == current_test_sha:
+    skip  # Nothing changed, previous evaluation still valid
+else:
+    evaluate  # Source or tests changed, re-run quality check
+```
+
+For files with multiple test files, we compute a combined test SHA from all associated test file SHAs. If any test file changes, the combined SHA changes, triggering re-evaluation.
+
+This is a general pattern worth stealing. Anytime you need to detect content changes across runs, git blob SHAs (or any content hash) give you a reliable, zero-cost signal. No diffing, no timestamp comparison, no file watchers. Just compare two 40-character strings.
+
+## The Takeaway
+
+Coverage is a necessary metric, not a sufficient one. 100% coverage with zero adversarial, security, or error handling tests is worse than 70% coverage with thorough edge case testing - because the 100% number creates false confidence that discourages further investment.
+
+If your coverage dashboard is green, that's when you should start asking harder questions about what those tests actually verify.
