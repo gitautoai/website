@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { getOctokitForUser } from "@/app/api/github";
 import type { RestEndpointMethodTypes } from "@octokit/rest";
 
@@ -52,6 +54,9 @@ export async function POST(request: Request) {
     return NextResponse.json(formattedBranches);
   } catch (error) {
     console.error("Error fetching branches:", error);
+    await slackUs(
+      `❌ Error fetching branches: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return NextResponse.json({ error: "Failed to fetch branches" }, { status: 500 });
   }
 }

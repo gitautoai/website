@@ -1,12 +1,13 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { TablesInsert, Tables } from "@/types/supabase";
 
 export async function saveContact(
   formData: FormData,
   userId: number | null,
-  userName: string | null
+  userName: string | null,
 ) {
   try {
     // Save to database
@@ -55,6 +56,9 @@ export async function saveContact(
     };
   } catch (error) {
     console.error("Contact save error:", error);
+    await slackUs(
+      `❌ Contact save error: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return { success: false, message: "Failed to save contact" };
   }
 }

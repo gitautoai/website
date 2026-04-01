@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import stripe from "@/lib/stripe";
 
 /**
@@ -24,6 +25,9 @@ export async function checkActiveSubscription(customerId: string) {
     return false;
   } catch (error) {
     console.error("Error checking Stripe subscription:", error);
+    await slackUs(
+      `❌ Error checking Stripe subscription: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return false;
   }
 }

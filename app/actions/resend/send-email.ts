@@ -1,6 +1,8 @@
 "use server";
 
 import { randomUUID } from "crypto";
+
+import { slackUs } from "@/app/actions/slack/slack-us";
 import type { CreateEmailOptions, CreateEmailRequestOptions } from "resend";
 import { resend } from "./index";
 import { sleep } from "@/utils/sleep";
@@ -46,6 +48,9 @@ export async function sendEmail({ from, to, cc, subject, text, scheduledAt }: Se
     return { success: true, emailId: data?.id };
   } catch (error) {
     console.error("Failed to send email:", error);
+    await slackUs(
+      `❌ Failed to send email: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { getOctokitForInstallation } from "@/app/api/github";
 
 /**
@@ -25,6 +26,9 @@ export const isPrOpen = async (
     console.error(
       `Failed to check PR state for ${ownerName}/${repoName}#${prNumber}:`,
       error instanceof Error ? error.message : error,
+    );
+    await slackUs(
+      `❌ Failed to check PR state for ${ownerName}/${repoName}#${prNumber}: ${error instanceof Error ? error.message : String(error)}`,
     );
     return false;
   }

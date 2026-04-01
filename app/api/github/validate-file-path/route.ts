@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { Octokit } from "@octokit/rest";
 import { createAppAuth } from "@octokit/auth-app";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
+
 // Cache Octokit instances
 const octokitCache = new Map();
 
@@ -75,10 +77,16 @@ export async function POST(request: Request) {
 
       // Some other error occurred
       console.error(`Error checking file existence:`, error);
+      await slackUs(
+        `❌ Error checking file existence: ${error instanceof Error ? error.message : String(error)}`,
+      );
       return NextResponse.json({ error: "Failed to check file existence" }, { status: 500 });
     }
   } catch (error) {
     console.error("Error validating file path:", error);
+    await slackUs(
+      `❌ Error validating file path: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return NextResponse.json({ error: "Failed to validate file path" }, { status: 500 });
   } finally {
     const endTime = performance.now();

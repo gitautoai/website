@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
 export async function getRepositorySettings(ownerId: number, repoId: number) {
@@ -31,6 +32,9 @@ export async function getRepositorySettings(ownerId: number, repoId: number) {
     return settings;
   } catch (error) {
     console.error("Failed to load settings:", error);
+    await slackUs(
+      `❌ Failed to load repository settings: ${error instanceof Error ? error.message : String(error)}`,
+    );
     throw new Error("Failed to load settings");
   }
 }

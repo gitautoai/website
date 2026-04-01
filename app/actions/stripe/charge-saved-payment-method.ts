@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import stripe from "@/lib/stripe";
 
 interface ChargePaymentMethodParams {
@@ -73,11 +74,16 @@ export async function chargeSavedPaymentMethod({
   } catch (error) {
     // Don't log errors for test customers (reduces noise in test output)
     if (!customerId.includes("test")) console.error("Error charging saved payment method:", error);
+    if (!customerId.includes("test"))
+      await slackUs(
+        `❌ Error charging saved payment method: ${error instanceof Error ? error.message : String(error)}`,
+      );
 
     const stripeError = error as { type?: string; message?: string };
 
     // Handle specific Stripe errors
-    if (stripeError.type === "StripeCardError") return { success: false, error: stripeError.message || "Card error" };
+    if (stripeError.type === "StripeCardError")
+      return { success: false, error: stripeError.message || "Card error" };
 
     return {
       success: false,

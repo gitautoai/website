@@ -3,6 +3,8 @@
 import { Octokit } from "@octokit/rest";
 import { createAppAuth } from "@octokit/auth-app";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
+
 export interface GitHubOwnerWithRepos {
   ownerId: number;
   ownerName: string;
@@ -19,7 +21,7 @@ const octokitCache = new Map<string, Octokit>();
  * @returns Array of organizations with their repositories
  */
 export async function getInstalledRepos(
-  installations: Array<{ installation_id: number; owner_id: number; owner_name: string }>
+  installations: Array<{ installation_id: number; owner_id: number; owner_name: string }>,
 ): Promise<GitHubOwnerWithRepos[]> {
   if (!installations || installations.length === 0) return [];
 
@@ -92,9 +94,12 @@ export async function getInstalledRepos(
         };
       } catch (error) {
         console.error(`Error fetching data for installation ${installationId}:`, error);
+        await slackUs(
+          `❌ Error fetching data for installation ${installationId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
         return null;
       }
-    })
+    }),
   );
 
   return organizations.filter((org): org is GitHubOwnerWithRepos => org !== null);

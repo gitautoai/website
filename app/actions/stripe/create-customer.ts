@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import stripe from "@/lib/stripe";
 
 interface CreateCustomerParams {
@@ -44,6 +45,9 @@ export async function createCustomer({
     };
   } catch (error) {
     console.error("Error creating Stripe customer:", error);
+    await slackUs(
+      `❌ Error creating Stripe customer: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

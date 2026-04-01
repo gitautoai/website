@@ -2,6 +2,7 @@
 
 import { Octokit } from "@octokit/rest";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { isAdmin } from "@/utils/is-admin";
 
 /**
@@ -34,7 +35,13 @@ export async function getOwnerIds(userId: number, accessToken: string) {
     return [userId, ...orgs.map((org) => org.id), ...ADDITIONAL_OWNER_IDS];
   } catch (error) {
     // If GitHub API call fails, log error and continue with just userId
-    console.error(`GitHub API error for user ${userId}:`, error instanceof Error ? error.message : "Unknown error");
+    console.error(
+      `GitHub API error for user ${userId}:`,
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    await slackUs(
+      `❌ GitHub API error for user ${userId}: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return [userId, ...ADDITIONAL_OWNER_IDS]; // Fallback to user ID (+ additional owners for admin)
   }
 }
