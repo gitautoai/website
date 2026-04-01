@@ -151,6 +151,16 @@ export const HOW_IT_WORKS_PAGES: NavItem[] = [
     title: "Dead Code Removal",
     category: "Quality Verification",
   },
+  {
+    href: UTH.QUALITY_VERIFICATION.QUALITY_CHECK_SCORING,
+    title: "Quality Check Scoring",
+    category: "Quality Verification",
+  },
+  {
+    href: UTH.QUALITY_VERIFICATION.QUALITY_CHECKLIST,
+    title: "Quality Checklist",
+    category: "Quality Verification",
+  },
 
   // Safety Guardrails
   {

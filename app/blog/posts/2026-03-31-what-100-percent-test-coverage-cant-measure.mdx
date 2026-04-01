@@ -1,0 +1,73 @@
+export const metadata = {
+  title: "What 100% Test Coverage Can't Measure",
+  description:
+    "100% line coverage means every line was executed, not that meaningful scenarios were tested. Quality checks fill the gap after 100%.",
+  slug: "what-100-percent-test-coverage-cant-measure",
+  alternates: {
+    canonical: "/blog/what-100-percent-test-coverage-cant-measure",
+  },
+  openGraph: {
+    url: "/blog/what-100-percent-test-coverage-cant-measure",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["test quality", "code coverage", "developer tooling", "testing strategy"],
+  createdAt: "2026-03-31",
+  updatedAt: "2026-03-31",
+};
+
+# What 100% Test Coverage Can't Measure
+
+Customers started asking us: "How do you evaluate test quality? What does your evaluation look like?" We had coverage numbers - line, branch, function - and we were driving files to 100%. But we didn't have a good answer for what happens after 100%. Coverage proves every line was exercised. It doesn't say whether the tests are actually good.
+
+## Coverage Is the Foundation
+
+Coverage tells you which lines ran during testing. That's important. A file at 30% coverage has obvious blind spots. Driving it to 100% forces tests to exercise error branches, conditional paths, and edge cases that might otherwise be ignored. We treat coverage as the primary goal and spend most of our effort getting files there.
+
+But coverage measures execution, not verification. A test that renders a payment form, types a valid card number, and clicks submit can hit every line and every branch. It proves the happy path works. It doesn't tell you whether the form handles an expired card, a malformed CVV, or a network timeout mid-submission.
+
+## The Eight Categories After 100%
+
+Once a file reaches 100%, there are categories of testing that coverage can't capture. We built a checklist of 41 checks across eight categories. Each check gets a pass, fail, or not-applicable result per file.
+
+### Business Logic
+
+Does the test verify that domain rules produce correct results? A pricing function that calculates premiums needs tests for each tier boundary, not just one valid input. State transitions (pending → approved → active) need tests that verify invalid transitions are rejected. Calculation accuracy matters when rounding errors compound across thousands of transactions.
+
+### Adversarial
+
+What happens when inputs are hostile? Null values, empty strings, empty arrays, boundary values (0, -1, MAX_INT), type coercion traps (`"0" == false`), oversized inputs, race conditions, and unicode special characters. A function can pass every line with valid inputs and still crash on `null`.
+
+### Security
+
+Does the code defend against attack vectors? XSS payloads in user-generated content, SQL injection through unsanitized parameters, command injection via shell calls, CSRF on state-changing endpoints, authentication bypass, sensitive data exposure in logs or responses, open redirects, and path traversal (`../../etc/passwd`). Security tests verify that malicious input is rejected, not just that valid input is accepted.
+
+### Performance
+
+Will this code scale? Quadratic algorithms hide behind small test datasets. N+1 queries don't show up until production traffic hits. Heavy synchronous operations block the event loop. Large imports increase bundle size. Redundant computation wastes cycles on every request. Performance tests catch what functional tests miss because functional tests use small inputs.
+
+### Memory
+
+Does this code clean up after itself? Event listeners that aren't removed on unmount leak memory on every navigation. Subscriptions and timers that outlive their component accumulate silently. Circular references prevent garbage collection. Closures that capture large scopes retain memory longer than expected. These bugs don't crash - they degrade slowly until the tab or process dies.
+
+### Error Handling
+
+What does the user see when things go wrong? Graceful degradation means a failed API call shows a retry option, not a blank screen. User-facing error messages should say what happened and what to do next, not expose a raw stack trace or a generic "Something went wrong."
+
+### Accessibility
+
+Can everyone use it? ARIA attributes tell screen readers what an element does. Keyboard navigation means every interactive element is reachable without a mouse. Focus management ensures modal dialogs trap focus correctly and return it when closed. These aren't nice-to-haves - they're requirements for users who rely on assistive technology.
+
+### SEO
+
+Is this page discoverable? Meta tags control how search engines and social platforms display the page. Semantic HTML (`<article>`, `<nav>`, `<main>`) helps crawlers understand page structure. Heading hierarchy (`h1` → `h2` → `h3`, no skipping) signals content relationships. Alt text on images provides context when images can't load or can't be seen.
+
+## Per-File, Not Per-Repo
+
+We evaluate quality per file, not per repo. A repo-level score averages away the problems. Per-file evaluation means each source file and its test files are checked against all eight categories independently. Files that fail any check become candidates for test strengthening.
+
+## What We Built
+
+We shipped 41 checks across these eight categories. When a file hits 100% coverage, we automatically evaluate its tests against the full checklist. Each check returns pass, fail, or not-applicable. Files that fail any check get a PR to strengthen the tests. Coverage remains our primary goal - we still spend most effort getting files to 100%. But now we have a concrete answer when customers ask how we evaluate quality beyond coverage numbers. The checklist will evolve as we learn what matters most across different codebases and languages.
+
+See the [full checklist with all 41 checks](/docs/how-it-works/quality-verification/quality-checklist) and how [change detection avoids redundant evaluation](/docs/how-it-works/quality-verification/quality-check-scoring).
