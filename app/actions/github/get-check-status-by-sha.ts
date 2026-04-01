@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { getOctokitForInstallation } from "@/app/api/github";
 import { PRData } from "@/app/dashboard/prs/types";
 
@@ -67,6 +68,9 @@ export const getCheckStatusBySHA = async ({
     return "none";
   } catch (error) {
     console.error(`Failed to get check status for SHA ${sha}:`, error);
+    await slackUs(
+      `❌ Failed to get check status for SHA ${sha}: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return "none";
   }
 };

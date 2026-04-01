@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { getGraphQL } from "@/app/api/github";
 import { PRODUCT_ID } from "@/config";
 import { ABSOLUTE_URLS } from "@/config/urls";
@@ -214,6 +216,9 @@ export async function POST(request: Request) {
         labelId = createLabelResponse.createLabel.label.id;
       } catch (error) {
         console.error("Failed to create label:", error);
+        await slackUs(
+          `❌ Failed to create label: ${error instanceof Error ? error.message : String(error)}`,
+        );
       }
     }
 
@@ -365,6 +370,9 @@ View full coverage details in the [Coverage Dashboard](${
     return NextResponse.json({ prs: createdPRs });
   } catch (error) {
     console.error("Error creating PRs:", error);
+    await slackUs(
+      `❌ Error creating coverage PRs: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return NextResponse.json({ error: "Failed to create PRs" }, { status: 500 });
   }
 }

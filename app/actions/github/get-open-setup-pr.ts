@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { getGraphQLForInstallation } from "@/app/api/github";
 
 // Must match: gitauto/services/webhook/setup_handler.py
@@ -24,72 +25,82 @@ export const getSetupPRStatus = async ({
   const graphql = await getGraphQLForInstallation(installationId);
   const gitautoBotUsername = process.env.GITHUB_APP_USER_NAME?.replace("[bot]", "");
 
-  const { repository } = await graphql<{
-    repository: {
-      openPRs: {
-        nodes: Array<{
-          number: number;
-          title: string;
-          url: string;
-          author: { login: string } | null;
-        }>;
+  let repository;
+  try {
+    const result = await graphql<{
+      repository: {
+        openPRs: {
+          nodes: Array<{
+            number: number;
+            title: string;
+            url: string;
+            author: { login: string } | null;
+          }>;
+        };
+        closedPRs: {
+          nodes: Array<{
+            number: number;
+            title: string;
+            url: string;
+            author: { login: string } | null;
+            comments: {
+              nodes: Array<{
+                body: string;
+                author: { login: string } | null;
+              }>;
+            };
+          }>;
+        };
       };
-      closedPRs: {
-        nodes: Array<{
-          number: number;
-          title: string;
-          url: string;
-          author: { login: string } | null;
-          comments: {
-            nodes: Array<{
-              body: string;
-              author: { login: string } | null;
-            }>;
-          };
-        }>;
-      };
-    };
-  }>(
-    `
-      query ($owner: String!, $repo: String!) {
-        repository(owner: $owner, name: $repo) {
-          openPRs: pullRequests(first: 100, states: OPEN) {
-            nodes {
-              number
-              title
-              url
-              author {
-                login
+    }>(
+      `
+        query ($owner: String!, $repo: String!) {
+          repository(owner: $owner, name: $repo) {
+            openPRs: pullRequests(first: 100, states: OPEN) {
+              nodes {
+                number
+                title
+                url
+                author {
+                  login
+                }
               }
             }
-          }
-          closedPRs: pullRequests(
-            first: 10
-            states: CLOSED
-            orderBy: { field: CREATED_AT, direction: DESC }
-          ) {
-            nodes {
-              number
-              title
-              url
-              author {
-                login
-              }
-              comments(last: 1) {
-                nodes {
-                  body
-                  author {
-                    login
+            closedPRs: pullRequests(
+              first: 10
+              states: CLOSED
+              orderBy: { field: CREATED_AT, direction: DESC }
+            ) {
+              nodes {
+                number
+                title
+                url
+                author {
+                  login
+                }
+                comments(last: 1) {
+                  nodes {
+                    body
+                    author {
+                      login
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-    `,
-    { owner: ownerName, repo: repoName },
-  );
+      `,
+      { owner: ownerName, repo: repoName },
+    );
+    repository = result.repository;
+  } catch (error) {
+    console.error(`Failed to query repo ${ownerName}/${repoName}:`, error);
+    await slackUs(
+      `❌ Failed to query repo ${ownerName}/${repoName}: ${error instanceof Error ? error.message : String(error)}`,
+    );
+    return { status: "none" };
+  }
 
   // Check open PRs first
   const openSetupPR = repository.openPRs.nodes.find(

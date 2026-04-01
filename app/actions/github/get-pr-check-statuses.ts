@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { checkCommitHasSkipCI } from "./check-commit-has-skip-ci";
 import { getOctokitForInstallation } from "@/app/api/github";
 
@@ -57,12 +58,15 @@ export const getPRCheckStatuses = async ({
         };
       } catch (error) {
         console.error(`Failed to get check status for PR ${prNumber}:`, error);
+        await slackUs(
+          `❌ Failed to get check status for PR ${prNumber}: ${error instanceof Error ? error.message : String(error)}`,
+        );
         return {
           prNumber,
           isTestPassed: false,
         };
       }
-    })
+    }),
   );
 
   return checkStatuses;

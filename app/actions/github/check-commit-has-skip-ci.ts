@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { getOctokitForInstallation } from "@/app/api/github";
 
 export const checkCommitHasSkipCI = async ({
@@ -27,6 +28,9 @@ export const checkCommitHasSkipCI = async ({
     return commitMessage.includes("[skip ci]");
   } catch (error) {
     console.error(`Failed to check if commit ${sha} has [skip ci]:`, error);
+    await slackUs(
+      `❌ Failed to check if commit ${sha} has [skip ci]: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return false;
   }
 };

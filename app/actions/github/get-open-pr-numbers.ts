@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { getGraphQLForInstallation } from "@/app/api/github";
 
 export type GitAutoPR = {
@@ -66,12 +67,12 @@ export const getOpenPRNumbers = async ({
       {
         owner: ownerName,
         repo: repoName,
-      }
+      },
     );
 
     // Filter only PRs created by GitAuto bot
     const gitautoPRs = repository.pullRequests.nodes.filter(
-      (pr) => pr.author?.login === gitautoBotUsername
+      (pr) => pr.author?.login === gitautoBotUsername,
     );
 
     return gitautoPRs.map((pr) => ({
@@ -90,6 +91,9 @@ export const getOpenPRNumbers = async ({
       repoName,
       installationId,
     });
+    await slackUs(
+      `❌ getOpenPRNumbers failed for ${ownerName}/${repoName}: ${error instanceof Error ? error.message : String(error)}`,
+    );
     throw error;
   }
 };

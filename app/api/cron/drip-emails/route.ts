@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import { processDripEmails } from "@/app/actions/cron/drip-emails";
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { verifyVercelCron } from "@/utils/auth/vercel-cron";
 
 // Read by Vercel at build time. Hobby: 300s (Fluid Compute) or 60s (without).
@@ -25,6 +27,9 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     const duration = Date.now() - start;
     console.error(`[drip-emails] Failed after ${duration}ms:`, error);
+    await slackUs(
+      `❌ Drip emails cron failed after ${duration}ms: ${error instanceof Error ? error.message : String(error)}`,
+    );
 
     return NextResponse.json(
       {

@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import { TablesInsert } from "@/types/supabase";
 
@@ -37,6 +38,9 @@ export async function upsertUser(
     };
   } catch (error) {
     console.error("User upsert error:", error);
+    await slackUs(
+      `❌ User upsert error: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return {
       success: false,
       message: "Failed to upsert user",

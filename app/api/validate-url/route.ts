@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
+
 export async function POST(req: NextRequest) {
   try {
     const { url } = await req.json();
@@ -20,7 +22,7 @@ export async function POST(req: NextRequest) {
     if (!url.startsWith("https://")) {
       return NextResponse.json(
         { valid: false, message: "Only HTTPS URLs are allowed" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -43,7 +45,7 @@ export async function POST(req: NextRequest) {
       } else {
         return NextResponse.json(
           { valid: false, message: `URL returned status code: ${response.status}` },
-          { status: 400 }
+          { status: 400 },
         );
       }
     } catch (error) {
@@ -54,11 +56,14 @@ export async function POST(req: NextRequest) {
             error instanceof Error ? error.message : String(error)
           }`,
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
   } catch (error) {
     console.error("Error in validate-url API:", error);
+    await slackUs(
+      `❌ Error in validate-url API: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return NextResponse.json({ valid: false, message: "Internal server error" }, { status: 500 });
   }
 }

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { checkAllAutoReloads } from "@/app/actions/supabase/owners/check-all-auto-reloads";
 import { verifyVercelCron } from "@/utils/auth/vercel-cron";
 
@@ -20,12 +22,15 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Auto-reload cron job failed:", error);
+    await slackUs(
+      `❌ Auto-reload cron job failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
     return NextResponse.json(
       {
         error: "Auto-reload check failed",
         details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,5 +1,6 @@
 "use server";
 
+import { slackUs } from "@/app/actions/slack/slack-us";
 import { supabaseAdmin } from "@/lib/supabase/server";
 import type { Database } from "@/types/supabase";
 
@@ -40,7 +41,7 @@ export async function expireCredits() {
         acc[ownerId].credits.push(credit);
         return acc;
       },
-      {} as Record<number, { totalAmount: number; credits: CreditRow[] }>
+      {} as Record<number, { totalAmount: number; credits: CreditRow[] }>,
     );
 
     const results = [];
@@ -61,7 +62,7 @@ export async function expireCredits() {
         if (insertError) {
           console.error(
             `Failed to create expiration transaction for owner ${ownerId}:`,
-            insertError
+            insertError,
           );
           continue;
         }
@@ -87,6 +88,9 @@ export async function expireCredits() {
         console.log(`Expired $${totalAmount} in credits for owner ${ownerId}`);
       } catch (error) {
         console.error(`Error processing expiration for owner ${ownerId}:`, error);
+        await slackUs(
+          `❌ Error processing credit expiration for owner ${ownerId}: ${error instanceof Error ? error.message : String(error)}`,
+        );
       }
     }
 
@@ -99,6 +103,9 @@ export async function expireCredits() {
     };
   } catch (error) {
     console.error("Credit expiration job failed:", error);
+    await slackUs(
+      `❌ Credit expiration job failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
     throw error;
   }
 }
