@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "How 39 Duplicate Jest Errors Burned $300 in Claude API Costs",
+  title: "39 Duplicate Jest Errors Cost Us $300",
   description:
     "A single PR cost $300 because 39 identical Jest TypeErrors survived our log cleaning pipeline. Here's the root cause, the fix, and how we prevent it.",
   slug: "how-39-duplicate-jest-errors-burned-300-dollars",
@@ -11,19 +11,12 @@ export const metadata = {
   },
   author: "Wes Nishio",
   authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
-  tags: [
-    "CI logs",
-    "Jest",
-    "token costs",
-    "Claude API",
-    "debugging",
-    "deduplication",
-  ],
+  tags: ["CI logs", "Jest", "token costs", "Claude API", "debugging", "deduplication"],
   createdAt: "2026-03-29",
   updatedAt: "2026-03-29",
 };
 
-# How 39 Duplicate Jest Errors Burned $300 in Claude API Costs
+# 39 Duplicate Jest Errors Cost Us $300
 
 I'd been going back and forth for days on whether to buy a $300 badminton racket. Comparing models, reading reviews, watching YouTube videos. $300 is $300 - you think about it.
 
@@ -31,7 +24,7 @@ Then I woke up one morning, checked our Claude API usage dashboard, and found th
 
 ## What Happened
 
-The repo was foxden-admin-portal, a React app with Jest tests. It had 39 test files that all imported a shared module. That module had a TypeError. When Jest runs, it executes every test file independently, so the same TypeError appeared 39 times in the CI log - once per file, with identical stack traces.
+The repo was a React app with Jest tests. It had 39 test files that all imported a shared module. That module had a TypeError. When Jest runs, it executes every test file independently, so the same TypeError appeared 39 times in the CI log - once per file, with identical stack traces.
 
 Our log cleaning pipeline already:
 

@@ -1,0 +1,75 @@
+export const metadata = {
+  title: "Tests Can Go Stale at 100% Coverage",
+  description:
+    "When source code changes but tests don't, the quality evaluation is outdated. We detect this automatically using content hashes from data we already have.",
+  slug: "tests-can-go-stale-at-100-percent-coverage",
+  alternates: {
+    canonical: "/blog/tests-can-go-stale-at-100-percent-coverage",
+  },
+  openGraph: {
+    url: "/blog/tests-can-go-stale-at-100-percent-coverage",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["change detection", "test quality", "developer tooling", "testing strategy"],
+  createdAt: "2026-04-02",
+  updatedAt: "2026-04-02",
+};
+
+# Tests Can Go Stale at 100% Coverage
+
+We built [41 quality checks](/blog/what-100-percent-test-coverage-cant-measure) that evaluate tests beyond coverage. But running them on every file every time is wasteful. Most files don't change between runs. The question is: which files actually need re-evaluation?
+
+## Three Signals, One Answer
+
+A file's quality evaluation depends on three inputs:
+
+1. **The source file** - if the implementation changed, the existing tests may not cover the new logic
+2. **The test files** - if someone strengthened the tests (manually or via a merged PR), the previously failing checks may now pass
+3. **The checklist itself** - if we add new check categories, previously passing files need re-scoring
+
+If none of these changed, the stored evaluation is still valid. If any one changed, we re-run.
+
+## How We Detect Changes
+
+Every file in a git repository has a blob SHA - a hash of its content. Two files with identical content produce the same hash regardless of filename, branch, or commit history. A rebase doesn't change it. A rename doesn't change it. Only actual content changes produce a new hash.
+
+We already fetch the file tree to list files. The tree includes blob SHAs for every file, so we get change detection data without any extra work.
+
+```python
+stored_sha = db.get(file_path, "impl_blob_sha")
+current_sha = tree[file_path].sha
+
+if stored_sha != current_sha:
+    re_evaluate(file_path)
+```
+
+When a source file has multiple test files, we combine their hashes into one. Any single test file change triggers re-evaluation.
+
+## Why Not Timestamps?
+
+Timestamps track when something was last checked, not whether anything changed. A rebase or cherry-pick changes the commit timestamp without changing file content. You end up re-evaluating files that are identical. Content hashes answer the right question: did the content actually change?
+
+## Why We Track Test File Changes Too
+
+It's obvious why we track source changes - new logic needs new tests. But why re-evaluate when the test file changes and the source didn't?
+
+A developer refactors a test file - renames variables, reorganizes describe blocks, removes "redundant" test cases to clean things up. Coverage stays at 100%. The source file is untouched. But the adversarial tests that caught null inputs? Deleted during cleanup. Without tracking the test file hash, we'd still show the old passing score. Re-evaluating on test changes catches quality regressions that coverage can't see.
+
+The reverse case matters too. If someone adds security tests to a file that was previously failing the security category, we want to re-evaluate and update the score to passing. Without test file tracking, the old "fail" would persist until the next source change.
+
+## The Checklist Evolves Too
+
+The quality checklist isn't static - we add new categories as we learn what matters. When we add a check, we need every file re-evaluated against the expanded criteria. We hash the checklist itself:
+
+```python
+checklist_hash = sha256(json.dumps(checklist, sort_keys=True).encode()).hexdigest()
+```
+
+When the checklist changes, the hash changes, and all files get re-evaluated automatically. No migration, no manual trigger.
+
+## What This Enables
+
+With change detection in place, quality checks scale to any repo size. A repo with thousands of files only re-evaluates the ones that actually changed. Files that pass all checks stay passing until their source, tests, or the checklist itself changes. This makes continuous quality evaluation practical, not just theoretically possible.
+
+For the full list of what we check, see the [quality checklist](/docs/how-it-works/quality-verification/quality-checklist). For how scores drive PR creation, see [quality check scoring](/docs/how-it-works/quality-verification/quality-check-scoring).

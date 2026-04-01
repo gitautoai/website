@@ -15,11 +15,11 @@ export default function QualityCheckScoringPage() {
       <div className="space-y-12">
         <section>
           <p className="text-gray-600 mb-4">
-            GitAuto evaluates test quality beyond raw coverage numbers. After tests pass and coverage
-            targets are met, a separate evaluation scores the tests across multiple quality
+            GitAuto evaluates test quality beyond raw coverage numbers. After tests pass and
+            coverage targets are met, a separate evaluation scores the tests across multiple quality
             categories. Each source file and its test files are analyzed together to identify gaps
-            that coverage metrics alone cannot detect - missing edge cases, security vulnerabilities,
-            performance regressions, and more.
+            that coverage metrics alone cannot detect - missing edge cases, security
+            vulnerabilities, performance regressions, and more.
           </p>
         </section>
 
@@ -27,10 +27,10 @@ export default function QualityCheckScoringPage() {
           <h2 className="text-2xl font-semibold mb-4">Why Coverage Is Not Enough</h2>
           <p className="text-gray-600 mb-4">
             100% line coverage means every line executes during tests. It does not mean the tests
-            verify correct behavior. A function that parses user input can achieve full coverage with
-            a single valid input string, while missing SQL injection, XSS, null bytes, Unicode edge
-            cases, and boundary values entirely. The lines run, but the dangerous paths are never
-            tested.
+            verify correct behavior. A function that parses user input can achieve full coverage
+            with a single valid input string, while missing SQL injection, XSS, null bytes, Unicode
+            edge cases, and boundary values entirely. The lines run, but the dangerous paths are
+            never tested.
           </p>
           <p className="text-gray-600 mb-4">
             Quality check scoring fills this gap by evaluating what the tests actually verify, not
@@ -57,8 +57,8 @@ export default function QualityCheckScoringPage() {
               traversal
             </li>
             <li>
-              <strong>Performance</strong> - quadratic algorithms, heavy synchronous operations,
-              N+1 queries, large imports, redundant computation
+              <strong>Performance</strong> - quadratic algorithms, heavy synchronous operations, N+1
+              queries, large imports, redundant computation
             </li>
             <li>
               <strong>Memory</strong> - event listener cleanup, subscription and timer cleanup,
@@ -76,9 +76,9 @@ export default function QualityCheckScoringPage() {
             </li>
           </ul>
           <p className="text-gray-600 mt-4">
-            Not every check applies to every file. A backend utility function has no accessibility or
-            SEO concerns. The evaluator marks inapplicable checks accordingly so they do not penalize
-            the score.
+            Not every check applies to every file. A backend utility function has no accessibility
+            or SEO concerns. The evaluator marks inapplicable checks accordingly so they do not
+            penalize the score.
           </p>
         </section>
 
@@ -118,6 +118,33 @@ export default function QualityCheckScoringPage() {
         <section>
           <h2 className="text-2xl font-semibold mb-4">Related Features</h2>
           <ul className="list-disc pl-8 text-gray-600 space-y-2">
+            <li>
+              <Link
+                href={RELATIVE_URLS.DOCS.HOW_IT_WORKS.QUALITY_VERIFICATION.QUALITY_CHECKLIST}
+                className="text-pink-600 hover:underline"
+              >
+                Quality Checklist
+              </Link>{" "}
+              - the full list of 41 checks across 8 categories used during scoring
+            </li>
+            <li>
+              <Link
+                href="/blog/what-100-percent-test-coverage-cant-measure"
+                className="text-pink-600 hover:underline"
+              >
+                What 100% Test Coverage Can&apos;t Measure
+              </Link>{" "}
+              - blog post on why quality checks exist beyond coverage
+            </li>
+            <li>
+              <Link
+                href="/blog/tests-can-go-stale-at-100-percent-coverage"
+                className="text-pink-600 hover:underline"
+              >
+                Tests Can Go Stale at 100% Coverage
+              </Link>{" "}
+              - blog post on the content hashing pattern used for change detection
+            </li>
             <li>
               <Link
                 href={RELATIVE_URLS.DOCS.HOW_IT_WORKS.QUALITY_VERIFICATION.COVERAGE_ENFORCEMENT}

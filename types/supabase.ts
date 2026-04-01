@@ -1,10 +1,4 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
@@ -173,6 +167,7 @@ export type Database = {
         Row: {
           branch_coverage: number | null;
           branch_name: string;
+          checklist_hash: string | null;
           created_at: string;
           created_by: string;
           exclusion_reason: string | null;
@@ -181,14 +176,17 @@ export type Database = {
           function_coverage: number | null;
           github_issue_url: string | null;
           id: number;
+          impl_blob_sha: string | null;
           is_excluded_from_testing: boolean | null;
           language: string | null;
           level: string;
           line_coverage: number | null;
           owner_id: number;
           package_name: string | null;
+          quality_checks: Json | null;
           repo_id: number;
           statement_coverage: number | null;
+          test_blob_sha: string | null;
           uncovered_branches: string | null;
           uncovered_functions: string | null;
           uncovered_lines: string | null;
@@ -198,6 +196,7 @@ export type Database = {
         Insert: {
           branch_coverage?: number | null;
           branch_name?: string;
+          checklist_hash?: string | null;
           created_at?: string;
           created_by: string;
           exclusion_reason?: string | null;
@@ -206,14 +205,17 @@ export type Database = {
           function_coverage?: number | null;
           github_issue_url?: string | null;
           id?: number;
+          impl_blob_sha?: string | null;
           is_excluded_from_testing?: boolean | null;
           language?: string | null;
           level: string;
           line_coverage?: number | null;
           owner_id: number;
           package_name?: string | null;
+          quality_checks?: Json | null;
           repo_id: number;
           statement_coverage?: number | null;
+          test_blob_sha?: string | null;
           uncovered_branches?: string | null;
           uncovered_functions?: string | null;
           uncovered_lines?: string | null;
@@ -223,6 +225,7 @@ export type Database = {
         Update: {
           branch_coverage?: number | null;
           branch_name?: string;
+          checklist_hash?: string | null;
           created_at?: string;
           created_by?: string;
           exclusion_reason?: string | null;
@@ -231,14 +234,17 @@ export type Database = {
           function_coverage?: number | null;
           github_issue_url?: string | null;
           id?: number;
+          impl_blob_sha?: string | null;
           is_excluded_from_testing?: boolean | null;
           language?: string | null;
           level?: string;
           line_coverage?: number | null;
           owner_id?: number;
           package_name?: string | null;
+          quality_checks?: Json | null;
           repo_id?: number;
           statement_coverage?: number | null;
+          test_blob_sha?: string | null;
           uncovered_branches?: string | null;
           uncovered_functions?: string | null;
           uncovered_lines?: string | null;
@@ -1188,10 +1194,7 @@ export type Database = {
 
 type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<
-  keyof Database,
-  "public"
->];
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
@@ -1212,10 +1215,8 @@ export type Tables<
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R;
       }
       ? R
