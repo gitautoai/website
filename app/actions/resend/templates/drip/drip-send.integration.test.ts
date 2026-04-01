@@ -20,7 +20,11 @@ const USER_ID = 4620828;
 const describeIf = process.env.RESEND_API_KEY ? describe : describe.skip;
 
 describeIf("drip email send integration", () => {
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  let resend: Resend;
+
+  beforeAll(() => {
+    resend = new Resend(process.env.RESEND_API_KEY!);
+  });
 
   it("sends all email templates using real processDripEmails data", async () => {
     // Fetch user info (same query as process-onboarding.ts)
