@@ -17,6 +17,7 @@ const OWNER_NAME = "gitautoai";
 const OWNER_ID = 159883862;
 const USER_ID = 4620828;
 
+// SKIP unless RESEND_API_KEY is set: sends real emails to a real inbox
 const describeIf = process.env.RESEND_API_KEY ? describe : describe.skip;
 
 describeIf("drip email send integration", () => {

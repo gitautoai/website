@@ -1,7 +1,8 @@
 import { expireCredits } from "./expire-credits";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
-describe("expireCredits integration", () => {
+// SKIP: expireCredits() has global blast radius — processes ALL expired credits in DB, not just test ones
+describe.skip("expireCredits integration", () => {
   const testOwnerId1 = Math.floor(Math.random() * 1000000) + 1000000; // Random ID between 1M-2M
   const testOwnerId2 = Math.floor(Math.random() * 1000000) + 2000000; // Random ID between 2M-3M
 

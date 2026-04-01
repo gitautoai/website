@@ -1,7 +1,8 @@
 import { checkAllAutoReloads } from "./check-all-auto-reloads";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
-describe("checkAllAutoReloads integration", () => {
+// SKIP: checkAllAutoReloads() has global blast radius — processes ALL owners, could charge real Stripe customers
+describe.skip("checkAllAutoReloads integration", () => {
   jest.setTimeout(15000);
   let testOwnerIds: number[];
 
