@@ -8,7 +8,10 @@ describe("getOwnerIdsHadSubscription (integration)", () => {
     const ownerIds = await getAllOwnerIds();
     const result = await getOwnerIdsHadSubscription(ownerIds);
 
-    expect(result).toBeInstanceOf(Set);
-    for (const id of result) expect(ownerIds).toContain(id);
+    expect(result).toBeInstanceOf(Map);
+    for (const [id, canceledAt] of result) {
+      expect(ownerIds).toContain(id);
+      expect(typeof canceledAt).toBe("string");
+    }
   });
 });

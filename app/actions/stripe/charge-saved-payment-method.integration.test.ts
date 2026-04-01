@@ -1,7 +1,8 @@
 import { chargeSavedPaymentMethod } from "./charge-saved-payment-method";
 import stripe from "@/lib/stripe";
 
-describe("chargeSavedPaymentMethod integration", () => {
+// SKIP: Creates real Stripe PaymentIntents (test mode) that are never refunded
+describe.skip("chargeSavedPaymentMethod integration", () => {
   // Helper function to create a customer with payment method for each test
   async function createTestCustomer() {
     const randomId = Math.random().toString(36).substring(7);

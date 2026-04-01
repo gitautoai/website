@@ -1,7 +1,8 @@
 import { checkAllAutoReloads } from "./check-all-auto-reloads";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
-describe("checkAllAutoReloads integration", () => {
+// SKIP: checkAllAutoReloads() has global blast radius — processes ALL owners, could charge real Stripe customers
+describe.skip("checkAllAutoReloads integration", () => {
   jest.setTimeout(15000);
   let testOwnerIds: number[];
 
@@ -13,9 +14,63 @@ describe("checkAllAutoReloads integration", () => {
   afterEach(async () => {
     if (testOwnerIds) {
       for (const ownerId of testOwnerIds) {
+        await supabaseAdmin
+          .from("owners")
+          .update({ auto_reload_in_progress: null })
+          .eq("owner_id", ownerId);
         await supabaseAdmin.from("owners").delete().eq("owner_id", ownerId);
       }
     }
+  });
+
+  it("should acquire and release auto-reload lock via RPC", async () => {
+    // Create a test owner with auto_reload_in_progress = null (unlocked)
+    await supabaseAdmin.from("owners").insert({
+      owner_id: testOwnerIds[0],
+      owner_name: `testuser${testOwnerIds[0]}`,
+      owner_type: "User",
+      stripe_customer_id: `cus_test_${testOwnerIds[0]}`,
+      credit_balance_usd: 5,
+      auto_reload_enabled: true,
+      auto_reload_threshold_usd: 10,
+      auto_reload_target_usd: 50,
+      org_rules: "",
+    });
+
+    // First call should acquire the lock (return 1 in `data`, NOT `count`)
+    const firstCall = await supabaseAdmin.rpc("acquire_auto_reload_lock", {
+      p_owner_id: testOwnerIds[0],
+    });
+    expect(firstCall.error).toBeNull();
+    expect(firstCall.data).toBe(1); // Lock acquired: 1 row updated
+
+    // Verify the lock is set in the database
+    const { data: owner } = await supabaseAdmin
+      .from("owners")
+      .select("auto_reload_in_progress")
+      .eq("owner_id", testOwnerIds[0])
+      .single();
+    expect(owner?.auto_reload_in_progress).not.toBeNull();
+
+    // Second call should fail to acquire (return 0) because lock is held
+    const secondCall = await supabaseAdmin.rpc("acquire_auto_reload_lock", {
+      p_owner_id: testOwnerIds[0],
+    });
+    expect(secondCall.error).toBeNull();
+    expect(secondCall.data).toBe(0); // Lock NOT acquired
+
+    // Release the lock
+    await supabaseAdmin
+      .from("owners")
+      .update({ auto_reload_in_progress: null })
+      .eq("owner_id", testOwnerIds[0]);
+
+    // Third call should succeed again after release
+    const thirdCall = await supabaseAdmin.rpc("acquire_auto_reload_lock", {
+      p_owner_id: testOwnerIds[0],
+    });
+    expect(thirdCall.error).toBeNull();
+    expect(thirdCall.data).toBe(1); // Lock re-acquired
   });
 
   it("should process multiple eligible owners", async () => {
