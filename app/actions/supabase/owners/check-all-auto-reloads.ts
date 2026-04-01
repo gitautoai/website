@@ -35,6 +35,21 @@ export async function checkAllAutoReloads() {
 
     for (const owner of eligibleOwners) {
       try {
+        // Atomic lock: only the first concurrent caller acquires it, rest skip.
+        // Flag auto-expires after 5 minutes in case of crash/timeout.
+        const { count } = await supabaseAdmin.rpc("acquire_auto_reload_lock", {
+          p_owner_id: owner.owner_id,
+        });
+
+        if (!count || count === 0) {
+          results.push({
+            ownerId: owner.owner_id,
+            success: false,
+            reason: "Auto-reload already in progress",
+          });
+          continue;
+        }
+
         // Calculate amount to charge (bring balance up to target)
         const amountToPurchase = owner.auto_reload_target_usd - owner.credit_balance_usd;
 
@@ -132,6 +147,12 @@ export async function checkAllAutoReloads() {
         );
 
         console.error(`❌ Auto-reload error for owner ${owner.owner_id}:`, error);
+      } finally {
+        // Release the lock so future auto-reloads can proceed
+        await supabaseAdmin
+          .from("owners")
+          .update({ auto_reload_in_progress: null })
+          .eq("owner_id", owner.owner_id);
       }
     }
 
