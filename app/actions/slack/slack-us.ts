@@ -2,7 +2,7 @@
 
 import { isPrd } from "@/config";
 
-const SLACK_CHANNEL_ID = "C08PHH352S3";
+const SLACK_CHANNEL_ID = "C06NBHE6D38"; // #prod-web-errors
 
 export async function slackUs(message: string, threadTs?: string) {
   if (!isPrd) return { success: true, skipped: true };
