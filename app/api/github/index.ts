@@ -48,3 +48,15 @@ export const getGraphQLForInstallation = async (installationId: number) => {
   const octokit = await getOctokitForInstallation(installationId);
   return octokit.graphql;
 };
+
+// Try user token first, fall back to app installation token on auth failure
+export const getGraphQLWithFallback = async (accessToken: string, installationId: number) => {
+  try {
+    const userClient = getGraphQL(accessToken);
+    await userClient(`query { viewer { login } }`);
+    return userClient;
+  } catch {
+    console.log("User token failed, falling back to installation token");
+    return getGraphQLForInstallation(installationId);
+  }
+};

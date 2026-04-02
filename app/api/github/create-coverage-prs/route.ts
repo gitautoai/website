@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { slackUs } from "@/app/actions/slack/slack-us";
-import { getGraphQL } from "@/app/api/github";
+import { getGraphQLWithFallback } from "@/app/api/github";
 import { PRODUCT_ID } from "@/config";
 import { ABSOLUTE_URLS } from "@/config/urls";
 import { supabaseAdmin } from "@/lib/supabase/server";
@@ -79,19 +79,20 @@ function gitCommand(branchName: string): string {
 
 export async function POST(request: Request) {
   try {
-    const { selectedCoverages, ownerName, repoName, accessToken, hasLabel } = await request.json();
+    const { selectedCoverages, ownerName, repoName, accessToken, installationId, hasLabel } =
+      await request.json();
 
-    if (!selectedCoverages?.length || !ownerName || !repoName || !accessToken) {
+    if (!selectedCoverages?.length || !ownerName || !repoName || !installationId) {
       console.error("Missing parameters:", {
         hasCoverages: !!selectedCoverages?.length,
         hasOwner: !!ownerName,
         hasRepo: !!repoName,
-        hasToken: !!accessToken,
+        hasInstallationId: !!installationId,
       });
       return NextResponse.json({ error: "Missing required parameters" }, { status: 400 });
     }
 
-    const graphqlClient = getGraphQL(accessToken);
+    const graphqlClient = await getGraphQLWithFallback(accessToken, installationId);
 
     // Get repository Node ID, default branch info, and label ID
     const allLabels: Array<{ id: string; name: string }> = [];

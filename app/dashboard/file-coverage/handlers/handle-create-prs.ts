@@ -20,6 +20,7 @@ export async function handleCreatePRs({
   currentOwnerName,
   currentRepoName,
   accessToken,
+  installationId,
   hasLabel = false,
   ownerId,
   installations,
@@ -35,6 +36,7 @@ export async function handleCreatePRs({
   currentOwnerName: string;
   currentRepoName: string;
   accessToken: string;
+  installationId: number;
   hasLabel?: boolean;
   ownerId: number;
   installations: Installation[] | undefined;
@@ -73,6 +75,7 @@ export async function handleCreatePRs({
           ownerName: currentOwnerName,
           repoName: currentRepoName,
           accessToken,
+          installationId,
           hasLabel,
         }),
       },

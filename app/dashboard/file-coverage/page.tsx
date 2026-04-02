@@ -414,7 +414,13 @@ export default function CoveragePage() {
           selectedRows={selectedRows}
           isCreatingPRs={isCreatingPRs}
           onCreatePRs={(hasLabel) => {
-            if (!currentOwnerName || !currentRepoName || !accessToken || !currentOwnerId) {
+            if (
+              !currentOwnerName ||
+              !currentRepoName ||
+              !accessToken ||
+              !currentInstallationId ||
+              !currentOwnerId
+            ) {
               setError("Missing required repository information");
               return;
             }
@@ -425,6 +431,7 @@ export default function CoveragePage() {
               currentOwnerName,
               currentRepoName,
               accessToken,
+              installationId: currentInstallationId,
               hasLabel,
               ownerId: currentOwnerId,
               installations,
