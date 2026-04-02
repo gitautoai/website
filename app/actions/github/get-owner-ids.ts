@@ -26,6 +26,7 @@ export async function getOwnerIds(userId: number, accessToken: string) {
 
   try {
     // Use GitHub API to get organizations the user belongs to
+    console.log(`getOwnerIds token debug: user=${userId}, length=${accessToken?.length}, prefix=${accessToken?.slice(0, 4)}, suffix=${accessToken?.slice(-4)}`);
     const octokit = new Octokit({ auth: accessToken });
 
     // Get user's organizations
