@@ -5,6 +5,7 @@ import confetti from "canvas-confetti";
 import { useEffect, useState } from "react";
 
 // Local imports (Actions)
+import { getCloneProgress } from "@/app/actions/supabase/repositories/get-clone-progress";
 import { toggleExclusion } from "@/app/actions/supabase/coverage/toggle-exclusion";
 import { syncRepositoryFiles } from "@/app/actions/sync-repository-files";
 
@@ -78,6 +79,10 @@ export default function CoveragePage() {
 
   const [gitHubSyncStatus, setGitHubSyncStatus] = useState<"loading" | "error" | null>(null);
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
+  const [cloneProgress, setCloneProgress] = useState<{
+    total: number;
+    cloned: number;
+  } | null>(null);
   const [isActionsOpen, setIsActionsOpen] = useState(false);
   const [isCreatingPRs, setIsCreatingPRs] = useState(false);
   const [actionSuccess, setActionSuccess] = useState(false);
@@ -189,6 +194,10 @@ export default function CoveragePage() {
         if (hasNoData) {
           const found = await pollUntil(
             async () => {
+              // Also check clone progress for the owner
+              const progress = await getCloneProgress(currentOwnerId);
+              if (progress) setCloneProgress({ total: progress.total, cloned: progress.cloned });
+
               const data = await fetchCoverageData(
                 currentOwnerId,
                 currentRepoId,
@@ -208,6 +217,7 @@ export default function CoveragePage() {
           );
           if (abortController.signal.aborted) return;
           setGitHubSyncStatus(null);
+          setCloneProgress(null);
           if (!found) setLastSyncTime("just now");
         }
       } catch (error) {
@@ -584,7 +594,12 @@ export default function CoveragePage() {
         <Modal
           title={gitHubSyncStatus === "loading" ? "Syncing Repository" : "Sync Failed"}
           type={gitHubSyncStatus}
-          message={SYNC_MESSAGES[gitHubSyncStatus]}
+          message={
+            gitHubSyncStatus === "loading" && cloneProgress && cloneProgress.total > 1
+              ? `Processing repos: ${cloneProgress.cloned}/${cloneProgress.total} complete. Syncing files...`
+              : SYNC_MESSAGES[gitHubSyncStatus]
+          }
+          onClose={() => setGitHubSyncStatus(null)}
         />
       )}
       {!isLoadingDB && coverageData.length === 0 && !gitHubSyncStatus && lastSyncTime && (
@@ -592,6 +607,7 @@ export default function CoveragePage() {
           title="Syncing Repository"
           type="loading"
           message={`Last triggered: ${lastSyncTime}. Refresh to check for updates.`}
+          onClose={() => setLastSyncTime(null)}
         />
       )}
     </div>
