@@ -782,9 +782,7 @@ export type Database = {
       };
       repositories: {
         Row: {
-          blank_lines: number;
           code_lines: number;
-          comment_lines: number;
           created_at: string;
           created_by: string;
           file_count: number;
@@ -820,9 +818,7 @@ export type Database = {
           web_urls: string[] | null;
         };
         Insert: {
-          blank_lines?: number;
           code_lines?: number;
-          comment_lines?: number;
           created_at?: string;
           created_by: string;
           file_count?: number;
@@ -858,9 +854,7 @@ export type Database = {
           web_urls?: string[] | null;
         };
         Update: {
-          blank_lines?: number;
           code_lines?: number;
-          comment_lines?: number;
           created_at?: string;
           created_by?: string;
           file_count?: number;
