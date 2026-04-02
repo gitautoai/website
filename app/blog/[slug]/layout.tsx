@@ -1,3 +1,6 @@
+import { redirect } from "next/navigation";
+
+import { slackUs } from "@/app/actions/slack/slack-us";
 import JsonLdScript from "@/app/components/JsonLdScript";
 import { PRODUCT_NAME } from "@/config";
 import { BASE_URL, ABSOLUTE_URLS } from "@/config/urls";
@@ -38,7 +41,8 @@ export default async function BlogPostLayout({ children, params }: BlogPostLayou
 
   if (!post) {
     console.error(`Blog post not found: ${slug}`);
-    return <div>{children}</div>;
+    await slackUs(`📝 Blog post not found: ${slug} — redirecting to /blog`);
+    redirect("/blog");
   }
 
   const jsonLd = createBlogPostJsonLd(post, slug);
