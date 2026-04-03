@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { slackUs } from "@/app/actions/slack/slack-us";
@@ -40,8 +41,11 @@ export default async function BlogPostLayout({ children, params }: BlogPostLayou
   const post = await getBlogPostFromPosts(slug);
 
   if (!post) {
+    const headersList = await headers();
+    const referer = headersList.get("referer") || "direct";
+    const userAgent = headersList.get("user-agent") || "unknown";
     console.error(`Blog post not found: ${slug}`);
-    await slackUs(`📝 Blog post not found: ${slug} — redirecting to /blog`);
+    await slackUs(`📝 Blog post not found: /blog/${slug}\nReferer: ${referer}\nUA: ${userAgent}`);
     redirect("/blog");
   }
 
