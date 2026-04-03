@@ -1,7 +1,3 @@
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-
-import { slackUs } from "@/app/actions/slack/slack-us";
 import JsonLdScript from "@/app/components/JsonLdScript";
 import { PRODUCT_NAME } from "@/config";
 import { BASE_URL, ABSOLUTE_URLS } from "@/config/urls";
@@ -41,12 +37,8 @@ export default async function BlogPostLayout({ children, params }: BlogPostLayou
   const post = await getBlogPostFromPosts(slug);
 
   if (!post) {
-    const headersList = await headers();
-    const referer = headersList.get("referer") || "direct";
-    const userAgent = headersList.get("user-agent") || "unknown";
     console.error(`Blog post not found: ${slug}`);
-    await slackUs(`📝 Blog post not found: /blog/${slug}\nReferer: ${referer}\nUA: ${userAgent}`);
-    redirect("/blog");
+    return <div>{children}</div>;
   }
 
   const jsonLd = createBlogPostJsonLd(post, slug);
