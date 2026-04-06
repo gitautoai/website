@@ -22,7 +22,7 @@ Here's exactly how we did it and what we learned.
 
 Our approach was straightforward:
 
-- **Enabled [schedule trigger](/settings/triggers):** Set GitAuto to run automatically every day
+- **Enabled [schedule trigger](/dashboard/triggers):** Set GitAuto to run automatically every day
 - **5 files per day:** Configured to target 5 files each morning
 - **Weekends included:** Tests ran 7 days a week
 - **Repository size:** ~250 files total
@@ -49,7 +49,7 @@ Every morning, GitAuto would create 5 pull requests—one for each targeted file
 
 ## Coverage Growth Over Time
 
-We didn't start tracking coverage data historically from day one, so our [coverage charts](/dashboard/charts) only show the latter half of the journey. The growth rate varies because we adjusted the volume based on what we were working on—when we found issues to fix in GitAuto itself, we ran fewer PRs; when things were stable, we ran up to 10 PRs per day.
+We didn't start tracking coverage data historically from day one, so our [coverage charts](/dashboard/coverage-trends) only show the latter half of the journey. The growth rate varies because we adjusted the volume based on what we were working on—when we found issues to fix in GitAuto itself, we ran fewer PRs; when things were stable, we ran up to 10 PRs per day.
 
 ![Coverage growth over time showing Statement Coverage reaching 92%, Function Coverage reaching 96%, and Branch Coverage reaching 85%](/blog/how-we-reached-92-percent-test-coverage-with-gitauto/coverage-growth-chart.png)
 
