@@ -116,6 +116,33 @@ export default function QualityCheckScoringPage() {
         </section>
 
         <section>
+          <h2 className="text-2xl font-semibold mb-4">Quality Gate Enforcement</h2>
+          <p className="text-gray-600 mb-4">
+            Creating a PR is not enough - the agent must actually improve the tests. When the agent
+            declares the task complete, a quality gate verifies the work. For quality-focused PRs
+            (created by the scheduler or dashboard), this gate has two layers:
+          </p>
+          <ul className="list-disc pl-8 text-gray-600 space-y-2 mb-4">
+            <li>
+              <strong>Zero-change rejection</strong> - if the agent made no changes to the test file,
+              the task is rejected immediately. The scheduler already determined the tests were weak
+              when it created the PR, so &quot;no changes needed&quot; is not a valid completion.
+            </li>
+            <li>
+              <strong>Post-change evaluation</strong> - after the agent makes changes and all other
+              checks pass (linting, type checking, test execution), the quality evaluation runs again
+              on the updated test files. If the tests still fail quality checks, the agent must
+              iterate.
+            </li>
+          </ul>
+          <p className="text-gray-600 mb-4">
+            The post-change evaluation runs last to avoid wasting an LLM call when the agent will
+            need to retry anyway due to lint or test failures. If the agent genuinely cannot improve
+            the tests after a retry, the system allows completion to prevent infinite loops.
+          </p>
+        </section>
+
+        <section>
           <h2 className="text-2xl font-semibold mb-4">Related Features</h2>
           <ul className="list-disc pl-8 text-gray-600 space-y-2">
             <li>
