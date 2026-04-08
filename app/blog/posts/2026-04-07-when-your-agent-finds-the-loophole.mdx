@@ -1,0 +1,60 @@
+export const metadata = {
+  title: "When Your AI Agent Finds the Loophole",
+  description:
+    "Our AI agent bypassed quality checks by making zero changes. The verification gate passed because there were no files to check.",
+  slug: "when-your-agent-finds-the-loophole",
+  alternates: {
+    canonical: "/blog/when-your-agent-finds-the-loophole",
+  },
+  openGraph: {
+    url: "/blog/when-your-agent-finds-the-loophole",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["AI agents", "quality gates", "test quality", "developer tooling"],
+  createdAt: "2026-04-07",
+  updatedAt: "2026-04-07",
+};
+
+# When Your Agent Finds the Loophole
+
+We have a pipeline that evaluates test quality beyond coverage. It scores files on [41 checks](/blog/what-100-percent-test-coverage-cant-measure) across categories like boundary testing, error handling, and security. When a file scores poorly, the system creates a PR and assigns an AI agent to improve the tests.
+
+Last week, the agent looked at a test file with 100% line coverage, said "nothing to improve," and closed the task with zero changes. The verification gate passed. The PR merged. The tests were still weak.
+
+Zero changes is sometimes correct - the tests might genuinely be good. But in this case, the scheduler had already evaluated the tests and found quality gaps. That's why the PR existed in the first place. The agent disagreed and did nothing.
+
+## What the Tests Actually Looked Like
+
+The test file covered a function that transforms data and returns an object. Every line was exercised. But the assertions only checked that a return value existed:
+
+```typescript
+expect(result).toBeDefined();
+expect(result).not.toBeNull();
+```
+
+The function always returns an object - it can never return `undefined` or `null`. These assertions pass no matter what the function does. You could replace the entire implementation with `return {}` and every test would still be green. They test nothing.
+
+## Why the Gate Didn't Catch It
+
+Our verification step runs when the agent calls `verify_task_is_complete`. It checks for lint errors, type errors, and test failures. If everything passes, the task is marked done.
+
+The problem: the agent made zero changes. Zero changes means zero PR files. Zero PR files means nothing to lint, nothing to type-check, nothing to test. The verification pipeline had nothing to verify, so it passed. "Do nothing" was a valid exit path even when the system had already flagged the tests as weak.
+
+## The Fix: Three Layers
+
+**Prompt-level instructions**: We added explicit rules telling the agent that 100% coverage doesn't mean the tests are good. The agent's coding standards now include guidance on what useless assertions look like and why `toBeDefined()` on a non-nullable return proves nothing.
+
+**Quality gate in verification**: When the agent completes a quality-focused PR with zero changes, we reject the first attempt - the scheduler already determined the tests were weak when it created the PR, so "no changes" contradicts that finding. But if the agent tries again and still makes no changes, we allow completion. Sometimes the agent is right and the tests are fine. No infinite loops.
+
+**LLM-based evaluation after changes**: When the agent does make changes, we run the quality evaluation again after all other checks pass (lint, types, tests). This runs last to avoid wasting an LLM call when the agent will need to retry anyway due to syntax errors or test failures.
+
+## The Cost Problem
+
+The quality evaluation uses an LLM call. Running it costs money. If we run it early and lint fails, the agent fixes the lint error and calls verify again - triggering another LLM evaluation for nearly identical code. By running quality checks last, we only pay for the evaluation when everything else is already clean. One call per successful verification instead of one per attempt.
+
+## The Broader Pattern
+
+This isn't specific to AI agents. Any automated pipeline with a "no changes needed" exit path has this vulnerability. CI that only runs on changed files. Linters that skip untouched code. Review bots that auto-approve empty diffs.
+
+The fix is the same everywhere: if the system decided something needs work, don't let "no work done" count as completion. Track why the task was created and verify that the reason was addressed, not just that the pipeline didn't find new problems.
