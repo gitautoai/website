@@ -1,0 +1,77 @@
+export const metadata = {
+  title: "Our Agent Had the Checklist and Ignored It",
+  description:
+    "An AI agent had a 41-check quality checklist but kept making cosmetic edits instead of addressing failures. The fix was application-layer forcing.",
+  slug: "our-agent-had-the-checklist-and-ignored-it",
+  alternates: {
+    canonical: "/blog/our-agent-had-the-checklist-and-ignored-it",
+  },
+  openGraph: {
+    url: "/blog/our-agent-had-the-checklist-and-ignored-it",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["AI agents", "LLM behavior", "quality gates", "test quality"],
+  createdAt: "2026-04-08",
+  updatedAt: "2026-04-08",
+};
+
+# Our Agent Had the Checklist and Ignored It
+
+We run an [LLM-based quality gate](/blog/what-100-percent-test-coverage-cant-measure) that evaluates tests across 41 checks in 8 categories: business logic, adversarial inputs, security, error handling, and others. When the gate fails, the agent is told to improve the tests and try again.
+
+Last week our agent - Claude Opus 4.6 - burned all its iterations rewriting tests for a CLI tool that parses CSV files and writes to a database. The quality gate failed on three specific categories every single time: adversarial inputs, security, and error handling. The agent never once added a test for any of them.
+
+## What the Agent Did Instead
+
+The agent had the full 41-check quality checklist in its system prompt. It knew which categories exist. When told "quality gate failed," here's what it did across 9 commits:
+
+- Changed `expect(spy).not.toHaveBeenCalledWith(msg)` to `spy.mock.calls.filter(...).toHaveLength(0)`. A "spy" in testing is a wrapper that records how a function was called - what arguments it received and how many times. Both lines check the same thing: "this function was never called with this message." The agent just rewrote the syntax without changing what's being tested.
+- Added a test combining all CLI flags together - useful, but not adversarial
+- Added a test for path normalization (backslash replacement) - general coverage, not security
+- Repeated similar cosmetic rewrites for the remaining commits
+
+Not a single null input test. Not a single injection test. Not a single error message test. The agent had the information. It just didn't use it.
+
+## Why This Happens
+
+If you've worked with LLMs, you've seen this pattern. Given a vague directive ("improve quality") and a detailed reference (the checklist), the model takes the path of least resistance. Rewriting an existing assertion is easier than designing a new adversarial test from scratch. The model satisfies the surface instruction ("I improved the tests") without addressing the substance.
+
+This is the same behavior you see when asking an LLM to "review this code" - it often comments on formatting and naming instead of identifying logical bugs. The easy observations come first. The hard analysis gets skipped.
+
+A good engineer, given vague feedback from a reviewer, would either ask clarifying questions or self-review against the checklist they already have. Claude Opus 4.6 had both options available - it could have asked for clarification through its tools, or systematically walked through the 41 checks it had in its system prompt. Instead, it made a small tweak and hoped that would be enough. Then did it again. And again. Nine times.
+
+That's not what a capable engineer does. That's what a lazy one does - make a cosmetic change, submit, and hope the reviewer doesn't look too closely. It's a very human behavior, but not one we want a model to have learned.
+
+## The Compounding Problem
+
+The quality gate returned a generic message: "Quality gate failed. Evaluate and improve test quality per coding standards." The agent knew the checklist existed but didn't know which 3 out of 41 checks actually failed. So it had to guess, and guessing led to cosmetic edits.
+
+But even with specific feedback, one of the three failures was a false positive. The gate flagged `path.resolve()` as a command injection vector. It's not - it's a path normalization function. No amount of test-writing would satisfy that check.
+
+So the agent faced three problems simultaneously:
+1. It was lazy - it didn't systematically work through the checklist
+2. The feedback was generic - it didn't know which checks failed
+3. One check was wrong - a false positive that could never pass
+
+## What We Changed
+
+**Specific feedback**: The error message now includes the exact failing checks with reasons. Instead of "quality gate failed," the agent sees `adversarial.null_undefined_inputs: No tests for null CLI arguments` and `security.command_injection: No tests for malicious input values`. This removes the guessing.
+
+**Same model for judging**: The quality gate was using a weaker model than the agent itself - a cheaper model evaluating a more capable model's work. Now both use the same model, which reduces false positives like the `path.resolve` judgment.
+
+**Escape hatch**: After 3 consecutive failures with no progress, accept the current quality and move on. Some checks may be false positives, and burning iterations on unfixable failures wastes compute. We get a Slack notification when this triggers so we can investigate.
+
+## The Lesson
+
+The model is fundamentally capable of writing null input tests, analyzing injection vectors, and designing error handling coverage. It does all of those in other contexts. The capability is there. But capability and behavior are different things - the model's native tendency toward path-of-least-resistance means it won't reliably use its full power without external pressure.
+
+This is why the fix has to be at the application layer. The checklist in the system prompt gives the model the knowledge. But knowledge alone doesn't produce diligence. Specific, targeted feedback ("these 3 checks failed") works better than comprehensive reference material ("here are all 41 checks") because it closes the gap between what the model *can* do and what it *will* do. It removes the opportunity to take shortcuts by making the exact problem inescapable.
+
+This is also why tools like GitAuto exist. The models are powerful enough to write high-quality tests, fix CI failures, and reason about security. But left to their own defaults, they take shortcuts. The application layer - verification gates, specific feedback loops, escape hatches, structured tool calls - is what turns raw model capability into reliable engineering output. The value isn't in the model. It's in making the model actually do the work.
+
+## We Need a Laziness Eval
+
+The industry benchmarks models on reasoning, coding, math, and knowledge. There are evals for shortcut resistance and multi-step reasoning. But none of them measure laziness - the gap between what a model *can* do and what it *will* do when not forced. This incident would pass every existing eval. Claude Opus 4.6 can write adversarial tests. It can analyze injection vectors. It can read a checklist and work through it systematically. It just didn't.
+
+A laziness eval would give the model a task, a reference checklist, and vague feedback ("this isn't good enough"), then measure whether it systematically addresses the checklist or makes cosmetic changes and resubmits. The score isn't whether the model *can* solve the problem - it's whether it *chooses* to do the hard work when the easy path is available.
