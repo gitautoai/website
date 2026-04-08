@@ -1,0 +1,65 @@
+export const metadata = {
+  title: "Why Retargeting a PR Explodes the Diff",
+  description:
+    "GitHub's change-base-branch API only updates metadata. When sibling release branches are involved, the PR diff explodes with unrelated files.",
+  slug: "why-retargeting-a-pr-explodes-the-diff",
+  alternates: {
+    canonical: "/blog/why-retargeting-a-pr-explodes-the-diff",
+  },
+  openGraph: {
+    url: "/blog/why-retargeting-a-pr-explodes-the-diff",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["git", "GitHub API", "pull requests", "release branches"],
+  createdAt: "2026-04-08T14:17:00-07:00",
+  updatedAt: "2026-04-08T14:17:00-07:00",
+};
+
+# Why Retargeting a PR Explodes the Diff
+
+A reviewer asked us to change a PR's base from, say, `release/20260401` to `release/20260501`. Simple request. GitHub even has an API for it: `PATCH /repos/{owner}/{repo}/pulls/{number}` with a new `base` field.
+
+GitAuto called it. The base branch label changed. And the PR diff went from 5 files to 300+.
+
+## What Went Wrong
+
+GitHub's "change base branch" is **metadata-only**. It updates which branch the PR targets but does nothing to the git history. When that doesn't matter - say, retargeting from `main` to `develop` where `develop` was forked from `main` - the diff stays clean because the commit graph still makes sense.
+
+But the two release branches were **siblings**. Both were cut from `main` at different points in time:
+
+```
+main ──────●──────────────●──────
+           │              │
+           ▼              ▼
+     release/0401    release/0501
+```
+
+When the PR originally targeted `release/0401`, Git computed the merge base between that branch and the PR head. The diff showed only the PR's actual changes. After the API call switched the target to `release/0501`, Git recomputed the merge base - now between a completely different branch and the same PR head. Every file that differed between the two release branches appeared in the PR diff.
+
+## What a Human Would Do
+
+A developer would run `git rebase --onto release/0501 release/0401 pr-branch`. This replays the PR's commits on top of the new base, and the diff goes back to showing only the actual changes.
+
+But rebase has two problems for automation:
+
+- **Merge conflicts can halt execution.** Rebase replays commits one by one. If any commit conflicts with the new base, git stops and waits for manual resolution. An automated system can't resolve conflicts interactively.
+- **Shallow clones break rebase.** Many CI systems and automation tools clone with `--depth 1` for speed. Rebase needs the full commit history to find the fork point and replay commits. With a shallow clone, it simply fails.
+
+## The Fix for Automation
+
+Instead of replaying commits, save the end result and rewrite it:
+
+1. **Save** the PR's actual file changes (contents from the current branch)
+2. **Change** the base branch on GitHub (the metadata part)
+3. **Reset** the local branch to the new base (`git fetch` + `git reset`)
+4. **Rewrite** the saved files onto the new base
+5. **Force push** to update the remote
+
+This is deterministic and conflict-free. It doesn't matter how the files got to their current state - we just read the final contents, reset to the new base, and write them back. Works with any clone depth.
+
+## The Takeaway
+
+When an API says it changes something, verify it changes **everything** that needs changing. GitHub's API truthfully changes the base branch - the metadata. But "retarget a PR" in a developer's mind means "make the diff show only my changes against the new base." That requires git-level surgery that no REST API currently provides.
+
+If you maintain release branches cut from the same trunk, be aware that retargeting PRs between them is not a one-API-call operation. The label moves instantly. The diff needs work.
