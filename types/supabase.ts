@@ -806,9 +806,6 @@ export type Database = {
           structured_rules: Json | null;
           target_branch: string;
           test_dir_prefixes: string[];
-          trigger_on_commit: boolean;
-          trigger_on_merged: boolean;
-          trigger_on_pr_change: boolean;
           trigger_on_review_comment: boolean;
           trigger_on_schedule: boolean;
           trigger_on_test_failure: boolean;
@@ -842,9 +839,6 @@ export type Database = {
           structured_rules?: Json | null;
           target_branch?: string;
           test_dir_prefixes?: string[];
-          trigger_on_commit?: boolean;
-          trigger_on_merged?: boolean;
-          trigger_on_pr_change?: boolean;
           trigger_on_review_comment?: boolean;
           trigger_on_schedule?: boolean;
           trigger_on_test_failure?: boolean;
@@ -878,9 +872,6 @@ export type Database = {
           structured_rules?: Json | null;
           target_branch?: string;
           test_dir_prefixes?: string[];
-          trigger_on_commit?: boolean;
-          trigger_on_merged?: boolean;
-          trigger_on_pr_change?: boolean;
           trigger_on_review_comment?: boolean;
           trigger_on_schedule?: boolean;
           trigger_on_test_failure?: boolean;

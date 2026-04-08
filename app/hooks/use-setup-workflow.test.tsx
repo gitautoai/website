@@ -19,6 +19,7 @@ const baseArgs = {
   repoName: "test-repo",
   installationId: 123,
   senderName: "user1",
+  source: "file-coverage",
 };
 
 describe("useSetupWorkflow", () => {
@@ -73,6 +74,7 @@ describe("useSetupWorkflow", () => {
         "test-repo",
         123,
         "user1",
+        "file-coverage",
       );
       expect(result.current.getRepoStatus("test-repo")?.status).toBe("open");
     });

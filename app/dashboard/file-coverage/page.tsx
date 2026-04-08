@@ -316,6 +316,7 @@ export default function CoveragePage() {
       repoName: currentRepoName,
       installationId: currentInstallationId,
       senderName: userLogin || "",
+      source: "file-coverage",
     });
   };
 

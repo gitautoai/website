@@ -45,11 +45,13 @@ export const useSetupWorkflow = () => {
     repoName,
     installationId,
     senderName,
+    source,
   }: {
     ownerName: string;
     repoName: string;
     installationId: number;
     senderName: string;
+    source: string;
   }) => {
     setIsSettingUp(true);
 
@@ -67,7 +69,7 @@ export const useSetupWorkflow = () => {
     }
 
     // Fire and forget — Lambda runs setup in the background
-    setupCoverageWorkflow(ownerName, repoName, installationId, senderName).catch(() => {});
+    setupCoverageWorkflow(ownerName, repoName, installationId, senderName, source).catch(() => {});
     setShowSetupModal(true);
     const triggered: SetupPRStatus = {
       status: "open",
