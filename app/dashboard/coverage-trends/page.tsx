@@ -244,6 +244,7 @@ export default function ChartsPage() {
       repoName,
       installationId: currentInstallationId,
       senderName: userLogin || "",
+      source: "coverage-trends",
     });
   };
 

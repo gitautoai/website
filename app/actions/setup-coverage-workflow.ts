@@ -13,6 +13,7 @@ export async function setupCoverageWorkflow(
   repoName: string,
   installationId: number,
   senderName: string,
+  source: string,
 ) {
   const octokit = await getOctokitForInstallation(installationId);
   const auth = (await octokit.auth({ type: "installation" })) as { token: string };
@@ -25,6 +26,7 @@ export async function setupCoverageWorkflow(
         "X-GitHub-Token": auth.token,
         "X-API-Key": GITAUTO_API_KEY,
         "X-Sender-Name": senderName,
+        "X-Source": source,
       },
     },
   );

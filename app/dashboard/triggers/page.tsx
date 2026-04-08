@@ -261,6 +261,7 @@ export default function TriggersPage() {
               repoName,
               installationId: currentInstallationId,
               senderName: userLogin,
+              source: "triggers",
             });
           }
         } else {
