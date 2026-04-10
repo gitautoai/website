@@ -1,0 +1,55 @@
+export const metadata = {
+  title: "Why PR Bodies Should Tell the Story",
+  description:
+    "AI agents create PRs but leave reviewers guessing what happened. We added Claude-generated sections summarizing work done, bugs found, and trade-offs.",
+  slug: "why-pr-bodies-should-tell-the-story",
+  alternates: {
+    canonical: "/blog/why-pr-bodies-should-tell-the-story",
+  },
+  openGraph: {
+    url: "/blog/why-pr-bodies-should-tell-the-story",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["PR workflow", "code review", "AI agents", "developer experience"],
+  createdAt: "2026-04-09T14:52:00-07:00",
+  updatedAt: "2026-04-09T14:52:00-07:00",
+};
+
+# Why PR Bodies Should Tell the Story
+
+## The problem
+
+When an AI agent creates a pull request, the PR body typically contains the original issue description or schedule coverage info. After the agent finishes working - writing tests, fixing bugs, making trade-offs - none of that context appears in the PR body. The reviewer opens the PR and sees the original instructions, then has to piece together what actually happened from the diff and comments.
+
+This is backwards. The PR body should be the first thing a reviewer reads to understand what was done, what bugs were found, and what they need to verify.
+
+## What we built
+
+After the agent completes its work, we now call Claude Sonnet 4.6 (via Anthropic's API) with the full context of what happened - the PR title, changed files with diffs, agent comments, and the agent's completion summary - and ask it to generate a structured summary. This gets appended to the PR body using HTML comment markers for idempotent upserts. Every call is recorded in our llm_requests table for cost tracking.
+
+The generated section includes:
+
+- What I Tested - specific functions, behaviors, and edge cases covered, referencing actual code from the diff
+- Potential Bugs Found - edge cases, untested paths, or workarounds the agent discovered. Our agent (Claude Opus 4.6) tries to break the code before users do, so it often finds issues that need reviewer attention. If a bug was found, the summary explains whether it was actually fixed or worked around.
+- Non-Code Tasks - tasks outside the code review like env vars to set, migrations to run, or configs to update
+
+The bugs section is always present - if none were found, it says so explicitly. Non-Code Tasks is omitted when not applicable.
+
+## The implementation
+
+The core is a pure function `upsert_pr_body_section` that uses regex to find HTML comment markers (`<!-- GITAUTO_UPDATE -->...<!-- /GITAUTO_UPDATE -->`) in the PR body. If the section exists, it replaces the content. If not, it appends with a `---` separator before the first agent section.
+
+The trigger type (dashboard, schedule, check suite, review comment) determines both the marker name and the prompt used for generation. This mapping lives in `constants/triggers.py` alongside the trigger type definitions, keeping the configuration centralized.
+
+## Why this matters for code review
+
+The hardest part of reviewing AI-generated PRs isn't reading the diff - it's understanding the intent. Why did the agent change this file? Did it find any issues? What should I look at carefully?
+
+By having the agent explain itself in the PR body, reviewers spend less time on archaeology and more time on actual review.
+
+## Key design decisions
+
+- **Claude-generated, not template strings**: Early versions used hardcoded strings like "Fixed the failing CI check." This told reviewers nothing. Claude writes context-aware summaries because it has the agent's full completion reason.
+- **Idempotent upserts, not appends**: If the agent runs again on the same PR, the section is replaced, not duplicated. This keeps PR bodies clean.
+- **Original body preserved**: The agent's sections are always appended after a separator. The original PR body (issue description, instructions) is never modified.

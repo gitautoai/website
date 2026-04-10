@@ -45,6 +45,7 @@ export const RELATIVE_URLS = {
   DOCS: {
     ACTIONS: {
       AUTO_MERGE: "/docs/actions/auto-merge",
+      PR_BODY_SUMMARY: "/docs/actions/pr-body-summary",
     },
     GETTING_STARTED: {
       INSTALLATION: "/docs/getting-started/installation",
@@ -190,6 +191,7 @@ export const ABSOLUTE_URLS = {
     DOCS: {
       ACTIONS: {
         AUTO_MERGE: `${BASE_URL}${RELATIVE_URLS.DOCS.ACTIONS.AUTO_MERGE}`,
+        PR_BODY_SUMMARY: `${BASE_URL}${RELATIVE_URLS.DOCS.ACTIONS.PR_BODY_SUMMARY}`,
       },
       GETTING_STARTED: {
         INSTALLATION: `${BASE_URL}${RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION}`,
