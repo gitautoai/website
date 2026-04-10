@@ -4,50 +4,6 @@ export const STRUCTURED_RULES_CONFIG = {
     description: "Define coding standards and patterns for GitAuto-generated code",
     rules: [
       {
-        key: "enforceOneFunctionPerFile",
-        label: "Enforce one function per file",
-        description:
-          "Each file should contain only one main function to improve testability and maintainability",
-        type: "boolean",
-        default: true,
-      },
-      {
-        key: "enforceOneResponsibilityPerFile",
-        label: "Enforce one responsibility per file",
-        description: "Each file should have a single, well-defined responsibility",
-        type: "boolean",
-        default: true,
-      },
-      {
-        key: "preferEarlyReturnsToReduceNesting",
-        label: "Prefer early returns to reduce nesting",
-        description:
-          "Use early returns, guard clauses, and similar techniques to keep code shallow and readable",
-        type: "boolean",
-        default: true,
-      },
-      {
-        key: "preferConciseCodeTechniques",
-        label: "Prefer concise code techniques",
-        description:
-          "Use shorthand syntax, omit braces when possible, and apply other techniques to reduce line count",
-        type: "boolean",
-        default: true,
-        examples: {
-          Enabled:
-            "if (error) return; // ternary operators, optional chaining, arrow functions, destructuring",
-          Disabled: "if (error) { return; } // explicit braces, verbose syntax",
-        },
-      },
-      {
-        key: "allowCreatingIntermediateLayers",
-        label: "Allow creating intermediate layers",
-        description:
-          "Allow creating wrapper functions or helper layers when they improve code organization",
-        type: "boolean",
-        default: false,
-      },
-      {
         key: "codePatternStrategy",
         label: "Code pattern strategy",
         description: "How GitAuto should handle code patterns when generating tests and code",
@@ -61,41 +17,12 @@ export const STRUCTURED_RULES_CONFIG = {
             "Use best practices when possible, fall back to existing patterns when they don't conflict",
         },
       },
-      {
-        key: "preferredApiApproach",
-        label: "Preferred API approach",
-        description: "Preferred API pattern for new code and tests",
-        type: "select",
-        options: ["REST API first", "GraphQL first", "Use both (context-dependent)", "Auto-detect"],
-        default: "GraphQL first",
-        examples: {
-          "REST API first": "Prefer REST endpoints for CRUD operations and simple data access",
-          "GraphQL first": "Prefer GraphQL for complex queries and data relationships",
-          "Use both (context-dependent)":
-            "Choose REST for simple operations, GraphQL for complex queries",
-          "Auto-detect": "Analyze existing codebase patterns to determine the best approach",
-        },
-      },
-      {
-        key: "fixUnrelatedIssuesWhenNoticed",
-        label: "Fix unrelated issues when noticed",
-        description: "Allow GitAuto to fix unrelated issues it notices while working on tests",
-        type: "boolean",
-        default: false,
-      },
     ],
   },
   commentRules: {
     title: "Comment Rules",
     description: "Configure comment generation preferences for GitAuto-generated code",
     rules: [
-      {
-        key: "enableCommentsInGeneratedSourceCode",
-        label: "Enable comments in generated source code",
-        description: "Include explanatory comments in source code files created by GitAuto",
-        type: "boolean",
-        default: false,
-      },
       {
         key: "enableCommentsInGeneratedTestCode",
         label: "Enable comments in generated test code",
@@ -114,20 +41,6 @@ export const STRUCTURED_RULES_CONFIG = {
           "Auto-detect": "Detect language from existing codebase comments",
           English: "Always use English for comments",
         },
-      },
-      {
-        key: "includeJSDocOrDocstringComments",
-        label: "Include JSDoc/docstring comments",
-        description: "Add JSDoc/docstring comments to functions and classes",
-        type: "boolean",
-        default: false,
-      },
-      {
-        key: "allowTodoCommentsInGeneratedCode",
-        label: "Allow TODO comments in generated code",
-        description: "Allow GitAuto to add TODO comments for incomplete or placeholder code",
-        type: "boolean",
-        default: false,
       },
     ],
   },
