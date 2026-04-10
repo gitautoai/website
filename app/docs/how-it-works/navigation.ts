@@ -240,6 +240,11 @@ export const HOW_IT_WORKS_PAGES: NavItem[] = [
     title: "CI Log Deduplication",
     category: "Token/Cost Management",
   },
+  {
+    href: UTH.TOKEN_COST_MANAGEMENT.WEB_FETCH_SUMMARIZATION,
+    title: "Web Fetch Summarization",
+    category: "Token/Cost Management",
+  },
 
   // Resilience & Recovery
   {
