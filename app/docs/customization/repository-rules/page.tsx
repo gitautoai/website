@@ -6,10 +6,6 @@ import { RELATIVE_URLS } from "@/config/urls";
 import { bestPracticesFirst } from "./code/best-practices-first";
 import { consistencyFirst } from "./code/consistency-first";
 import { customRulesExample } from "./code/custom-rules";
-import { oneFunctionPerFileGood } from "./code/one-function-per-file-good";
-import { oneFunctionPerFileBad } from "./code/one-function-per-file-bad";
-import { earlyReturnsGood } from "./code/early-returns-good";
-import { earlyReturnsBad } from "./code/early-returns-bad";
 import { commentsDisabled } from "./code/comments-disabled";
 import { commentsEnabled } from "./code/comments-enabled";
 import { testFileStructureGood } from "./code/test-file-structure-good";
@@ -99,50 +95,6 @@ export default function RulesPage() {
           <h2 className="text-3xl font-semibold mt-0 mb-8">Coding Rules</h2>
 
           <div className="space-y-12">
-            <div>
-              <h3 className="text-2xl font-semibold mb-4">One Function Per File</h3>
-              <p className="text-gray-700 mb-4">
-                Each file contains exactly one main function. This makes tests easier to write since
-                each test file focuses on testing just one thing.
-              </p>
-
-              <CodeBlock
-                code={oneFunctionPerFileGood}
-                language="typescript"
-                filename="✓ Recommended approach"
-              />
-
-              <div className="mb-4" />
-
-              <CodeBlock
-                code={oneFunctionPerFileBad}
-                language="typescript"
-                filename="✗ What to avoid"
-              />
-            </div>
-
-            <div>
-              <h3 className="text-2xl font-semibold mb-4">Early Returns vs Deep Nesting</h3>
-              <p className="text-gray-700 mb-4">
-                Use early returns instead of deeply nested if statements. Handle error cases
-                upfront, then focus on the main logic.
-              </p>
-
-              <CodeBlock
-                code={earlyReturnsGood}
-                language="typescript"
-                filename="✓ Early returns (recommended)"
-              />
-
-              <div className="mb-4" />
-
-              <CodeBlock
-                code={earlyReturnsBad}
-                language="typescript"
-                filename="✗ Deep nesting (harder to read)"
-              />
-            </div>
-
             <div>
               <h3 className="text-2xl font-semibold mb-4">Code Pattern Strategy</h3>
               <p className="text-gray-700 mb-4">
