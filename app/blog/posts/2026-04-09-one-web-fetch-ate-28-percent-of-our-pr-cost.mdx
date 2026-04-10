@@ -1,0 +1,52 @@
+export const metadata = {
+  title: "One Web Fetch Ate 28% of Our PR Cost",
+  description:
+    "One web fetch compounded across 22 agent turns and ate 28% of the entire PR's cost. We added Haiku as a summarization filter to stop the bleed.",
+  slug: "one-web-fetch-ate-28-percent-of-our-pr-cost",
+  alternates: {
+    canonical: "/blog/one-web-fetch-ate-28-percent-of-our-pr-cost",
+  },
+  openGraph: {
+    url: "/blog/one-web-fetch-ate-28-percent-of-our-pr-cost",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["token optimization", "cost reduction", "model routing", "AI agents"],
+  createdAt: "2026-04-09T21:08:00-07:00",
+  updatedAt: "2026-04-09T21:08:00-07:00",
+};
+
+# One Web Fetch Ate 28% of Our PR Cost
+
+## 58K tokens for a yes/no question
+
+Our agent was investigating whether Jest 30 supports the `@jest-config` docblock pragma. It called `fetch_url` on the Jest configuration docs page. That single page converted to 58,348 tokens of markdown - navigation menus, sidebar links, configuration options for `testMatch`, `moduleNameMapper`, `transform`, and dozens of other settings the agent didn't need. All 58K tokens went into Claude Opus 4.6's context window.
+
+The agent needed one fact. It got an encyclopedia.
+
+This wasn't a one-off. Every `fetch_url` call inflated the next agent turn by 10K-58K tokens. Worse, in an agentic loop, those tokens compound: they stay in the conversation history and get re-sent on every subsequent API call. We checked production data - that single Jest docs fetch added ~32K tokens to each of the 22 remaining turns. The compounded cost of one web page ate **28% of the entire PR's agent cost**.
+
+## The fix
+
+We replaced `fetch_url` with `web_fetch`, adding Claude Haiku 4.5 as a summarization layer. The tool now takes a `prompt` parameter describing what information to extract. After HTML-to-markdown conversion, Haiku reads the full page and returns only the relevant content. The main model receives a focused summary instead of the raw page.
+
+For that Jest docs page: instead of 58K tokens hitting Opus, Haiku reads them (at 5x cheaper input pricing), returns a ~200-token summary with the answer, and Opus processes only that summary. The token waste drops from 99%+ to near zero.
+
+We also split the tool in two:
+
+- **`web_fetch`** - fetches HTML, summarizes with Haiku, returns the summary. For documentation and articles.
+- **`curl`** - returns raw content with no processing. For JSON APIs and text files where exact content matters.
+
+## Why the model can't solve this itself
+
+Opus is smart enough to ignore irrelevant content on a web page. But by the time it sees the content, you've already paid for the input tokens. The 58K tokens are in the context window whether Opus reads them carefully or skims past them. Asking a model to "focus on the relevant parts" doesn't reduce the input token count.
+
+The filtering has to happen before the tokens reach the expensive model. That's an application-layer decision - the model has no way to say "don't send me the tokens I'm about to ignore."
+
+## The broader pattern
+
+Any time your agent pipeline has a step that produces large output, feeds into an expensive model, and only needs a fraction of the content - insert a cheap model as a filter.
+
+In Python with pytest, verbose test output can be thousands of lines. In Java with Maven or Gradle, build logs run hundreds of KB. CI logs in any language are full of ANSI escape codes, download progress bars, and dependency resolution noise. All of this gets stuffed into the reasoning model's context window and stays there for every subsequent turn.
+
+Model capability and model cost are different axes. Route high-volume, low-complexity work (summarize this page) to cheap models. Route low-volume, high-complexity work (reason about the summary) to expensive ones.

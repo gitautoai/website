@@ -139,6 +139,7 @@ export const RELATIVE_URLS = {
         STALE_FILE_REPLACEMENT: "/docs/how-it-works/token-cost-management/stale-file-replacement",
         SKIP_CI_INTERMEDIATE: "/docs/how-it-works/token-cost-management/skip-ci-intermediate",
         CI_LOG_DEDUP: "/docs/how-it-works/token-cost-management/ci-log-dedup",
+        WEB_FETCH_SUMMARIZATION: "/docs/how-it-works/token-cost-management/web-fetch-summarization",
       },
       RESILIENCE_RECOVERY: {
         MODEL_FALLBACK: "/docs/how-it-works/resilience-recovery/model-fallback",
@@ -281,6 +282,7 @@ export const ABSOLUTE_URLS = {
           STALE_FILE_REPLACEMENT: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.STALE_FILE_REPLACEMENT}`,
           SKIP_CI_INTERMEDIATE: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.SKIP_CI_INTERMEDIATE}`,
           CI_LOG_DEDUP: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.CI_LOG_DEDUP}`,
+          WEB_FETCH_SUMMARIZATION: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.WEB_FETCH_SUMMARIZATION}`,
         },
         RESILIENCE_RECOVERY: {
           MODEL_FALLBACK: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.RESILIENCE_RECOVERY.MODEL_FALLBACK}`,
