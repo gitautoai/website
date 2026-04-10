@@ -63,3 +63,5 @@ This is deterministic and conflict-free. It doesn't matter how the files got to 
 When an API says it changes something, verify it changes **everything** that needs changing. GitHub's API truthfully changes the base branch - the metadata. But "retarget a PR" in a developer's mind means "make the diff show only my changes against the new base." That requires git-level surgery that no REST API currently provides.
 
 If you maintain release branches cut from the same trunk, be aware that retargeting PRs between them is not a one-API-call operation. The label moves instantly. The diff needs work.
+
+GitAuto handles this automatically. See our [docs on sibling branch retarget](/docs/actions/sibling-branch-retarget) for details.
