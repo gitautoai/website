@@ -1,0 +1,68 @@
+export const metadata = {
+  title: "Runtime Downloads Are Hidden CI Costs",
+  description:
+    "MongoMemoryServer downloads a 100MB binary on every CI run. Pre-caching the correct platform-specific archive to S3 eliminates that hidden latency.",
+  slug: "runtime-downloads-are-hidden-ci-costs",
+  alternates: {
+    canonical: "/blog/runtime-downloads-are-hidden-ci-costs",
+  },
+  openGraph: {
+    url: "/blog/runtime-downloads-are-hidden-ci-costs",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["CI optimization", "caching", "MongoMemoryServer", "binary management"],
+  createdAt: "2026-04-11T10:00:00-07:00",
+  updatedAt: "2026-04-11T10:00:00-07:00",
+};
+
+# Runtime Downloads Are Hidden CI Costs
+
+## The assumption
+
+We had just fixed a MongoMemoryServer OS detection bug that affected versions below 8.x. For those, we constructed `MONGOMS_ARCHIVE_NAME` to bypass the broken detection entirely. For 8.x and above, we skipped it - the auto-detection works correctly on Amazon Linux 2023.
+
+"Works correctly" became "nothing to do." That was wrong.
+
+## The hidden cost
+
+MongoMemoryServer downloads a MongoDB binary (~100MB) the first time it runs. On a developer machine, this happens once and gets cached in `~/.cache/mongodb-binaries/`. In CI, there is no persistent cache. Every scheduled run - every PR, every test cycle - downloads the binary fresh.
+
+Across 9 repos running on a schedule, that is 9 downloads of ~100MB each, adding 10-30 seconds of latency per run depending on network conditions. None of this shows up as a "failure." Tests still pass. Logs show a download progress bar that scrolls by. Nobody notices because it is not broken - it is just slow.
+
+## The distro complication
+
+Pre-caching means constructing the correct download URL ahead of time. MongoDB binaries are platform-specific, and the archive filename includes a distro identifier:
+
+```
+mongodb-linux-x86_64-amazon2023-7.0.11.tgz   # MongoDB 7.0+
+mongodb-linux-x86_64-amazon2-6.0.9.tgz        # MongoDB 6.0.x
+```
+
+MongoDB 7.0 and above publish `amazon2023` builds. MongoDB 6.0.x only publishes `amazon2` builds. Get the distro wrong and you get a 403 from the CDN - the URL looks valid but the file does not exist.
+
+The distro depends on the MongoDB server version, not the MongoMemoryServer package version and not the OS. A repo using mongoms 9.x (which defaults to MongoDB 6.0.9) needs `amazon2`, even though the CI runs on Amazon Linux 2023.
+
+## The fix
+
+We built a lookup chain:
+
+1. Check if the repo specifies an explicit MongoDB version in `package.json` config or scripts
+2. If not, map the mongoms package major version to its default MongoDB version (e.g., mongoms 9.x defaults to 6.0.9, mongoms 10.x defaults to 7.0.11)
+3. Derive the distro from the MongoDB version (7.0+ = `amazon2023`, 6.0.x = `amazon2`)
+4. Construct the full archive name and pre-cache it to S3
+
+For future-proofing: if a new mongoms version ships that is not in our mapping, we fall back to the latest known default and send a Slack notification to update the mapping.
+
+## The universal pattern
+
+This is not specific to MongoDB or Node.js. Any CI dependency that downloads platform-specific binaries at runtime is a hidden cost:
+
+- **Puppeteer** downloads Chromium (~170MB) on first run
+- **Prisma** downloads query engines per platform
+- **esbuild** fetches platform-specific Go binaries
+- **Playwright** downloads browser binaries for each target
+
+The pattern is the same everywhere: detect platform, construct URL, download binary. It works. It is also doing redundant network I/O on every CI run when the binary could be cached once and reused.
+
+If your CI runs are "not broken but somehow slow," check whether a dependency is silently downloading binaries at runtime. The download succeeds, the tests pass, and nobody questions why the job took 30 extra seconds. Multiply that by every repo and every scheduled run, and the cost adds up quietly.
