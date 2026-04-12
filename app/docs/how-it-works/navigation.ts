@@ -245,6 +245,11 @@ export const HOW_IT_WORKS_PAGES: NavItem[] = [
     title: "Web Fetch Summarization",
     category: "Token/Cost Management",
   },
+  {
+    href: UTH.TOKEN_COST_MANAGEMENT.CONTEXT_FORGETTING,
+    title: "Context Forgetting",
+    category: "Token/Cost Management",
+  },
 
   // Resilience & Recovery
   {

@@ -15,21 +15,20 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     // Allows customizing built-in components, e.g. to add styling.
     h1: ({ children }) => (
-      <h1 className="text-3xl md:text-4xl text-center mt-24 mb-8 font-semibold">{children}</h1>
+      <h1 className="text-3xl md:text-4xl text-center mt-8 mb-0 font-semibold">{children}</h1>
     ),
     h2: ({ children }) => {
       const text = String(children);
       const slug = toSlug(text);
       return (
-        <h2
-          id={slug}
-          className="text-2xl md:text-3xl text-center mt-16 mb-8 md:my-16 md:mb-12 font-semibold"
-        >
+        <h2 id={slug} className="text-2xl md:text-3xl text-center !mt-10 !mb-3 font-semibold">
           {children}
         </h2>
       );
     },
-    h3: ({ children }) => <h3 className="text-xl md:text-2xl my-8 font-semibold">{children}</h3>,
+    h3: ({ children }) => (
+      <h3 className="text-xl md:text-2xl mt-8 mb-2 font-semibold">{children}</h3>
+    ),
     p: ({ children }) => <p className="text-base md:text-lg py-1">{children}</p>,
     a: ({ href, children }) => {
       // Skip empty hrefs
@@ -94,7 +93,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     img: ({ src, alt, ...props }) => (
       <Image src={src || ""} alt={alt || ""} className="mb-6" width={800} height={400} {...props} />
     ),
-
     table: ({ children }) => (
       <div style={{ overflowX: "auto", fontSize: "0.875rem" }} className="my-8 text-sm md:text-lg">
         <table
@@ -145,11 +143,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     code: ({ className, children }) => {
       // Inline code (no className = not inside a code block)
       if (!className) {
-        return (
-          <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded text-sm">
-            {children}
-          </code>
-        );
+        return <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{children}</code>;
       }
 
       const language = className?.replace("language-", "") || "plaintext";

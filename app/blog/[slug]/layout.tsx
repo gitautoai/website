@@ -1,3 +1,6 @@
+import fs from "fs";
+import Image from "next/image";
+import path from "path";
 import JsonLdScript from "@/app/components/JsonLdScript";
 import { PRODUCT_NAME } from "@/config";
 import { BASE_URL, ABSOLUTE_URLS } from "@/config/urls";
@@ -27,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: post.description,
     url: `${ABSOLUTE_URLS.GITAUTO.BLOG}/${slug}`,
     keywords: post.tags || [],
-    images: [{ url: BASE_URL + "/og/blog-" + slug + ".png", alt: post.title }],
+    images: [{ url: `${BASE_URL}/og/blog/${slug}.png`, alt: post.title }],
     type: "article",
   });
 }
@@ -42,10 +45,27 @@ export default async function BlogPostLayout({ children, params }: BlogPostLayou
   }
 
   const jsonLd = createBlogPostJsonLd(post, slug);
+  const coverPath = `/og/blog/${slug}.png`;
+  const hasCover = fs.existsSync(path.join(process.cwd(), "public", coverPath));
 
   return (
     <>
       <JsonLdScript data={jsonLd} id="jsonld-blogpost" />
+      {hasCover && (
+        <Image
+          src={coverPath}
+          alt={post.title}
+          width={1200}
+          height={630}
+          priority
+          style={{
+            width: "100%",
+            height: "300px",
+            objectFit: "cover",
+            borderRadius: "8px",
+          }}
+        />
+      )}
       {children}
     </>
   );

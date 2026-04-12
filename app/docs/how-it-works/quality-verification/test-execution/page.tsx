@@ -70,6 +70,44 @@ export default function TestExecutionPage() {
         </section>
 
         <section>
+          <h2 className="text-2xl font-semibold mb-4">Node.js Version Detection</h2>
+          <p className="text-gray-600 mb-4">
+            Native Node.js addons encode their ABI version at compile time. If the build environment
+            compiles modules with one Node version but the test runner uses a different version, tests
+            crash with <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">NODE_MODULE_VERSION mismatch</code> errors.
+          </p>
+          <p className="text-gray-600 mb-4">
+            GitAuto detects each repo&apos;s required Node.js version from{" "}
+            <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.nvmrc</code>,{" "}
+            <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.node-version</code>, or{" "}
+            <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">package.json engines</code>{" "}
+            and switches to it at runtime before executing tests. If the upfront detection misses the
+            right version, the AI agent can also switch reactively when it encounters ABI mismatch
+            errors during test execution.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">MongoDB Binary Pre-Caching</h2>
+          <p className="text-gray-600 mb-4">
+            Projects using MongoMemoryServer need a MongoDB binary to run tests. By default,
+            MongoMemoryServer downloads this binary (~100MB) at runtime on every CI run. GitAuto
+            pre-caches the correct binary to S3 during the build phase, so tests start immediately
+            without a network download.
+          </p>
+          <p className="text-gray-600 mb-4">
+            The correct binary depends on the MongoDB server version, not the MongoMemoryServer
+            package version. MongoDB 7.0+ publishes{" "}
+            <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">amazon2023</code> builds
+            while 6.0.x only publishes{" "}
+            <code className="bg-gray-100 px-1.5 py-0.5 rounded text-sm">amazon2</code> builds.
+            GitAuto detects the repo&apos;s MongoMemoryServer version, maps it to the default
+            MongoDB server version, selects the correct distro, and constructs the full archive
+            filename for pre-caching.
+          </p>
+        </section>
+
+        <section>
           <h2 className="text-2xl font-semibold mb-4">Related Features</h2>
           <ul className="list-disc pl-8 text-gray-600 space-y-2">
             <li>

@@ -1,0 +1,53 @@
+export const metadata = {
+  title: "Let Your AI Agent Forget on Purpose",
+  description:
+    "Why we built a tool that lets an AI agent explicitly drop file contents from its own context window, and the token economics behind it.",
+  slug: "let-your-agent-forget",
+  alternates: { canonical: "/blog/let-your-agent-forget" },
+  openGraph: { url: "/blog/let-your-agent-forget" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["ai-agents", "context-window", "cost-optimization", "claude"],
+  createdAt: "2026-04-11T10:00:00-07:00",
+  updatedAt: "2026-04-11T10:00:00-07:00",
+};
+
+# Let Your AI Agent Forget on Purpose
+
+## The problem
+
+When an AI agent runs a multi-step coding task, it reads files early to learn patterns: test naming conventions, project structure, framework idioms. These reference files go into the conversation context and stay there forever.
+
+Every subsequent API call sends the full message history. If the agent reads three reference files totaling 15,000 characters on turn 5, those 15,000 characters ship with every call from turn 6 through turn 50. That is 675,000 characters of redundant input across those 45 turns.
+
+Input tokens are roughly 95% of our Claude costs. At Opus 4.6 pricing ($5 per million input tokens, $25 output), accumulated stale content adds up fast. We noticed reference files persisting across 30+ turns in production runs, contributing meaningfully to our daily invoices.
+
+## The usual approach
+
+Most agent frameworks handle context management from the outside. The orchestrator decides when to truncate, summarize, or compact the conversation. LangChain has buffer windows. OpenAI's ChatGPT does automatic compaction. The agent itself has no say.
+
+This works for generic chatbots. But coding agents have a different pattern: they read specific files for specific reasons, extract what they need, and move on. The orchestrator does not know when the agent is "done" with a file. Only the agent knows.
+
+## The tool
+
+We added a `forget_messages` tool to our agent's toolkit. It takes a list of file paths and replaces their content in the conversation history with a short placeholder like `['src/ref.py' content removed because agent already extracted needed patterns]`.
+
+The agent calls it when it decides it has extracted the patterns it needs. The content is gone from context, but the placeholder reminds the agent the file existed. If it needs the file again, it can re-read it with `get_local_file_content`.
+
+## The economics
+
+Say the agent forgets 15,000 characters on turn 5 of a 50-turn run:
+
+- **Cost of forgetting**: near zero (one tool call, a few placeholder tokens)
+- **Savings per subsequent turn**: 15,000 fewer input characters
+- **Total savings**: 15,000 x 45 turns = 675,000 characters
+
+The breakeven is immediate. The only risk is forgetting too early, but the agent can always re-read.
+
+## What we expect
+
+Giving the agent control over its own context feels unusual but logical. The agent is the one reading files and deciding what to do with them. It already manages file edits, directory creation, and git operations. Managing its own memory is a natural extension.
+
+We shipped this as an experiment. If it works, we will expand it beyond file content to other large tool results.
+
+The broader lesson: if your agent accumulates stale content over long runs, consider giving it a tool to clean up after itself rather than building increasingly complex orchestrator logic.
