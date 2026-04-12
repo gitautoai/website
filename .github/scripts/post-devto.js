@@ -58,6 +58,7 @@ async function postOneToDevTo(filePath) {
   const markdownContent = content
     .split(/export const metadata = {[\s\S]*?};/)[1]
     .trim()
+    .replace(/^# .+\n*/m, "") // Remove leading h1 title; Dev.to already renders metadata.title as h1
     .replace(/\(\/([^)]*)\)/g, "(https://gitauto.ai/$1)") // Add domain to relative links
     .replace(/(https:\/\/[^)\s]*?gitauto\.ai[^)\s]*?)(?=[\s)])/g, "$1" + utmParams); // Add utm params to gitauto.ai links
 
