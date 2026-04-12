@@ -31,33 +31,7 @@ async function findAllPages() {
     pages.push({ name: fileName, path: routePath, title: title, file: file });
   }
 
-  // Add actual blog posts
-  const blogPostsDir = path.join(process.cwd(), "app", "blog", "posts");
-  if (fs.existsSync(blogPostsDir)) {
-    const blogFiles = fs.readdirSync(blogPostsDir).filter((file) => file.endsWith(".mdx"));
-
-    for (const blogFile of blogFiles) {
-      const slug = blogFile.replace(".mdx", "");
-      const blogPath = `/blog/${slug}`;
-      const fileName = `blog-${slug}`;
-
-      // Read blog post metadata for title
-      const blogContent = fs.readFileSync(path.join(blogPostsDir, blogFile), "utf8");
-      const metadataMatch = blogContent.match(/export const metadata = ({[\s\S]*?});/);
-      let title = `GitAuto Blog - ${slug}`;
-
-      if (metadataMatch) {
-        try {
-          const metadata = eval(`(${metadataMatch[1]})`);
-          if (metadata?.title) title = metadata.title;
-        } catch (error) {
-          console.warn(`Could not parse metadata for ${blogFile}:`, error.message);
-        }
-      }
-
-      pages.push({ name: fileName, path: blogPath, title: title, file: `blog/posts/${blogFile}` });
-    }
-  }
+  // Blog post OG images are Unsplash photos added during LGTM workflow, not Playwright screenshots
 
   pages.sort((a, b) => a.path.localeCompare(b.path));
 
@@ -72,7 +46,7 @@ async function generateOGImages() {
   const pages = await findAllPages();
   console.log(
     `Found ${pages.length} pages:`,
-    pages.map((p) => p.path)
+    pages.map((p) => p.path),
   );
 
   const ogDir = path.join(process.cwd(), "public", "og");

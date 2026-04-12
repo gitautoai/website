@@ -892,7 +892,6 @@ export type Database = {
       };
       repository_features: {
         Row: {
-          allow_edit_any_file: boolean;
           auto_merge: boolean;
           auto_merge_only_test_files: boolean;
           created_at: string;
@@ -903,12 +902,10 @@ export type Database = {
           owner_name: string;
           repo_id: number;
           repo_name: string;
-          restrict_edit_to_target_test_file_only: boolean;
           updated_at: string;
           updated_by: string;
         };
         Insert: {
-          allow_edit_any_file?: boolean;
           auto_merge?: boolean;
           auto_merge_only_test_files?: boolean;
           created_at?: string;
@@ -919,12 +916,10 @@ export type Database = {
           owner_name: string;
           repo_id: number;
           repo_name: string;
-          restrict_edit_to_target_test_file_only?: boolean;
           updated_at?: string;
           updated_by: string;
         };
         Update: {
-          allow_edit_any_file?: boolean;
           auto_merge?: boolean;
           auto_merge_only_test_files?: boolean;
           created_at?: string;
@@ -935,7 +930,6 @@ export type Database = {
           owner_name?: string;
           repo_id?: number;
           repo_name?: string;
-          restrict_edit_to_target_test_file_only?: boolean;
           updated_at?: string;
           updated_by?: string;
         };

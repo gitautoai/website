@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./app/**/*.{js,ts,jsx,tsx}", "./stories/**/*.{js,ts,jsx,tsx}"],
+  // mdx-components.tsx uses Tailwind classes (e.g. !mt-10) that need to be scanned
+  content: ["./app/**/*.{js,ts,jsx,tsx}", "./mdx-components.tsx", "./stories/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       spacing: {

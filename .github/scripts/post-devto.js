@@ -30,7 +30,7 @@ async function postOneToDevTo(filePath) {
   const slug = filename.replace(/^\d{4}-\d{2}-\d{2}-/, "");
   const postUrl = `https://gitauto.ai/blog/${slug}`;
   const blogPath = path.join(process.cwd(), filePath);
-  const imageUrl = `https://gitauto.ai/blog/${slug}/thumbnail-devto.png`;
+  const imageUrl = `https://gitauto.ai/og/blog/${slug}.png`;
   console.log({ slug, blogPath, imageUrl });
 
   // Read the blog content
