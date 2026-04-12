@@ -3,17 +3,21 @@ name: E2E Tests
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    paths-ignore:
-      - "**.md"
-      - "**.mdx"
-      - "**.txt"
-      - "**.test.ts"
-      - "**.test.tsx"
-      - ".github/**"
-      - ".claude/**"
-      - "docs/**"
-      - "infrastructure/**"
-      - "public/**"
+    paths:
+      - "**.ts"
+      - "**.tsx"
+      - "**.js"
+      - "**.jsx"
+      - "**.mjs"
+      - "**.json"
+      - "**.css"
+      - "!**.test.ts"
+      - "!**.test.tsx"
+      - "!.github/**"
+      - "!.claude/**"
+      - "!docs/**"
+      - "!infrastructure/**"
+      - "!public/**"
   workflow_dispatch:
 
 jobs:

@@ -5,23 +5,35 @@ on:
   pull_request:
     types: [opened, synchronize]
     branches: [main]
-    paths-ignore:
-      - "**.md"
-      - "**.mdx"
-      - ".github/**"
-      - "docs/**"
-      - "infrastructure/**"
-      - "public/**"
+    paths:
+      - "**.ts"
+      - "**.tsx"
+      - "**.js"
+      - "**.jsx"
+      - "**.mjs"
+      - "**.json"
+      - "**.css"
+      - "!.github/**"
+      - "!.claude/**"
+      - "!docs/**"
+      - "!infrastructure/**"
+      - "!public/**"
   # Run tests after merge and save coverage to Supabase as canonical source of truth
   push:
     branches: [main]
-    paths-ignore:
-      - "**.md"
-      - "**.mdx"
-      - ".github/**"
-      - "docs/**"
-      - "infrastructure/**"
-      - "public/**"
+    paths:
+      - "**.ts"
+      - "**.tsx"
+      - "**.js"
+      - "**.jsx"
+      - "**.mjs"
+      - "**.json"
+      - "**.css"
+      - "!.github/**"
+      - "!.claude/**"
+      - "!docs/**"
+      - "!infrastructure/**"
+      - "!public/**"
   # Allow manual trigger for debugging
   workflow_dispatch:
 
