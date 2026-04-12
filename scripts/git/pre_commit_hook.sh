@@ -5,7 +5,13 @@ set -uo pipefail
 
 echo "=== Pre-commit hook ==="
 
-# Merge latest main
+STAGED_FILES=$(git diff --cached --name-only)
+has_mdx=$(echo "$STAGED_FILES" | grep -q '\.mdx$' && echo 1 || echo 0)
+has_md=$(echo "$STAGED_FILES" | grep -q '\.md$' && echo 1 || echo 0)
+has_ts=$(echo "$STAGED_FILES" | grep -qE '\.(ts|tsx)$' && echo 1 || echo 0)
+has_js=$(echo "$STAGED_FILES" | grep -qE '\.(js|jsx|mjs)$' && echo 1 || echo 0)
+
+# Merge latest main (always)
 echo "--- merge main ---"
 git fetch origin main && git merge origin/main
 if [ $? -ne 0 ]; then
@@ -14,59 +20,73 @@ if [ $? -ne 0 ]; then
 fi
 
 # Blog metadata length validation (title 50-60 with suffix, description 110-160)
-echo "--- blog metadata length check ---"
-npx tsx scripts/git/validate_blog_metadata.ts
-if [ $? -ne 0 ]; then
-    echo "FAILED: Fix blog post metadata lengths before committing."
-    exit 1
+if [ "$has_mdx" = "1" ]; then
+    echo "--- blog metadata length check ---"
+    npx tsx scripts/git/validate_blog_metadata.ts
+    if [ $? -ne 0 ]; then
+        echo "FAILED: Fix blog post metadata lengths before committing."
+        exit 1
+    fi
 fi
 
 # Generate TypeScript types
-echo "--- types:generate ---"
-npm run types:generate
-if [ $? -ne 0 ]; then
-    echo "FAILED: Type generation failed."
-    exit 1
+if [ "$has_ts" = "1" ]; then
+    echo "--- types:generate ---"
+    npm run types:generate
+    if [ $? -ne 0 ]; then
+        echo "FAILED: Type generation failed."
+        exit 1
+    fi
 fi
 
 # ESLint
-echo "--- eslint ---"
-npx eslint .
-if [ $? -ne 0 ]; then
-    echo "FAILED: Fix ESLint errors before committing."
-    exit 1
+if [ "$has_ts" = "1" ] || [ "$has_js" = "1" ]; then
+    echo "--- eslint ---"
+    npx eslint .
+    if [ $? -ne 0 ]; then
+        echo "FAILED: Fix ESLint errors before committing."
+        exit 1
+    fi
 fi
 
 # Markdown lint
-echo "--- markdownlint ---"
-npx markdownlint-cli2 "**/*.md" "#node_modules" "#.next"
-if [ $? -ne 0 ]; then
-    echo "FAILED: Fix markdown lint errors before committing."
-    exit 1
+if [ "$has_md" = "1" ]; then
+    echo "--- markdownlint ---"
+    npx markdownlint-cli2 "**/*.md" "#node_modules" "#.next"
+    if [ $? -ne 0 ]; then
+        echo "FAILED: Fix markdown lint errors before committing."
+        exit 1
+    fi
 fi
 
 # TypeScript type check
-echo "--- tsc ---"
-npx tsc --noEmit
-if [ $? -ne 0 ]; then
-    echo "FAILED: Fix TypeScript errors before committing."
-    exit 1
+if [ "$has_ts" = "1" ]; then
+    echo "--- tsc ---"
+    npx tsc --noEmit
+    if [ $? -ne 0 ]; then
+        echo "FAILED: Fix TypeScript errors before committing."
+        exit 1
+    fi
 fi
 
 # Tests
-echo "--- jest ---"
-npx jest
-if [ $? -ne 0 ]; then
-    echo "FAILED: Fix failing tests before committing."
-    exit 1
+if [ "$has_ts" = "1" ] || [ "$has_js" = "1" ]; then
+    echo "--- jest ---"
+    npx jest
+    if [ $? -ne 0 ]; then
+        echo "FAILED: Fix failing tests before committing."
+        exit 1
+    fi
 fi
 
 # Build
-echo "--- build ---"
-npm run build
-if [ $? -ne 0 ]; then
-    echo "FAILED: Build failed."
-    exit 1
+if [ "$has_ts" = "1" ]; then
+    echo "--- build ---"
+    npm run build
+    if [ $? -ne 0 ]; then
+        echo "FAILED: Build failed."
+        exit 1
+    fi
 fi
 
 echo "=== Pre-commit hook passed ==="

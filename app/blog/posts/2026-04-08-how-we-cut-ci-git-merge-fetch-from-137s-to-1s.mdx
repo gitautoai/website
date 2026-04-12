@@ -1,0 +1,72 @@
+export const metadata = {
+  title: "How We Cut CI git merge Fetch from 137s to 1s",
+  description:
+    "Shallow clones break git merge. We replaced --unshallow with the GitHub Compare API and exponential --deepen, cutting fetch time from 137s to under 1s.",
+  slug: "how-we-cut-ci-git-merge-fetch-from-137s-to-1s",
+  alternates: {
+    canonical: "/blog/how-we-cut-ci-git-merge-fetch-from-137s-to-1s",
+  },
+  openGraph: {
+    url: "/blog/how-we-cut-ci-git-merge-fetch-from-137s-to-1s",
+  },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["git", "shallow clone", "performance", "GitHub API"],
+  createdAt: "2026-04-12T16:36:00-07:00",
+  updatedAt: "2026-04-12T16:36:00-07:00",
+};
+
+# How We Cut CI git merge Fetch from 137s to 1s
+
+## Why merge base into a PR at all?
+
+When a PR sits open for days, the base branch keeps moving. Other PRs get merged, and the PR's code falls behind. If the base branch changed the same files the PR touches, you get merge conflicts. CI might pass on the PR branch alone but fail after merge, or worse, the agent edits stale code and produces a diff that silently breaks on merge.
+
+Our agent merges the base branch into the PR before it starts working. This surfaces conflict markers upfront so the agent can resolve them, and ensures every edit happens against the current state of the codebase — not a snapshot from days ago.
+
+## The shallow clone problem
+
+We use shallow clones (`--depth 1`) to keep clone times fast. But `git merge` needs a common ancestor between the two branches, and a depth-1 clone only has a single commit — no shared history. The merge fails immediately.
+
+## The naive fix: --unshallow
+
+The obvious solution is `git fetch --unshallow origin main`. This downloads the full commit history so git can find the merge base. It works, but for a repo with 61,000 commits, this single command took 137 seconds - over two minutes of pure network transfer before the agent could start working.
+
+## The insight: we don't need all 61K commits
+
+The merge base between a PR branch and its base is typically within the last few hundred commits. Downloading 61,000 commits to find an ancestor 50 commits back is wasteful.
+
+## The fix: ask GitHub, then deepen precisely
+
+We split the solution into two strategies:
+
+**Primary: GitHub Compare API.** Before touching git at all, we call `GET /repos/{owner}/{repo}/compare/{base}...{head}`. GitHub returns `behind_by` - the exact number of commits the PR is behind the base. If the PR is 50 commits behind, we run `git fetch --deepen 60 origin main` (50 plus a small buffer). One API call, one precise fetch.
+
+This works because GitHub already has the full commit graph indexed in its database. Computing `behind_by` is a graph traversal on data already in memory - milliseconds regardless of repo size. Our shallow clone's bottleneck is network transfer of git objects. GitHub's bottleneck is... nothing, really.
+
+**Fallback: exponential deepen.** If the API fails (rate limit, network issue), we deepen exponentially: `--deepen 100`, check for merge base with `git merge-base`, if not found `--deepen 500`, then 2500, then 12500. Four rounds covering 15,600 commits total. If even that isn't enough, we fall back to `--unshallow` as a last resort.
+
+```python
+if behind_by > 0:
+    depth = behind_by + 10
+    run_subprocess(["git", "fetch", "--deepen", str(depth), "origin", base_branch], clone_dir)
+else:
+    depth = 100
+    while depth <= 12500:
+        run_subprocess(["git", "fetch", "--deepen", str(depth), "origin", base_branch], clone_dir)
+        try:
+            run_subprocess(["git", "merge-base", "HEAD", f"origin/{base_branch}"], clone_dir)
+            break
+        except ValueError:
+            depth *= 5
+    else:
+        run_subprocess(["git", "fetch", "--unshallow", "origin", base_branch], clone_dir)
+```
+
+## The broader pattern
+
+Shallow clones are a common optimization, but they create a tension: fast clone vs. operations that need history (merge, blame, log). The key insight is that you rarely need _all_ the history. By querying the hosting platform's API first, you can fetch exactly the depth you need. This pattern applies to any CI/CD system or automation tool that uses shallow clones and needs to perform merge operations.
+
+## Results
+
+For the 61K-commit repo that triggered this investigation: API path fetches roughly 60 commits in under a second instead of 61,000 commits in 137 seconds. The exponential fallback handles edge cases without ever needing the full history for typical repositories.
