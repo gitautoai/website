@@ -3,6 +3,7 @@ import Image from "next/image";
 import path from "path";
 import JsonLdScript from "@/app/components/JsonLdScript";
 import { PRODUCT_NAME } from "@/config";
+import { THUMBNAILS } from "@/config/thumbnails";
 import { BASE_URL, ABSOLUTE_URLS } from "@/config/urls";
 import { createPageMetadata } from "@/utils/metadata";
 import { getBlogPostFromPosts } from "../utils/get-blog-post-from-posts";
@@ -11,6 +12,12 @@ import { createBlogPostJsonLd } from "./jsonld";
 interface BlogPostLayoutProps {
   children: React.ReactNode;
   params: Promise<{ slug: string }>;
+}
+
+function getBlogCoverUrl(slug: string) {
+  const coverPath = `/og/blog/${slug}.png`;
+  const exists = fs.existsSync(path.join(process.cwd(), "public", coverPath));
+  return exists ? `${BASE_URL}${coverPath}` : THUMBNAILS.HOME;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -30,7 +37,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     description: post.description,
     url: `${ABSOLUTE_URLS.GITAUTO.BLOG}/${slug}`,
     keywords: post.tags || [],
-    images: [{ url: `${BASE_URL}/og/blog/${slug}.png`, alt: post.title }],
+    images: [{ url: getBlogCoverUrl(slug), alt: post.title }],
     type: "article",
   });
 }
