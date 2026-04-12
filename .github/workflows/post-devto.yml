@@ -1,11 +1,12 @@
 name: Post to Dev.to
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Deploy to Vercel"]
+    types:
+      - completed
     branches:
       - main
-    paths:
-      - "app/blog/**/*.mdx"
 
 permissions:
   contents: read
@@ -17,6 +18,7 @@ env:
 jobs:
   post-devto:
     runs-on: ubuntu-22.04
+    if: github.event.workflow_run.conclusion == 'success'
     steps:
       - uses: actions/checkout@v4
 

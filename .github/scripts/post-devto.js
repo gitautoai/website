@@ -3,17 +3,29 @@ const notifySlack = require("./notify-slack.js");
 const path = require("path");
 
 /**
- * Extracts blog post files from push event using compare API.
- * Using commit.added/modified from push payload doesn't work for merge commits
- * (arrays are empty), so we compare before/after SHAs instead.
+ * Extracts blog post files from the PR associated with the workflow_run event.
+ * Triggered after "Deploy to Vercel" completes so images are live.
  */
 async function getChangedPostFiles(github, context) {
-  const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
+  const headSha = context.payload.workflow_run.head_sha;
+  const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    basehead: `${context.payload.before}...${context.payload.after}`,
+    commit_sha: headSha,
   });
-  return (comparison.files || [])
+
+  if (prs.length === 0) {
+    console.log("No PR found for commit, skipping");
+    return [];
+  }
+
+  const { data: files } = await github.rest.pulls.listFiles({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    pull_number: prs[0].number,
+  });
+
+  return files
     .filter((f) => f.filename.startsWith("app/blog/posts/") && f.filename.endsWith(".mdx"))
     .filter((f) => f.status !== "removed")
     .map((f) => f.filename);
