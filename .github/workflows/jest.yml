@@ -8,7 +8,7 @@ on:
     paths-ignore:
       - "**.md"
       - "**.mdx"
-      - ".github/workflows/**"
+      - ".github/**"
       - "docs/**"
       - "infrastructure/**"
       - "public/**"
@@ -18,7 +18,7 @@ on:
     paths-ignore:
       - "**.md"
       - "**.mdx"
-      - ".github/workflows/**"
+      - ".github/**"
       - "docs/**"
       - "infrastructure/**"
       - "public/**"

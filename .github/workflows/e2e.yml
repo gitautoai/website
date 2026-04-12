@@ -9,7 +9,7 @@ on:
       - "**.txt"
       - "**.test.ts"
       - "**.test.tsx"
-      - ".github/workflows/**"
+      - ".github/**"
       - ".claude/**"
       - "docs/**"
       - "infrastructure/**"
