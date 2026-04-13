@@ -17,7 +17,9 @@ export default function Footer() {
   const hideFooter = pathname?.startsWith("/dashboard");
   if (hideFooter) return null;
 
-  const groupedLinks = INTERNAL_LINKS.reduce(
+  const groupedLinks = INTERNAL_LINKS.filter(
+    (link) => !("showInFooter" in link && !link.showInFooter),
+  ).reduce(
     (acc, link) => {
       if (!acc[link.category]) acc[link.category] = [] as (typeof INTERNAL_LINKS)[number][];
       acc[link.category].push(link);

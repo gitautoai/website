@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <JsonLdScript data={dashboardJsonLd} />
       <div className="min-h-screen flex">
         {/* Desktop Menu - Server-rendered for SEO */}
-        <div className="hidden lg:block lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-56 lg:bg-gray-50 lg:border-r">
+        <div className="hidden lg:block lg:fixed lg:left-0 lg:top-0 lg:h-screen lg:w-56 lg:bg-gray-50 lg:border-r lg:overflow-y-auto">
           <DashboardMenu />
         </div>
 

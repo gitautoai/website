@@ -30,7 +30,7 @@ export default function MobileDashboardMenu({
 
       {/* Menu */}
       <div
-        className={`fixed right-0 top-0 h-full w-64 bg-white shadow-xl transform transition-transform duration-200 ease-in-out ${
+        className={`fixed right-0 top-0 h-full w-64 bg-white shadow-xl overflow-y-auto transform transition-transform duration-200 ease-in-out ${
           isClosing ? "-translate-x-full" : "translate-x-0"
         }`}
       >

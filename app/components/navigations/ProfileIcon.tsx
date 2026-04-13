@@ -120,7 +120,7 @@ const ProfileIcon = ({ session, mobileMenuTrigger = false }: ProfileIconProps) =
                     }
                   }}
                 >
-                  <span className="link">Manage Subscriptions</span>
+                  <span className="link">Billing</span>
                 </button>
               )}
 

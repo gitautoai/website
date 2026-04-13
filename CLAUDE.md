@@ -232,33 +232,33 @@ When the user says "LGTM", execute these commands in order:
 2. `git commit -m "descriptive message"` - Pre-commit hook runs all checks (merge main, lint, type check, test, build). **If hook fails, fix and re-commit.** (do NOT include Claude Code attribution, do NOT include `[skip ci]`)
 3. `git push` - Push to remote
 4. Create pull request: `gh pr create --title "PR title" --body "PR description" --assignee @me`
-    - PR title should be technical and descriptive
-    - **Do NOT include a `## Test plan` section** - it's unnecessary noise
-    - **Social Media Post sections must always be the last sections in the PR body**
-    - **Social Media Post sections**: Only include when there are explicit customer benefits or useful dev insights. Skip for internal-only changes (refactoring, logging fixes, test improvements, infrastructure updates) that don't affect customers or teach anything.
-    - Always write TWO posts:
-      - **GitAuto post** (`## Social Media Post (GitAuto)`): Product voice. Can mention GitAuto. Explains what changed and why it matters for users.
-      - **Wes post** (`## Social Media Post (Wes)`): Personal voice. Written as Wes (the founder) sharing what he debugged/built. Don't emphasize "GitAuto" — no "GitAuto now does X" pattern. More like telling a friend what you worked on today.
-    - Shared guidelines for both posts:
-      - **NEVER use em dashes (—)** in social media posts. Use regular dashes (-) or rewrite the sentence instead.
-      - Be concise and fit in a tweet (under 280 characters is ideal)
-      - **Write for developers, not marketers** - our customers are devs who hate corporate speak
-      - **NEVER use typical marketing keywords**: "all-in", "doubling down", "sunsetting", "deeper features", "polished product", "game-changer", "seamless"
-      - **NEVER frame things negatively**: "unused", "nobody used", "removing unused" - this is embarrassing
-      - **Be straightforward and honest** like a dev talking to other devs
-      - **Users don't know GitAuto internals** - They don't know we clone repos, install dependencies, set up working environments, etc. When relevant, educate them on what GitAuto does
-      - **Tell the story when there's a real failure** - When you find a real flaw or failure, be transparent. Tell the story: what happened, what went wrong (e.g. Claude misunderstood X, our pipeline missed Y), what the impact was, and how we improved. Developers respect honesty and the story resonates more than hiding it. Frame it as "we found a flaw → it caused X → we improved" not "we fixed a bug".
-      - **Sound like a human wrote it** - AI-generated posts are obvious and get ignored. Write like a real dev sharing something they built. Be casual, imperfect, opinionated. No polished marketing tone.
-      - **Vary the opening every time** - NEVER use patterns like "GitAuto now...", "We just...", or any formula that gets stale. Start with the substance — what changed, why it matters, or a hook.
-      - **Wes post: don't repeat openers** - Before writing, run `scripts/git/recent_social_posts.sh wes` and make sure your opening sentence doesn't use the same structure as any recent post.
-    - If the PR includes a Social Media Post section, check recent posts to avoid repeating patterns:
+   - PR title should be technical and descriptive
+   - **Do NOT include a `## Test plan` section** - it's unnecessary noise
+   - **Social Media Post sections must always be the last sections in the PR body**
+   - **Social Media Post sections**: Only include when there are explicit customer benefits or useful dev insights. Skip for internal-only changes (refactoring, logging fixes, test improvements, infrastructure updates) that don't affect customers or teach anything.
+   - Always write TWO posts:
+     - **GitAuto post** (`## Social Media Post (GitAuto)`): Product voice. Can mention GitAuto. Explains what changed and why it matters for users.
+     - **Wes post** (`## Social Media Post (Wes)`): Personal voice. Written as Wes (the founder) sharing what he debugged/built. Don't emphasize "GitAuto" — no "GitAuto now does X" pattern. More like telling a friend what you worked on today.
+   - Shared guidelines for both posts:
+     - **NEVER use em dashes (—)** in social media posts. Use regular dashes (-) or rewrite the sentence instead.
+     - Be concise and fit in a tweet (under 280 characters is ideal)
+     - **Write for developers, not marketers** - our customers are devs who hate corporate speak
+     - **NEVER use typical marketing keywords**: "all-in", "doubling down", "sunsetting", "deeper features", "polished product", "game-changer", "seamless"
+     - **NEVER frame things negatively**: "unused", "nobody used", "removing unused" - this is embarrassing
+     - **Be straightforward and honest** like a dev talking to other devs
+     - **Users don't know GitAuto internals** - They don't know we clone repos, install dependencies, set up working environments, etc. When relevant, educate them on what GitAuto does
+     - **Tell the story when there's a real failure** - When you find a real flaw or failure, be transparent. Tell the story: what happened, what went wrong (e.g. Claude misunderstood X, our pipeline missed Y), what the impact was, and how we improved. Developers respect honesty and the story resonates more than hiding it. Frame it as "we found a flaw → it caused X → we improved" not "we fixed a bug".
+     - **Sound like a human wrote it** - AI-generated posts are obvious and get ignored. Write like a real dev sharing something they built. Be casual, imperfect, opinionated. No polished marketing tone.
+     - **Vary the opening every time** - NEVER use patterns like "GitAuto now...", "We just...", or any formula that gets stale. Start with the substance — what changed, why it matters, or a hook.
+     - **Wes post: don't repeat openers** - Before writing, run `scripts/git/recent_social_posts.sh wes` and make sure your opening sentence doesn't use the same structure as any recent post.
+   - If the PR includes a Social Media Post section, check recent posts to avoid repeating patterns:
 
-      ```bash
-      scripts/git/recent_social_posts.sh gitauto  # GitAuto posts only
-      scripts/git/recent_social_posts.sh wes      # Wes posts only
-      ```
+     ```bash
+     scripts/git/recent_social_posts.sh gitauto  # GitAuto posts only
+     scripts/git/recent_social_posts.sh wes      # Wes posts only
+     ```
 
-      Read the output and ensure your new post uses a different sentence structure and opener.
+     Read the output and ensure your new post uses a different sentence structure and opener.
 
 **Note**: E2E tests (`npx playwright test`) are skipped during LGTM to save time. Run them manually when needed.
 
@@ -332,6 +332,18 @@ Show results from each sub-agent before proceeding to the next step.
 - **Hover states**: `pink-700` for button hovers, `hover:underline` for links
 - **Secondary colors**: `gray-600` for text, `red-600` for errors, `green-600` for success
 - **Never use**: `blue-600` or other blue colors - always use pink for primary actions
+
+### Global Styles
+
+- **Always read `styles/globals.css` first** before styling elements. Global base styles exist for `h2`, `label`, etc. Override with inline classes only when needed — don't duplicate what the global already provides.
+
+### UI Consistency Rules
+
+- **Match heights**: When elements sit side by side (buttons, links, selects, icons), they MUST have the same rendered height. Use browser DevTools or JS to verify `getBoundingClientRect().height` matches exactly. Don't eyeball it.
+- **Match widths**: When elements are stacked vertically (e.g., a select above a button), they should share the same width constraint (e.g., both inside a `w-48` container).
+- **Consistent spacing**: Spacing (`gap`, `margin`) is context-dependent - use your judgement per layout. But padding on adjacent interactive elements (buttons, selects, inputs) that sit side by side MUST match so they render the same height.
+- **Button text wrapping**: Be intentional about whether button text wraps. If a button sits inline with other elements, use `whitespace-nowrap` to prevent awkward two-line buttons. But full-width buttons in narrow containers may wrap by design.
+- **Reusable components**: Use shared components (`DocsLink`, `InfoIcon`, `SaveButton`) instead of creating one-off elements. When a shared component needs a variant (e.g., icon-only), add a prop to the existing component rather than creating a new one.
 
 ### Quality Priorities (in order of importance)
 
