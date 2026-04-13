@@ -205,6 +205,23 @@ export default function ReviewCommentTriggerPage() {
           </div>
         </div>
 
+        {/* Retarget */}
+        <div>
+          <h2 className="text-2xl font-semibold mt-0 mb-4">Retarget to a Different Branch</h2>
+          <p className="text-gray-700 mb-3">
+            You can also ask GitAuto to change a PR&apos;s target branch via a review comment (e.g.
+            &quot;please target release/20260501 instead&quot;). GitAuto will safely retarget the PR
+            and rewrite the diff. See{" "}
+            <Link
+              href={RELATIVE_URLS.DOCS.ACTIONS.SIBLING_BRANCH_RETARGET}
+              className="text-pink-600 hover:text-pink-700"
+            >
+              Sibling Branch Retarget
+            </Link>{" "}
+            for details.
+          </p>
+        </div>
+
         {/* Example */}
         <div>
           <h2 className="text-2xl font-semibold mt-0 mb-4">See It in Action</h2>

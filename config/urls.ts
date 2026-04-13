@@ -46,6 +46,7 @@ export const RELATIVE_URLS = {
     ACTIONS: {
       AUTO_MERGE: "/docs/actions/auto-merge",
       PR_BODY_SUMMARY: "/docs/actions/pr-body-summary",
+      SIBLING_BRANCH_RETARGET: "/docs/actions/sibling-branch-retarget",
     },
     GETTING_STARTED: {
       INSTALLATION: "/docs/getting-started/installation",
@@ -194,6 +195,7 @@ export const ABSOLUTE_URLS = {
       ACTIONS: {
         AUTO_MERGE: `${BASE_URL}${RELATIVE_URLS.DOCS.ACTIONS.AUTO_MERGE}`,
         PR_BODY_SUMMARY: `${BASE_URL}${RELATIVE_URLS.DOCS.ACTIONS.PR_BODY_SUMMARY}`,
+        SIBLING_BRANCH_RETARGET: `${BASE_URL}${RELATIVE_URLS.DOCS.ACTIONS.SIBLING_BRANCH_RETARGET}`,
       },
       GETTING_STARTED: {
         INSTALLATION: `${BASE_URL}${RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION}`,

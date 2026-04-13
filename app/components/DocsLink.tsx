@@ -3,13 +3,14 @@ import Link from "next/link";
 interface DocsLinkProps {
   className?: string;
   href: string;
+  showLabel?: boolean;
 }
 
-export default function DocsLink({ className = "", href }: DocsLinkProps) {
+export default function DocsLink({ className = "", href, showLabel = true }: DocsLinkProps) {
   return (
     <Link
       href={href}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors text-gray-600 ${className}`}
+      className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-gray-100 hover:bg-gray-200 transition-colors text-gray-600 ${className}`}
       aria-label="Documentation"
     >
       <svg
@@ -26,7 +27,7 @@ export default function DocsLink({ className = "", href }: DocsLinkProps) {
         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
       </svg>
-      <span className="text-sm font-medium">Docs</span>
+      {showLabel && <span className="text-sm font-medium">Docs</span>}
     </Link>
   );
 }

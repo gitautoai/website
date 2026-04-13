@@ -3,11 +3,13 @@
 import { useCallback, useEffect, useState, useRef, useTransition } from "react";
 
 // Local imports
+import { retargetPRBranches } from "@/app/actions/retarget-pr-branches";
 import { getRepositorySettings } from "@/app/actions/supabase/repositories/get-repository-settings";
 import { updateRepoLanguage } from "@/app/actions/supabase/repositories/update-repo-language";
 import { upsertRepository } from "@/app/actions/supabase/repositories/upsert-repository";
 import { Branch } from "@/app/api/github/get-branches/route";
 import { useAccountContext } from "@/app/components/contexts/Account";
+import DocsLink from "@/app/components/DocsLink";
 import LoadingSpinner from "@/app/components/LoadingSpinner";
 import RepositorySelector from "@/app/dashboard/components/RepositorySelector";
 import SaveButton from "@/app/dashboard/components/SaveButton";
@@ -15,6 +17,7 @@ import StructuredRulesSection from "@/app/dashboard/rules/StructuredRulesSection
 import { PLAN_LIMITS } from "@/app/dashboard/constants/plans";
 import { RULES_CONTENT } from "@/app/dashboard/rules/config/freeform-rules";
 import { SUPPORTED_LANGUAGES } from "@/config/languages";
+import { RELATIVE_URLS } from "@/config/urls";
 import {
   DEFAULT_STRUCTURED_RULES,
   StructuredRules,
@@ -25,6 +28,7 @@ import { countTokens } from "@/utils/tokens";
 export default function RulesPage() {
   // Account context
   const {
+    currentInstallationId,
     currentOwnerId,
     currentOwnerName,
     currentRepoId,
@@ -249,6 +253,32 @@ export default function RulesPage() {
     await updateRepoLanguage(currentOwnerId, currentRepoId, languageCode);
   };
 
+  // Retarget open PRs
+  const [isRetargeting, setIsRetargeting] = useState(false);
+  const [retargetMessage, setRetargetMessage] = useState<string | null>(null);
+
+  const handleRetargetPRs = async () => {
+    if (!currentOwnerName || !currentRepoName || !currentInstallationId || !formData.targetBranch)
+      return;
+
+    setIsRetargeting(true);
+    setRetargetMessage(null);
+    try {
+      await retargetPRBranches(
+        currentOwnerName,
+        currentRepoName,
+        currentInstallationId,
+        formData.targetBranch,
+      );
+      setRetargetMessage("Retargeting started. Open PRs will be updated in the background.");
+    } catch (err) {
+      console.error("Error retargeting PRs:", err);
+      setRetargetMessage("Failed to retarget PRs. Please try again.");
+    } finally {
+      setIsRetargeting(false);
+    }
+  };
+
   // Memoized rule section renderer
   const renderRuleSection = useCallback(
     (field: "repoRules") => (
@@ -333,6 +363,22 @@ export default function RulesPage() {
           </select>
         </div>
       </div>
+
+      <div className="mt-3 w-48 flex items-center gap-2">
+        <button
+          onClick={handleRetargetPRs}
+          disabled={isRetargeting || !formData.targetBranch || !currentInstallationId}
+          className="flex-1 text-sm p-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:bg-gray-300 disabled:cursor-not-allowed whitespace-nowrap"
+        >
+          {isRetargeting ? "Retargeting..." : "Retarget Open PRs"}
+        </button>
+        <DocsLink
+          href={RELATIVE_URLS.DOCS.ACTIONS.SIBLING_BRANCH_RETARGET}
+          showLabel={false}
+          className="h-9"
+        />
+      </div>
+      {retargetMessage && <p className="mt-1 text-xs text-gray-600">{retargetMessage}</p>}
 
       <div className="space-y-6">
         <StructuredRulesSection
