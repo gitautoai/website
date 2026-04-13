@@ -73,7 +73,6 @@ export const INTERNAL_LINKS = [
     category: "docs",
     showInHeader: true,
     showInMobile: true,
-    showInFooter: false,
   },
   {
     href: RELATIVE_URLS.DASHBOARD.INDEX,
@@ -82,7 +81,6 @@ export const INTERNAL_LINKS = [
     category: "dashboard",
     showInHeader: true,
     showInMobile: true,
-    showInFooter: false,
   },
   {
     href: RELATIVE_URLS.PRICING_DETAILS,

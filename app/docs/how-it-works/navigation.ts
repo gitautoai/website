@@ -250,6 +250,11 @@ export const HOW_IT_WORKS_PAGES: NavItem[] = [
     title: "Context Forgetting",
     category: "Token/Cost Management",
   },
+  {
+    href: UTH.TOKEN_COST_MANAGEMENT.FILE_QUERY_ROUTING,
+    title: "File Query Routing",
+    category: "Token/Cost Management",
+  },
 
   // Resilience & Recovery
   {
