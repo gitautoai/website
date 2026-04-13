@@ -272,8 +272,9 @@ export default function CoveragePage() {
   const currentRepo = currentOrg?.repositories.find((repo) => repo.repoName === currentRepoName);
 
   // Show modal automatically when coverage data has all null values (no CI workflow)
+  // Also reset when switching to a repo that has real coverage data
   useEffect(() => {
-    if (allCoverageEmpty && !isLoadingDB) setShowVisitModal(true);
+    if (!isLoadingDB) setShowVisitModal(allCoverageEmpty);
   }, [allCoverageEmpty, isLoadingDB]);
 
   // Check for existing setup PR when coverage is empty

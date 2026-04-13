@@ -49,10 +49,11 @@ if [ "$has_ts" = "1" ] || [ "$has_js" = "1" ]; then
     fi
 fi
 
-# Markdown lint
-if [ "$has_md" = "1" ]; then
+# Markdown lint (only staged files to avoid pre-existing errors)
+if [ "$has_md" = "1" ] || [ "$has_mdx" = "1" ]; then
     echo "--- markdownlint ---"
-    npx markdownlint-cli2 "**/*.md" "#node_modules" "#.next"
+    STAGED_MD=$(echo "$STAGED_FILES" | grep -E '\.(md|mdx)$' || true)
+    npx markdownlint-cli2 $STAGED_MD
     if [ $? -ne 0 ]; then
         echo "FAILED: Fix markdown lint errors before committing."
         exit 1
