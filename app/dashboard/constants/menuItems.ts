@@ -2,6 +2,7 @@ import { RELATIVE_URLS } from "@/config/urls";
 
 export const menuItems = [
   { id: "dashboard-header", label: "Dashboard", href: "#", isHeader: true },
+  { id: "overview", label: "Overview", href: RELATIVE_URLS.DASHBOARD.INDEX, isHeader: false },
   {
     id: "coverage-trends",
     label: "Coverage Trends",

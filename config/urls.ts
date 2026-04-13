@@ -26,6 +26,7 @@ export const RELATIVE_URLS = {
     METHODOLOGY: "/roi/methodology",
   },
   DASHBOARD: {
+    INDEX: "/dashboard",
     GENERAL: "/dashboard/general",
     COVERAGE_TRENDS: "/dashboard/coverage-trends",
     FILE_COVERAGE: "/dashboard/file-coverage",
@@ -166,7 +167,7 @@ export const RELATIVE_URLS = {
 } as const;
 
 // Authentication
-export const DEFAULT_SIGNIN_REDIRECT = RELATIVE_URLS.DASHBOARD.COVERAGE_TRENDS;
+export const DEFAULT_SIGNIN_REDIRECT = RELATIVE_URLS.DASHBOARD.INDEX;
 
 export const ABSOLUTE_URLS = {
   CALENDLY: "https://calendly.com/gitauto/wes",

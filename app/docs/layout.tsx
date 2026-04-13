@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { FaChevronDown, FaChevronRight } from "react-icons/fa";
 import { slackUs } from "@/app/actions/slack/slack-us";
 import { useAccountContext } from "@/app/components/contexts/Account";
 import { RELATIVE_URLS } from "@/config/urls";
@@ -172,25 +171,10 @@ const howItWorksCategories = [
 export default function DocsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { userId, userName } = useAccountContext();
-  const isHowItWorks = pathname.startsWith("/docs/how-it-works");
-  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
-
   useEffect(() => {
     if (!userId || !userName) return;
     slackUs(`${userName} (${userId}) visited docs: ${pathname}`).catch(console.error);
   }, [userId, userName, pathname]);
-
-  // Auto-expand the category containing the current page
-  useEffect(() => {
-    if (!isHowItWorks) return;
-    for (const cat of howItWorksCategories) {
-      if (cat.items.some((item) => pathname === item.href))
-        setExpandedCategories((prev) => ({ ...prev, [cat.title]: true }));
-    }
-  }, [pathname, isHowItWorks]);
-
-  const toggleCategory = (title: string) =>
-    setExpandedCategories((prev) => ({ ...prev, [title]: !prev[title] }));
 
   return (
     <div className="min-h-[calc(100vh-64px)] pt-28">
@@ -225,48 +209,30 @@ export default function DocsLayout({ children }: { children: React.ReactNode }) 
               ))}
 
               {/* How It Works */}
-              <div>
-                <h3 className="font-medium text-gray-900 text-sm mb-2">How It Works</h3>
-                <ul className="space-y-0.5">
-                  {howItWorksCategories.map((cat) => (
-                    <li key={cat.title}>
-                      <button
-                        onClick={() => toggleCategory(cat.title)}
-                        className={`flex items-center gap-1 w-full py-1 px-2 rounded-md text-sm transition-colors text-left ${
-                          cat.items.some((i) => pathname === i.href)
-                            ? "text-pink-600 font-medium"
-                            : "text-gray-600 hover:text-pink-600"
-                        }`}
-                      >
-                        {expandedCategories[cat.title] ? (
-                          <FaChevronDown className="h-2.5 w-2.5 shrink-0" />
-                        ) : (
-                          <FaChevronRight className="h-2.5 w-2.5 shrink-0" />
-                        )}
-                        {cat.title}
-                      </button>
-                      {expandedCategories[cat.title] && (
-                        <ul className="ml-4 space-y-0.5">
-                          {cat.items.map((item) => (
-                            <li key={item.href}>
-                              <Link
-                                href={item.href}
-                                className={`block py-0.5 px-2 rounded-md text-xs transition-colors ${
-                                  pathname === item.href
-                                    ? "bg-pink-50 text-pink-600"
-                                    : "text-gray-500 hover:text-pink-600"
-                                }`}
-                              >
-                                {item.label}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+              <div className="border-t border-gray-200 pt-3 mt-3">
+                <h3 className="font-bold text-gray-900 text-sm mb-2">How It Works</h3>
               </div>
+              {howItWorksCategories.map((cat) => (
+                <div key={cat.title}>
+                  <h3 className="font-medium text-gray-900 text-sm mb-2">{cat.title}</h3>
+                  <ul className="space-y-1">
+                    {cat.items.map((item) => (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          className={`block py-1 px-2 rounded-md text-sm transition-colors ${
+                            pathname === item.href
+                              ? "bg-pink-50 text-pink-600"
+                              : "text-gray-600 hover:text-pink-600"
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </nav>
           </div>
         </div>

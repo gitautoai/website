@@ -97,7 +97,7 @@ export default function MobileDrawer({ setIsNavOpen, isNavOpen }: MobileDrawerPr
                           }
                         }}
                       >
-                        Manage Subscriptions
+                        Billing
                       </span>
                     </li>
                   )}
