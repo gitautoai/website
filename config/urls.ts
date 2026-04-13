@@ -144,6 +144,7 @@ export const RELATIVE_URLS = {
         CI_LOG_DEDUP: "/docs/how-it-works/token-cost-management/ci-log-dedup",
         WEB_FETCH_SUMMARIZATION: "/docs/how-it-works/token-cost-management/web-fetch-summarization",
         CONTEXT_FORGETTING: "/docs/how-it-works/token-cost-management/context-forgetting",
+        FILE_QUERY_ROUTING: "/docs/how-it-works/token-cost-management/file-query-routing",
       },
       RESILIENCE_RECOVERY: {
         MODEL_FALLBACK: "/docs/how-it-works/resilience-recovery/model-fallback",
@@ -290,6 +291,7 @@ export const ABSOLUTE_URLS = {
           CI_LOG_DEDUP: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.CI_LOG_DEDUP}`,
           WEB_FETCH_SUMMARIZATION: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.WEB_FETCH_SUMMARIZATION}`,
           CONTEXT_FORGETTING: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.CONTEXT_FORGETTING}`,
+          FILE_QUERY_ROUTING: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.TOKEN_COST_MANAGEMENT.FILE_QUERY_ROUTING}`,
         },
         RESILIENCE_RECOVERY: {
           MODEL_FALLBACK: `${BASE_URL}${RELATIVE_URLS.DOCS.HOW_IT_WORKS.RESILIENCE_RECOVERY.MODEL_FALLBACK}`,

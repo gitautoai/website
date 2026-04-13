@@ -1,0 +1,53 @@
+export const metadata = {
+  title: "Ask a File, Don't Read the Whole Thing",
+  description:
+    "How routing file reads through a cheaper model saves input tokens when your AI agent only needs a quick answer, not the full source code.",
+  slug: "ask-a-file-dont-read-the-whole-thing",
+  alternates: { canonical: "/blog/ask-a-file-dont-read-the-whole-thing" },
+  openGraph: { url: "/blog/ask-a-file-dont-read-the-whole-thing" },
+  author: "Wes Nishio",
+  authorUrl: "https://www.linkedin.com/in/hiroshi-nishio/",
+  tags: ["ai-agents", "context-window", "cost-optimization", "claude"],
+  createdAt: "2026-04-13T10:00:00-07:00",
+  updatedAt: "2026-04-13T10:00:00-07:00",
+};
+
+# Ask a File, Don't Read the Whole Thing
+
+## The problem
+
+A coding agent needs to know what test framework a project uses. The answer is four characters: "Jest". But to find that answer, the agent loads `conftest.py` or `package.json` — and now that entire file sits in the conversation context for every subsequent API call.
+
+One file is cheap. But the agent does this dozens of times per run: reading a config to check a naming convention, reading a setup file to find fixtures, reading a CI config to learn the build tool. Each file stays in context for every turn after it enters. Input tokens are 95% of our Claude costs, and most of these reads exist only to extract a short answer.
+
+We already let the agent [drop files from context](/blog/let-your-agent-forget) after reading them. But that still loads the full file for at least one turn. What if the agent never needed the full file in the first place?
+
+## The pattern
+
+We already had this pattern for web pages. When the agent fetches a URL, GitAuto sends the HTML through Claude Haiku ($1 per million input tokens) to extract a summary, then only the summary enters the main Opus context. A 30,000-token web page becomes a 1,000-token summary.
+
+The same pattern works for local files. Instead of loading a file into Opus context to answer a simple question, route it through Haiku first.
+
+## How it works
+
+The agent provides a file path and a question (e.g., `query_file("tests/conftest.py", "What test framework and fixtures are used?")`):
+
+1. GitAuto reads the file and sends it to Haiku with the question
+2. Haiku returns a focused answer
+3. Only the answer enters the Opus conversation
+
+The full file never touches the expensive model's context.
+
+## Three modes of file access
+
+The agent now picks the cheapest way to interact with a file:
+
+- **Full read** — load the entire file into context. For when the agent needs exact code to edit.
+- **Query** — route through Haiku, return only the answer. For when the agent needs to learn something about the file.
+- **Forget** — drop file content already in context. For when a full read happened but the content is no longer needed.
+
+## What we expect
+
+The agent should naturally prefer querying for pattern learning: test conventions, framework detection, project structure questions. It should only do a full read when it needs exact lines for editing.
+
+Whether the agent actually makes this distinction is the experiment. The tool descriptions guide it, but real usage will tell us if the guidance is sufficient or if we need to adjust.
