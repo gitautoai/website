@@ -11,11 +11,11 @@ has_md=$(echo "$STAGED_FILES" | grep -q '\.md$' && echo 1 || echo 0)
 has_ts=$(echo "$STAGED_FILES" | grep -qE '\.(ts|tsx)$' && echo 1 || echo 0)
 has_js=$(echo "$STAGED_FILES" | grep -qE '\.(js|jsx|mjs)$' && echo 1 || echo 0)
 
-# Merge latest main (always)
-echo "--- merge main ---"
-git fetch origin main && git merge origin/main
-if [ $? -ne 0 ]; then
-    echo "FAILED: Merge conflict with main. Resolve before committing."
+# Check main is merged (merge must be done before committing)
+echo "--- check main ---"
+git fetch origin main
+if ! git merge-base --is-ancestor origin/main HEAD; then
+    echo "FAILED: Branch is behind main. Run 'git merge origin/main' first."
     exit 1
 fi
 

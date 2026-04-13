@@ -42,5 +42,7 @@ export const menuItems = [
     href: RELATIVE_URLS.DASHBOARD.INTEGRATIONS.NPM,
     isHeader: false,
   },
+  { id: "links-header", label: "Links", href: "#", isHeader: true },
+  { id: "docs", label: "Docs", href: RELATIVE_URLS.DOCS.INDEX, isHeader: false },
   { id: "home", label: "Back to Home", href: RELATIVE_URLS.INDEX, isHeader: false },
 ] as const;

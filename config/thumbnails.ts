@@ -25,6 +25,7 @@ export const THUMBNAILS = {
 
   // Documentation
   DOCS: {
+    INDEX: `${BASE_URL}/og/docs.png`,
     ACTIONS: {
       AUTO_MERGE: `${BASE_URL}/og/docs-actions-auto-merge.png`,
     },
