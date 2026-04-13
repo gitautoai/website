@@ -44,6 +44,7 @@ export const RELATIVE_URLS = {
   },
   BLOG: "/blog",
   DOCS: {
+    INDEX: "/docs",
     ACTIONS: {
       AUTO_MERGE: "/docs/actions/auto-merge",
       PR_BODY_SUMMARY: "/docs/actions/pr-body-summary",
@@ -193,6 +194,7 @@ export const ABSOLUTE_URLS = {
       },
     },
     DOCS: {
+      INDEX: `${BASE_URL}${RELATIVE_URLS.DOCS.INDEX}`,
       ACTIONS: {
         AUTO_MERGE: `${BASE_URL}${RELATIVE_URLS.DOCS.ACTIONS.AUTO_MERGE}`,
         PR_BODY_SUMMARY: `${BASE_URL}${RELATIVE_URLS.DOCS.ACTIONS.PR_BODY_SUMMARY}`,

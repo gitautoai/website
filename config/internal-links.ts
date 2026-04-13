@@ -67,7 +67,7 @@ export const INTERNAL_LINKS = [
     showInMobile: true,
   },
   {
-    href: RELATIVE_URLS.DOCS.GETTING_STARTED.INSTALLATION,
+    href: RELATIVE_URLS.DOCS.INDEX,
     eventType: "docs",
     text: "Docs",
     category: "docs",

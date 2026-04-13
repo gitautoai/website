@@ -14,9 +14,9 @@ jest.mock("next/navigation", () => ({
 }));
 
 import { render, screen } from "@testing-library/react";
-import DocsLayout from "./layout";
+import DocsLayoutClient from "./components/DocsLayoutClient";
 
-describe("DocsLayout", () => {
+describe("DocsLayoutClient", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUsePathname.mockReturnValue("/docs/getting-started/installation");
@@ -25,9 +25,9 @@ describe("DocsLayout", () => {
 
   it("renders children", () => {
     render(
-      <DocsLayout>
+      <DocsLayoutClient>
         <p>Test content</p>
-      </DocsLayout>,
+      </DocsLayoutClient>,
     );
 
     expect(screen.getByText("Test content")).toBeInTheDocument();
@@ -35,9 +35,9 @@ describe("DocsLayout", () => {
 
   it("renders sidebar sections", () => {
     render(
-      <DocsLayout>
+      <DocsLayoutClient>
         <div />
-      </DocsLayout>,
+      </DocsLayoutClient>,
     );
 
     expect(screen.getByText("Getting Started")).toBeInTheDocument();
@@ -49,9 +49,9 @@ describe("DocsLayout", () => {
 
   it("renders sidebar items in correct order under Triggers", () => {
     render(
-      <DocsLayout>
+      <DocsLayoutClient>
         <div />
-      </DocsLayout>,
+      </DocsLayoutClient>,
     );
 
     expect(screen.getByText("Schedule Trigger")).toBeInTheDocument();
@@ -65,9 +65,9 @@ describe("DocsLayout", () => {
     mockUsePathname.mockReturnValue("/docs/triggers/schedule");
 
     render(
-      <DocsLayout>
+      <DocsLayoutClient>
         <div />
-      </DocsLayout>,
+      </DocsLayoutClient>,
     );
 
     expect(mockSlackUs).toHaveBeenCalledWith(
@@ -79,9 +79,9 @@ describe("DocsLayout", () => {
     mockUseAccountContext.mockReturnValue({ userId: null, userName: null });
 
     render(
-      <DocsLayout>
+      <DocsLayoutClient>
         <div />
-      </DocsLayout>,
+      </DocsLayoutClient>,
     );
 
     expect(mockSlackUs).not.toHaveBeenCalled();
@@ -91,9 +91,9 @@ describe("DocsLayout", () => {
     mockUseAccountContext.mockReturnValue({ userId: "user-123", userName: null });
 
     render(
-      <DocsLayout>
+      <DocsLayoutClient>
         <div />
-      </DocsLayout>,
+      </DocsLayoutClient>,
     );
 
     expect(mockSlackUs).not.toHaveBeenCalled();
@@ -103,9 +103,9 @@ describe("DocsLayout", () => {
     mockUsePathname.mockReturnValue("/docs/getting-started/installation");
 
     render(
-      <DocsLayout>
+      <DocsLayoutClient>
         <div />
-      </DocsLayout>,
+      </DocsLayoutClient>,
     );
 
     const activeLink = screen.getByText("Installation").closest("a");
@@ -114,9 +114,9 @@ describe("DocsLayout", () => {
 
   it("renders mobile navigation select", () => {
     render(
-      <DocsLayout>
+      <DocsLayoutClient>
         <div />
-      </DocsLayout>,
+      </DocsLayoutClient>,
     );
 
     const select = screen.getByRole("combobox");
