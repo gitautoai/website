@@ -63,6 +63,8 @@ fi
 # TypeScript type check
 if [ "$has_ts" = "1" ]; then
     echo "--- tsc ---"
+    # Clear stale Next.js route types to avoid false positives when new pages are added
+    rm -rf .next/dev/types .next/types
     npx tsc --noEmit
     if [ $? -ne 0 ]; then
         echo "FAILED: Fix TypeScript errors before committing."
