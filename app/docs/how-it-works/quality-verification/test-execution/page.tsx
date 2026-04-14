@@ -16,10 +16,9 @@ export default function TestExecutionPage() {
         <section>
           <p className="text-gray-600 mb-4">
             GitAuto runs every generated test file to verify the tests actually pass before
-            committing them to the PR. For example, for JavaScript/TypeScript projects, it runs Jest
-            or Vitest, collects coverage data during the run, ensures the correct test-specific
-            TypeScript config is used, and relaxes lint rules for test files to avoid false
-            positives from test-specific patterns like mocks and spies.
+            committing them to the PR. It supports multiple ecosystems: Jest/Vitest for
+            JavaScript/TypeScript, pytest for Python, and PHPUnit for PHP. Each runner collects
+            output, identifies failures, and feeds errors back to the model for correction.
           </p>
         </section>
 
@@ -127,6 +126,15 @@ export default function TestExecutionPage() {
                 Type Checking
               </Link>{" "}
               - catches type errors before tests are executed
+            </li>
+            <li>
+              <Link
+                href={RELATIVE_URLS.DOCS.HOW_IT_WORKS.QUALITY_VERIFICATION.PYTEST_SUPPORT}
+                className="text-pink-600 hover:underline"
+              >
+                Pytest Support
+              </Link>{" "}
+              - runs pytest for Python projects with dependency caching
             </li>
             <li>
               <Link

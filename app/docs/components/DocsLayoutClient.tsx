@@ -4,9 +4,21 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { slackUs } from "@/app/actions/slack/slack-us";
 import { useAccountContext } from "@/app/components/contexts/Account";
+import { HOW_IT_WORKS_PAGES } from "@/app/docs/how-it-works/navigation";
 import { RELATIVE_URLS } from "@/config/urls";
 
-const UTH = RELATIVE_URLS.DOCS.HOW_IT_WORKS;
+// Derive sidebar categories from the single source of truth in navigation.ts
+const howItWorksCategories = HOW_IT_WORKS_PAGES.reduce<
+  { title: string; items: { href: string; label: string }[] }[]
+>((acc, page) => {
+  const last = acc[acc.length - 1];
+  if (last && last.title === page.category) {
+    last.items.push({ href: page.href, label: page.title });
+  } else {
+    acc.push({ title: page.category, items: [{ href: page.href, label: page.title }] });
+  }
+  return acc;
+}, []);
 
 const sidebarItems = [
   {
@@ -54,116 +66,6 @@ const sidebarItems = [
     items: [
       { href: RELATIVE_URLS.DOCS.INTEGRATIONS.CIRCLECI, label: "CircleCI Integration" },
       { href: RELATIVE_URLS.DOCS.INTEGRATIONS.NPM, label: "npm Integration" },
-    ],
-  },
-];
-
-const howItWorksCategories = [
-  {
-    title: "Context Enrichment",
-    items: [
-      { href: UTH.CONTEXT_ENRICHMENT.LINE_NUMBERS, label: "Line Numbers" },
-      { href: UTH.CONTEXT_ENRICHMENT.FULL_FILE_READS, label: "Full File Reads" },
-      { href: UTH.CONTEXT_ENRICHMENT.TEST_FILE_PRELOADING, label: "Test File Preloading" },
-      { href: UTH.CONTEXT_ENRICHMENT.TEST_NAMING_DETECTION, label: "Test Naming Detection" },
-      { href: UTH.CONTEXT_ENRICHMENT.ERROR_BASELINES, label: "Error Baselines" },
-      { href: UTH.CONTEXT_ENRICHMENT.CI_LOG_CLEANING, label: "CI Log Cleaning" },
-      { href: UTH.CONTEXT_ENRICHMENT.TRIGGER_SPECIFIC_PROMPTS, label: "Trigger-Specific Prompts" },
-      { href: UTH.CONTEXT_ENRICHMENT.CODING_STANDARDS, label: "Coding Standards" },
-    ],
-  },
-  {
-    title: "Output Auto-Correction",
-    items: [
-      { href: UTH.OUTPUT_AUTO_CORRECTION.DIFF_HUNK_REPAIR, label: "Diff Hunk Repair" },
-      { href: UTH.OUTPUT_AUTO_CORRECTION.DIFF_PREFIX_REPAIR, label: "Diff Prefix Repair" },
-      { href: UTH.OUTPUT_AUTO_CORRECTION.TOOL_NAME_CORRECTION, label: "Tool Name Correction" },
-      {
-        href: UTH.OUTPUT_AUTO_CORRECTION.TOOL_ARGUMENT_CORRECTION,
-        label: "Tool Argument Correction",
-      },
-      { href: UTH.OUTPUT_AUTO_CORRECTION.IMPORT_SORTING, label: "Import Sorting" },
-      { href: UTH.OUTPUT_AUTO_CORRECTION.TRAILING_SPACE_REMOVAL, label: "Trailing Space Removal" },
-      { href: UTH.OUTPUT_AUTO_CORRECTION.FINAL_NEWLINE, label: "Final Newline" },
-      {
-        href: UTH.OUTPUT_AUTO_CORRECTION.LINE_ENDING_PRESERVATION,
-        label: "Line Ending Preservation",
-      },
-      {
-        href: UTH.OUTPUT_AUTO_CORRECTION.SANITIZE_TOOL_ARGUMENTS,
-        label: "Sanitize Tool Arguments",
-      },
-      { href: UTH.OUTPUT_AUTO_CORRECTION.LINT_DISABLE_HEADERS, label: "Lint Disable Headers" },
-    ],
-  },
-  {
-    title: "Quality Verification",
-    items: [
-      { href: UTH.QUALITY_VERIFICATION.FORMATTING, label: "Formatting" },
-      { href: UTH.QUALITY_VERIFICATION.LINTING, label: "Linting" },
-      { href: UTH.QUALITY_VERIFICATION.TYPE_CHECKING, label: "Type Checking" },
-      { href: UTH.QUALITY_VERIFICATION.TEST_EXECUTION, label: "Test Execution" },
-      { href: UTH.QUALITY_VERIFICATION.COVERAGE_ENFORCEMENT, label: "Coverage Enforcement" },
-      { href: UTH.QUALITY_VERIFICATION.PHPUNIT_SUPPORT, label: "PHPUnit Support" },
-      { href: UTH.QUALITY_VERIFICATION.SNAPSHOT_AUTO_UPDATE, label: "Snapshot Auto-Update" },
-      { href: UTH.QUALITY_VERIFICATION.UNTESTABLE_DETECTION, label: "Untestable Detection" },
-      { href: UTH.QUALITY_VERIFICATION.SHOULD_SKIP_DETECTION, label: "Should-Skip Detection" },
-      { href: UTH.QUALITY_VERIFICATION.DEAD_CODE_REMOVAL, label: "Dead Code Removal" },
-    ],
-  },
-  {
-    title: "Safety Guardrails",
-    items: [
-      { href: UTH.SAFETY_GUARDRAILS.FILE_EDIT_RESTRICTIONS, label: "File Edit Restrictions" },
-      { href: UTH.SAFETY_GUARDRAILS.TEMPERATURE_ZERO, label: "Temperature Zero" },
-      { href: UTH.SAFETY_GUARDRAILS.PR_BRANCH_CHECKS, label: "PR/Branch Checks" },
-      { href: UTH.SAFETY_GUARDRAILS.RACE_CONDITION_PREVENTION, label: "Race Condition Prevention" },
-      { href: UTH.SAFETY_GUARDRAILS.BOT_LOOP_PREVENTION, label: "Bot Loop Prevention" },
-      { href: UTH.SAFETY_GUARDRAILS.WEBHOOK_DEDUPLICATION, label: "Webhook Deduplication" },
-      { href: UTH.SAFETY_GUARDRAILS.DUPLICATE_ERROR_HASHING, label: "Duplicate Error Hashing" },
-      {
-        href: UTH.SAFETY_GUARDRAILS.INFRASTRUCTURE_FAILURE_DETECTION,
-        label: "Infra Failure Detection",
-      },
-      { href: UTH.SAFETY_GUARDRAILS.STRICT_TOOL_SCHEMAS, label: "Strict Tool Schemas" },
-      { href: UTH.SAFETY_GUARDRAILS.NO_CHANGE_DETECTION, label: "No-Change Detection" },
-    ],
-  },
-  {
-    title: "Token/Cost Management",
-    items: [
-      { href: UTH.TOKEN_COST_MANAGEMENT.TOKEN_TRIMMING, label: "Token Trimming" },
-      { href: UTH.TOKEN_COST_MANAGEMENT.OUTDATED_DIFF_REMOVAL, label: "Outdated Diff Removal" },
-      { href: UTH.TOKEN_COST_MANAGEMENT.STALE_FILE_REPLACEMENT, label: "Stale File Replacement" },
-      { href: UTH.TOKEN_COST_MANAGEMENT.SKIP_CI_INTERMEDIATE, label: "Skip CI Intermediate" },
-    ],
-  },
-  {
-    title: "Resilience & Recovery",
-    items: [
-      { href: UTH.RESILIENCE_RECOVERY.MODEL_FALLBACK, label: "Model Fallback" },
-      { href: UTH.RESILIENCE_RECOVERY.OVERLOAD_RETRY, label: "Overload Retry" },
-      { href: UTH.RESILIENCE_RECOVERY.FORCED_VERIFICATION, label: "Forced Verification" },
-      { href: UTH.RESILIENCE_RECOVERY.ERROR_FILES_EDITABLE, label: "Error Files Editable" },
-    ],
-  },
-  {
-    title: "Hallucination Prevention",
-    items: [
-      { href: UTH.HALLUCINATION_PREVENTION.WEB_SEARCH, label: "Web Search" },
-      { href: UTH.HALLUCINATION_PREVENTION.URL_FETCHING, label: "URL Fetching" },
-      {
-        href: UTH.HALLUCINATION_PREVENTION.ANTI_HALLUCINATION_PROMPTS,
-        label: "Anti-Hallucination Prompts",
-      },
-      {
-        href: UTH.HALLUCINATION_PREVENTION.GITAUTO_MD_RESTRICTIONS,
-        label: "GITAUTO.md Restrictions",
-      },
-      {
-        href: UTH.HALLUCINATION_PREVENTION.REVIEW_RESPONSE_GUARDRAILS,
-        label: "Review Response Guardrails",
-      },
     ],
   },
 ];
