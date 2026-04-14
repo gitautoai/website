@@ -132,6 +132,11 @@ export const HOW_IT_WORKS_PAGES: NavItem[] = [
     category: "Quality Verification",
   },
   {
+    href: UTH.QUALITY_VERIFICATION.PYTEST_SUPPORT,
+    title: "pytest Support",
+    category: "Quality Verification",
+  },
+  {
     href: UTH.QUALITY_VERIFICATION.SNAPSHOT_AUTO_UPDATE,
     title: "Snapshot Auto-Update",
     category: "Quality Verification",
