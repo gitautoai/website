@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { render } from '@testing-library/react';
 import DemoVideo from './Demo';
 import { ABSOLUTE_URLS } from '@/config/urls';
