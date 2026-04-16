@@ -120,5 +120,14 @@ describe("getCreditTransactions integration", () => {
     });
     expect(result[0].expires_at).toBeTruthy();
     expect(result[0].created_at).toBeTruthy();
+  it("should return empty array for null ownerId", async () => {
+    const result = await getCreditTransactions(null as any);
+    expect(result).toEqual([]);
+  });
+
+  it("should return empty array for undefined ownerId", async () => {
+    const result = await getCreditTransactions(undefined as any);
+    expect(result).toEqual([]);
+  });
   });
 });
