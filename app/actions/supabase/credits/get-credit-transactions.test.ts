@@ -79,6 +79,27 @@ describe("getCreditTransactions", () => {
 
     await getCreditTransactions(1, 10);
 
+  it("handles null ownerId gracefully", async () => {
+    // Verify that null ownerId (passed via any) doesn't crash and returns empty array or throws
+    const chain = chainMock([]);
+    mockFrom.mockReturnValue(chain);
+
+    const result = await getCreditTransactions(null as any);
+
+    expect(result).toEqual([]);
+    expect(chain.eq).toHaveBeenCalledWith("owner_id", null);
+  });
+
+  it("handles undefined ownerId gracefully", async () => {
+    // Verify that undefined ownerId (passed via any) doesn't crash and returns empty array or throws
+    const chain = chainMock([]);
+    mockFrom.mockReturnValue(chain);
+
+    const result = await getCreditTransactions(undefined as any);
+
+    expect(result).toEqual([]);
+    expect(chain.eq).toHaveBeenCalledWith("owner_id", undefined);
+  });
     expect(chain.limit).toHaveBeenCalledWith(10);
   });
 });
