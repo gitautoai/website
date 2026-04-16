@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
+
 import { render } from "@testing-library/react";
 
 // Mock NotFoundRedirect to isolate the NotFound component under test.
 // Captures props so we can verify the correct redirectTo value is passed.
-const mockNotFoundRedirect = jest.fn(() => null);
+const mockNotFoundRedirect = jest.fn(
+  (_props: { redirectTo: string }) => null
+);
 jest.mock("@/app/components/NotFoundRedirect", () => ({
   __esModule: true,
   default: (props: { redirectTo: string }) => mockNotFoundRedirect(props),
