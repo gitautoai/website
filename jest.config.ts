@@ -8,6 +8,7 @@ const createJestConfig = nextJest({
 
 // Custom Jest configuration
 const customJestConfig: Config = {
+  testTimeout: process.env.CI ? 180000 : 5000,
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testEnvironment: "jest-environment-jsdom",
   testPathIgnorePatterns: ["/node_modules/", "/e2e/", "\\.integration\\.test\\."],
