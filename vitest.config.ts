@@ -17,6 +17,7 @@ export default defineConfig({
     storybookTest({ configDir: path.join(dirname, '.storybook') }),
   ],
   test: {
+    testTimeout: process.env.CI ? 180000 : 5000,
     name: 'storybook',
     browser: {
       enabled: true,
