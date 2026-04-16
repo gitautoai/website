@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-var-requires, no-unused-vars */
 import { render } from "@testing-library/react";
 import GlobalError from "./global-error";
 import * as Sentry from "@sentry/nextjs";
