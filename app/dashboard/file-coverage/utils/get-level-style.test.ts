@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { getLevelStyle } from "./get-level-style";
 
 describe("getLevelStyle", () => {
