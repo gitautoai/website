@@ -40,9 +40,10 @@ describe("getUser", () => {
 
     expect(result).toEqual(mockUser);
     expect(mockFrom).toHaveBeenCalledWith("users");
-    expect(supabaseAdmin.from().select).toHaveBeenCalledWith("*");
-    expect(supabaseAdmin.from().select().eq).toHaveBeenCalledWith("user_id", 123);
-    expect(supabaseAdmin.from().select().eq().maybeSingle).toHaveBeenCalled();
+    const chain = mockFrom.mock.results[0].value;
+    expect(chain.select).toHaveBeenCalledWith("*");
+    expect(chain.eq).toHaveBeenCalledWith("user_id", 123);
+    expect(chain.maybeSingle).toHaveBeenCalled();
   });
 
   it("returns null when user is not found", async () => {
