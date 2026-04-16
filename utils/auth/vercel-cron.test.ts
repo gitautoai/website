@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { NextRequest, NextResponse } from "next/server";
 import { verifyVercelCron } from "./vercel-cron";
 
