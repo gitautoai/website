@@ -77,7 +77,7 @@ describe("getUser", () => {
     // In our mock, it will return null because we didn't set a return value for this specific call,
     // but let's be explicit.
     mockFrom.mockReturnValue(chainMock(null));
-    const result2 = await getUser("not-a-number");
+    const result2 = await getUser("not-a-number" as any);
     expect(result2).toBeNull();
   });
 });
