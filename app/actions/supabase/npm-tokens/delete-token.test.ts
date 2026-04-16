@@ -41,7 +41,7 @@ describe("deleteNpmToken", () => {
 
   it("throws an error when Supabase returns an error", async () => {
     // Verify that it throws the error returned by Supabase
-    const mockError = { message: "Database error during deletion" };
+    const mockError = new Error("Database error during deletion");
     const chain = chainMock(mockError);
     mockFrom.mockReturnValue(chain);
 
