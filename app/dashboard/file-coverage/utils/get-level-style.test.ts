@@ -1,4 +1,4 @@
- 
+
 import { getLevelStyle } from "./get-level-style";
 
 describe("getLevelStyle", () => {
@@ -20,10 +20,12 @@ describe("getLevelStyle", () => {
   });
 
   describe("edge cases", () => {
-    it("should return an empty string for unknown levels", () => {
+    it("should return an empty string for unknown or partially matching levels", () => {
       // Verify that any unrecognized level returns an empty string
       expect(getLevelStyle("unknown")).toBe("");
       expect(getLevelStyle("something-else")).toBe("");
+      expect(getLevelStyle("repositories")).toBe("");
+      expect(getLevelStyle("directories")).toBe("");
     });
 
     it("should return an empty string for empty string input", () => {
@@ -42,6 +44,13 @@ describe("getLevelStyle", () => {
       // Verify that levels with leading/trailing whitespace are not matched
       expect(getLevelStyle(" repository ")).toBe("");
       expect(getLevelStyle("directory ")).toBe("");
+    });
+
+    it("should return an empty string for strings with special characters or extreme length", () => {
+      // Verify that special characters and very long strings are handled by the default case
+      expect(getLevelStyle("repository!")).toBe("");
+      expect(getLevelStyle("dir\tory")).toBe("");
+      expect(getLevelStyle("a".repeat(1000))).toBe("");
     });
   });
 
