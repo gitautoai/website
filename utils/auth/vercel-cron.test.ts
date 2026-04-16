@@ -1,6 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyVercelCron } from "./vercel-cron";
 
+// Mock next/server to avoid ReferenceError: Request is not defined in jsdom environment
+jest.mock("next/server", () => {
+  class MockNextResponse {
+    constructor(public status: number, public body: any) {}
+    static json(body: any, init?: { status?: number }) {
+      return new MockNextResponse(init?.status || 200, body);
+    }
+    async json() {
+      return this.body;
+    }
+  }
+
+  return {
+    NextRequest: jest.fn(),
+    NextResponse: MockNextResponse,
+  };
+});
+
 describe("verifyVercelCron", () => {
   // Helper to create a mock NextRequest
   const createMockRequest = (userAgent: string | null): NextRequest => {
