@@ -69,7 +69,6 @@ describe("getUser", () => {
 
   it("handles non-numeric userId gracefully (adversarial)", async () => {
     // Verify behavior when userId is not a number (e.g. passed from JS)
-    // @ts-expect-error: testing runtime behavior with invalid type
     const result = await getUser("not-a-number" as any);
 
     expect(mockFrom).toHaveBeenCalledWith("users");
