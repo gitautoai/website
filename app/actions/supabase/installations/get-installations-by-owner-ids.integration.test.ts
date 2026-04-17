@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { getInstallationsByOwnerIds } from "./get-installations-by-owner-ids";
 import { getAllOwnerIds } from "./get-all-owner-ids";
 
