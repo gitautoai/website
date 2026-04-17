@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { blogJsonLd } from "./jsonld";
 import { PRODUCT_NAME } from "@/config";
 import { KEYWORDS } from "@/config/keywords";
