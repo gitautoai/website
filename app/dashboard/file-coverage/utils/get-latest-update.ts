@@ -9,6 +9,7 @@ export function getLatestUpdate(coverageData: Tables<"coverages">[]) {
 
   const latestDate = coverageData.reduce((latest, item) => {
     const itemDate = new Date(item.updated_at);
+    if (isNaN(itemDate.getTime())) return latest;
     return latest > itemDate ? latest : itemDate;
   }, new Date(0));
 
