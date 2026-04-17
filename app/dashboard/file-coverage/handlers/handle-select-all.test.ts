@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { handleSelectAll } from "./handle-select-all";
 import { Tables } from "@/types/supabase";
 
