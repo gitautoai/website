@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { methodologyJsonLd } from './jsonld';
 import { AUDIENCE, CREATOR } from "@/app/jsonld";
 import { PRODUCT_NAME } from "@/config";
