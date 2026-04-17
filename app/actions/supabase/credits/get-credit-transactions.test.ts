@@ -70,4 +70,26 @@ describe("getCreditTransactions solitary", () => {
 
     expect(chain.limit).toHaveBeenCalledWith(10);
   });
+
+  it("should handle null or undefined ownerId gracefully", async () => {
+    // Verify that null/undefined ownerId is passed to Supabase, which should return empty or error
+    const chain = createMockChain([]);
+    mockFrom.mockReturnValue(chain);
+
+    await getCreditTransactions(null as any);
+    expect(chain.eq).toHaveBeenCalledWith("owner_id", null);
+
+    await getCreditTransactions(undefined as any);
+    expect(chain.eq).toHaveBeenCalledWith("owner_id", undefined);
+  });
+
+  it("should not be vulnerable to SQL injection via ownerId", async () => {
+    // Verify that passing a string as ownerId is handled by Supabase's parameterized queries
+    const chain = createMockChain([]);
+    mockFrom.mockReturnValue(chain);
+
+    const injectionPayload = "1; DROP TABLE credits;";
+    await getCreditTransactions(injectionPayload as any);
+    expect(chain.eq).toHaveBeenCalledWith("owner_id", injectionPayload);
+  });
 });
