@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
+ 
 import { getCreditTransactions } from "./get-credit-transactions";
 import { supabaseAdmin } from "@/lib/supabase/server";
 
