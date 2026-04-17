@@ -31,7 +31,7 @@ describe("blogJsonLd", () => {
       jest.resetModules();
     });
 
-    test("should correctly assemble the object using provided dependencies", () => {
+    test("should correctly assemble the object using provided dependencies", async () => {
       // Mock dependencies before requiring the module
       jest.doMock("@/config", () => ({
         PRODUCT_NAME: "MockProduct",
@@ -51,7 +51,7 @@ describe("blogJsonLd", () => {
         CREATOR: { "@type": "Organization", name: "MockCreator" },
       }));
 
-      const { blogJsonLd: mockedBlogJsonLd } = require("./jsonld");
+      const { blogJsonLd: mockedBlogJsonLd } = await import("./jsonld");
 
       // Verify that the object is constructed using the mocked values
       expect(mockedBlogJsonLd.name).toBe("MockProduct Blog");
