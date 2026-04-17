@@ -6,6 +6,7 @@ import { AUDIENCE, CREATOR } from "@/app/jsonld";
 
 describe("solutionJsonLd", () => {
   // ===== sociable =====
+  // Verify that the JSON-LD object for the solution page is correctly constructed with expected schema.org types and config values
   it("should have the correct schema.org structure and values", () => {
     // Verify the basic structure and static values
     expect(solutionJsonLd["@context"]).toBe("https://schema.org");
