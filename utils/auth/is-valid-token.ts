@@ -8,18 +8,21 @@ type DecodedToken = {
 };
 
 export function isValidToken(userId: string, jwtToken: string) {
-  const decodedToken = jwt.verify(jwtToken, config.JWT_SECRET || "") as DecodedToken;
-  const currentTime = Math.floor(Date.now() / 1000);
+  try {
+    const decodedToken = jwt.verify(jwtToken, config.JWT_SECRET || "") as DecodedToken;
+    const currentTime = Math.floor(Date.now() / 1000);
 
-  if (
-    decodedToken &&
-    decodedToken.exp &&
-    decodedToken.exp > currentTime &&
-    decodedToken.iat &&
-    decodedToken.iat < currentTime &&
-    decodedToken.id === userId
-  ) {
-    return true;
+    if (
+      decodedToken.exp &&
+      decodedToken.exp > currentTime &&
+      decodedToken.iat &&
+      decodedToken.iat < currentTime &&
+      decodedToken.id === userId
+    ) {
+      return true;
+    }
+  } catch (error) {
+    return false;
   }
 
   return false;
