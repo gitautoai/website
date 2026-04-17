@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { isValidToken } from "./is-valid-token";
 import jwt from "jsonwebtoken";
 import { config } from "@/config";
