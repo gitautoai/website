@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { solutionJsonLd } from "./jsonld";
 import { PRODUCT_NAME } from "@/config";
 import { THUMBNAILS } from "@/config/thumbnails";
