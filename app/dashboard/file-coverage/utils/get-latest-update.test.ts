@@ -1,7 +1,6 @@
 import { Tables } from "@/types/supabase";
 import { getLatestUpdate } from "./get-latest-update";
 import * as formatDateTimeModule from "@/utils/format-date-time";
-import { vi, describe, it, expect } from "vitest";
 
 // ===== solitary =====
 describe("getLatestUpdate solitary", () => {
@@ -13,7 +12,7 @@ describe("getLatestUpdate solitary", () => {
 
   it("should find the latest date and call formatDateTime with it", () => {
     // Mock formatDateTime to verify it's called with the correct ISO string
-    const spy = vi.spyOn(formatDateTimeModule, "formatDateTime").mockImplementation((date) => `mocked-${date}`);
+    const spy = jest.spyOn(formatDateTimeModule, "formatDateTime").mockImplementation((date) => `mocked-${date}`);
 
     const data: Tables<"coverages">[] = [
       { updated_at: "2023-01-01T00:00:00Z" } as Tables<"coverages">,
@@ -29,7 +28,7 @@ describe("getLatestUpdate solitary", () => {
   });
 
   it("should handle a single item array", () => {
-    const spy = vi.spyOn(formatDateTimeModule, "formatDateTime").mockImplementation((date) => `mocked-${date}`);
+    const spy = jest.spyOn(formatDateTimeModule, "formatDateTime").mockImplementation((date) => `mocked-${date}`);
 
     const data: Tables<"coverages">[] = [
       { updated_at: "2023-01-01T00:00:00Z" } as Tables<"coverages">,
@@ -43,7 +42,7 @@ describe("getLatestUpdate solitary", () => {
   });
 
   it("should handle items with the same date", () => {
-    const spy = vi.spyOn(formatDateTimeModule, "formatDateTime").mockImplementation((date) => `mocked-${date}`);
+    const spy = jest.spyOn(formatDateTimeModule, "formatDateTime").mockImplementation((date) => `mocked-${date}`);
 
     const data: Tables<"coverages">[] = [
       { updated_at: "2023-05-01T00:00:00Z" } as Tables<"coverages">,
