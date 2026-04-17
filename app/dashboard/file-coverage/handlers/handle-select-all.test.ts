@@ -72,8 +72,9 @@ describe("handleSelectAll", () => {
     expect(mockSetSelectedRows).toHaveBeenCalledTimes(1);
   });
 
-  it("should deselect all rows when all file-level rows are selected but other levels are also selected", () => {
-    // Verify that if all file-level rows are selected, it deselects all, even if non-file rows were selected
+  it("should select all file-level rows when all file-level rows are selected but other levels are also selected", () => {
+    // Verify that if all file-level rows are selected but other rows (e.g. folders) are also selected,
+    // it results in only file-level rows being selected (effectively deselecting the others)
     const filteredData = [
       createMockCoverage(1),
       createMockCoverage(2),
@@ -84,7 +85,7 @@ describe("handleSelectAll", () => {
 
     handleSelectAll(filteredData, selectedRows, mockSetSelectedRows);
 
-    expect(mockSetSelectedRows).toHaveBeenCalledWith([]);
+    expect(mockSetSelectedRows).toHaveBeenCalledWith([1, 2]);
     expect(mockSetSelectedRows).toHaveBeenCalledTimes(1);
   });
 
