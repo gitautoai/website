@@ -49,6 +49,16 @@ describe("getOwnerIdsWithActiveSubscription", () => {
       await expect(getOwnerIdsWithActiveSubscription(undefined as any)).rejects.toThrow();
     });
 
+    it("handles malformed input arrays gracefully", async () => {
+      // Verify that non-number elements in the array don't cause unexpected crashes
+      // and are handled by the underlying getOwners call
+      mockGetOwners.mockResolvedValue([]);
+      mockGetActiveSubscriptionCustomerIds.mockResolvedValue(new Set());
+
+      const result = await getOwnerIdsWithActiveSubscription(["not-a-number" as any, { id: 1 } as any]);
+      expect(result).toEqual(new Set());
+    });
+
     it("throws when getOwners fails", async () => {
       // Verify that errors from getOwners are propagated
       mockGetOwners.mockRejectedValue(new Error("DB Error"));
@@ -117,6 +127,17 @@ describe("getOwnerIdsWithActiveSubscription", () => {
 
       const result = await getOwnerIdsWithActiveSubscription([1, 2, 3, 4]);
       expect(result).toEqual(new Set([1, 2]));
+    });
+
+    it("avoids N+1 queries by calling dependencies once", async () => {
+      // Verify that getOwners and getActiveSubscriptionCustomerIds are called exactly once
+      // regardless of the number of ownerIds provided.
+      mockGetOwners.mockResolvedValue([]);
+      mockGetActiveSubscriptionCustomerIds.mockResolvedValue(new Set());
+
+      await getOwnerIdsWithActiveSubscription([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+      expect(mockGetOwners).toHaveBeenCalledTimes(1);
+      expect(mockGetActiveSubscriptionCustomerIds).toHaveBeenCalledTimes(1);
     });
   });
 
