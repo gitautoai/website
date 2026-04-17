@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { Tables } from "@/types/supabase";
 import { getLatestUpdate } from "./get-latest-update";
 import { formatDateTime } from "@/utils/format-date-time";
