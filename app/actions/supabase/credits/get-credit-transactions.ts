@@ -2,7 +2,7 @@
 
 import { supabaseAdmin } from "@/lib/supabase/server";
 
-export async function getCreditTransactions(ownerId: number, limit = 50) {
+export async function getCreditTransactions(ownerId: number | null | undefined, limit = 50) {
   if (ownerId == null) return [];
   const { data, error } = await supabaseAdmin
     .from("credits")
