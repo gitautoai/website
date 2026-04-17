@@ -42,6 +42,26 @@ describe("getOwnerIdsWithActiveSubscription", () => {
       expect(mockGetActiveSubscriptionCustomerIds).not.toHaveBeenCalled();
     });
 
+    it("throws when ownerIds is null or undefined", async () => {
+      // Verify that null or undefined ownerIds cause a crash (as expected for this implementation)
+      // This documents the current behavior and ensures it's handled/known
+      await expect(getOwnerIdsWithActiveSubscription(null as any)).rejects.toThrow();
+      await expect(getOwnerIdsWithActiveSubscription(undefined as any)).rejects.toThrow();
+    });
+
+    it("throws when getOwners fails", async () => {
+      // Verify that errors from getOwners are propagated
+      mockGetOwners.mockRejectedValue(new Error("DB Error"));
+      await expect(getOwnerIdsWithActiveSubscription([1])).rejects.toThrow("DB Error");
+    });
+
+    it("throws when getActiveSubscriptionCustomerIds fails", async () => {
+      // Verify that errors from getActiveSubscriptionCustomerIds are propagated
+      mockGetOwners.mockResolvedValue([{ owner_id: 1, stripe_customer_id: "cus_1" }]);
+      mockGetActiveSubscriptionCustomerIds.mockRejectedValue(new Error("Stripe Error"));
+      await expect(getOwnerIdsWithActiveSubscription([1])).rejects.toThrow("Stripe Error");
+    });
+
     it("returns an empty set when no owners are found", async () => {
       // Verify that if no owners are returned from DB, the result is an empty set
       mockGetOwners.mockResolvedValue([]);
