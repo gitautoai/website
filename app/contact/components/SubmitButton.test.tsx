@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, @typescript-eslint/no-var-requires */
 import { render, screen } from "@testing-library/react";
 import { useFormStatus } from "react-dom";
 import SubmitButton from "./SubmitButton";
