@@ -2,8 +2,7 @@
 
 import { supabaseAdmin } from "@/lib/supabase/server";
 
-export async function getCreditTransactions(ownerId: number | null | undefined, limit = 50) {
-  if (ownerId == null) return [];
+export async function getCreditTransactions(ownerId: number, limit = 50) {
   const { data, error } = await supabaseAdmin
     .from("credits")
     .select("*")
@@ -13,6 +12,5 @@ export async function getCreditTransactions(ownerId: number | null | undefined, 
 
   if (error) throw new Error(`Failed to fetch credit transactions: ${error.message}`);
 
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  return data ?? [];
+  return data || [];
 }
