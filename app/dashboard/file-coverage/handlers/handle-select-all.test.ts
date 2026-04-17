@@ -40,6 +40,21 @@ describe("handleSelectAll", () => {
     expect(mockSetSelectedRows).toHaveBeenCalledWith([1, 2, 3]);
     expect(mockSetSelectedRows).toHaveBeenCalledTimes(1);
   });
+  it("should select all file-level rows when selectedRows length matches but IDs differ", () => {
+    // Verify that if the number of selected rows matches the number of file-level rows but the IDs are different, it selects all file-level rows
+    const filteredData = [
+      createMockCoverage(1),
+      createMockCoverage(2),
+    ];
+    const selectedRows = [3, 4];
+    const mockSetSelectedRows = jest.fn();
+
+    handleSelectAll(filteredData, selectedRows, mockSetSelectedRows);
+
+    expect(mockSetSelectedRows).toHaveBeenCalledWith([1, 2]);
+    expect(mockSetSelectedRows).toHaveBeenCalledTimes(1);
+  });
+
 
   it("should deselect all rows when all file-level rows are already selected", () => {
     // Verify that when all file-level rows are selected, it deselects all of them
