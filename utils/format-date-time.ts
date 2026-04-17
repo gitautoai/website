@@ -2,6 +2,9 @@
  * Format date string to readable format
  */
 export function formatDateTime(dateString: string, options: { includeTime?: boolean } = { includeTime: true }): string {
+  if (!dateString) {
+    return "Invalid Date";
+  }
   const date = new Date(dateString);
 
   const formatOptions: Intl.DateTimeFormatOptions = {
