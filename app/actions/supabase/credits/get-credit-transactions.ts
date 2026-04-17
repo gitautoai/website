@@ -13,5 +13,5 @@ export async function getCreditTransactions(ownerId: number | null | undefined, 
 
   if (error) throw new Error(`Failed to fetch credit transactions: ${error.message}`);
 
-  return data;
+  return data ?? [];
 }
