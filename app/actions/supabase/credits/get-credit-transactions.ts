@@ -13,5 +13,6 @@ export async function getCreditTransactions(ownerId: number | null | undefined, 
 
   if (error) throw new Error(`Failed to fetch credit transactions: ${error.message}`);
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   return data ?? [];
 }
