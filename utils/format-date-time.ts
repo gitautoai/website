@@ -2,14 +2,17 @@
  * Format date string to readable format
  */
 export function formatDateTime(dateString: string, options: { includeTime?: boolean } = { includeTime: true }): string {
+  if (!dateString) {
+    return "Invalid Date";
+  }
   const date = new Date(dateString);
-  
+
   const formatOptions: Intl.DateTimeFormatOptions = {
     weekday: "short", // "Sun"
     month: "short", // "Mar"
     day: "numeric", // "23"
   };
-  
+
   if (options.includeTime) {
     formatOptions.hour = "numeric"; // "4"
     formatOptions.minute = "2-digit"; // "13"
@@ -17,9 +20,9 @@ export function formatDateTime(dateString: string, options: { includeTime?: bool
   } else {
     formatOptions.year = "numeric"; // "2024"
   }
-  
+
   return date
     .toLocaleDateString("en-US", formatOptions)
-    .replace(",", "")
+    .replace(/,/g, "")
     .replace(/\s+/g, " ");
 }
