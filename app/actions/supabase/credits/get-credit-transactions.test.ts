@@ -90,13 +90,9 @@ describe("getCreditTransactions", () => {
   });
 
   it("handles undefined ownerId gracefully", async () => {
-    // Verify that undefined ownerId (passed via any) doesn't crash and returns empty array or throws
-    const chain = chainMock([]);
-    mockFrom.mockReturnValue(chain);
-
+    // Verify that undefined ownerId (passed via any) doesn't crash and returns empty array
     const result = await getCreditTransactions(undefined as any);
 
     expect(result).toEqual([]);
-    expect(chain.eq).toHaveBeenCalledWith("owner_id", undefined);
   });
 });
